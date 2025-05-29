@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import type { Job } from '@/types';
 
 export const useJobsStore = defineStore('jobs', () => {
@@ -9,9 +9,6 @@ export const useJobsStore = defineStore('jobs', () => {
   const jobs = ref<Job[]>([]);
   const starting = ref<Record<string, boolean>>({});
   const deleting = ref<Record<string, boolean>>({});
-
-  // Getters
-  const hasJobs = computed(() => jobs.value.length > 0);
 
   // Actions
   const setLoading = (isLoading: boolean) => {
@@ -49,10 +46,7 @@ export const useJobsStore = defineStore('jobs', () => {
     jobs,
     starting,
     deleting,
-    
-    // Getters
-    hasJobs,
-
+  
     // Actions
     setLoading,
     setError,

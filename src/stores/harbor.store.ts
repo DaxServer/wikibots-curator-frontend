@@ -26,9 +26,9 @@ export const useHarborStore = defineStore('harbor', () => {
 
   return {
     // State
-    loading: computed(() => loading.value),
-    error: computed(() => error.value),
-    processes: computed(() => processes.value),
+    loading,
+    error,
+    processes,
 
     // Getters
     hasProcesses,

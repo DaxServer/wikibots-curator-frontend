@@ -21,9 +21,11 @@
   },
   "devDependencies": {
     "@primevue/auto-import-resolver": "^4.3.4",
+    "@stylistic/eslint-plugin": "^4.4.0",
     "@tailwindcss/vite": "^4.1.7",
     "@tsconfig/node22": "^22.0.1",
     "@types/node": "^22.14.0",
+    "@typescript-eslint/parser": "^8.33.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.0",

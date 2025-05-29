@@ -1,16 +1,13 @@
 <script setup lang="ts">
 // Vue
-import { computed, onMounted, ref } from 'vue';
-
-// Components
-import BotActions from './BotActions.vue';
+import { computed, onMounted } from 'vue';
 
 // PrimeVue Components
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import Button from 'primevue/button';
-import Tag from 'primevue/tag';
 import Message from 'primevue/message';
+
+// Components
+import BotsDataTable from './BotsDataTable.vue';
 
 // Stores
 import { useJobsStore } from '@/stores/jobs.store';
@@ -26,49 +23,54 @@ const jobsStore = useJobsStore();
 const harborStore = useHarborStore();
 const botsStore = useBotsStore();
 
-const { fetchBots, fetchJobs, startPolling } = useBotsApi();
+const { fetchBots, fetchJobs } = useBotsApi();
 const { startJob, deleteJob } = useJobsApi();
 
 // Local state
-const isRefreshing = ref(false);
 
 // Computed properties
-const isLoading = computed(() => harborStore.loading || jobsStore.loading || isRefreshing.value);
+
 const error = computed(() => {
-  if (botsStore.error) return botsStore.error;
-  if (jobsStore.error) return jobsStore.error;
-  if (harborStore.error) return harborStore.error;
-  return '';
+  const errors = [];
+  if (botsStore.error) errors.push(botsStore.error);
+  if (jobsStore.error) errors.push(jobsStore.error);
+  if (harborStore.error) errors.push(harborStore.error);
+  return errors.join('\n');
 });
+
+/**
+ * Handles executing a job action and refreshing job data.
+ */
+const handleJobAction = async (action: () => Promise<void>) => {
+  await action();
+  await fetchJobs();
+};
+
+/**
+ * Refreshes bots data and starts polling if there are pending jobs.
+ */
+const refreshBotsData = async () => {
+  await fetchBots();
+};
 
 /**
  * Handles refreshing bots data and/or performing job actions
  * @param actionOrEvent - Either an async function to execute before refreshing or a MouseEvent
  */
 const refreshBots = async (actionOrEvent?: (() => Promise<void>) | MouseEvent) => {
-  // Handle the case where the function is called from a click event
   const action = typeof actionOrEvent === 'function' ? actionOrEvent : undefined;
 
   try {
-    isRefreshing.value = true;
-    
-    // Execute the provided action if any
-    if (action) {
-      await action();
-      // After a job action, we need to refresh jobs to get the latest status
-      await fetchJobs();
-    } else {
-      // If no action provided, just refresh the bots data
-      await fetchBots();
-    }
+    botsStore.setLoading(true);
 
-    // Start polling if there are pending jobs
-    if (botsStore.hasPendingJobs) {
-      startPolling();
+    if (action) {
+      await handleJobAction(action);
+    } else {
+      await refreshBotsData();
     }
   } finally {
     botsStore.setLastRefreshed();
-    isRefreshing.value = false;
+    botsStore.setLoading(false);
   }
 };
 
@@ -90,13 +92,8 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
         <span class="text-sm text-gray-600">
           Last updated: {{ botsStore.lastRefreshed?.toLocaleTimeString() ?? 'Never' }}
         </span>
-        <Button
-          icon="pi pi-refresh"
-          class="p-button-rounded p-button-info"
-          :loading="isRefreshing"
-          :disabled="isLoading"
-          @click="refreshBots"
-        />
+        <Button icon="pi pi-refresh" class="p-button-rounded p-button-info" :loading="botsStore.loading"
+          :disabled="botsStore.loading" @click="refreshBots" />
       </div>
     </div>
 
@@ -106,51 +103,6 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
     </Message>
 
     <!-- Data Table -->
-    <DataTable
-      v-else
-      :value="botsStore.bots"
-      :loading="isLoading"
-      stripedRows
-      size="small"
-      class="p-datatable-sm"
-    >
-      <Column field="type" header="Type">
-        <template #body="{ data }">
-          <span v-if="data?.type" class="font-bold">{{ data.type }}</span>
-          <span v-else class="text-gray-400 italic">Unknown</span>
-        </template>
-      </Column>
-
-      <Column header="Status">
-        <template #body="{ data }">
-          <Tag
-            :value="data.status.text"
-            :severity="data.status.severity"
-          />
-        </template>
-      </Column>
-
-      <Column field="jobName" header="Job">
-        <template #body="{ data }">
-          <span v-if="data?.jobName" class="font-mono text-sm">{{ data.jobName }}</span>
-        </template>
-      </Column>
-
-      <Column header="Command">
-        <template #body="{ data }">
-          <code class="text-sm">{{ data.command }}{{ data.args ? ' ' + data.args.join(' ') : '' }}</code>
-        </template>
-      </Column>
-
-      <Column header="Actions">
-        <template #body="{ data }">
-          <BotActions
-            :bot="data"
-            :on-start="handleStartJob"
-            :on-stop="handleDeleteJob"
-          />
-        </template>
-      </Column>
-    </DataTable>
+    <BotsDataTable v-else :handle-start-job="handleStartJob" :handle-delete-job="handleDeleteJob" />
   </div>
 </template>

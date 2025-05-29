@@ -5,6 +5,17 @@ export const useJobsApi = () => {
   const jobsStore = useJobsStore();
 
   /**
+   * Handles API response errors and sets the error state.
+   * @param response - The API response object.
+   * @param action - A string describing the action being performed (e.g., 'fetch jobs').
+   */
+  const handleApiResponseError = async (response: Response, action: string): Promise<void> => {
+    const errorData = await response.json().catch(() => ({}));
+    const errorMsg = `Failed to ${action}: ${errorData.message || response.statusText}`;
+    jobsStore.setError(errorMsg);
+  };
+
+  /**
    * Fetches the list of jobs
    * @returns Promise<void>
    */
@@ -18,9 +29,8 @@ export const useJobsApi = () => {
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMsg = errorData.message || `Failed to fetch jobs: ${response.statusText}`;
-        throw new Error(errorMsg);
+        await handleApiResponseError(response, 'fetch jobs');
+        return;
       }
       
       const data = await response.json();
@@ -49,10 +59,8 @@ export const useJobsApi = () => {
       );
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMsg = errorData.message || `Failed to delete job: ${response.statusText}`;
-        jobsStore.setError(errorMsg);
-        throw new Error(errorMsg);
+        await handleApiResponseError(response, 'delete job');
+        return;
       }
     } finally {
       jobsStore.setDeleting(jobName, false);
@@ -66,6 +74,7 @@ export const useJobsApi = () => {
    */
   const startJob = async (jobName: string): Promise<void> => {
     jobsStore.setStarting(jobName, true);
+    jobsStore.setError('');
 
     const job: JobRequest = {
       name: jobName,
@@ -85,9 +94,7 @@ export const useJobsApi = () => {
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMsg = errorData.message || `Failed to start job: ${response.statusText}`;
-        throw new Error(errorMsg);
+        await handleApiResponseError(response, 'start job');
       }
     } finally {
       jobsStore.setStarting(job.name, false);

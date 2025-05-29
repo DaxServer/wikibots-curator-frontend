@@ -1,22 +1,28 @@
-import { globalIgnores } from 'eslint/config'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
-import pluginVue from 'eslint-plugin-vue'
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+import stylistic from '@stylistic/eslint-plugin';
+import typescriptParser from '@typescript-eslint/parser';
+import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 
-// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
-// import { configureVueProject } from '@vue/eslint-config-typescript'
-// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
-// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
+const extraFileExtensions = ['.vue'];
 
-export default defineConfigWithVueTs(
+export default [
   {
-    name: 'app',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    files: ['src/**/*.ts'],
+    plugins: {
+      '@stylistic': stylistic,
+      '@typescript-eslint': typescriptPlugin,
+    },
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        project: 'tsconfig.app.json',
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        extraFileExtensions,
+      },
+    },
+    rules: {
+      ...typescriptPlugin.configs['eslint-recommended'].rules,
+      ...typescriptPlugin.configs.recommended.rules,
+    },
   },
-
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
-
-  pluginVue.configs['flat/essential'],
-  vueTsConfigs.recommended,
-  skipFormatting,
-)
+];

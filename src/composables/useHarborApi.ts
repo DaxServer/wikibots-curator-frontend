@@ -23,9 +23,9 @@ export const useHarborApi = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMsg = errorData.detail || `Failed to fetch processes: ${response.statusText}`;
+        const errorMsg = `Failed to fetch Harbor processes: ${errorData.detail || response.statusText}`;
         harborStore.setError(errorMsg);
-        throw new Error(errorMsg);
+        return;
       }
 
       const processes: Process[] = await response.json();

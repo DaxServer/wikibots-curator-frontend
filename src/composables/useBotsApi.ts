@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from 'vue';
+import { onUnmounted, watch } from 'vue';
 import { useBotsStore } from '@/stores/bots.store';
 import { useHarborApi } from './useHarborApi';
 import useJobsApi from "@/composables/useJobsApi.ts";
@@ -46,23 +46,13 @@ export const useBotsApi = () => {
    * @returns Promise<void>
    */
   const fetchBots = async (): Promise<void> => {
-    botsStore.setError('');
-    
-    try {
-      // Fetch processes and jobs in parallel
-      await Promise.all([
-        harborApi.fetchProcessesFromHarbor(),
-        jobsApi.fetchJobs()
-      ]);
+    await Promise.all([
+      harborApi.fetchProcessesFromHarbor(),
+      jobsApi.fetchJobs()
+    ]);
 
-      // This will update the bots in the store directly
-      mapProcessesToBots();
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      botsStore.setError(errorMessage);
-      console.error('Error in fetchBotsFromArtifact:', errorMessage);
-      throw err;
-    }
+    // This will update the bots in the store directly
+    mapProcessesToBots();
   };
 
   const fetchJobs = async (): Promise<void> => {
@@ -70,44 +60,49 @@ export const useBotsApi = () => {
     mapProcessesToBots();
   };
 
-  // Poll jobs when there are pending jobs
-  const pollInterval = ref<number | null>(null);
+  // Polling
+  let pollInterval: number | null = null;
   const POLL_INTERVAL_MS = 2000; // 2 seconds
 
-  const startPolling = (): void => {
-    // Clear any existing interval
-    stopPolling();
+  const startPolling = () => {
+    if (pollInterval !== null) {
+      clearInterval(pollInterval);
+    }
     
-    pollInterval.value = window.setInterval(async () => {
+    pollInterval = window.setInterval(async () => {
       try {
         await fetchJobs();
-        
-        // Check if there are no more pending jobs
-        if (!botsStore.hasPendingJobs) {
-          stopPolling();
-        }
-      } catch (error) {
-        console.error('Error while polling jobs:', error);
+      } catch (e) {
+        jobsStore.setError(`Error fetching jobs: ${e}`);
         stopPolling();
       }
     }, POLL_INTERVAL_MS);
   };
 
-  const stopPolling = (): void => {
-    if (pollInterval.value !== null) {
-      clearInterval(pollInterval.value);
-      pollInterval.value = null;
+  const stopPolling = () => {
+    if (pollInterval !== null) {
+      clearInterval(pollInterval);
+      pollInterval = null;
     }
   };
 
-  // Clean up interval when component is unmounted
-  onUnmounted(stopPolling);
+  watch(() => botsStore.hasPendingJobs, (newVal) => {
+    if (newVal) {
+      startPolling();
+    } else {
+      stopPolling();
+    }
+  });
+
+  onUnmounted(() => {
+    stopPolling();
+  });
 
   return {
     fetchBots,
     fetchJobs,
-    startPolling,
-    stopPolling,
+    startPolling, // Expose startPolling if needed elsewhere, though watch handles it
+    stopPolling,  // Expose stopPolling if needed elsewhere
   };
 };
 

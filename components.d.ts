@@ -9,8 +9,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BotActions: typeof import('./src/components/BotActions.vue')['default']
+    BotsDataTable: typeof import('./src/components/BotsDataTable.vue')['default']
     BotsTable: typeof import('./src/components/BotsTable.vue')['default']
     Button: typeof import('primevue/button')['default']
+    Column: typeof import('primevue/column')['default']
+    DataTable: typeof import('primevue/datatable')['default']
     Tag: typeof import('primevue/tag')['default']
   }
 }
