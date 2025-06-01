@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Tag from 'primevue/tag';
-import BotActions from './BotActions.vue';
-import { useBotsStore } from '@/stores/bots.store';
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Tag from 'primevue/tag'
+import BotActions from './BotActions.vue'
+import { useBotsStore } from '@/stores/bots.store'
 
 interface Props {
-  handleStartJob: (jobType: string) => void;
-  handleDeleteJob: (jobType: string) => void;
+  handleStartJob: (jobType: string) => void
+  handleDeleteJob: (jobType: string) => void
 }
 
-const props = defineProps<Props>();
-const botsStore = useBotsStore();
+const props = defineProps<Props>()
+const botsStore = useBotsStore()
 </script>
 
 <template>
-  <DataTable :value="botsStore.bots" :loading="botsStore.loading" stripedRows size="small" class="p-datatable-sm">
+  <DataTable
+    :value="botsStore.bots"
+    :loading="botsStore.loading"
+    stripedRows
+    size="small"
+    class="p-datatable-sm"
+  >
     <Column field="type" header="Type">
       <template #body="{ data }">
         <span v-if="data?.type" class="font-bold">{{ data.type }}</span>
@@ -37,7 +43,9 @@ const botsStore = useBotsStore();
 
     <Column header="Command">
       <template #body="{ data }">
-        <code class="text-sm">{{ data.command }}{{ data.args ? ' ' + data.args.join(' ') : '' }}</code>
+        <code class="text-sm"
+          >{{ data.command }}{{ data.args ? ' ' + data.args.join(' ') : '' }}</code
+        >
       </template>
     </Column>
 

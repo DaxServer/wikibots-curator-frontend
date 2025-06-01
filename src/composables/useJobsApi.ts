@@ -1,8 +1,8 @@
-import {useJobsStore} from '@/stores/jobs.store';
-import type {JobRequest} from '@/types';
+import { useJobsStore } from '@/stores/jobs.store'
+import type { JobRequest } from '@/types'
 
 export const useJobsApi = () => {
-  const jobsStore = useJobsStore();
+  const jobsStore = useJobsStore()
 
   /**
    * Handles API response errors and sets the error state.
@@ -10,35 +10,35 @@ export const useJobsApi = () => {
    * @param action - A string describing the action being performed (e.g., 'fetch jobs').
    */
   const handleApiResponseError = async (response: Response, action: string): Promise<void> => {
-    const errorData = await response.json().catch(() => ({}));
-    const errorMsg = `Failed to ${action}: ${errorData.message || response.statusText}`;
-    jobsStore.setError(errorMsg);
-  };
+    const errorData = await response.json().catch(() => ({}))
+    const errorMsg = `Failed to ${action}: ${errorData.message || response.statusText}`
+    jobsStore.setError(errorMsg)
+  }
 
   /**
    * Fetches the list of jobs
    * @returns Promise<void>
    */
   const fetchJobs = async (): Promise<void> => {
-    jobsStore.setLoading(true);
-    jobsStore.setError('');
+    jobsStore.setLoading(true)
+    jobsStore.setError('')
 
     try {
       const response = await fetch('/api/toolforge/jobs/v1/tool/curator/jobs/', {
-        signal: AbortSignal.timeout(60000)
-      });
-      
+        signal: AbortSignal.timeout(60000),
+      })
+
       if (!response.ok) {
-        await handleApiResponseError(response, 'fetch jobs');
-        return;
+        await handleApiResponseError(response, 'fetch jobs')
+        return
       }
-      
-      const data = await response.json();
-      jobsStore.setJobs(data.jobs || []);
+
+      const data = await response.json()
+      jobsStore.setJobs(data.jobs || [])
     } finally {
-      jobsStore.setLoading(false);
+      jobsStore.setLoading(false)
     }
-  };
+  }
 
   /**
    * Deletes a job by name
@@ -46,26 +46,26 @@ export const useJobsApi = () => {
    * @returns Promise<boolean> - Returns true if successful
    */
   const deleteJob = async (jobName: string): Promise<void> => {
-    jobsStore.setDeleting(jobName, true);
-    jobsStore.setError('');
+    jobsStore.setDeleting(jobName, true)
+    jobsStore.setError('')
 
     try {
       const response = await fetch(
         `/api/toolforge/jobs/v1/tool/curator/jobs/${encodeURIComponent(jobName)}`,
-        { 
+        {
           method: 'DELETE',
-          signal: AbortSignal.timeout(60000)
-        }
-      );
-      
+          signal: AbortSignal.timeout(60000),
+        },
+      )
+
       if (!response.ok) {
-        await handleApiResponseError(response, 'delete job');
-        return;
+        await handleApiResponseError(response, 'delete job')
+        return
       }
     } finally {
-      jobsStore.setDeleting(jobName, false);
+      jobsStore.setDeleting(jobName, false)
     }
-  };
+  }
 
   /**
    * Starts a new job
@@ -73,16 +73,16 @@ export const useJobsApi = () => {
    * @param jobName
    */
   const startJob = async (jobName: string): Promise<void> => {
-    jobsStore.setStarting(jobName, true);
-    jobsStore.setError('');
+    jobsStore.setStarting(jobName, true)
+    jobsStore.setError('')
 
     const job: JobRequest = {
       name: jobName,
       cmd: jobName,
       imagename: 'tool-curator/wikibots:latest',
       continuous: true,
-    };
-    
+    }
+
     try {
       const response = await fetch('/api/toolforge/jobs/v1/tool/curator/jobs/', {
         method: 'POST',
@@ -91,22 +91,22 @@ export const useJobsApi = () => {
         },
         body: JSON.stringify(job),
         signal: AbortSignal.timeout(60000),
-      });
-      
+      })
+
       if (!response.ok) {
-        await handleApiResponseError(response, 'start job');
+        await handleApiResponseError(response, 'start job')
       }
     } finally {
-      jobsStore.setStarting(job.name, false);
+      jobsStore.setStarting(job.name, false)
     }
-  };
+  }
 
   return {
     // Methods
     fetchJobs,
     deleteJob,
     startJob,
-  };
-};
+  }
+}
 
-export default useJobsApi;
+export default useJobsApi

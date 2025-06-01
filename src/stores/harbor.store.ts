@@ -1,28 +1,28 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import type { Process } from '@/types';
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { Process } from '@/types'
 
 export const useHarborStore = defineStore('harbor', () => {
   // State
-  const loading = ref(false);
-  const error = ref('');
-  const processes = ref<Process[]>([]);
+  const loading = ref(false)
+  const error = ref('')
+  const processes = ref<Process[]>([])
 
   // Getters
-  const hasProcesses = computed(() => processes.value.length > 0);
+  const hasProcesses = computed(() => processes.value.length > 0)
 
   // Actions
   const setLoading = (isLoading: boolean) => {
-    loading.value = isLoading;
-  };
+    loading.value = isLoading
+  }
 
   const setError = (errorMessage: string) => {
-    error.value = errorMessage;
-  };
+    error.value = errorMessage
+  }
 
   const setProcesses = (newProcesses: Process[]) => {
-    processes.value = newProcesses;
-  };
+    processes.value = newProcesses
+  }
 
   return {
     // State
@@ -37,7 +37,7 @@ export const useHarborStore = defineStore('harbor', () => {
     setLoading,
     setError,
     setProcesses,
-  };
-});
+  }
+})
 
-export default useHarborStore;
+export default useHarborStore

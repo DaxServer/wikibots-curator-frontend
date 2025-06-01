@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useJobsStore } from '@/stores/jobs.store';
-import type { Bot } from '@/types';
+import { computed } from 'vue'
+import { useJobsStore } from '@/stores/jobs.store'
+import type { Bot } from '@/types'
 
 const props = defineProps<{
-  bot: Bot;
-  onStart: (jobType: string) => void;
-  onStop: (jobType: string) => void;
-}>();
+  bot: Bot
+  onStart: (jobType: string) => void
+  onStop: (jobType: string) => void
+}>()
 
-const jobsStore = useJobsStore();
+const jobsStore = useJobsStore()
 
-const isLoading = computed(() => 
-  jobsStore.starting[props.bot.type] || jobsStore.deleting[props.bot.type]
-);
+const isLoading = computed(
+  () => jobsStore.starting[props.bot.type] || jobsStore.deleting[props.bot.type],
+)
 </script>
 
 <template>
@@ -45,12 +45,6 @@ const isLoading = computed(() =>
       icon="pi pi-spin pi-spinner"
       value="Starting..."
     />
-    <Tag
-      v-else
-      severity="danger"
-      size="small"
-      icon="pi pi-question"
-      value="Unknown"
-    />
+    <Tag v-else severity="danger" size="small" icon="pi pi-question" value="Unknown" />
   </div>
 </template>

@@ -1,5 +1,5 @@
-import type { Process } from '@/types/harbor';
-import useHarborStore from "@/stores/harbor.store.ts";
+import type { Process } from '@/types/harbor'
+import useHarborStore from '@/stores/harbor.store.ts'
 
 /**
  * Fetches and extracts processes from the latest Harbor artifact via the backend API
@@ -7,35 +7,35 @@ import useHarborStore from "@/stores/harbor.store.ts";
  * @throws {Error} If there's an error fetching or processing the artifact
  */
 export const useHarborApi = () => {
-  const harborStore = useHarborStore();
+  const harborStore = useHarborStore()
 
   /**
    * Fetches processes from the latest Harbor artifact via the backend API
    * @returns Promise<void>
    */
   const fetchProcessesFromHarbor = async (): Promise<void> => {
-    harborStore.setLoading(true);
-    harborStore.setError('');
+    harborStore.setLoading(true)
+    harborStore.setError('')
 
     try {
       // Call our backend endpoint which will handle the Harbor API call
-      const response = await fetch('/api/harbor/processes');
+      const response = await fetch('/api/harbor/processes')
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMsg = `Failed to fetch Harbor processes: ${errorData.detail || response.statusText}`;
-        harborStore.setError(errorMsg);
-        return;
+        const errorData = await response.json().catch(() => ({}))
+        const errorMsg = `Failed to fetch Harbor processes: ${errorData.detail || response.statusText}`
+        harborStore.setError(errorMsg)
+        return
       }
 
-      const processes: Process[] = await response.json();
-      harborStore.setProcesses(processes);
+      const processes: Process[] = await response.json()
+      harborStore.setProcesses(processes)
     } finally {
-      harborStore.setLoading(false);
+      harborStore.setLoading(false)
     }
-  };
+  }
 
-  return { fetchProcessesFromHarbor };
-};
+  return { fetchProcessesFromHarbor }
+}
 
-export default useHarborApi;
+export default useHarborApi

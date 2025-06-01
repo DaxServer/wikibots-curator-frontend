@@ -1,87 +1,87 @@
 <script setup lang="ts">
 // Vue
-import { computed, onMounted } from 'vue';
+import { computed, onMounted } from 'vue'
 
 // PrimeVue Components
-import Button from 'primevue/button';
-import Message from 'primevue/message';
+import Button from 'primevue/button'
+import Message from 'primevue/message'
 
 // Components
-import BotsDataTable from './BotsDataTable.vue';
+import BotsDataTable from './BotsDataTable.vue'
 
 // Stores
-import { useJobsStore } from '@/stores/jobs.store';
-import { useHarborStore } from '@/stores/harbor.store.ts';
-import { useBotsStore } from '@/stores/bots.store';
+import { useJobsStore } from '@/stores/jobs.store'
+import { useHarborStore } from '@/stores/harbor.store.ts'
+import { useBotsStore } from '@/stores/bots.store'
 
 // Composables
-import useBotsApi from "@/composables/useBotsApi.ts";
-import useJobsApi from "@/composables/useJobsApi.ts";
+import useBotsApi from '@/composables/useBotsApi.ts'
+import useJobsApi from '@/composables/useJobsApi.ts'
 
 // Initialize stores and composables
-const jobsStore = useJobsStore();
-const harborStore = useHarborStore();
-const botsStore = useBotsStore();
+const jobsStore = useJobsStore()
+const harborStore = useHarborStore()
+const botsStore = useBotsStore()
 
-const { fetchBots, fetchJobs } = useBotsApi();
-const { startJob, deleteJob } = useJobsApi();
+const { fetchBots, fetchJobs } = useBotsApi()
+const { startJob, deleteJob } = useJobsApi()
 
 // Local state
 
 // Computed properties
 
 const error = computed(() => {
-  const errors = [];
-  if (botsStore.error) errors.push(botsStore.error);
-  if (jobsStore.error) errors.push(jobsStore.error);
-  if (harborStore.error) errors.push(harborStore.error);
-  return errors.join('\n');
-});
+  const errors = []
+  if (botsStore.error) errors.push(botsStore.error)
+  if (jobsStore.error) errors.push(jobsStore.error)
+  if (harborStore.error) errors.push(harborStore.error)
+  return errors.join('\n')
+})
 
 /**
  * Handles executing a job action and refreshing job data.
  */
 const handleJobAction = async (action: () => Promise<void>) => {
-  await action();
-  await fetchJobs();
-};
+  await action()
+  await fetchJobs()
+}
 
 /**
  * Refreshes bots data and starts polling if there are pending jobs.
  */
 const refreshBotsData = async () => {
-  await fetchBots();
-};
+  await fetchBots()
+}
 
 /**
  * Handles refreshing bots data and/or performing job actions
  * @param actionOrEvent - Either an async function to execute before refreshing or a MouseEvent
  */
 const refreshBots = async (actionOrEvent?: (() => Promise<void>) | MouseEvent) => {
-  const action = typeof actionOrEvent === 'function' ? actionOrEvent : undefined;
+  const action = typeof actionOrEvent === 'function' ? actionOrEvent : undefined
 
   try {
-    botsStore.setLoading(true);
+    botsStore.setLoading(true)
 
     if (action) {
-      await handleJobAction(action);
+      await handleJobAction(action)
     } else {
-      await refreshBotsData();
+      await refreshBotsData()
     }
   } finally {
-    botsStore.setLastRefreshed();
-    botsStore.setLoading(false);
+    botsStore.setLastRefreshed()
+    botsStore.setLoading(false)
   }
-};
+}
 
 // Initialize data when component is mounted
 onMounted(() => {
-  refreshBots();
-});
+  refreshBots()
+})
 
 // Wrapper functions for job actions
-const handleStartJob = (jobType: string) => refreshBots(() => startJob(jobType));
-const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType));
+const handleStartJob = (jobType: string) => refreshBots(() => startJob(jobType))
+const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType))
 </script>
 
 <template>
@@ -92,8 +92,13 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
         <span class="text-sm text-gray-600">
           Last updated: {{ botsStore.lastRefreshed?.toLocaleTimeString() ?? 'Never' }}
         </span>
-        <Button icon="pi pi-refresh" class="p-button-rounded p-button-info" :loading="botsStore.loading"
-          :disabled="botsStore.loading" @click="refreshBots" />
+        <Button
+          icon="pi pi-refresh"
+          class="p-button-rounded p-button-info"
+          :loading="botsStore.loading"
+          :disabled="botsStore.loading"
+          @click="refreshBots"
+        />
       </div>
     </div>
 

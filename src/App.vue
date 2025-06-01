@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BotsTable from './components/BotsTable.vue';
+import BotsTable from './components/BotsTable.vue'
 </script>
 
 <template>

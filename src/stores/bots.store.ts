@@ -1,44 +1,44 @@
-import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue';
-import type { Bot } from '@/types';
-import { useHarborStore } from './harbor.store';
-import { useJobsStore } from './jobs.store';
+import { defineStore } from 'pinia'
+import { ref, computed, watch } from 'vue'
+import type { Bot } from '@/types'
+import { useHarborStore } from './harbor.store'
+import { useJobsStore } from './jobs.store'
 
 export const useBotsStore = defineStore('bots', () => {
   // Child stores
-  const harborStore = useHarborStore();
-  const jobsStore = useJobsStore();
+  const harborStore = useHarborStore()
+  const jobsStore = useJobsStore()
 
   // State
-  const loading = ref(false);
-  const error = ref('');
-  const bots = ref<Bot[]>([]);
-  const lastRefreshed = ref<Date | null>(null);
-  const hasPendingJobs = ref(false);
+  const loading = ref(false)
+  const error = ref('')
+  const bots = ref<Bot[]>([])
+  const lastRefreshed = ref<Date | null>(null)
+  const hasPendingJobs = ref(false)
 
   // Actions
   const setError = (errorMessage: string) => {
-    error.value = errorMessage;
-  };
+    error.value = errorMessage
+  }
 
   const setBots = (newBots: Bot[]) => {
-    bots.value = newBots;
-  };
+    bots.value = newBots
+  }
 
   const setLastRefreshed = () => {
-    lastRefreshed.value = new Date();
-  };
+    lastRefreshed.value = new Date()
+  }
 
   const setLoading = (isLoading: boolean) => {
-    loading.value = isLoading;
-  };
+    loading.value = isLoading
+  }
 
   const updateHasPendingJobs = () => {
-    hasPendingJobs.value = bots.value.some(bot => bot.status.isPending);
-  };
+    hasPendingJobs.value = bots.value.some((bot) => bot.status.isPending)
+  }
 
   // Watchers
-  watch(bots, updateHasPendingJobs, { immediate: true });
+  watch(bots, updateHasPendingJobs, { immediate: true })
 
   return {
     // State
@@ -55,7 +55,7 @@ export const useBotsStore = defineStore('bots', () => {
     setBots,
     setLastRefreshed,
     setLoading,
-  };
-});
+  }
+})
 
-export default useBotsStore;
+export default useBotsStore
