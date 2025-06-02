@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import type { Bot } from '@/types'
-import { useHarborStore } from './harbor.store'
-import { useJobsStore } from './jobs.store'
+import { useHarborStore } from '@/stores/harbor.store'
+import { useJobsStore } from '@/stores/jobs.store'
 
 export const useBotsStore = defineStore('bots', () => {
   // Child stores

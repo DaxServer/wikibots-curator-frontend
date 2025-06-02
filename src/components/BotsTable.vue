@@ -7,16 +7,16 @@ import Button from 'primevue/button'
 import Message from 'primevue/message'
 
 // Components
-import BotsDataTable from './BotsDataTable.vue'
+import BotsDataTable from '@/components/BotsDataTable.vue'
 
 // Stores
 import { useJobsStore } from '@/stores/jobs.store'
-import { useHarborStore } from '@/stores/harbor.store.ts'
+import { useHarborStore } from '@/stores/harbor.store'
 import { useBotsStore } from '@/stores/bots.store'
 
 // Composables
-import useBotsApi from '@/composables/useBotsApi.ts'
-import useJobsApi from '@/composables/useJobsApi.ts'
+import useBotsApi from '@/composables/useBotsApi'
+import useJobsApi from '@/composables/useJobsApi'
 
 // Initialize stores and composables
 const jobsStore = useJobsStore()

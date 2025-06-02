@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import BotsTable from './components/BotsTable.vue'
-import Header from './components/Header.vue'
+import BotsTable from '@/components/BotsTable.vue'
+import Header from '@/components/Header.vue'
 </script>
 
 <template>
