@@ -12,13 +12,8 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthorized.value = false
   }
 
-  const login = async () => {
-    try {
-      // Redirect to backend for OAuth initiation
-      window.location.href = '/auth/login'
-    } catch (error) {
-      console.error('Login initiation failed:', error)
-    }
+  const login = () => {
+    window.location.href = '/auth/login'
   }
 
   const logout = async () => {
