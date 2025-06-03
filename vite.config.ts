@@ -50,9 +50,10 @@ export default defineConfig(({ mode }): import('vite').UserConfig => {
         },
         server: {
             proxy: {
-                '/api/harbor': {
-                    target: 'http://localhost:8000',
+                '/auth': {
+                    target: 'http://localhost:8001',
                     changeOrigin: true,
+                    secure: false,
                 },
                 '/api': {
                     target: 'https://curator.toolforge.org',

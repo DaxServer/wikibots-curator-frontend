@@ -1,10 +1,10 @@
 import { onUnmounted, watch } from 'vue'
 import { useBotsStore } from '@/stores/bots.store'
 import { useHarborApi } from './useHarborApi'
-import useJobsApi from '@/composables/useJobsApi.ts'
-import useHarborStore from '@/stores/harbor.store.ts'
-import useJobsStore from '@/stores/jobs.store.ts'
-import useBotStatus from '@/composables/useBotStatus.ts'
+import useJobsApi from '@/composables/useJobsApi'
+import useHarborStore from '@/stores/harbor.store'
+import useJobsStore from '@/stores/jobs.store'
+import useBotStatus from '@/composables/useBotStatus'
 
 export const useBotsApi = () => {
   const botsStore = useBotsStore()

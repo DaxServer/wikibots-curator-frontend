@@ -2,7 +2,7 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
-import BotActions from './BotActions.vue'
+import BotActions from '@/components/BotActions.vue'
 import { useBotsStore } from '@/stores/bots.store'
 
 interface Props {
