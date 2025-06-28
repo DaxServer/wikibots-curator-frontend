@@ -27,10 +27,13 @@ jobs:
       - name: Build project
         run: bun run build
 
+      - name: Make archive
+        run: tar -czvf dist.tar.gz dist
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/**
+          files: dist.tar.gz
           tag_name: auto-release-${{ github.run_number }}
           target_commitish: ${{ github.sha }}
           make_latest: true
