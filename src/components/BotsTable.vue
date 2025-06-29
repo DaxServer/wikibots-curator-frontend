@@ -26,10 +26,7 @@ const botsStore = useBotsStore()
 const { fetchBots, fetchJobs } = useBotsApi()
 const { startJob, deleteJob } = useJobsApi()
 
-// Local state
-
 // Computed properties
-
 const error = computed(() => {
   const errors = []
   if (botsStore.error) errors.push(botsStore.error)
