@@ -5,7 +5,7 @@ import Aura from '@primeuix/themes/aura'
 import 'primeicons/primeicons.css' // Icons
 import '@/assets/main.css' // Tailwind CSS
 
-import App from './App.vue'
+import App from '@/App.vue'
 
 // Create app
 const app = createApp(App)

@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
-import Toolbar from 'primevue/toolbar'
-import { useAuthStore } from '@/stores/auth.store'
-import { onMounted } from 'vue'
-
 const authStore = useAuthStore()
 
 const handleLogin = () => authStore.login()
@@ -15,7 +10,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Toolbar class="flex justify-between items-center">
+  <Toolbar class="flex justify-between items-center border-l-0! border-r-0! border-t-0! md:px-52!">
     <template #start>
       <h1>CuratorBot - Toolforge Jobs</h1>
     </template>

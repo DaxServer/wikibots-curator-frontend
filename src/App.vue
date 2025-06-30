@@ -1,11 +1,10 @@
-<script setup lang="ts">
-import BotsTable from '@/components/BotsTable.vue'
-import Header from '@/components/Header.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <Header />
-  <div class="p-4">
-    <BotsTable />
+  <div>
+    <Header />
+    <div class="md:w-7xl mx-auto">
+      <BotsTable />
+    </div>
   </div>
 </template>

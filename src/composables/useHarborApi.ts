@@ -1,6 +1,3 @@
-import type { Process } from '@/types/harbor'
-import useHarborStore from '@/stores/harbor.store'
-
 /**
  * Fetches and extracts processes from the latest Harbor artifact via the backend API
  * @returns Promise<void>

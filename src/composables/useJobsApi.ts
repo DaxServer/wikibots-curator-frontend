@@ -1,6 +1,3 @@
-import { useJobsStore } from '@/stores/jobs.store'
-import type { JobRequest } from '@/types'
-
 export const useJobsApi = () => {
   const jobsStore = useJobsStore()
 

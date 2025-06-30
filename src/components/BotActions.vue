@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useJobsStore } from '@/stores/jobs.store'
-import { useAuthStore } from '@/stores/auth.store'
-import type { Bot } from '@/types'
-
 const props = defineProps<{
   bot: Bot
   onStart: (jobType: string) => void
