@@ -1,7 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import type { Job } from '@/types'
-
 export const useJobsStore = defineStore('jobs', () => {
   // State
   const loading = ref(false)

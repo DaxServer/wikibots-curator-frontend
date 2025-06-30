@@ -1,23 +1,4 @@
 <script setup lang="ts">
-// Vue
-import { computed, onMounted } from 'vue'
-
-// PrimeVue Components
-import Button from 'primevue/button'
-import Message from 'primevue/message'
-
-// Components
-import BotsDataTable from '@/components/BotsDataTable.vue'
-
-// Stores
-import { useJobsStore } from '@/stores/jobs.store'
-import { useHarborStore } from '@/stores/harbor.store'
-import { useBotsStore } from '@/stores/bots.store'
-
-// Composables
-import useBotsApi from '@/composables/useBotsApi'
-import useJobsApi from '@/composables/useJobsApi'
-
 // Initialize stores and composables
 const jobsStore = useJobsStore()
 const harborStore = useHarborStore()
@@ -83,8 +64,8 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
 
 <template>
   <div class="card mt-4">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="m-0">Bots</h2>
+    <div class="flex justify-between items-center mb-4 ml-2">
+      <h2>Bots</h2>
       <div class="flex items-center gap-2">
         <span class="text-sm text-gray-600">
           Last updated: {{ botsStore.lastRefreshed?.toLocaleTimeString() ?? 'Never' }}

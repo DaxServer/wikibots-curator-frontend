@@ -1,5 +1,3 @@
-import type { Bot, Job, BotStatus, StatusConfig } from '@/types'
-
 const STATUS_CONFIG: StatusConfig = {
   running: { text: 'Running', severity: 'success', isRunning: true },
   stopped: { text: 'Not Running', severity: 'danger', isRunning: false },

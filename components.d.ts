@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    App: typeof import('./src/App.vue')['default']
     BotActions: typeof import('./src/components/BotActions.vue')['default']
     BotsDataTable: typeof import('./src/components/BotsDataTable.vue')['default']
     BotsTable: typeof import('./src/components/BotsTable.vue')['default']
@@ -15,8 +16,8 @@ declare module 'vue' {
     Column: typeof import('primevue/column')['default']
     DataTable: typeof import('primevue/datatable')['default']
     Header: typeof import('./src/components/Header.vue')['default']
-    RouterLink: typeof import('vue-router')['RouterLink']
-    RouterView: typeof import('vue-router')['RouterView']
+    Message: typeof import('primevue/message')['default']
     Tag: typeof import('primevue/tag')['default']
+    Toolbar: typeof import('primevue/toolbar')['default']
   }
 }

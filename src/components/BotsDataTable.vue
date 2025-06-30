@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Tag from 'primevue/tag'
-import BotActions from '@/components/BotActions.vue'
-import { useBotsStore } from '@/stores/bots.store'
-
 interface Props {
   handleStartJob: (jobType: string) => void
   handleDeleteJob: (jobType: string) => void
@@ -12,6 +6,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const botsStore = useBotsStore()
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -49,7 +44,7 @@ const botsStore = useBotsStore()
       </template>
     </Column>
 
-    <Column header="Actions">
+    <Column v-if="authStore.isAuthorized" header="Actions">
       <template #body="{ data }">
         <BotActions :bot="data" :on-start="props.handleStartJob" :on-stop="props.handleDeleteJob" />
       </template>
