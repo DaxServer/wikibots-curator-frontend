@@ -1,5 +1,6 @@
 
 import { fileURLToPath, URL } from 'node:url'
+/// <reference types="vitest/globals" />
 import type { PluginOption } from 'vite'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -8,9 +9,20 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { PrimeVueResolver } from "@primevue/auto-import-resolver"
 import tailwindcss from '@tailwindcss/vite'
+import type { UserConfig } from 'vitest/config'
 
 export default defineConfig((): import('vite').UserConfig => {
+    const vitestConfig: UserConfig['test'] = {
+        globals: true,
+        environment: 'jsdom',
+        include: ['src/**/*.{test,spec}.ts'], // Only .ts files for tests
+        deps: {
+          inline: ['primevue'] // Or any other libraries that need transformation
+        }
+    };
+
     return {
+        test: vitestConfig, // Add this line
         plugins: [
             vue(),
             vueDevTools(),

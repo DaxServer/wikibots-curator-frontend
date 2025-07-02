@@ -12,11 +12,13 @@ declare global {
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']
   const createPinia: typeof import('pinia')['createPinia']
+  const createStatusFromJob: typeof import('./src/composables/useBotStatus')['createStatusFromJob']
   const customRef: typeof import('vue')['customRef']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
   const defineStore: typeof import('pinia')['defineStore']
   const effectScope: typeof import('vue')['effectScope']
+  const formatDuration: typeof import('./src/composables/useFormatDuration')['formatDuration']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -82,7 +84,6 @@ declare global {
   const useJobsStore: typeof import('./src/stores/jobs.store')['useJobsStore']
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
-  const formatDuration: typeof import('./src/composables/useFormatDuration')['formatDuration']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
@@ -98,6 +99,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { FormattedDuration } from './src/composables/useFormatDuration'
+  import('./src/composables/useFormatDuration')
+  // @ts-ignore
   export type { StatusConfig, BotStatus, Bot } from './src/types/bots'
   import('./src/types/bots')
   // @ts-ignore
@@ -106,9 +110,6 @@ declare global {
   // @ts-ignore
   export type { Job, JobRequest } from './src/types/jobs'
   import('./src/types/jobs')
-  // @ts-ignore
-  export type { FormattedDuration } from './src/composables/useFormatDuration'
-  import('./src/composables/useFormatDuration')
 }
 
 // for vue template auto import
@@ -122,11 +123,13 @@ declare module 'vue' {
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
+    readonly createStatusFromJob: UnwrapRef<typeof import('./src/composables/useBotStatus')['createStatusFromJob']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly formatDuration: UnwrapRef<typeof import('./src/composables/useFormatDuration')['formatDuration']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
