@@ -7,16 +7,18 @@ const STATUS_CONFIG: StatusConfig = {
   unknown: { text: 'Unknown', severity: 'danger', isRunning: false },
 }
 
-export const useBotStatus = () => {
-  /**
-   * Creates a status object based on the job status
-   */
-  const createStatusFromJob = (statusLong: string): BotStatus => {
-    const statusLower = statusLong.toLowerCase()
-    let state: BotStatus['state']
+/**
+ * Creates a status object based on the job status
+ */
+export const createStatusFromJob = (statusLong: string): BotStatus => {
+  const statusLower = statusLong.toLowerCase()
+  let state: BotStatus['state']
     let startedAt: Date | undefined
 
-    if (statusLower.includes("pod in 'pending' phase")) {
+    // Highest priority: Specific CrashLoopBackOff with 'waiting' state
+    if (statusLower.includes('crashloopbackoff') && statusLower.includes("state 'waiting'")) {
+      state = 'error'
+    } else if (statusLower.includes("pod in 'pending' phase")) {
       state = 'pending'
     } else if (statusLower.includes("pod in 'running' phase")) {
       state = 'running'
@@ -29,6 +31,7 @@ export const useBotStatus = () => {
         }
       }
     } else if (statusLower.includes('error') || statusLower.includes('failed') || statusLower.includes('crashloopbackoff')) {
+      // Fallback for other error conditions, including general CrashLoopBackOff
       state = 'error'
     } else {
       state = 'stopped'
@@ -47,6 +50,7 @@ export const useBotStatus = () => {
     return baseStatus
   }
 
+export const useBotStatus = () => {
   /**
    * Updates bots with job status information
    * @param bots - The array of bots to update
