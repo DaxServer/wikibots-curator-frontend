@@ -12,6 +12,7 @@ export type BotStatus = {
   severity: 'success' | 'danger' | 'info'
   isRunning: boolean
   isPending: boolean
+  startedAt?: Date
 }
 
 export interface Bot {

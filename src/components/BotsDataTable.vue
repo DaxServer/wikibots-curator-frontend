@@ -7,6 +7,7 @@ interface Props {
 const props = defineProps<Props>()
 const botsStore = useBotsStore()
 const authStore = useAuthStore()
+
 </script>
 
 <template>
@@ -26,7 +27,7 @@ const authStore = useAuthStore()
 
     <Column header="Status">
       <template #body="{ data }">
-        <Tag :value="data.status.text" :severity="data.status.severity" />
+        <JobStatusTag :status="data.status" />
       </template>
     </Column>
 
