@@ -13,6 +13,7 @@ export type BotStatus = {
   isRunning: boolean
   isPending: boolean
   startedAt?: Date
+  status_long: string
 }
 
 export interface Bot {

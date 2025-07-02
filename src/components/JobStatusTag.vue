@@ -16,12 +16,17 @@ const durationDisplayParts = computed(() => {
 <template>
   <Tag :severity="status.severity">
     <template #default>
-      <span>{{ status.text }}</span>
-      <template v-if="durationDisplayParts">
-        <span class="ml-1">
-          for {{ durationDisplayParts.hours }}:{{ durationDisplayParts.minutes }}<span class="text-xs">:{{ durationDisplayParts.seconds }}</span>
-        </span>
-      </template>
+      <div>
+        <span>{{ status.text }}</span>
+        <template v-if="durationDisplayParts">
+          <span class="ml-1">
+            for {{ durationDisplayParts.hours }}:{{ durationDisplayParts.minutes }}<span class="text-xs">:{{ durationDisplayParts.seconds }}</span>
+          </span>
+        </template>
+      </div>
+      <div v-if="status.state === 'error'" class="mt-1 text-xs">
+        {{ status.status_long }}
+      </div>
     </template>
   </Tag>
 </template>
