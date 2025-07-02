@@ -15,6 +15,7 @@ declare module 'vue' {
     Button: typeof import('primevue/button')['default']
     Column: typeof import('primevue/column')['default']
     DataTable: typeof import('primevue/datatable')['default']
+    Footer: typeof import('./src/components/Footer.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     Message: typeof import('primevue/message')['default']
     Tag: typeof import('primevue/tag')['default']

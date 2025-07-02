@@ -6,5 +6,6 @@
     <div class="md:w-7xl mx-auto">
       <BotsTable />
     </div>
+    <Footer />
   </div>
 </template>
