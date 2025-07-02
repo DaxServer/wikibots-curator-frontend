@@ -14,22 +14,34 @@ export const useBotStatus = () => {
   const createStatusFromJob = (statusLong: string): BotStatus => {
     const statusLower = statusLong.toLowerCase()
     let state: BotStatus['state']
+    let startedAt: Date | undefined
 
     if (statusLower.includes("pod in 'pending' phase")) {
       state = 'pending'
     } else if (statusLower.includes("pod in 'running' phase")) {
       state = 'running'
+      // Try to parse Started at time
+      const startedAtIndex = statusLong.indexOf("Started at '")
+      if (startedAtIndex !== -1) {
+        const dateString = statusLong.substring(startedAtIndex + 12, statusLong.indexOf("'", startedAtIndex + 12))
+        startedAt = new Date(dateString)
+      }
     } else if (statusLower.includes('error') || statusLower.includes('failed')) {
       state = 'error'
     } else {
       state = 'stopped'
     }
 
-    return {
+    const baseStatus = {
       state,
       ...STATUS_CONFIG[state],
       isPending: state === 'pending',
     }
+
+    if (startedAt && !isNaN(startedAt.getTime())) {
+      return { ...baseStatus, startedAt }
+    }
+    return baseStatus
   }
 
   /**
