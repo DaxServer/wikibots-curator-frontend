@@ -20,11 +20,13 @@ export const useBotStatus = () => {
       state = 'pending'
     } else if (statusLower.includes("pod in 'running' phase")) {
       state = 'running'
-      // Try to parse Started at time
       const startedAtIndex = statusLong.indexOf("Started at '")
       if (startedAtIndex !== -1) {
         const dateString = statusLong.substring(startedAtIndex + 12, statusLong.indexOf("'", startedAtIndex + 12))
-        startedAt = new Date(dateString)
+        const parsedStartedAt = new Date(dateString)
+        if (!isNaN(parsedStartedAt.getTime())) {
+          startedAt = parsedStartedAt
+        }
       }
     } else if (statusLower.includes('error') || statusLower.includes('failed')) {
       state = 'error'
@@ -32,13 +34,13 @@ export const useBotStatus = () => {
       state = 'stopped'
     }
 
-    const baseStatus = {
+    const baseStatus: BotStatus = {
       state,
       ...STATUS_CONFIG[state],
       isPending: state === 'pending',
     }
 
-    if (startedAt && !isNaN(startedAt.getTime())) {
+    if (startedAt) {
       return { ...baseStatus, startedAt }
     }
     return baseStatus

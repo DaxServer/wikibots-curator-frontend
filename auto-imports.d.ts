@@ -82,6 +82,7 @@ declare global {
   const useJobsStore: typeof import('./src/stores/jobs.store')['useJobsStore']
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
+  const formatDuration: typeof import('./src/composables/useFormatDuration')['formatDuration']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
@@ -105,6 +106,9 @@ declare global {
   // @ts-ignore
   export type { Job, JobRequest } from './src/types/jobs'
   import('./src/types/jobs')
+  // @ts-ignore
+  export type { FormattedDuration } from './src/composables/useFormatDuration'
+  import('./src/composables/useFormatDuration')
 }
 
 // for vue template auto import
