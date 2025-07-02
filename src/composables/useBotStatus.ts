@@ -28,7 +28,7 @@ export const useBotStatus = () => {
           startedAt = parsedStartedAt
         }
       }
-    } else if (statusLower.includes('error') || statusLower.includes('failed')) {
+    } else if (statusLower.includes('error') || statusLower.includes('failed') || statusLower.includes('crashloopbackoff')) {
       state = 'error'
     } else {
       state = 'stopped'
@@ -38,6 +38,7 @@ export const useBotStatus = () => {
       state,
       ...STATUS_CONFIG[state],
       isPending: state === 'pending',
+      status_long: statusLong,
     }
 
     if (startedAt) {
