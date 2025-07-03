@@ -23,6 +23,7 @@ export const useBotsApi = () => {
         state: 'stopped' as const,
         ...statusConfig.stopped,
         isPending: false,
+        statusLong: '',
       },
       jobName: '',
     }))

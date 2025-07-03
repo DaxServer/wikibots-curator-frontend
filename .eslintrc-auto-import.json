@@ -1,5 +1,6 @@
 {
   "globals": {
+    "Aura": true,
     "Bot": true,
     "BotStatus": true,
     "Component": true,
@@ -16,6 +17,7 @@
     "JobRequest": true,
     "MaybeRef": true,
     "MaybeRefOrGetter": true,
+    "PrimeVue": true,
     "Process": true,
     "PropType": true,
     "Ref": true,
