@@ -1,6 +1,6 @@
 const STATUS_CONFIG: StatusConfig = {
   running: { text: 'Running', severity: 'success', isRunning: true },
-  stopped: { text: 'Not Running', severity: 'danger', isRunning: false },
+  stopped: { text: 'Not Running', severity: 'secondary', isRunning: false },
   pending: { text: 'Starting...', severity: 'info', isRunning: false },
   error: { text: 'Error', severity: 'danger', isRunning: false },
   failed: { text: 'Failed', severity: 'danger', isRunning: false },
@@ -13,42 +13,49 @@ const STATUS_CONFIG: StatusConfig = {
 export const createStatusFromJob = (statusLong: string): BotStatus => {
   const statusLower = statusLong.toLowerCase()
   let state: BotStatus['state']
-    let startedAt: Date | undefined
+  let startedAt: Date | undefined
 
-    // Highest priority: Specific CrashLoopBackOff with 'waiting' state
-    if (statusLower.includes('crashloopbackoff') && statusLower.includes("state 'waiting'")) {
-      state = 'error'
-    } else if (statusLower.includes("pod in 'pending' phase")) {
-      state = 'pending'
-    } else if (statusLower.includes("pod in 'running' phase")) {
-      state = 'running'
-      const startedAtIndex = statusLong.indexOf("Started at '")
-      if (startedAtIndex !== -1) {
-        const dateString = statusLong.substring(startedAtIndex + 12, statusLong.indexOf("'", startedAtIndex + 12))
-        const parsedStartedAt = new Date(dateString)
-        if (!isNaN(parsedStartedAt.getTime())) {
-          startedAt = parsedStartedAt
-        }
+  // Highest priority: Specific CrashLoopBackOff with 'waiting' state
+  if (statusLower.includes('crashloopbackoff') && statusLower.includes("state 'waiting'")) {
+    state = 'error'
+  } else if (statusLower.includes("pod in 'pending' phase")) {
+    state = 'pending'
+  } else if (statusLower.includes("pod in 'running' phase")) {
+    state = 'running'
+    const startedAtIndex = statusLong.indexOf("Started at '")
+    if (startedAtIndex !== -1) {
+      const dateString = statusLong.substring(
+        startedAtIndex + 12,
+        statusLong.indexOf("'", startedAtIndex + 12),
+      )
+      const parsedStartedAt = new Date(dateString)
+      if (!isNaN(parsedStartedAt.getTime())) {
+        startedAt = parsedStartedAt
       }
-    } else if (statusLower.includes('error') || statusLower.includes('failed') || statusLower.includes('crashloopbackoff')) {
-      // Fallback for other error conditions, including general CrashLoopBackOff
-      state = 'error'
-    } else {
-      state = 'stopped'
     }
-
-    const baseStatus: BotStatus = {
-      state,
-      ...STATUS_CONFIG[state],
-      isPending: state === 'pending',
-      status_long: statusLong,
-    }
-
-    if (startedAt) {
-      return { ...baseStatus, startedAt }
-    }
-    return baseStatus
+  } else if (
+    statusLower.includes('error') ||
+    statusLower.includes('failed') ||
+    statusLower.includes('crashloopbackoff')
+  ) {
+    // Fallback for other error conditions, including general CrashLoopBackOff
+    state = 'error'
+  } else {
+    state = 'stopped'
   }
+
+  const baseStatus: BotStatus = {
+    state,
+    ...STATUS_CONFIG[state],
+    isPending: state === 'pending',
+    statusLong: statusLong,
+  }
+
+  if (startedAt) {
+    return { ...baseStatus, startedAt }
+  }
+  return baseStatus
+}
 
 export const useBotStatus = () => {
   /**
