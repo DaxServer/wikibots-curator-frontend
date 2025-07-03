@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test'
-import { createStatusFromJob } from './useBotStatus' // Import createStatusFromJob directly
+import { createStatusFromJob } from './useBotStatus'
 
 describe('useBotStatus', () => {
   it('should correctly identify CrashLoopBackOff with state waiting', () => {

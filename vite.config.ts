@@ -14,7 +14,14 @@ export default defineConfig((): import('vite').UserConfig => {
       vue(),
       vueDevTools(),
       AutoImport({
-        imports: ['vue', 'pinia'],
+        imports: [
+          'vue',
+          'pinia',
+          {
+            'primevue/config': [['default', 'PrimeVue']],
+            '@primeuix/themes/Aura': [['default', 'Aura']],
+          },
+        ],
         dirs: ['src/**'],
         dts: true,
         vueTemplate: true,

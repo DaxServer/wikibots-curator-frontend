@@ -6,7 +6,9 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const Aura: typeof import('@primeuix/themes/Aura')['default']
   const EffectScope: typeof import('vue')['EffectScope']
+  const PrimeVue: typeof import('primevue/config')['default']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const botsStore: typeof import('./src/stores/bots.store')['default']
   const computed: typeof import('vue')['computed']
@@ -39,8 +41,6 @@ declare global {
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
-  const onBeforeRouteLeave: typeof import('vue-router')['onBeforeRouteLeave']
-  const onBeforeRouteUpdate: typeof import('vue-router')['onBeforeRouteUpdate']
   const onBeforeUnmount: typeof import('vue')['onBeforeUnmount']
   const onBeforeUpdate: typeof import('vue')['onBeforeUpdate']
   const onDeactivated: typeof import('vue')['onDeactivated']
@@ -82,10 +82,7 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useJobsApi: typeof import('./src/composables/useJobsApi')['default']
   const useJobsStore: typeof import('./src/stores/jobs.store')['useJobsStore']
-  const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
-  const useRoute: typeof import('vue-router')['useRoute']
-  const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const watch: typeof import('vue')['watch']
@@ -117,7 +114,9 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly Aura: UnwrapRef<typeof import('@primeuix/themes/Aura')['default']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly PrimeVue: UnwrapRef<typeof import('primevue/config')['default']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly botsStore: UnwrapRef<typeof import('./src/stores/bots.store')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>

@@ -22,3 +22,6 @@ jobs:
 
       - name: Run tests
         run: bun test
+
+      - name: Run build to check if it builds
+        run: bun run build
