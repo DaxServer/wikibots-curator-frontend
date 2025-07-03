@@ -18,7 +18,7 @@ const durationDisplayParts = computed(() => {
       <div>
         <span v-if="status.state !== 'error'">{{ status.text }}</span>
         <template v-if="durationDisplayParts">
-          <span class="ml-1">
+          <span>
             for {{ durationDisplayParts.hours }}:{{ durationDisplayParts.minutes
             }}<span class="text-xs">:{{ durationDisplayParts.seconds }}</span>
           </span>
