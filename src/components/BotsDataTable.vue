@@ -7,7 +7,6 @@ interface Props {
 const props = defineProps<Props>()
 const botsStore = useBotsStore()
 const authStore = useAuthStore()
-
 </script>
 
 <template>

@@ -9,11 +9,11 @@ export type StatusConfig = {
 export type BotStatus = {
   state: 'running' | 'stopped' | 'error' | 'unknown' | 'pending' | 'failed'
   text: string
-  severity: 'success' | 'danger' | 'info'
+  severity: 'success' | 'danger' | 'info' | 'secondary'
   isRunning: boolean
   isPending: boolean
   startedAt?: Date
-  status_long: string
+  statusLong: string
 }
 
 export interface Bot {
