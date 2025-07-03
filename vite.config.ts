@@ -19,7 +19,7 @@ export default defineConfig((): import('vite').UserConfig => {
           'pinia',
           {
             'primevue/config': [['default', 'PrimeVue']],
-            '@primeuix/themes/Aura': [['default', 'Aura']],
+            '@primevue/themes/aura': [['default', 'Aura']],
           },
         ],
         dirs: ['src/**'],

@@ -6,7 +6,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const Aura: typeof import('@primeuix/themes/Aura')['default']
+  const Aura: typeof import('@primevue/themes/aura')['default']
   const EffectScope: typeof import('vue')['EffectScope']
   const PrimeVue: typeof import('primevue/config')['default']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -114,7 +114,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly Aura: UnwrapRef<typeof import('@primeuix/themes/Aura')['default']>
+    readonly Aura: UnwrapRef<typeof import('@primevue/themes/aura')['default']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly PrimeVue: UnwrapRef<typeof import('primevue/config')['default']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>

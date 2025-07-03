@@ -4,14 +4,14 @@
     "": {
       "name": "v1",
       "dependencies": {
-        "@primeuix/themes": "^1.1.2",
+        "@primevue/themes": "4.3.5",
         "pinia": "^3.0.3",
         "primeicons": "^7.0.0",
-        "primevue": "^4.3.5",
+        "primevue": "4.3.5",
         "vue": "^3.5.17",
       },
       "devDependencies": {
-        "@primevue/auto-import-resolver": "^4.3.5",
+        "@primevue/auto-import-resolver": "4.3.5",
         "@stylistic/eslint-plugin": "^5.1.0",
         "@tailwindcss/vite": "^4.1.11",
         "@tsconfig/node22": "^22.0.2",
@@ -218,6 +218,8 @@
     "@primevue/icons": ["@primevue/icons@4.3.5", "", { "dependencies": { "@primeuix/utils": "^0.5.3", "@primevue/core": "4.3.5" } }, "sha512-+V8XG6MEvczw3Ufz7+ABSSCaVdFCYKRHvVDmXpS65AUeQTDEqmJz3xx2UiYYdASA6Gb2yIKdVztTcRjHFtiAnw=="],
 
     "@primevue/metadata": ["@primevue/metadata@4.3.5", "", {}, "sha512-R1urDTqWyjRZyVF+8WFYc/N6fRuPdOMDtA+zTfTeMRW/BzDvakbpJKZDGI6DcOz4NR/MZFEWi8hFyT87aFSKow=="],
+
+    "@primevue/themes": ["@primevue/themes@4.3.5", "", { "dependencies": { "@primeuix/styled": "^0.6.4", "@primeuix/themes": "^1.1.1" } }, "sha512-UV1CRURmpmAqOvZyRDqBCAryoxEBFBGdBP0/qJAs5mi+JKeWonz+IHi3FQLnwN5GFVa9WhdRMi48Y4+9/6YkZA=="],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.19", "", {}, "sha512-3FL3mnMbPu0muGOCaKAhhFEYmqv9eTfPSJRJmANrCwtgK8VuxpsZDGK+m0LYAGoyO8+0j5uRe4PeyPDK1yA/hA=="],
 
