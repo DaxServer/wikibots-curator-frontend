@@ -3,7 +3,7 @@
 <template>
   <div>
     <Header />
-    <div class="w-fill lg:w-7xl mx-auto">
+    <div class="w-full lg:w-7xl mx-auto">
       <BotsTable />
     </div>
     <Footer />
