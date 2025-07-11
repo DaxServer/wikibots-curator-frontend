@@ -1,8 +1,14 @@
+type Action = {
+  type: 'start' | 'stop' | 'terminate' | 'pending' | 'unknown'
+  label: string
+}
+
 export type StatusConfig = {
   [key in BotStatus['state']]: {
     text: string
     severity: BotStatus['severity']
     isRunning: boolean
+    action: Action
   }
 }
 
@@ -14,6 +20,7 @@ export type BotStatus = {
   isPending: boolean
   startedAt?: Date
   statusLong: string
+  action: Action
 }
 
 export interface Bot {

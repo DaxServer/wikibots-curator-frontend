@@ -16,9 +16,9 @@ const isLoading = computed(
 <template>
   <div v-if="authStore.isAuthorized" class="flex gap-2">
     <Button
-      v-if="!bot.status.isRunning && !bot.status.isPending"
-      severity="info"
-      label="Start"
+      v-if="bot.status.action.type === 'start'"
+      :severity="bot.status.severity"
+      :label="bot.status.action.label"
       icon="pi pi-play"
       size="small"
       :loading="jobsStore.starting[bot.type]"
@@ -26,21 +26,21 @@ const isLoading = computed(
       @click="onStart(bot.type)"
     />
     <Button
-      v-else-if="bot.status.isRunning"
-      severity="danger"
+      v-else-if="bot.status.action.type === 'terminate' || bot.status.action.type === 'stop'"
+      :severity="bot.status.severity"
       size="small"
       icon="pi pi-stop"
-      label="Stop"
+      :label="bot.status.action.label"
       :loading="jobsStore.deleting[bot.type]"
       :disabled="isLoading"
       @click="onStop(bot.type)"
     />
     <Tag
-      v-else-if="bot.status.isPending"
-      severity="info"
+      v-else-if="bot.status.action.type === 'pending'"
+      :severity="bot.status.severity"
       size="small"
       icon="pi pi-spin pi-spinner"
-      value="Starting..."
+      :value="bot.status.action.label"
     />
     <Tag v-else severity="danger" size="small" icon="pi pi-question" value="Unknown" />
   </div>
