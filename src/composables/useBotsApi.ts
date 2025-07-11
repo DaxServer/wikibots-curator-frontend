@@ -15,15 +15,15 @@ export const useBotsApi = () => {
     const jobs = jobsStore.jobs
 
     // First, create basic bot objects from processes
-    const basicBots = processes.map((process) => ({
+    const basicBots: Bot[] = processes.map((process) => ({
       type: process.type,
       command: process.command,
       args: process.args,
       status: {
         state: 'stopped' as const,
         ...statusConfig.stopped,
+        isRunning: false,
         isPending: false,
-        statusLong: '',
       },
       jobName: '',
     }))
