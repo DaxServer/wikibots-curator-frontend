@@ -15,7 +15,7 @@ export const useBotsApi = () => {
     const jobs = jobsStore.jobs
 
     // First, create basic bot objects from processes
-    const basicBots: Bot[] = processes.map((process) => ({
+    const basicBots = processes.map((process) => ({
       type: process.type,
       command: process.command,
       args: process.args,
@@ -26,7 +26,7 @@ export const useBotsApi = () => {
         isPending: false,
       },
       jobName: '',
-    }))
+    } as Bot))
 
     // Then update them with job status information
     const botsWithStatus = updateBotsWithJobStatus(basicBots, jobs)
