@@ -1,10 +1,40 @@
 const STATUS_CONFIG: StatusConfig = {
-  running: { text: 'Running', severity: 'success', isRunning: true },
-  stopped: { text: 'Not Running', severity: 'secondary', isRunning: false },
-  pending: { text: 'Starting...', severity: 'info', isRunning: false },
-  error: { text: 'Error', severity: 'danger', isRunning: false },
-  failed: { text: 'Failed', severity: 'danger', isRunning: false },
-  unknown: { text: 'Unknown', severity: 'danger', isRunning: false },
+  running: {
+    text: 'Running',
+    severity: 'success',
+    isRunning: true,
+    action: { type: 'stop', label: 'Stop' },
+  },
+  stopped: {
+    text: 'Not Running',
+    severity: 'secondary',
+    isRunning: false,
+    action: { type: 'start', label: 'Start' },
+  },
+  pending: {
+    text: 'Starting...',
+    severity: 'info',
+    isRunning: false,
+    action: { type: 'pending', label: 'Starting...' },
+  },
+  error: {
+    text: 'Error',
+    severity: 'danger',
+    isRunning: false,
+    action: { type: 'terminate', label: 'Terminate' },
+  },
+  failed: {
+    text: 'Failed',
+    severity: 'danger',
+    isRunning: false,
+    action: { type: 'unknown', label: 'Unknown' },
+  },
+  unknown: {
+    text: 'Unknown',
+    severity: 'danger',
+    isRunning: false,
+    action: { type: 'unknown', label: 'Unknown' },
+  },
 }
 
 /**
@@ -54,6 +84,7 @@ export const createStatusFromJob = (statusLong: string): BotStatus => {
   if (startedAt) {
     return { ...baseStatus, startedAt }
   }
+
   return baseStatus
 }
 

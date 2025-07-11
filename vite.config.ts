@@ -49,7 +49,7 @@ export default defineConfig((): import('vite').UserConfig => {
     server: {
       proxy: {
         '/auth': {
-          target: 'http://localhost:8001',
+          target: 'http://localhost:8000',
           changeOrigin: true,
           secure: false,
         },
