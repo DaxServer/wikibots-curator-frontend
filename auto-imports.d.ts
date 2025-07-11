@@ -99,7 +99,7 @@ declare global {
   export type { FormattedDuration } from './src/composables/useFormatDuration'
   import('./src/composables/useFormatDuration')
   // @ts-ignore
-  export type { StatusConfig, BotStatus, Bot } from './src/types/bots'
+  export type { StatusInfo, StatusConfig, BotStatus, Bot } from './src/types/bots'
   import('./src/types/bots')
   // @ts-ignore
   export type { Process } from './src/types/harbor'

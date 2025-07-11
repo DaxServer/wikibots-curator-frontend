@@ -1,39 +1,27 @@
 const STATUS_CONFIG: StatusConfig = {
   running: {
-    text: 'Running',
-    severity: 'success',
-    isRunning: true,
-    action: { type: 'stop', label: 'Stop' },
+    info: { label: 'Running', severity: 'success' },
+    action: { type: 'stop', label: 'Stop', severity: 'danger' },
   },
   stopped: {
-    text: 'Not Running',
-    severity: 'secondary',
-    isRunning: false,
-    action: { type: 'start', label: 'Start' },
+    info: { label: 'Not Running', severity: 'secondary' },
+    action: { type: 'start', label: 'Start', severity: 'secondary' },
   },
   pending: {
-    text: 'Starting...',
-    severity: 'info',
-    isRunning: false,
-    action: { type: 'pending', label: 'Starting...' },
+    info: { label: 'Starting...', severity: 'info' },
+    action: { type: 'pending', label: 'Starting...', severity: 'info' },
   },
   error: {
-    text: 'Error',
-    severity: 'danger',
-    isRunning: false,
-    action: { type: 'terminate', label: 'Terminate' },
+    info: { label: 'Error', severity: 'danger' },
+    action: { type: 'terminate', label: 'Terminate', severity: 'danger' },
   },
   failed: {
-    text: 'Failed',
-    severity: 'danger',
-    isRunning: false,
-    action: { type: 'unknown', label: 'Unknown' },
+    info: { label: 'Failed', severity: 'danger' },
+    action: { type: 'unknown', label: 'Unknown', severity: 'danger' },
   },
   unknown: {
-    text: 'Unknown',
-    severity: 'danger',
-    isRunning: false,
-    action: { type: 'unknown', label: 'Unknown' },
+    info: { label: 'Unknown', severity: 'danger' },
+    action: { type: 'unknown', label: 'Unknown', severity: 'danger' },
   },
 }
 
@@ -77,8 +65,12 @@ export const createStatusFromJob = (statusLong: string): BotStatus => {
   const baseStatus: BotStatus = {
     state,
     ...STATUS_CONFIG[state],
+    info: {
+      ...STATUS_CONFIG[state].info,
+      text: statusLong,
+    },
+    isRunning: state === 'running',
     isPending: state === 'pending',
-    statusLong: statusLong,
   }
 
   if (startedAt) {
@@ -106,6 +98,7 @@ export const useBotStatus = () => {
             ...bot.status,
             ...STATUS_CONFIG.stopped,
             state: 'stopped',
+            isRunning: false,
             isPending: false,
           },
           jobName: '',

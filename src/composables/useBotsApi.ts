@@ -22,11 +22,11 @@ export const useBotsApi = () => {
       status: {
         state: 'stopped' as const,
         ...statusConfig.stopped,
+        isRunning: false,
         isPending: false,
-        statusLong: '',
       },
       jobName: '',
-    }))
+    } as Bot))
 
     // Then update them with job status information
     const botsWithStatus = updateBotsWithJobStatus(basicBots, jobs)

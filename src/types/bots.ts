@@ -1,25 +1,30 @@
+type Severity = 'success' | 'danger' | 'info' | 'secondary' | 'warning'
+
+export type StatusInfo = {
+  label: string
+  text?: string
+  severity: Severity
+}
+
 type Action = {
   type: 'start' | 'stop' | 'terminate' | 'pending' | 'unknown'
   label: string
+  severity: Severity
 }
 
 export type StatusConfig = {
   [key in BotStatus['state']]: {
-    text: string
-    severity: BotStatus['severity']
-    isRunning: boolean
+    info: StatusInfo
     action: Action
   }
 }
 
 export type BotStatus = {
   state: 'running' | 'stopped' | 'error' | 'unknown' | 'pending' | 'failed'
-  text: string
-  severity: 'success' | 'danger' | 'info' | 'secondary'
+  info: StatusInfo
   isRunning: boolean
   isPending: boolean
   startedAt?: Date
-  statusLong: string
   action: Action
 }
 
