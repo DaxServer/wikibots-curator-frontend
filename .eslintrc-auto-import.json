@@ -24,6 +24,7 @@
     "Slot": true,
     "Slots": true,
     "StatusConfig": true,
+    "StatusInfo": true,
     "VNode": true,
     "WritableComputedRef": true,
     "acceptHMRUpdate": true,
