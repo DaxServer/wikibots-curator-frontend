@@ -6,6 +6,7 @@ const botsStore = useBotsStore()
 
 const { fetchBots, fetchJobs } = useBotsApi()
 const { startJob, deleteJob } = useJobsApi()
+const { isLoading } = useBotStatus()
 
 // Computed properties
 const error = computed(() => {
@@ -73,8 +74,8 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
         <Button
           icon="pi pi-refresh"
           class="p-button-rounded p-button-info"
-          :loading="botsStore.loading"
-          :disabled="botsStore.loading"
+          :loading="isLoading"
+          :disabled="isLoading"
           @click="refreshBots"
         />
       </div>

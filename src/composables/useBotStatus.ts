@@ -81,6 +81,14 @@ export const createStatusFromJob = (statusLong: string): BotStatus => {
 }
 
 export const useBotStatus = () => {
+  const botStore = useBotsStore()
+  const jobStore = useJobsStore()
+  const harborStore = useHarborStore()
+
+  const isLoading = computed(() => {
+    return botStore.isLoading || jobStore.isLoading || harborStore.isLoading
+  })
+
   /**
    * Updates bots with job status information
    * @param bots - The array of bots to update
@@ -117,6 +125,7 @@ export const useBotStatus = () => {
   }
 
   return {
+    isLoading,
     updateBotsWithJobStatus,
     statusConfig: STATUS_CONFIG,
   }

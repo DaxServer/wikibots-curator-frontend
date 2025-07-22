@@ -7,12 +7,14 @@ interface Props {
 const props = defineProps<Props>()
 const botsStore = useBotsStore()
 const authStore = useAuthStore()
+
+const { isLoading } = useBotStatus()
 </script>
 
 <template>
   <DataTable
     :value="botsStore.bots"
-    :loading="botsStore.loading"
+    :loading="isLoading"
     stripedRows
     size="small"
     class="p-datatable-sm"
