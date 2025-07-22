@@ -1,6 +1,6 @@
 export const useHarborStore = defineStore('harbor', () => {
   // State
-  const loading = ref(false)
+  const isLoading = ref(false)
   const error = ref('')
   const processes = ref<Process[]>([])
 
@@ -8,8 +8,8 @@ export const useHarborStore = defineStore('harbor', () => {
   const hasProcesses = computed(() => processes.value.length > 0)
 
   // Actions
-  const setLoading = (isLoading: boolean) => {
-    loading.value = isLoading
+  const setLoading = (_isLoading: boolean) => {
+    isLoading.value = _isLoading
   }
 
   const setError = (errorMessage: string) => {
@@ -22,7 +22,7 @@ export const useHarborStore = defineStore('harbor', () => {
 
   return {
     // State
-    loading,
+    isLoading,
     error,
     processes,
 

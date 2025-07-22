@@ -1,10 +1,6 @@
 export const useBotsStore = defineStore('bots', () => {
-  // Child stores
-  const harborStore = useHarborStore()
-  const jobsStore = useJobsStore()
-
   // State
-  const loading = ref(false)
+  const isLoading = ref(false)
   const error = ref('')
   const bots = ref<Bot[]>([])
   const lastRefreshed = ref<Date | null>(null)
@@ -23,8 +19,8 @@ export const useBotsStore = defineStore('bots', () => {
     lastRefreshed.value = new Date()
   }
 
-  const setLoading = (isLoading: boolean) => {
-    loading.value = isLoading
+  const setLoading = (_isLoading: boolean) => {
+    isLoading.value = _isLoading
   }
 
   const updateHasPendingJobs = () => {
@@ -38,7 +34,7 @@ export const useBotsStore = defineStore('bots', () => {
     // State
     hasPendingJobs,
     error,
-    loading: computed(() => loading.value || harborStore.loading || jobsStore.loading),
+    isLoading,
 
     // Getters
     bots,

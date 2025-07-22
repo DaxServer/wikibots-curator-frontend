@@ -1,14 +1,14 @@
 export const useJobsStore = defineStore('jobs', () => {
   // State
-  const loading = ref(false)
+  const isLoading = ref(false)
   const error = ref('')
   const jobs = ref<Job[]>([])
   const starting = ref<Record<string, boolean>>({})
   const deleting = ref<Record<string, boolean>>({})
 
   // Actions
-  const setLoading = (isLoading: boolean) => {
-    loading.value = isLoading
+  const setLoading = (_isLoading: boolean) => {
+    isLoading.value = _isLoading
   }
 
   const setError = (errorMessage: string) => {
@@ -37,7 +37,7 @@ export const useJobsStore = defineStore('jobs', () => {
 
   return {
     // State
-    loading,
+    isLoading,
     error,
     jobs,
     starting,
