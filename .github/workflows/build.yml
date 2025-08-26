@@ -5,15 +5,14 @@ on:
     branches:
       - main
 
+permissions:
+  attestations: write
+  contents: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    permissions:
-      attestations: write
-      contents: write
-      id-token: write
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -21,7 +20,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.20
+          bun-version: 1.2.21
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
