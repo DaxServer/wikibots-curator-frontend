@@ -1,8 +1,8 @@
-import stylistic from '@stylistic/eslint-plugin';
-import typescriptParser from '@typescript-eslint/parser';
-import typescriptPlugin from '@typescript-eslint/eslint-plugin';
+import stylistic from '@stylistic/eslint-plugin'
+import typescriptParser from '@typescript-eslint/parser'
+import typescriptPlugin from '@typescript-eslint/eslint-plugin'
 
-const extraFileExtensions = ['.vue'];
+const extraFileExtensions = ['.vue']
 
 export default [
   {
@@ -25,4 +25,4 @@ export default [
       ...typescriptPlugin.configs.recommended.rules,
     },
   },
-];
+]
