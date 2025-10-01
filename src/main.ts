@@ -1,5 +1,5 @@
-import 'primeicons/primeicons.css' // Icons
 import '@/assets/main.css' // Tailwind CSS
+import 'primeicons/primeicons.css' // Icons
 
 import App from '@/App.vue'
 

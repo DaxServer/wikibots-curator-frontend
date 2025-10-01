@@ -12,9 +12,18 @@ const sourceLinks = [
   >
     <template #start>
       <p class="text-gray-700">
-        <span class="pi pi-github"></span>&nbsp;
-        <template v-for="(link, index) in sourceLinks" :key="index">
-          <a :href="link.url" target="_blank">{{ link.text }}</a>
+        <span class="pi pi-github"></span>
+        &nbsp;
+        <template
+          v-for="(link, index) in sourceLinks"
+          :key="index"
+        >
+          <a
+            :href="link.url"
+            target="_blank"
+          >
+            {{ link.text }}
+          </a>
           <template v-if="index < sourceLinks.length - 1">&nbsp;&bull;&nbsp;</template>
         </template>
       </p>

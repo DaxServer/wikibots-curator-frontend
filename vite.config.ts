@@ -13,6 +13,7 @@ export default defineConfig((): import('vite').UserConfig => {
     plugins: [
       vue(),
       vueDevTools(),
+      tailwindcss(),
       AutoImport({
         imports: [
           'vue',
@@ -39,7 +40,6 @@ export default defineConfig((): import('vite').UserConfig => {
         resolvers: [PrimeVueResolver()],
         dts: true,
       }),
-      tailwindcss(),
     ] as PluginOption[],
     resolve: {
       alias: {
@@ -49,6 +49,11 @@ export default defineConfig((): import('vite').UserConfig => {
     server: {
       proxy: {
         '/auth': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+          secure: false,
+        },
+        '/api/mapillary': {
           target: 'http://localhost:8000',
           changeOrigin: true,
           secure: false,

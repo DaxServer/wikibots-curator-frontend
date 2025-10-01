@@ -54,8 +54,8 @@ const refreshBots = async (actionOrEvent?: (() => Promise<void>) | MouseEvent) =
 }
 
 // Initialize data when component is mounted
-onMounted(() => {
-  refreshBots()
+onMounted(async () => {
+  await refreshBots()
 })
 
 // Wrapper functions for job actions
@@ -82,11 +82,20 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
     </div>
 
     <!-- Error Message -->
-    <Message v-if="error" severity="error" class="mb-4" :closable="false">
+    <Message
+      v-if="error"
+      severity="error"
+      class="mb-4"
+      :closable="false"
+    >
       {{ error }}
     </Message>
 
     <!-- Data Table -->
-    <BotsDataTable v-else :handle-start-job="handleStartJob" :handle-delete-job="handleDeleteJob" />
+    <BotsDataTable
+      v-else
+      :handle-start-job="handleStartJob"
+      :handle-delete-job="handleDeleteJob"
+    />
   </div>
 </template>

@@ -14,7 +14,10 @@ const isLoading = computed(
 </script>
 
 <template>
-  <div v-if="authStore.isAuthorized" class="flex gap-2">
+  <div
+    v-if="authStore.isAuthorized"
+    class="flex gap-2"
+  >
     <Button
       v-if="bot.status.action.type === 'start'"
       :severity="bot.status.action.severity"
@@ -42,9 +45,20 @@ const isLoading = computed(
       icon="pi pi-spin pi-spinner"
       :value="bot.status.action.label"
     />
-    <Tag v-else severity="danger" size="small" icon="pi pi-question" value="Unknown" />
+    <Tag
+      v-else
+      severity="danger"
+      size="small"
+      icon="pi pi-question"
+      value="Unknown"
+    />
   </div>
   <div v-else-if="authStore.isAuthenticated && !authStore.isAuthorized">
-    <Tag severity="danger" size="small" icon="pi pi-lock" value="Not authorized" />
+    <Tag
+      severity="danger"
+      size="small"
+      icon="pi pi-lock"
+      value="Not authorized"
+    />
   </div>
 </template>
