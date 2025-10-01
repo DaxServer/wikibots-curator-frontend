@@ -8,6 +8,8 @@ export {}
 declare global {
   const Aura: typeof import('@primevue/themes/aura')['default']
   const EffectScope: typeof import('vue')['EffectScope']
+  const MetadataKey: typeof import('./src/types/mapillary')['MetadataKey']
+  const MetadataKeys: typeof import('./src/types/mapillary')['MetadataKeys']
   const PrimeVue: typeof import('primevue/config')['default']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const botsStore: typeof import('./src/stores/bots.store')['default']
@@ -34,6 +36,7 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const isShallow: typeof import('vue')['isShallow']
   const jobsStore: typeof import('./src/stores/jobs.store')['default']
+  const languageOptions: typeof import('./src/components/mapillary/languageOptions')['languageOptions']
   const mapActions: typeof import('pinia')['mapActions']
   const mapGetters: typeof import('pinia')['mapGetters']
   const mapState: typeof import('pinia')['mapState']
@@ -79,11 +82,14 @@ declare global {
   const useBotsStore: typeof import('./src/stores/bots.store')['useBotsStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
+  const useGeocoding: typeof import('./src/composables/useGeocoding')['useGeocoding']
   const useHarborApi: typeof import('./src/composables/useHarborApi')['default']
   const useHarborStore: typeof import('./src/stores/harbor.store')['useHarborStore']
   const useId: typeof import('vue')['useId']
   const useJobsApi: typeof import('./src/composables/useJobsApi')['default']
   const useJobsStore: typeof import('./src/stores/jobs.store')['useJobsStore']
+  const useMapillary: typeof import('./src/composables/useMapillary')['useMapillary']
+  const useMapillaryStore: typeof import('./src/stores/mapillary.store')['useMapillaryStore']
   const useModel: typeof import('vue')['useModel']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
@@ -109,6 +115,9 @@ declare global {
   // @ts-ignore
   export type { Job, JobRequest } from './src/types/jobs'
   import('./src/types/jobs')
+  // @ts-ignore
+  export type { MapillaryImage, MapillaryApiResponse, Metadata, MetadataKey, MetadataValue, MapillaryItem, Layout } from './src/types/mapillary'
+  import('./src/types/mapillary')
 }
 
 // for vue template auto import
@@ -144,6 +153,7 @@ declare module 'vue' {
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
     readonly jobsStore: UnwrapRef<typeof import('./src/stores/jobs.store')['default']>
+    readonly languageOptions: UnwrapRef<typeof import('./src/components/mapillary/languageOptions')['languageOptions']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
@@ -194,6 +204,8 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useJobsApi: UnwrapRef<typeof import('./src/composables/useJobsApi')['default']>
     readonly useJobsStore: UnwrapRef<typeof import('./src/stores/jobs.store')['useJobsStore']>
+    readonly useMapillary: UnwrapRef<typeof import('./src/composables/useMapillary')['useMapillary']>
+    readonly useMapillaryStore: UnwrapRef<typeof import('./src/stores/mapillary.store')['useMapillaryStore']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
