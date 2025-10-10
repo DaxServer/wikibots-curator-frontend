@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import { PrimeVueResolver } from '@primevue/auto-import-resolver'
+import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig((): import('vite').UserConfig => {
@@ -19,8 +19,9 @@ export default defineConfig((): import('vite').UserConfig => {
           'vue',
           'pinia',
           {
-            'primevue/config': [['default', 'PrimeVue']],
-            '@primevue/themes/aura': [['default', 'Aura']],
+            from: 'naive-ui',
+            imports: ['GlobalThemeOverrides', 'DataTableColumns', 'DataTableRowKey', 'RowData', 'SelectOption'],
+            type: true,
           },
         ],
         dirs: ['src/**'],
@@ -37,7 +38,7 @@ export default defineConfig((): import('vite').UserConfig => {
         dirs: ['src/**'],
         extensions: ['vue'],
         deep: true,
-        resolvers: [PrimeVueResolver()],
+        resolvers: [NaiveUiResolver()],
         dts: true,
       }),
     ] as PluginOption[],
@@ -47,6 +48,7 @@ export default defineConfig((): import('vite').UserConfig => {
       },
     },
     server: {
+      port: 5173,
       proxy: {
         '/auth': {
           target: 'http://localhost:8000',
@@ -62,6 +64,12 @@ export default defineConfig((): import('vite').UserConfig => {
           target: 'https://curator.toolforge.org',
           changeOrigin: true,
         },
+        '/callback/wikimedia': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/callback\/wikimedia/, '/auth/callback'),
+        }
       },
     },
   }

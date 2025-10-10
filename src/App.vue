@@ -1,29 +1,30 @@
 <script setup lang="ts">
+const themeOverrides: GlobalThemeOverrides = {
+  common: {
+    // primaryColor: '#0E47CB',
+  },
+}
+
 const activeTab = ref('mapillary')
 </script>
 
 <template>
-  <div>
+  <n-config-provider :theme-overrides="themeOverrides">
     <Header />
-    <div class="w-full xl:w-7xl mx-auto">
-      <Tabs
-        :value="activeTab"
+    <div class="w-full text-md p-2 xl:w-7xl mx-auto">
+      <n-tabs
+        v-model:value="activeTab"
         class="mt-4"
       >
-        <TabList>
-          <Tab value="bots">CuratoBot jobs</Tab>
-          <Tab value="mapillary">Mapillary Sequence Viewer</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel value="bots">
-            <BotsTable />
-          </TabPanel>
-          <TabPanel value="mapillary">
-            <MapillaryTable />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+        <n-tab-pane name="bots" tab="CuratoBot jobs">
+          Placeholder
+          <!-- <BotsTable /> -->
+        </n-tab-pane>
+        <n-tab-pane name="mapillary" tab="Mapillary Sequence Viewer">
+          <MapillaryTable />
+        </n-tab-pane>
+      </n-tabs>
     </div>
     <Footer />
-  </div>
+  </n-config-provider>
 </template>

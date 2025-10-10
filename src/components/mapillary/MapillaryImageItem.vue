@@ -13,19 +13,18 @@ const store = useMapillaryStore()
     <!-- Row 1, Col 1: index + checkbox stacked -->
     <div class="flex flex-row items-center gap-2">
       <span class="text-3xl font-medium">{{ index }}</span>
-      <Checkbox
-        :model-value="meta.selected"
-        binary
-        @update:model-value="(v) => store.updateItem(image.id, 'selected', v)"
+      <n-checkbox
+        :checked="meta.selected"
+        @update:checked="(v) => store.updateItem(image.id, 'selected', v)"
       />
     </div>
     <!-- Row 1, Col 2: title input -->
     <div>
-      <InputText
-        :model-value="meta.title"
+      <n-input
+        :value="meta.title"
         placeholder="Title"
         class="w-full"
-        @update:model-value="(v) => store.updateItem(image.id, 'title', v as string)"
+        @update:value="(v) => store.updateItem(image.id, 'title', v as string)"
       />
     </div>
 
@@ -43,11 +42,11 @@ const store = useMapillaryStore()
             rel="noopener noreferrer"
             class="block"
           >
-            <Image
+            <n-image
               :src="image.thumb_1024_url"
               :alt="`Mapillary image ${image.id}`"
               class="rounded w-full object-cover"
-              loading="lazy"
+              lazy
             />
           </a>
         </div>
@@ -65,7 +64,7 @@ const store = useMapillaryStore()
               {{ image.geometry.coordinates[0].toFixed(6) }}
             </div>
           </div>
-          <div v-if="image.compass_angle">
+          <div>
             <span class="text-gray-500">Compass Angle</span>
             <div>{{ image.compass_angle.toFixed(1) }}°</div>
           </div>
@@ -90,14 +89,16 @@ const store = useMapillaryStore()
               class="text-blue-500 hover:underline"
             >
               View on Mapillary
-              <i class="pi pi-external-link"></i>
+              <i class="pi pi-external-link ml-1"></i>
             </a>
-            <Tag
+            <n-tag
               v-if="image.is_pano"
-              value="Panorama"
-              severity="info"
+              type="info"
+              size="small"
               class="text-xs w-fit"
-            />
+            >
+              Panorama
+            </n-tag>
           </div>
         </div>
       </div>

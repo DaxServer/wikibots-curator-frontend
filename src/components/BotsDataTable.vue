@@ -4,80 +4,85 @@ interface Props {
   handleDeleteJob: (jobType: string) => void
 }
 
+interface BotRow {
+  type?: string;
+  status: string;
+  jobName?: string;
+  command: string;
+  args?: string[];
+}
+
 const props = defineProps<Props>()
 const botsStore = useBotsStore()
 const authStore = useAuthStore()
 
 const { isLoading } = useBotStatus()
+
+const columns = [
+  {
+    title: 'Type',
+    key: 'type',
+    render: (row: unknown) => {
+      const typedRow = row as BotRow
+      if (typedRow?.type) {
+        return h('span', { class: 'font-bold' }, typedRow.type)
+      }
+      return h('span', { class: 'text-gray-400 italic' }, 'Unknown')
+    },
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    render: (row: unknown) => {
+      const typedRow = row as BotRow
+      return h(JobStatusTag, { status: typedRow.status })
+    },
+  },
+  {
+    title: 'Job',
+    key: 'jobName',
+    render: (row: unknown) => {
+      const typedRow = row as BotRow
+      if (typedRow?.jobName) {
+        return h('span', { class: 'font-mono text-sm' }, typedRow.jobName)
+      }
+      return null
+    },
+  },
+  {
+    title: 'Command',
+    key: 'command',
+    render: (row: unknown) => {
+      const typedRow = row as BotRow
+      return h('code', { class: 'text-sm' },
+        typedRow.command + (typedRow.args ? ' ' + typedRow.args.join(' ') : ''),
+      )
+    },
+  },
+]
+
+if (authStore.isAuthorized) {
+  columns.push({
+    title: 'Actions',
+    key: 'actions',
+    render: (row: unknown) => {
+      const typedRow = row as BotRow
+      return h(BotActions, {
+        bot: typedRow,
+        onStart: props.handleStartJob,
+        onStop: props.handleDeleteJob,
+      })
+    },
+  })
+}
 </script>
 
 <template>
-  <DataTable
-    :value="botsStore.bots"
+  <n-data-table
+    :data="botsStore.bots"
+    :columns="columns"
     :loading="isLoading"
-    striped-rows
+    striped
     size="small"
-    class="p-datatable-sm"
-  >
-    <Column
-      field="type"
-      header="Type"
-    >
-      <template #body="{ data }">
-        <span
-          v-if="data?.type"
-          class="font-bold"
-        >
-          {{ data.type }}
-        </span>
-        <span
-          v-else
-          class="text-gray-400 italic"
-        >
-          Unknown
-        </span>
-      </template>
-    </Column>
-
-    <Column header="Status">
-      <template #body="{ data }">
-        <JobStatusTag :status="data.status" />
-      </template>
-    </Column>
-
-    <Column
-      field="jobName"
-      header="Job"
-    >
-      <template #body="{ data }">
-        <span
-          v-if="data?.jobName"
-          class="font-mono text-sm"
-        >
-          {{ data.jobName }}
-        </span>
-      </template>
-    </Column>
-
-    <Column header="Command">
-      <template #body="{ data }">
-        <code class="text-sm">
-          {{ data.command }}{{ data.args ? ' ' + data.args.join(' ') : '' }}
-        </code>
-      </template>
-    </Column>
-
-    <Column
-      v-if="authStore.isAuthorized"
-      header="Actions"
-    >
-      <template #body="{ data }">
-        <BotActions
-          :bot="data"
-          :on-start="props.handleStartJob"
-          :on-stop="props.handleDeleteJob"
-        />
-      </template>
-    </Column>
-  </DataTable>
+  />
 </template>

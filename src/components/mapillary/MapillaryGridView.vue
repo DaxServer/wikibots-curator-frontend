@@ -5,7 +5,7 @@ const store = useMapillaryStore()
 </script>
 
 <template>
-  <div class="grid grid-cols-3 gap-4 my-5">
+  <div class="grid grid-cols-3 lg:grid-cols-4 gap-4 my-5">
     <div
       v-for="item in items"
       :key="item.image.id"
@@ -26,8 +26,8 @@ const store = useMapillaryStore()
           ></div>
           <i class="pi pi-check text-white absolute top-2 left-2 text-xl!"></i>
         </div>
-        <Image
-          :src="item.image.thumb_1024_url"
+        <n-image
+          :src="item.image.thumb_256_url"
           :alt="`Mapillary image ${item.image.id}`"
         />
       </div>
@@ -50,7 +50,7 @@ const store = useMapillaryStore()
             class="text-md text-blue-500 hover:underline"
           >
             Open
-            <i class="pi pi-external-link"></i>
+            <i class="pi pi-external-link ml-1"></i>
           </a>
         </div>
       </div>

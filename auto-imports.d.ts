@@ -6,11 +6,12 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const Aura: typeof import('@primevue/themes/aura')['default']
   const EffectScope: typeof import('vue')['EffectScope']
-  const MetadataKey: typeof import('./src/types/mapillary')['MetadataKey']
-  const MetadataKeys: typeof import('./src/types/mapillary')['MetadataKeys']
-  const PrimeVue: typeof import('primevue/config')['default']
+  const IconEye: typeof import('@vicons/tabler')['IconEye']
+  const IconFilter: typeof import('@vicons/tabler')['IconFilter']
+  const IconSearch: typeof import('@vicons/tabler')['IconSearch']
+  const IconUpload: typeof import('@vicons/tabler')['IconUpload']
+  const Search: typeof import('@vicons/ionicons5')['Search']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const botsStore: typeof import('./src/stores/bots.store')['default']
   const computed: typeof import('vue')['computed']
@@ -82,7 +83,6 @@ declare global {
   const useBotsStore: typeof import('./src/stores/bots.store')['useBotsStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
-  const useGeocoding: typeof import('./src/composables/useGeocoding')['useGeocoding']
   const useHarborApi: typeof import('./src/composables/useHarborApi')['default']
   const useHarborStore: typeof import('./src/stores/harbor.store')['useHarborStore']
   const useId: typeof import('vue')['useId']
@@ -93,6 +93,7 @@ declare global {
   const useModel: typeof import('vue')['useModel']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
+  const useWikidata: typeof import('./src/components/wikidata/useWikidata')['useWikidata']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
   const watchPostEffect: typeof import('vue')['watchPostEffect']
@@ -103,6 +104,9 @@ declare global {
   // @ts-ignore
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { GlobalThemeOverrides, DataTableColumns, DataTableRowKey, RowData, SelectOption } from 'naive-ui'
+  import('naive-ui')
   // @ts-ignore
   export type { FormattedDuration } from './src/composables/useFormatDuration'
   import('./src/composables/useFormatDuration')
@@ -118,6 +122,9 @@ declare global {
   // @ts-ignore
   export type { MapillaryImage, MapillaryApiResponse, Metadata, MetadataKey, MetadataValue, MapillaryItem, Layout } from './src/types/mapillary'
   import('./src/types/mapillary')
+  // @ts-ignore
+  export type { WikibaseEntityType, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, DataValueGlobeCoordinate, StringDataValue, EntityIdDataValue, MonolingualTextDataValue, QuantityDataValue, TimeDataValue, GlobeCoordinateDataValue, UrlDataValue, DataValue, SnakType, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
+  import('./src/types/wikidata')
 }
 
 // for vue template auto import
@@ -125,9 +132,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly Aura: UnwrapRef<typeof import('@primevue/themes/aura')['default']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
-    readonly PrimeVue: UnwrapRef<typeof import('primevue/config')['default']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly botsStore: UnwrapRef<typeof import('./src/stores/bots.store')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -209,6 +214,7 @@ declare module 'vue' {
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useWikidata: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['useWikidata']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

@@ -1,16 +1,13 @@
 export interface MapillaryImage {
   id: string
   captured_at: number
-  creator: {
-    id: string
-    username: string
-  }
   geometry: {
     type: 'Point'
     coordinates: [number, number] // [longitude, latitude]
   }
   height: number
   width: number
+  thumb_256_url: string
   thumb_1024_url: string
   thumb_original_url: string
   compass_angle: number
@@ -20,7 +17,11 @@ export interface MapillaryImage {
 }
 
 export interface MapillaryApiResponse {
-  data: MapillaryImage[]
+  creator: {
+    id: string
+    username: string
+  }
+  images: Record<string, MapillaryImage>
 }
 
 interface Description {
@@ -40,6 +41,7 @@ export type MetadataValue = Metadata[MetadataKey]
 export interface MapillaryItem {
   image: MapillaryImage
   meta: Metadata
+  sdc: Statement[]
   index: number
   id: string
 }

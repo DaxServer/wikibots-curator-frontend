@@ -28,39 +28,42 @@ const emit = defineEmits<{
     <div class="flex gap-3 text-sm">
       <div class="space-y-2 grow-none">
         <label class="block font-medium text-gray-600">Language</label>
-        <Select
+        <n-select
           :disabled="!enableLanguage"
           :model-value="language"
           :options="languageOptions"
+          :default-value="languageOptions[0]!.value"
           option-label="label"
           option-value="value"
           placeholder="Language"
           class="w-full"
-          @update:model-value="(v) => emit('update:language', v as string)"
+          @update:value="(v) => emit('update:language', v)"
         />
       </div>
       <div class="space-y-2 grow">
         <label class="block font-medium text-gray-600">Description</label>
-        <Textarea
+        <n-input
+          type="textarea"
           :disabled="!enableDescription"
           :model-value="description"
           rows="1"
-          auto-resize
+          :autosize="{ minRows: 1 }"
           class="w-full"
-          @update:model-value="(v) => emit('update:description', v as string)"
+          @update:value="(v) => emit('update:description', v)"
         />
       </div>
     </div>
 
     <div class="space-y-2">
       <label class="block text-sm font-medium text-gray-600">Categories</label>
-      <Textarea
+      <n-input
+        type="textarea"
         :disabled="!enableCategories"
         :model-value="categories"
         rows="3"
-        auto-resize
+        :autosize="{ minRows: 3 }"
         class="w-full"
-        @update:model-value="(v) => emit('update:categories', v as string)"
+        @update:value="(v) => emit('update:categories', v)"
       />
     </div>
   </div>

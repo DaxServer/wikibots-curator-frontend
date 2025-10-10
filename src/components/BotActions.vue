@@ -18,47 +18,62 @@ const isLoading = computed(
     v-if="authStore.isAuthorized"
     class="flex gap-2"
   >
-    <Button
+    <n-button
       v-if="bot.status.action.type === 'start'"
-      :severity="bot.status.action.severity"
-      :label="bot.status.action.label"
-      icon="pi pi-play"
+      :type="bot.status.action.severity === 'danger' ? 'error' : 'default'"
       size="small"
       :loading="jobsStore.starting[bot.type]"
       :disabled="isLoading"
       @click="onStart(bot.type)"
-    />
-    <Button
+    >
+      <template #icon>
+        <i class="pi pi-play"></i>
+      </template>
+      {{ bot.status.action.label }}
+    </n-button>
+    <n-button
       v-else-if="bot.status.action.type === 'terminate' || bot.status.action.type === 'stop'"
-      :severity="bot.status.action.severity"
+      :type="bot.status.action.severity === 'danger' ? 'error' : 'default'"
       size="small"
-      icon="pi pi-stop"
-      :label="bot.status.action.label"
       :loading="jobsStore.deleting[bot.type]"
       :disabled="isLoading"
       @click="onStop(bot.type)"
-    />
-    <Tag
+    >
+      <template #icon>
+        <i class="pi pi-stop"></i>
+      </template>
+      {{ bot.status.action.label }}
+    </n-button>
+    <n-tag
       v-else-if="bot.status.action.type === 'pending'"
-      :severity="bot.status.action.severity"
+      :type="bot.status.action.severity === 'danger' ? 'error' : 'default'"
       size="small"
-      icon="pi pi-spin pi-spinner"
-      :value="bot.status.action.label"
-    />
-    <Tag
+    >
+      <template #icon>
+        <i class="pi pi-spin pi-spinner"></i>
+      </template>
+      {{ bot.status.action.label }}
+    </n-tag>
+    <n-tag
       v-else
-      severity="danger"
+      type="error"
       size="small"
-      icon="pi pi-question"
-      value="Unknown"
-    />
+    >
+      <template #icon>
+        <i class="pi pi-question"></i>
+      </template>
+      Unknown
+    </n-tag>
   </div>
   <div v-else-if="authStore.isAuthenticated && !authStore.isAuthorized">
-    <Tag
-      severity="danger"
+    <n-tag
+      type="error"
       size="small"
-      icon="pi pi-lock"
-      value="Not authorized"
-    />
+    >
+      <template #icon>
+        <i class="pi pi-lock"></i>
+      </template>
+      Not authorized
+    </n-tag>
   </div>
 </template>

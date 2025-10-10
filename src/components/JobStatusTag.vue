@@ -13,7 +13,7 @@ const durationDisplayParts = computed(() => {
 </script>
 
 <template>
-  <Tag :severity="status.info.severity">
+  <n-tag :type="status.info.severity">
     <template #default>
       <div>
         <span v-if="status.state !== 'error'">{{ status.info.label }}</span>
@@ -31,5 +31,5 @@ const durationDisplayParts = computed(() => {
         {{ status.info.text }}
       </div>
     </template>
-  </Tag>
+  </n-tag>
 </template>

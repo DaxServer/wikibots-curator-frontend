@@ -2,7 +2,7 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   // State
   const isLoading = ref(false)
   const error = ref<string | null>(null)
-  const items = ref<MapillaryItem[]>([])
+  const items = ref<Record<string, MapillaryItem>>({})
   const sequenceId = ref<string>('tulzukst7vufhdo1e4z60f')
   const creatorUsername = ref<string>('')
   const creatorId = ref<string>('')
@@ -12,6 +12,8 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     { name: 'Select', value: 'grid' },
     { name: 'Edit', value: 'list' },
   ])
+
+  const stepper = ref('1')
 
   // List view preferences
   // When true, the list view will show only selected items by default
@@ -28,11 +30,17 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   }
 
   const updateItem = (id: string, key: MetadataKey, value: MetadataValue) => {
-    const meta = items.value.find((img) => img.image.id === id)!.meta as Record<
-      MetadataKey,
-      MetadataValue
-    >
-    meta[key] = value
+    const meta = items.value[id]!.meta
+    items.value[id]!.meta = {
+      ...meta,
+      [key]: value,
+    }
+  }
+
+  const updateSelected = (ids: DataTableRowKey[]) => {
+    Object.values(items.value).forEach((item) => {
+      item.meta.selected = ids.includes(item.id)
+    })
   }
 
   // Global inputs setters
@@ -49,7 +57,7 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   }
 
   const $reset = () => {
-    items.value = []
+    items.value = {}
     error.value = null
     creatorUsername.value = ''
     creatorId.value = ''
@@ -62,19 +70,20 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   }
 
   // Getters
-  const getItem = (id: string) => items.value.find((img) => img.image.id === id)!
-  const totalImages = computed(() => items.value.length)
+  const totalImages = computed(() => Object.values(items.value).length)
   const hasSequence = computed(() => totalImages.value > 0)
-  const selectedItems = computed(() => items.value.filter((i) => i.meta.selected))
+  const selectedItems = computed(() => Object.values(items.value).filter((i) => i.meta.selected))
+  const selectedItemsKeys = computed(() => selectedItems.value.map((i) => i.id))
   const selectedCount = computed(() => selectedItems.value.length)
   const displayedItems = computed(() => {
-    if (layout.value === 'grid') {
-      return items.value
+    // select
+    if (stepper.value === '2') {
+      return Object.values(items.value)
     }
 
-    return selectedCount.value > 0 && showSelectedOnly.value ? selectedItems.value : items.value
+    return selectedCount.value > 0 && showSelectedOnly.value ? selectedItems.value : Object.values(items.value)
   })
-  const displayRows = computed(() => (layout.value === 'list' ? 5 : 50))
+  const displayRows = computed(() => (stepper.value === '2' ? 5 : 5))
 
   return {
     // State
@@ -92,13 +101,14 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     showSelectedOnly,
     displayedItems,
     displayRows,
+    stepper,
 
     // Getters
-    getItem,
     totalImages,
     hasSequence,
     selectedCount,
     selectedItems,
+    selectedItemsKeys,
 
     // Actions
     setLoading,
@@ -106,6 +116,7 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     setGlobalLanguage,
     setGlobalCategories,
     updateItem,
+    updateSelected,
     $reset,
   }
 })

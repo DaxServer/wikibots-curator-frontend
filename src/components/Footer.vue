@@ -7,10 +7,10 @@ const sourceLinks = [
 </script>
 
 <template>
-  <Toolbar
+  <n-layout-footer
     class="fixed bottom-0 flex justify-between items-center border-l-0! border-r-0! border-b-0! md:px-52! w-full"
   >
-    <template #start>
+    <template #default>
       <p class="text-gray-700">
         <span class="pi pi-github"></span>
         &nbsp;
@@ -20,6 +20,7 @@ const sourceLinks = [
         >
           <a
             :href="link.url"
+            rel="noopener noreferrer"
             target="_blank"
           >
             {{ link.text }}
@@ -28,5 +29,5 @@ const sourceLinks = [
         </template>
       </p>
     </template>
-  </Toolbar>
+  </n-layout-footer>
 </template>
