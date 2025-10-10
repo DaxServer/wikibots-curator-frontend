@@ -54,8 +54,8 @@ const refreshBots = async (actionOrEvent?: (() => Promise<void>) | MouseEvent) =
 }
 
 // Initialize data when component is mounted
-onMounted(() => {
-  refreshBots()
+onMounted(async () => {
+  await refreshBots()
 })
 
 // Wrapper functions for job actions
@@ -71,22 +71,35 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
         <span class="text-sm text-gray-600">
           Last updated: {{ botsStore.lastRefreshed?.toLocaleTimeString() ?? 'Never' }}
         </span>
-        <Button
-          icon="pi pi-refresh"
-          class="p-button-rounded p-button-info"
+        <n-button
           :loading="isLoading"
           :disabled="isLoading"
+          type="info"
+          circle
           @click="refreshBots"
-        />
+        >
+          <template #icon>
+            <i class="pi pi-refresh" />
+          </template>
+        </n-button>
       </div>
     </div>
 
     <!-- Error Message -->
-    <Message v-if="error" severity="error" class="mb-4" :closable="false">
+    <n-alert
+      v-if="error"
+      type="error"
+      class="mb-4"
+      :closable="false"
+    >
       {{ error }}
-    </Message>
+    </n-alert>
 
     <!-- Data Table -->
-    <BotsDataTable v-else :handle-start-job="handleStartJob" :handle-delete-job="handleDeleteJob" />
+    <BotsDataTable
+      v-else
+      :handle-start-job="handleStartJob"
+      :handle-delete-job="handleDeleteJob"
+    />
   </div>
 </template>
