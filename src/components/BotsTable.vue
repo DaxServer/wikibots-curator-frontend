@@ -60,7 +60,7 @@ onMounted(async () => {
 
 // Wrapper functions for job actions
 const handleStartJob = (jobType: string) => refreshBots(() => startJob(jobType))
-const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType))
+const handleStopJob = (jobType: string) => refreshBots(() => deleteJob(jobType))
 </script>
 
 <template>
@@ -97,7 +97,7 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
     <BotsDataTable
       v-else
       :handle-start-job="handleStartJob"
-      :handle-delete-job="handleDeleteJob"
+      :handle-stop-job="handleStopJob"
     />
   </div>
 </template>
