@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p typecheck \"build-only {@}\" --",
-    "build-only": "vite build",
+    "build": "vite build",
     "typecheck": "vue-tsc --noEmit -p tsconfig.app.json",
     "tsc": "vue-tsc --noEmit -p tsconfig.app.json",
     "lint": "eslint",
