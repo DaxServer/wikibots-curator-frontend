@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Search } from '@vicons/ionicons5'
+import { mdiMagnify } from '@mdi/js'
 
 const mapillary = useMapillary()
 const store = useMapillaryStore()
@@ -11,29 +11,26 @@ const handleSubmit = async (e: Event) => {
 </script>
 
 <template>
-  <n-form
+  <v-form
     class="mt-4 mb-4"
+    @submit.prevent="handleSubmit"
   >
-    <div class="flex gap-2">
-      <n-input
-        v-model:value="store.sequenceId"
-        placeholder="Mapillary sequence ID (e.g., tulzukst7vufhdo1e4z60f)"
-        class="w-full"
-        />
-        <n-button
-          type="primary"
-          attr-type="submit"
-          :loading="store.isLoading"
-          :disabled="!store.sequenceId.trim() || store.isLoading"
-          @click="handleSubmit"
-        >
-          <template #icon>
-            <n-icon>
-              <Search />
-            </n-icon>
-          </template>
-          Load Sequence
-        </n-button>
-    </div>
-  </n-form>
+    <v-text-field
+      v-model="store.sequenceId"
+      placeholder="Mapillary sequence ID (e.g., tulzukst7vufhdo1e4z60f)"
+      variant="outlined"
+      density="compact"
+      class="flex-grow-1"
+    />
+    <v-btn
+      :prepend-icon="mdiMagnify"
+      color="primary"
+      type="submit"
+      :loading="store.isLoading"
+      :disabled="!store.sequenceId.trim() || store.isLoading"
+      @click="handleSubmit"
+    >
+      Load Sequence
+    </v-btn>
+  </v-form>
 </template>

@@ -7,36 +7,38 @@ onMounted(async () => {
 </script>
 
 <template>
-  <n-layout-header
-    bordered
-    class="flex justify-between items-center p-2 lg:px-52!"
+  <v-app-bar
+    color="white"
+    elevation="1"
+    class="border-b border-gray-200"
   >
-    <template #default>
-      <h1>Curator</h1>
+    <v-app-bar-title class="text-h6 font-weight-bold text-grey-darken-3">
+      Curator App
+    </v-app-bar-title>
+
+    <v-spacer />
+
+    <div class="d-flex align-center ga-4">
+      <div v-if="!authStore.isAuthenticated">
+        <v-btn
+          color="primary"
+          @click="authStore.login"
+        >
+          Login
+        </v-btn>
+      </div>
       <div
-        v-if="authStore.isAuthenticated"
-        class="flex items-center space-x-2"
+        v-else
+        class="d-flex align-center ga-4"
       >
-        <span>Welcome, {{ authStore.user }}!</span>
-        <n-button
-          type="default"
-          size="small"
+        <span class="text-grey-darken-1">{{ authStore.user }}</span>
+        <v-btn
+          variant="outlined"
           @click="authStore.logout"
         >
           Logout
-        </n-button>
+        </v-btn>
       </div>
-      <div v-else>
-        <n-button
-          type="default"
-          size="medium"
-          :loading="authStore.isLoading"
-          :disabled="authStore.isLoading"
-          @click="authStore.login"
-        >
-          Login with Wikimedia Commons
-        </n-button>
-      </div>
-    </template>
-  </n-layout-header>
+    </div>
+  </v-app-bar>
 </template>

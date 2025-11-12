@@ -7,7 +7,7 @@ const { getEntityLabel } = useWikidata()
   <template v-if="value.type === 'wikibase-entityid'">
     <a
       :href="`https://www.wikidata.org/wiki/Q${value.value['numeric-id']}`"
-      class="text-blue-500 hover:underline"
+      class="text-blue hover:underline"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -29,7 +29,7 @@ const { getEntityLabel } = useWikidata()
   <template v-else-if="value.type === 'url'">
     <a
       :href="value.value"
-      class="text-blue-500 hover:underline"
+      class="text-blue hover:underline"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -40,11 +40,11 @@ const { getEntityLabel } = useWikidata()
     <span>{{ value.value }}</span>
   </template>
   <template v-else>
-    <n-tag
-      type="default"
+    <v-chip
+      size="small"
       class="text-xs"
     >
       Unsupported value
-    </n-tag>
+    </v-chip>
   </template>
 </template>

@@ -3,31 +3,36 @@ const store = useMapillaryStore()
 </script>
 
 <template>
-  <n-card class="mt-4 mb-4">
-    <div class="flex justify-between gap-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-600">Total Images</label>
-        <p class="text-lg font-semibold">
-          <span class="text-blue-600">{{ store.selectedCount }}</span>
-          / {{ store.totalImages }}
-        </p>
-      </div>
-      <div v-if="store.creatorUsername">
-        <label class="block text-sm font-medium text-gray-600">Creator</label>
-        <n-button
-          text
-          tag="a"
-          :href="`https://www.mapillary.com/profile/${store.creatorUsername}`"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {{ store.creatorUsername }}
-        </n-button>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-600">Sequence ID</label>
-        <p class="text-sm">{{ store.sequenceId }}</p>
-      </div>
-    </div>
-  </n-card>
+  <v-card class="mt-4 mb-4 pa-4">
+    <v-container>
+      <v-row>
+        <v-col>
+          <span class="text-body-2 text-medium-emphasis">Total Images</span>
+          <div class="text-h6 font-weight-medium">
+            <span class="text-primary">{{ store.selectedCount }}</span>
+            / {{ store.totalImages }}
+          </div>
+        </v-col>
+        <v-col v-if="store.creatorUsername">
+          <span class="text-body-2 text-medium-emphasis">Creator</span>
+          <div>
+            <v-btn
+              variant="text"
+              :href="`https://www.mapillary.com/profile/${store.creatorUsername}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pa-0 text-none"
+              color="primary"
+            >
+              {{ store.creatorUsername }}
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col>
+          <span class="text-body-2 text-medium-emphasis">Sequence ID</span>
+          <div class="text-body-2">{{ store.sequenceId }}</div>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>

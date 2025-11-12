@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { mdiImageMultiple } from '@mdi/js'
+
 const store = useMapillaryStore()
 // const auth = useAuthStore()
 
@@ -9,33 +11,57 @@ const updateStep = (step: string) => {
 
 <template>
   <div>
-  <!-- <div v-if="!auth.isAuthenticated" class="py-50 flex justify-center items-center">
-    <n-button
-      type="primary"
+    <!-- <div v-if="!auth.isAuthenticated" class="py-16 d-flex justify-center align-center">
+    <v-btn
+      color="primary"
       :loading="auth.isLoading"
       :disabled="auth.isLoading"
       @click="auth.login"
     >
       Login with Wikimedia Commons
-    </n-button>
+    </v-btn>
   </div> -->
     <!-- Error Message -->
-    <n-alert
+    <v-alert
       v-if="store.error"
       type="error"
       class="mb-4"
-      :closable="true"
+      closable
     >
       {{ store.error }}
-    </n-alert>
+    </v-alert>
 
-    <n-steps :current="Number(store.stepper)" :on-update:current="(step) => updateStep(String(step))">
-      <n-step title="Retrieve" description="" />
-      <n-step title="Select" description="" />
-      <n-step title="Edit" description="" />
-      <n-step title="Preview" description="" />
-      <n-step title="Upload" description="" />
-    </n-steps>
+    <v-stepper
+      :model-value="Number(store.stepper)"
+      @update:model-value="(step) => updateStep(String(step))"
+    >
+      <v-stepper-header>
+        <v-stepper-item
+          :value="1"
+          title="Retrieve"
+        />
+        <v-divider />
+        <v-stepper-item
+          :value="2"
+          title="Select"
+        />
+        <v-divider />
+        <v-stepper-item
+          :value="3"
+          title="Edit"
+        />
+        <v-divider />
+        <v-stepper-item
+          :value="4"
+          title="Preview"
+        />
+        <v-divider />
+        <v-stepper-item
+          :value="5"
+          title="Upload"
+        />
+      </v-stepper-header>
+    </v-stepper>
 
     <div v-if="store.stepper === '1'">
       <MapillarySequenceForm />
@@ -56,18 +82,25 @@ const updateStep = (step: string) => {
     <!-- Loading State -->
     <div
       v-if="store.isLoading"
-      class="flex justify-center items-center py-8"
+      class="d-flex justify-center align-center py-8"
     >
-      <n-spin />
+      <v-progress-circular
+        indeterminate
+        color="primary"
+        size="64"
+      />
     </div>
 
     <!-- Empty State -->
     <div
       v-if="!store.hasSequence && !store.isLoading"
-      class="text-center py-8 text-gray-500"
+      class="text-center py-8 text-medium-emphasis"
     >
-      <i class="pi pi-images text-4xl mb-2"></i>
-      <p>Enter a Mapillary sequence ID to view images</p>
+      <v-icon
+        :icon="mdiImageMultiple"
+        class="mb-4"
+      />
+      <p class="text-body-1">Enter a Mapillary sequence ID to view images</p>
     </div>
-   </div>
+  </div>
 </template>

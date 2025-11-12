@@ -47,6 +47,7 @@ export default defineConfig(
       'vue/multi-word-component-names': 'off',
       'vue/singleline-html-element-content-newline': 'off',
       'vue/html-indent': 'off',
+      'vue/valid-v-slot': 'off', // Allow dot notation in v-slot for Vuetify data tables
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-explicit-any': 'off',

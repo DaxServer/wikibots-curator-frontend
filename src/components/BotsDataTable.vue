@@ -1,15 +1,15 @@
 <script setup lang="ts">
 interface Props {
   handleStartJob: (jobType: string) => void
-  handleDeleteJob: (jobType: string) => void
+  handleStopJob: (jobType: string) => void
 }
 
 interface BotRow {
-  type?: string;
-  status: string;
-  jobName?: string;
-  command: string;
-  args?: string[];
+  type: string
+  status: BotStatus
+  jobName: string
+  command: string
+  args: string[]
 }
 
 const props = defineProps<Props>()
@@ -18,71 +18,70 @@ const authStore = useAuthStore()
 
 const { isLoading } = useBotStatus()
 
-const columns = [
-  {
-    title: 'Type',
-    key: 'type',
-    render: (row: unknown) => {
-      const typedRow = row as BotRow
-      if (typedRow?.type) {
-        return h('span', { class: 'font-bold' }, typedRow.type)
-      }
-      return h('span', { class: 'text-gray-400 italic' }, 'Unknown')
-    },
-  },
-  {
-    title: 'Status',
-    key: 'status',
-    render: (row: unknown) => {
-      const typedRow = row as BotRow
-      return h(JobStatusTag, { status: typedRow.status })
-    },
-  },
-  {
-    title: 'Job',
-    key: 'jobName',
-    render: (row: unknown) => {
-      const typedRow = row as BotRow
-      if (typedRow?.jobName) {
-        return h('span', { class: 'font-mono text-sm' }, typedRow.jobName)
-      }
-      return null
-    },
-  },
-  {
-    title: 'Command',
-    key: 'command',
-    render: (row: unknown) => {
-      const typedRow = row as BotRow
-      return h('code', { class: 'text-sm' },
-        typedRow.command + (typedRow.args ? ' ' + typedRow.args.join(' ') : ''),
-      )
-    },
-  },
-]
+const headers = computed(() => {
+  const baseHeaders = [
+    { title: 'Type', key: 'type', sortable: true },
+    { title: 'Status', key: 'status', sortable: true },
+    { title: 'Job', key: 'jobName', sortable: true },
+    { title: 'Command', key: 'command', sortable: false },
+  ]
 
-if (authStore.isAuthorized) {
-  columns.push({
-    title: 'Actions',
-    key: 'actions',
-    render: (row: unknown) => {
-      const typedRow = row as BotRow
-      return h(BotActions, {
-        bot: typedRow,
-        onStart: props.handleStartJob,
-        onStop: props.handleDeleteJob,
-      })
-    },
-  })
+  if (authStore.isAuthorized) {
+    baseHeaders.push({ title: 'Actions', key: 'actions', sortable: false })
+  }
+
+  return baseHeaders
+})
+
+const getTypeDisplay = (item: BotRow) => {
+  if (item?.type) {
+    return item.type
+  }
+  return 'Unknown'
+}
+
+const getJobDisplay = (item: BotRow) => {
+  return item?.jobName || ''
+}
+
+const getCommandDisplay = (item: BotRow) => {
+  return item.command + (item.args ? ' ' + item.args.join(' ') : '')
 }
 </script>
 
 <template>
-  <n-data-table
-    :data="botsStore.bots"
-    :columns="columns"
+  <v-data-table
+    :items="botsStore.bots"
+    :headers="headers"
     :loading="isLoading"
-    striped
-    size="small"
-  />
+    density="compact"
+    class="elevation-1"
+  >
+    <template #[`item.type`]="{ item }">
+      {{ getTypeDisplay(item) }}
+    </template>
+
+    <template #[`item.status`]="{ item }">
+      <JobStatusTag :status="item.status" />
+    </template>
+
+    <template #[`item.jobName`]="{ item }">
+      {{ getJobDisplay(item) }}
+    </template>
+
+    <template #[`item.command`]="{ item }">
+      {{ getCommandDisplay(item) }}
+    </template>
+
+    <template
+      v-if="authStore.isAuthorized"
+      #[`item.actions`]="{ item }"
+    >
+      <BotActions
+        :bot="item"
+        :on-start="props.handleStartJob"
+        :on-stop="props.handleStopJob"
+      />
+    </template>
+  </v-data-table>
 </template>

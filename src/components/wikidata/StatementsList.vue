@@ -1,33 +1,32 @@
 <script setup lang="ts">
-import PropertyLabel from '@/components/wikidata/PropertyLabel.vue'
-import StatementItem from '@/components/wikidata/StatementItem.vue'
-
 defineProps<{ statements: Statement[] }>()
-
-const columns: DataTableColumns<Statement> = [
-  {
-    key: 'property',
-    render: (row: Statement) => h(PropertyLabel, {
-      property: row.mainsnak.property,
-    }),
-    className: 'align-baseline text-right!',
-  },
-  {
-    key: 'value',
-    render: (row: Statement) => h(StatementItem, {
-      snak: row.mainsnak,
-      qualifiers: row.qualifiers || {},
-    }),
-    className: 'align-top',
-  },
-]
 </script>
 
 <template>
-  <n-data-table
-    :columns="columns"
-    :data="statements"
-    :row-key="(item) => item.id"
-    :striped="false"
-  />
+  <VDataTable
+    :items="statements"
+    :headers="[
+      { title: 'Property', key: 'property', align: 'start' },
+      { title: 'Value', key: 'value' },
+    ]"
+    :item-key="'id'"
+    :items-per-page="0"
+    density="compact"
+    class="elevation-1"
+  >
+    <template #[`item.property`]="{ item }">
+      <div class="align-baseline text-start">
+        <PropertyLabel :property="item.mainsnak.property" />
+      </div>
+    </template>
+    <template #[`item.value`]="{ item }">
+      <div class="align-top">
+        <StatementItem
+          :snak="item.mainsnak"
+          :qualifiers="item.qualifiers || {}"
+        />
+      </div>
+    </template>
+    <template #bottom></template>
+  </VDataTable>
 </template>

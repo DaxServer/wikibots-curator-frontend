@@ -23,47 +23,46 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="d-flex flex-column ga-3">
     <slot name="description-help" />
-    <div class="flex gap-3 text-sm">
-      <div class="space-y-2 grow-none">
-        <label class="block font-medium text-gray-600">Language</label>
-        <n-select
+    <div class="d-flex ga-3">
+      <div class="flex-grow-0">
+        <v-select
           :disabled="!enableLanguage"
           :model-value="language"
-          :options="languageOptions"
-          :default-value="languageOptions[0]!.value"
-          option-label="label"
-          option-value="value"
-          placeholder="Language"
-          class="w-full"
-          @update:value="(v) => emit('update:language', v)"
+          :items="languageOptions"
+          item-title="label"
+          item-value="value"
+          label="Language"
+          variant="outlined"
+          density="compact"
+          @update:model-value="(v) => emit('update:language', v)"
         />
       </div>
-      <div class="space-y-2 grow">
-        <label class="block font-medium text-gray-600">Description</label>
-        <n-input
-          type="textarea"
+      <div class="flex-grow-1">
+        <v-textarea
           :disabled="!enableDescription"
           :model-value="description"
+          label="Description"
+          variant="outlined"
+          density="compact"
           rows="1"
-          :autosize="{ minRows: 1 }"
-          class="w-full"
-          @update:value="(v) => emit('update:description', v)"
+          auto-grow
+          @update:model-value="(v) => emit('update:description', v)"
         />
       </div>
     </div>
 
-    <div class="space-y-2">
-      <label class="block text-sm font-medium text-gray-600">Categories</label>
-      <n-input
-        type="textarea"
+    <div>
+      <v-textarea
         :disabled="!enableCategories"
         :model-value="categories"
+        label="Categories"
+        variant="outlined"
+        density="compact"
         rows="3"
-        :autosize="{ minRows: 3 }"
-        class="w-full"
-        @update:value="(v) => emit('update:categories', v)"
+        auto-grow
+        @update:model-value="(v) => emit('update:categories', v)"
       />
     </div>
   </div>

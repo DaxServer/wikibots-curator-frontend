@@ -3,7 +3,7 @@ const store = useMapillaryStore()
 </script>
 
 <template>
-  <n-card class="mb-4 bg-gray-400">
+  <v-card class="mb-4 bg-grey-lighten-5 pa-4">
     <MapillaryInputs
       :language="store.globalLanguage"
       :description="store.globalDescription"
@@ -13,14 +13,15 @@ const store = useMapillaryStore()
       @update:categories="(v) => (store.globalCategories = v)"
     >
       <template #description-help>
-        <n-alert
+        <v-alert
           type="info"
+          variant="tonal"
           class="w-fit font-normal"
         >
           Will be applied to all selected images
           <span class="underline">only as a fallback</span>
-        </n-alert>
+        </v-alert>
       </template>
     </MapillaryInputs>
-  </n-card>
+  </v-card>
 </template>

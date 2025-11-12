@@ -5,7 +5,8 @@
     "components.d.ts",
     "env.d.ts",
     "interface-extensions.d.ts",
-    "src/**/*"
+    "src/**/*",
+    "src/**/*.vue"
   ],
   "compilerOptions": {
     // Enable strict type checking
@@ -25,12 +26,14 @@
 
     "baseUrl": ".",
     "paths": {
-      "@": ["./src/*"],
+      "@/*": ["./src/*"]
     },
 
     "lib": ["esnext", "dom"],
     "jsx": "preserve",
     "jsxImportSource": "vue",
-    "types": ["vite/client", "bun", "node", "naive-ui/volar"],
-  }
+    "types": ["vite/client", "bun", "unplugin-icons/types/vue", "vuetify"],
+    "plugins": [{ "name": "@vue/typescript-plugin", "allowVueInTs": true }]
+  },
+  "vueCompilerOptions": { "target": 3, "strictTemplates": true }
 }

@@ -81,7 +81,13 @@ export const useMapillary = () => {
     store.isLoading = true
     store.error = null
     try {
-      const response = await fetch(`/api/mapillary/sequences/${store.sequenceId}/sdc?images=${(store.selectedItems).map((i) => i.id).join(',')}`)
+      const params = new URLSearchParams()
+      for (const item of store.selectedItems) {
+        params.append('images', item.id)
+      }
+      const response = await fetch(
+        `/api/mapillary/sequences/${store.sequenceId}/sdc?${params.toString()}`,
+      )
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }

@@ -65,35 +65,33 @@ const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType
 
 <template>
   <div class="card mt-4">
-    <div class="flex justify-between items-center mb-4 ml-2">
+    <div class="d-flex justify-space-between align-center mb-4 ml-2">
       <h2>Bots</h2>
-      <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600">
+      <div class="d-flex align-center ga-2">
+        <span class="text-body-2 text-grey-darken-1">
           Last updated: {{ botsStore.lastRefreshed?.toLocaleTimeString() ?? 'Never' }}
         </span>
-        <n-button
+        <v-btn
           :loading="isLoading"
           :disabled="isLoading"
-          type="info"
-          circle
+          color="info"
+          icon
           @click="refreshBots"
         >
-          <template #icon>
-            <i class="pi pi-refresh" />
-          </template>
-        </n-button>
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
       </div>
     </div>
 
     <!-- Error Message -->
-    <n-alert
+    <v-alert
       v-if="error"
-      type="error"
+      color="error"
       class="mb-4"
       :closable="false"
     >
       {{ error }}
-    </n-alert>
+    </v-alert>
 
     <!-- Data Table -->
     <BotsDataTable

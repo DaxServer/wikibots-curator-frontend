@@ -1,41 +1,13 @@
 <script lang="ts" setup>
-import { CloudUploadOutline } from '@vicons/ionicons5'
-import StatementsList from '@/components/wikidata/StatementsList.vue'
+import { mdiCloudUpload } from '@mdi/js'
 
 const store = useMapillaryStore()
 const { wikitext, submitUpload, loadSDC } = useMapillary()
 
-const columns: DataTableColumns<MapillaryItem> = [
-  {
-    title: '#',
-    key: 'index',
-    className: 'align-baseline',
-    render: (row: MapillaryItem) => h('span', { class: 'text-lg font-medium' }, row.index),
-  },
-  {
-    title: 'Image',
-    key: 'image',
-    className: 'align-top',
-    render: (row: MapillaryItem) => h('img', {
-      src: row.image.thumb_256_url,
-      alt: `Mapillary image ${row.id}`,
-    }),
-  },
-  {
-    title: 'Metadata',
-    key: 'metadata',
-    render: (row: MapillaryItem) => h('div', { class: 'flex flex-col gap-2' }, [
-      h('div', { class: 'text-lg font-bold' }, `File: ${row.meta.title}`),
-      h('pre', { class: 'text-xs bg-gray-50 p-2' }, wikitext(row)),
-      h('div', [
-        h('div', { class: 'text-lg font-bold' }, 'SDC'),
-        h(StatementsList, {
-          key: row.id,
-          statements: row.sdc,
-        }),
-      ]),
-    ]),
-  },
+const headers = [
+  { title: '#', key: 'index', width: '80px' },
+  { title: 'Image', key: 'image', width: '200px' },
+  { title: 'Metadata', key: 'metadata' },
 ]
 
 onMounted(async () => {
@@ -47,36 +19,63 @@ onMounted(async () => {
   <div>
     <MapillarySequenceInfo />
 
-    <div class="my-4 bg-gray-100 p-4 rounded-md">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <div class="text-lg font-bold">Preview</div>
-          <span class="text-sm text-gray-500">
+    <v-card
+      class="my-4"
+      color="grey-lighten-4"
+    >
+      <v-card-text class="d-flex justify-space-between align-center">
+        <div class="d-flex align-center ga-2">
+          <div class="text-h6 font-weight-bold">Preview</div>
+          <span class="text-body-2 text-medium-emphasis">
             displaying {{ store.selectedCount }} items to upload
           </span>
         </div>
-        <n-button
-          type="primary"
+        <v-btn
+          :prepend-icon="mdiCloudUpload"
+          color="primary"
           :disabled="store.selectedCount === 0"
           @click="submitUpload"
         >
-          <template #icon>
-            <n-icon>
-              <CloudUploadOutline />
-            </n-icon>
-          </template>
           Upload
-        </n-button>
-      </div>
-    </div>
+        </v-btn>
+      </v-card-text>
+    </v-card>
 
-    <n-data-table
-      :columns="columns"
-      :data="store.displayedItems"
-      :pagination="{
-        pageSize: 10,
-      }"
-      :row-key="(item) => item.id"
-    />
+    <v-data-table
+      :headers="headers"
+      :items="store.displayedItems"
+      :items-per-page="10"
+      item-key="id"
+    >
+      <template #item.index="{ item }">
+        <span class="text-body-1 font-weight-medium">{{ item.index }}</span>
+      </template>
+
+      <template #item.image="{ item }">
+        <v-img
+          :src="item.image.thumb_256_url"
+          :alt="`Mapillary image ${item.id}`"
+          class="my-2"
+        />
+      </template>
+
+      <template #item.metadata="{ item }">
+        <div class="d-flex flex-column ga-3">
+          <div class="text-body-1 font-weight-bold">File: {{ item.meta.title }}</div>
+          <pre
+            class="text-caption bg-grey-lighten-4 pa-2 rounded"
+            style="font-family: monospace"
+            >{{ wikitext(item).trim() }}</pre
+          >
+          <div>
+            <div class="text-body-1 font-weight-bold">SDC</div>
+            <StatementsList
+              :key="item.id"
+              :statements="item.sdc"
+            />
+          </div>
+        </div>
+      </template>
+    </v-data-table>
   </div>
 </template>

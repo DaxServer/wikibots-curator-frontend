@@ -5,55 +5,61 @@ const store = useMapillaryStore()
 </script>
 
 <template>
-  <div class="grid grid-cols-3 lg:grid-cols-4 gap-4 my-5">
-    <div
+  <v-row class="my-5">
+    <v-col
       v-for="item in items"
       :key="item.image.id"
-      class="relative border-2 border-transparent"
-      :class="{ 'border-green-500!': item.meta.selected }"
+      cols="4"
+      lg="3"
+      class="pa-2"
     >
-      <div
-        class="cursor-pointer"
+      <v-card
+        :color="item.meta.selected ? 'success' : undefined"
+        :variant="item.meta.selected ? 'outlined' : 'flat'"
+        class="position-relative"
         @click="store.updateItem(item.image.id, 'selected', !item.meta.selected)"
       >
         <!-- Corner check overlay when selected for upload -->
-        <div
+        <IMdiCheckCircle
           v-if="item.meta.selected"
-          class="pointer-events-none absolute top-0 left-0 z-10"
-        >
-          <div
-            class="w-0 h-0 border-t-[66px] border-r-[66px] border-t-green-500 border-r-transparent opacity-80"
-          ></div>
-          <i class="pi pi-check text-white absolute top-2 left-2 text-xl!"></i>
-        </div>
-        <n-image
+          class="position-absolute text-success"
+        />
+
+        <v-img
           :src="item.image.thumb_256_url"
           :alt="`Mapillary image ${item.image.id}`"
+          cover
+          class="cursor-pointer"
         />
-      </div>
-      <div
-        class="flex flex-row justify-between items-center"
-        :class="{ 'bg-green-100': item.meta.selected }"
-      >
-        <div class="grow-none mx-3">
-          <span class="text-lg">{{ item.index }}</span>
-        </div>
-        <div class="flex flex-col grow">
-          <span class="text-sm">Time: {{ new Date(item.image.captured_at).toLocaleString() }}</span>
-          <span class="text-xs">Image ID: {{ item.image.id }}</span>
-        </div>
-        <div class="grow-none">
-          <a
-            :href="`https://www.mapillary.com/app/?pKey=${item.image.id}&focus=photo`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-md text-blue-500 hover:underline"
-          >
-            Open
-            <i class="pi pi-external-link ml-1"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+
+        <v-card-text
+          class="d-flex justify-space-between align-center pa-2"
+          :class="{ 'bg-success-lighten-4': item.meta.selected }"
+        >
+          <div class="flex-shrink-0">
+            <span class="text-body-1 font-weight-medium">{{ item.index }}</span>
+          </div>
+          <div class="d-flex flex-column flex-grow-1 mx-2">
+            <span class="text-caption">
+              Time: {{ new Date(item.image.captured_at).toLocaleString() }}
+            </span>
+            <span class="text-caption text-medium-emphasis">Image ID: {{ item.image.id }}</span>
+          </div>
+          <div class="flex-shrink-0">
+            <v-btn
+              :href="`https://www.mapillary.com/app/?pKey=${item.image.id}&focus=photo`"
+              target="_blank"
+              variant="text"
+              color="primary"
+              size="small"
+              @click.stop
+            >
+              Open
+              <IMdiOpenInNew class="ml-2" />
+            </v-btn>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>

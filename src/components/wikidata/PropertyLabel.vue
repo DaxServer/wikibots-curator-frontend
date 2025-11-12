@@ -8,7 +8,7 @@ const { getPropertyLabel } = useWikidata()
     :href="`https://www.wikidata.org/wiki/Property:${property}`"
     target="_blank"
     rel="noopener noreferrer"
-    class="text-sm text-blue-500 hover:underline"
+    class="text-body-2 text-blue hover:underline"
   >
     {{ getPropertyLabel(property) }} ({{ property }})
   </a>

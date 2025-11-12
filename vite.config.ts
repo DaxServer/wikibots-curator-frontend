@@ -4,9 +4,11 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import Components from 'unplugin-vue-components/vite'
+import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
 import AutoImport from 'unplugin-auto-import/vite'
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import vuetify from 'vite-plugin-vuetify'
 
 export default defineConfig((): import('vite').UserConfig => {
   return {
@@ -14,15 +16,11 @@ export default defineConfig((): import('vite').UserConfig => {
       vue(),
       vueDevTools(),
       tailwindcss(),
+      vuetify({ autoImport: true }),
       AutoImport({
         imports: [
           'vue',
           'pinia',
-          {
-            from: 'naive-ui',
-            imports: ['GlobalThemeOverrides', 'DataTableColumns', 'DataTableRowKey', 'RowData', 'SelectOption'],
-            type: true,
-          },
         ],
         dirs: ['src/**'],
         dts: true,
@@ -38,8 +36,11 @@ export default defineConfig((): import('vite').UserConfig => {
         dirs: ['src/**'],
         extensions: ['vue'],
         deep: true,
-        resolvers: [NaiveUiResolver()],
         dts: true,
+        resolvers: [
+          IconsResolver(),
+          VuetifyResolver(),
+        ],
       }),
     ] as PluginOption[],
     resolve: {

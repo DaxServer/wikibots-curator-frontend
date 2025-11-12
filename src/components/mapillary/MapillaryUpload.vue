@@ -1,20 +1,18 @@
 <script setup lang="ts">
 const store = useMapillaryStore()
 
-const columns = [
+const headers = [
   { title: '#', key: 'index' },
-  { 
-    title: 'Title', 
-    key: 'title',
-    render: (row: any) => `File:${row.meta.title}`,
-  },
+  { title: 'Title', key: 'title' },
 ]
 </script>
 
 <template>
-  <n-data-table
-    :columns="columns"
-    :data="store.displayedItems"
+  <v-data-table
+    :headers="headers"
+    :items="store.displayedItems"
     class="mt-4 mb-20"
-  />
+  >
+    <template #item.title="{ item }">File:{{ item.meta.title }}</template>
+  </v-data-table>
 </template>

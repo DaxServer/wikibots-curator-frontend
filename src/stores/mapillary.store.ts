@@ -37,7 +37,7 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     }
   }
 
-  const updateSelected = (ids: DataTableRowKey[]) => {
+  const updateSelected = (ids: (string | number)[]) => {
     Object.values(items.value).forEach((item) => {
       item.meta.selected = ids.includes(item.id)
     })
@@ -81,7 +81,9 @@ export const useMapillaryStore = defineStore('mapillary', () => {
       return Object.values(items.value)
     }
 
-    return selectedCount.value > 0 && showSelectedOnly.value ? selectedItems.value : Object.values(items.value)
+    return selectedCount.value > 0 && showSelectedOnly.value
+      ? selectedItems.value
+      : Object.values(items.value)
   })
   const displayRows = computed(() => (stepper.value === '2' ? 5 : 5))
 

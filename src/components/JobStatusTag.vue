@@ -13,23 +13,21 @@ const durationDisplayParts = computed(() => {
 </script>
 
 <template>
-  <n-tag :type="status.info.severity">
-    <template #default>
-      <div>
-        <span v-if="status.state !== 'error'">{{ status.info.label }}</span>
-        <template v-if="durationDisplayParts">
-          <span>
-            for {{ durationDisplayParts.hours }}:{{ durationDisplayParts.minutes }}
-            <span class="text-xs">:{{ durationDisplayParts.seconds }}</span>
-          </span>
-        </template>
-      </div>
-      <div
-        v-if="status.state === 'error'"
-        class="mt-1 text-xs"
-      >
-        {{ status.info.text }}
-      </div>
-    </template>
-  </n-tag>
+  <v-chip :color="status.info.severity">
+    <div>
+      <span v-if="status.state !== 'error'">{{ status.info.label }}</span>
+      <template v-if="durationDisplayParts">
+        <span>
+          for {{ durationDisplayParts.hours }}:{{ durationDisplayParts.minutes }}
+          <span class="text-xs">:{{ durationDisplayParts.seconds }}</span>
+        </span>
+      </template>
+    </div>
+    <div
+      v-if="status.state === 'error'"
+      class="mt-1 text-xs"
+    >
+      {{ status.info.text }}
+    </div>
+  </v-chip>
 </template>

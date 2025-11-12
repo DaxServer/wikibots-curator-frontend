@@ -3,18 +3,18 @@ defineProps<{ snak: Snak; qualifiers: Record<string, Snak[]> }>()
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 py-1">
+  <div class="d-flex flex-column ga-2 py-1">
     <VR :snak="snak" />
 
     <!-- Qualifiers -->
     <div
       v-if="qualifiers"
-      class="ml-6 flex flex-col gap-1"
+      class="ml-6 d-flex flex-column ga-1"
     >
       <div
         v-for="([pid, snaks], idx) in Object.entries(qualifiers)"
         :key="`qualifier-${pid}-${idx}`"
-        class="flex items-center gap-2"
+        class="d-flex align-center ga-2"
       >
         <PropertyLabel :property="pid" />
         <div>

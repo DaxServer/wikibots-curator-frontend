@@ -3,7 +3,7 @@ defineProps<{ items: MapillaryItem[] }>()
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="d-flex flex-column">
     <div
       v-for="(item, index) in items"
       :key="item.image.id"

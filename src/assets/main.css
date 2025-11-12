@@ -1,6 +1,0 @@
-@import 'tailwindcss';
-
-/* Add global utility classes here */
-.row-selected-global td {
-  @apply bg-green-50!;
-}

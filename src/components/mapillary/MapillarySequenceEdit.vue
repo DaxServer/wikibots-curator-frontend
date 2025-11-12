@@ -12,53 +12,56 @@ const { submitUpload } = useMapillary()
     <MapillaryBatchPanel />
 
     <!-- Toggle between showing only selected items vs all items -->
-    <div class="flex justify-between mb-4">
-      <n-alert
+    <div class="d-flex justify-space-between align-center mt-4 mb-4 ga-4">
+      <!-- <div class="flex-shrink-0"> -->
+      <v-alert
         type="info"
+        variant="tonal"
       >
         Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
-      </n-alert>
-      <div class="flex gap-4">
-        <!-- <n-button
+      </v-alert>
+      <!-- </div> -->
+      <!-- <div class="flex gap-4"> -->
+      <!-- <v-btn
           :disabled="store.selectedCount === 0"
-          type="info"
+          color="info"
           @click="store.showSelectedOnly = !store.showSelectedOnly"
         >
-          <template #icon>
-            <n-icon>
+          <template #prepend>
+            <v-icon>
               <FilterCircleOutline />
-            </n-icon>
+            </v-icon>
           </template>
-          {{
-            store.showSelectedOnly && store.selectedCount > 0
-              ? 'Show all items'
-              : 'Show only selected'
-          }}
-        </n-button> -->
-        <n-button
-          :disabled="store.selectedCount === 0"
-          type="primary"
-          @click="store.stepper = '4'"
-        >
-          <template #icon>
-            <n-icon>
-              <EyeOutline />
-            </n-icon>
-          </template>
-          Preview edits
-        </n-button>
-        <n-button
-          :disabled="store.selectedCount === 0"
-          @click="submitUpload"
-        >
-          <template #icon>
-            <n-icon>
-              <CloudUploadOutline />
-            </n-icon>
-          </template>
-          Upload
-        </n-button>
-      </div>
+{{
+store.showSelectedOnly && store.selectedCount > 0
+? 'Show all items'
+: 'Show only selected'
+}}
+</v-btn> -->
+      <v-btn
+        :disabled="store.selectedCount === 0"
+        color="primary"
+        @click="store.stepper = '4'"
+      >
+        <template #prepend>
+          <v-icon>
+            <EyeOutline />
+          </v-icon>
+        </template>
+        Preview edits
+      </v-btn>
+      <v-btn
+        :disabled="store.selectedCount === 0"
+        @click="submitUpload"
+      >
+        <template #prepend>
+          <v-icon>
+            <CloudUploadOutline />
+          </v-icon>
+        </template>
+        Upload
+      </v-btn>
+      <!-- </div> -->
     </div>
 
     <div
