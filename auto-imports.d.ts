@@ -6,9 +6,12 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const Aura: typeof import('@primevue/themes/aura')['default']
   const EffectScope: typeof import('vue')['EffectScope']
-  const PrimeVue: typeof import('primevue/config')['default']
+  const IconEye: typeof import('@vicons/tabler')['IconEye']
+  const IconFilter: typeof import('@vicons/tabler')['IconFilter']
+  const IconSearch: typeof import('@vicons/tabler')['IconSearch']
+  const IconUpload: typeof import('@vicons/tabler')['IconUpload']
+  const Search: typeof import('@vicons/ionicons5')['Search']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const botsStore: typeof import('./src/stores/bots.store')['default']
   const computed: typeof import('vue')['computed']
@@ -34,6 +37,7 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const isShallow: typeof import('vue')['isShallow']
   const jobsStore: typeof import('./src/stores/jobs.store')['default']
+  const languageOptions: typeof import('./src/components/mapillary/languageOptions')['languageOptions']
   const mapActions: typeof import('pinia')['mapActions']
   const mapGetters: typeof import('pinia')['mapGetters']
   const mapState: typeof import('pinia')['mapState']
@@ -84,9 +88,12 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useJobsApi: typeof import('./src/composables/useJobsApi')['default']
   const useJobsStore: typeof import('./src/stores/jobs.store')['useJobsStore']
+  const useMapillary: typeof import('./src/composables/useMapillary')['useMapillary']
+  const useMapillaryStore: typeof import('./src/stores/mapillary.store')['useMapillaryStore']
   const useModel: typeof import('vue')['useModel']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
+  const useWikidata: typeof import('./src/components/wikidata/useWikidata')['useWikidata']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
   const watchPostEffect: typeof import('vue')['watchPostEffect']
@@ -109,6 +116,12 @@ declare global {
   // @ts-ignore
   export type { Job, JobRequest } from './src/types/jobs'
   import('./src/types/jobs')
+  // @ts-ignore
+  export type { MapillaryImage, MapillaryApiResponse, Metadata, MetadataKey, MetadataValue, MapillaryItem, Layout } from './src/types/mapillary'
+  import('./src/types/mapillary')
+  // @ts-ignore
+  export type { WikibaseEntityType, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, DataValueGlobeCoordinate, StringDataValue, EntityIdDataValue, MonolingualTextDataValue, QuantityDataValue, TimeDataValue, GlobeCoordinateDataValue, UrlDataValue, DataValue, SnakType, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
+  import('./src/types/wikidata')
 }
 
 // for vue template auto import
@@ -116,9 +129,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly Aura: UnwrapRef<typeof import('@primevue/themes/aura')['default']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
-    readonly PrimeVue: UnwrapRef<typeof import('primevue/config')['default']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly botsStore: UnwrapRef<typeof import('./src/stores/bots.store')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -144,6 +155,7 @@ declare module 'vue' {
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
     readonly jobsStore: UnwrapRef<typeof import('./src/stores/jobs.store')['default']>
+    readonly languageOptions: UnwrapRef<typeof import('./src/components/mapillary/languageOptions')['languageOptions']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
@@ -194,9 +206,12 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useJobsApi: UnwrapRef<typeof import('./src/composables/useJobsApi')['default']>
     readonly useJobsStore: UnwrapRef<typeof import('./src/stores/jobs.store')['useJobsStore']>
+    readonly useMapillary: UnwrapRef<typeof import('./src/composables/useMapillary')['useMapillary']>
+    readonly useMapillaryStore: UnwrapRef<typeof import('./src/stores/mapillary.store')['useMapillaryStore']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useWikidata: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['useWikidata']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

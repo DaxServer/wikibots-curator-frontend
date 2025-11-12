@@ -1,7 +1,15 @@
 <script setup lang="ts">
 interface Props {
   handleStartJob: (jobType: string) => void
-  handleDeleteJob: (jobType: string) => void
+  handleStopJob: (jobType: string) => void
+}
+
+interface BotRow {
+  type: string
+  status: BotStatus
+  jobName: string
+  command: string
+  args: string[]
 }
 
 const props = defineProps<Props>()
@@ -9,47 +17,71 @@ const botsStore = useBotsStore()
 const authStore = useAuthStore()
 
 const { isLoading } = useBotStatus()
+
+const headers = computed(() => {
+  const baseHeaders = [
+    { title: 'Type', key: 'type', sortable: true },
+    { title: 'Status', key: 'status', sortable: true },
+    { title: 'Job', key: 'jobName', sortable: true },
+    { title: 'Command', key: 'command', sortable: false },
+  ]
+
+  if (authStore.isAuthorized) {
+    baseHeaders.push({ title: 'Actions', key: 'actions', sortable: false })
+  }
+
+  return baseHeaders
+})
+
+const getTypeDisplay = (item: BotRow) => {
+  if (item?.type) {
+    return item.type
+  }
+  return 'Unknown'
+}
+
+const getJobDisplay = (item: BotRow) => {
+  return item?.jobName || ''
+}
+
+const getCommandDisplay = (item: BotRow) => {
+  return item.command + (item.args ? ' ' + item.args.join(' ') : '')
+}
 </script>
 
 <template>
-  <DataTable
-    :value="botsStore.bots"
+  <v-data-table
+    :items="botsStore.bots"
+    :headers="headers"
     :loading="isLoading"
-    stripedRows
-    size="small"
-    class="p-datatable-sm"
+    density="compact"
+    class="elevation-1"
   >
-    <Column field="type" header="Type">
-      <template #body="{ data }">
-        <span v-if="data?.type" class="font-bold">{{ data.type }}</span>
-        <span v-else class="text-gray-400 italic">Unknown</span>
-      </template>
-    </Column>
+    <template #[`item.type`]="{ item }">
+      {{ getTypeDisplay(item) }}
+    </template>
 
-    <Column header="Status">
-      <template #body="{ data }">
-        <JobStatusTag :status="data.status" />
-      </template>
-    </Column>
+    <template #[`item.status`]="{ item }">
+      <JobStatusTag :status="item.status" />
+    </template>
 
-    <Column field="jobName" header="Job">
-      <template #body="{ data }">
-        <span v-if="data?.jobName" class="font-mono text-sm">{{ data.jobName }}</span>
-      </template>
-    </Column>
+    <template #[`item.jobName`]="{ item }">
+      {{ getJobDisplay(item) }}
+    </template>
 
-    <Column header="Command">
-      <template #body="{ data }">
-        <code class="text-sm"
-          >{{ data.command }}{{ data.args ? ' ' + data.args.join(' ') : '' }}</code
-        >
-      </template>
-    </Column>
+    <template #[`item.command`]="{ item }">
+      {{ getCommandDisplay(item) }}
+    </template>
 
-    <Column v-if="authStore.isAuthorized" header="Actions">
-      <template #body="{ data }">
-        <BotActions :bot="data" :on-start="props.handleStartJob" :on-stop="props.handleDeleteJob" />
-      </template>
-    </Column>
-  </DataTable>
+    <template
+      v-if="authStore.isAuthorized"
+      #[`item.actions`]="{ item }"
+    >
+      <BotActions
+        :bot="item"
+        :on-start="props.handleStartJob"
+        :on-stop="props.handleStopJob"
+      />
+    </template>
+  </v-data-table>
 </template>

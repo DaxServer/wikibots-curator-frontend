@@ -1,5 +1,9 @@
-import 'primeicons/primeicons.css' // Icons
-import '@/assets/main.css' // Tailwind CSS
+// Vuetify
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import 'vuetify/styles'
 
 import App from '@/App.vue'
 
@@ -11,11 +15,24 @@ const pinia = createPinia()
 
 // Register plugins
 app.use(pinia)
-app.use(PrimeVue, {
-  theme: {
-    preset: Aura,
-  },
-})
+
+// Register Vuetify
+app.use(
+  createVuetify({
+    components,
+    directives,
+    icons: {
+      defaultSet: 'mdi',
+      aliases,
+      sets: {
+        mdi,
+      },
+    },
+    theme: {
+      defaultTheme: 'light',
+    },
+  }),
+)
 
 // Mount the app
 app.mount('#app')

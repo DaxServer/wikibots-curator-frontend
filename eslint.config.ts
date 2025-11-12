@@ -1,28 +1,63 @@
-import stylistic from '@stylistic/eslint-plugin'
-import typescriptParser from '@typescript-eslint/parser'
-import typescriptPlugin from '@typescript-eslint/eslint-plugin'
+import js from '@eslint/js'
+import prettierConfig from 'eslint-config-prettier'
+import pluginVue from 'eslint-plugin-vue'
+import { defineConfig } from 'eslint/config'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
+import vueParser from 'vue-eslint-parser'
+import autoImportGlobals from './.eslintrc-auto-import.json'
 
-const extraFileExtensions = ['.vue']
-
-export default [
+export default defineConfig(
   {
-    files: ['src/**/*.ts'],
-    plugins: {
-      '@stylistic': stylistic,
-      '@typescript-eslint': typescriptPlugin,
-    },
+    ignores: [
+      '*.config.*',
+      '*.d.ts',
+      '*.json',
+      'bun.lock',
+      'dist/**',
+      'node_modules/**',
+      'src/**/*.test.ts',
+    ],
+  },
+  js.configs.recommended,
+  ...pluginVue.configs['flat/recommended'],
+  ...tseslint.configs.recommendedTypeChecked,
+  prettierConfig,
+  {
+    files: ['**/*.{ts,vue}'],
     languageOptions: {
-      parser: typescriptParser,
+      parser: vueParser,
       parserOptions: {
-        project: 'tsconfig.app.json',
         ecmaVersion: 'latest',
+        parser: tseslint.parser,
         sourceType: 'module',
-        extraFileExtensions,
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: ['.vue'],
+      },
+      globals: {
+        ...globals.browser,
+        ...autoImportGlobals.globals,
       },
     },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
     rules: {
-      ...typescriptPlugin.configs['eslint-recommended'].rules,
-      ...typescriptPlugin.configs.recommended.rules,
+      'vue/multi-word-component-names': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/html-indent': 'off',
+      'vue/valid-v-slot': 'off', // Allow dot notation in v-slot for Vuetify data tables
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'comma-dangle': ['error', 'always-multiline'],
+
+      // Temporary
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
     },
   },
-]
+)

@@ -16,7 +16,7 @@ jobs:
 
       - name: Determine Bun version
         id: determine-bun-version
-        run: echo "BUN_VERSION=$(cat package.json | grep '\"bun\":' | cut -d '"' -f 4)" >> $GITHUB_OUTPUT
+        run: echo "BUN_VERSION=$(jq -r '.engines.bun' package.json)" >> $GITHUB_OUTPUT
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2

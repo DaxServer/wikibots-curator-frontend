@@ -54,39 +54,50 @@ const refreshBots = async (actionOrEvent?: (() => Promise<void>) | MouseEvent) =
 }
 
 // Initialize data when component is mounted
-onMounted(() => {
-  refreshBots()
+onMounted(async () => {
+  await refreshBots()
 })
 
 // Wrapper functions for job actions
 const handleStartJob = (jobType: string) => refreshBots(() => startJob(jobType))
-const handleDeleteJob = (jobType: string) => refreshBots(() => deleteJob(jobType))
+const handleStopJob = (jobType: string) => refreshBots(() => deleteJob(jobType))
 </script>
 
 <template>
   <div class="card mt-4">
-    <div class="flex justify-between items-center mb-4 ml-2">
+    <div class="d-flex justify-space-between align-center mb-4 ml-2">
       <h2>Bots</h2>
-      <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600">
+      <div class="d-flex align-center ga-2">
+        <span class="text-body-2 text-grey-darken-1">
           Last updated: {{ botsStore.lastRefreshed?.toLocaleTimeString() ?? 'Never' }}
         </span>
-        <Button
-          icon="pi pi-refresh"
-          class="p-button-rounded p-button-info"
+        <v-btn
           :loading="isLoading"
           :disabled="isLoading"
+          color="info"
+          icon
           @click="refreshBots"
-        />
+        >
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
       </div>
     </div>
 
     <!-- Error Message -->
-    <Message v-if="error" severity="error" class="mb-4" :closable="false">
+    <v-alert
+      v-if="error"
+      color="error"
+      class="mb-4"
+      :closable="false"
+    >
       {{ error }}
-    </Message>
+    </v-alert>
 
     <!-- Data Table -->
-    <BotsDataTable v-else :handle-start-job="handleStartJob" :handle-delete-job="handleDeleteJob" />
+    <BotsDataTable
+      v-else
+      :handle-start-job="handleStartJob"
+      :handle-stop-job="handleStopJob"
+    />
   </div>
 </template>

@@ -1,34 +1,44 @@
 <script setup lang="ts">
 const authStore = useAuthStore()
 
-const handleLogin = () => authStore.login()
-const handleLogout = () => authStore.logout()
-
-onMounted(() => {
-  authStore.checkAuth()
+onMounted(async () => {
+  await authStore.checkAuth()
 })
 </script>
 
 <template>
-  <Toolbar class="flex justify-between items-center border-l-0! border-r-0! border-t-0! md:px-52!">
-    <template #start>
-      <h1>CuratorBot - Toolforge Jobs</h1>
-    </template>
-    <template #end>
-      <div v-if="authStore.isAuthenticated" class="flex items-center space-x-2">
-        <span>Welcome, {{ authStore.user }}!</span>
-        <Button label="Logout" severity="secondary" size="small" @click="handleLogout" />
+  <v-app-bar
+    color="white"
+    elevation="1"
+    class="border-b border-gray-200"
+  >
+    <v-app-bar-title class="text-h6 font-weight-bold text-grey-darken-3">
+      Curator App
+    </v-app-bar-title>
+
+    <v-spacer />
+
+    <div class="d-flex align-center ga-4">
+      <div v-if="!authStore.isAuthenticated">
+        <v-btn
+          color="primary"
+          @click="authStore.login"
+        >
+          Login
+        </v-btn>
       </div>
-      <div v-else>
-        <Button
-          label="Login with Wikimedia Commons"
-          severity="secondary"
-          size="small"
-          @click="handleLogin"
-          :loading="authStore.isLoading"
-          :disabled="authStore.isLoading"
-        />
+      <div
+        v-else
+        class="d-flex align-center ga-4"
+      >
+        <span class="text-grey-darken-1">{{ authStore.user }}</span>
+        <v-btn
+          variant="outlined"
+          @click="authStore.logout"
+        >
+          Logout
+        </v-btn>
       </div>
-    </template>
-  </Toolbar>
+    </div>
+  </v-app-bar>
 </template>
