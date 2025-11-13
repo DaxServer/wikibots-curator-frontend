@@ -1,5 +1,42 @@
 export const useMapillary = () => {
   const store = useMapillaryStore()
+  let poller: number | null = null
+
+  const stopPolling = () => {
+    if (poller !== null) {
+      clearInterval(poller)
+      poller = null
+    }
+    store.isStatusChecking = false
+  }
+  const startPolling = (batchId: string) => {
+    const statusCheck = async () => {
+      store.isStatusChecking = true
+      const resp = await fetch(`/api/mapillary/uploads/${batchId}`).catch(() => null)
+      if (!resp || !resp.ok) {
+        store.isStatusChecking = false
+        return
+      }
+      const updates = (await resp.json()) as {
+        image_id: string
+        status: UploadStatus
+        error?: string
+      }[]
+      for (const u of updates) {
+        store.updateItem(u.image_id, 'status', u.status)
+        if (u.status === 'failed') {
+          store.updateItem(u.image_id, 'statusReason', u.error ?? '')
+        }
+      }
+      const done = store.selectedItems.every(
+        (i) => i.meta.status === 'completed' || i.meta.status === 'failed',
+      )
+      store.isStatusChecking = false
+      if (done) stopPolling()
+    }
+    poller = setInterval(statusCheck, 5000) as unknown as number
+    void statusCheck()
+  }
 
   const validationRules = {
     sequenceId: [
@@ -172,6 +209,22 @@ ${categories}
       if (!res.ok) {
         const text = await res.text()
         store.error = `Upload failed: ${res.status} ${text}`
+        return
+      }
+      const body = (await res.json()) as {
+        id: number
+        status: UploadStatus
+        image_id: string
+        sequence_id: string
+        batch_id: string
+      }[]
+      if (body.length > 0) {
+        store.batchId = body[0]!.batch_id
+        for (const r of body) {
+          store.updateItem(r.image_id, 'status', r.status)
+        }
+        stopPolling()
+        startPolling(store.batchId)
       }
     } catch (err) {
       store.error = err instanceof Error ? err.message : 'Failed to submit upload request'

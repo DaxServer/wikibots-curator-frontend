@@ -117,7 +117,7 @@ declare global {
   export type { Job, JobRequest } from './src/types/jobs'
   import('./src/types/jobs')
   // @ts-ignore
-  export type { MapillaryImage, MapillaryApiResponse, Metadata, MetadataKey, MetadataValue, MapillaryItem, Layout } from './src/types/mapillary'
+  export type { MapillaryImage, MapillaryApiResponse, Metadata, MetadataKey, MetadataValue, MapillaryItem, Layout, UploadStatus } from './src/types/mapillary'
   import('./src/types/mapillary')
   // @ts-ignore
   export type { WikibaseEntityType, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, DataValueGlobeCoordinate, StringDataValue, EntityIdDataValue, MonolingualTextDataValue, QuantityDataValue, TimeDataValue, GlobeCoordinateDataValue, UrlDataValue, DataValue, SnakType, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'

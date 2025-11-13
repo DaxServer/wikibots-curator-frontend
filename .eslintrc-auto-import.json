@@ -50,6 +50,7 @@
     "StatusInfo": true,
     "StringDataValue": true,
     "TimeDataValue": true,
+    "UploadStatus": true,
     "UrlDataValue": true,
     "VNode": true,
     "ValueSnak": true,

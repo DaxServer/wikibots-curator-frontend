@@ -9,8 +9,8 @@ const headers = [
   { title: 'Metadata', key: 'metadata' },
 ]
 
-const rowProps = (item: unknown) => {
-  if (item.item.meta.selected) {
+const rowProps = ({ item }: { item: MapillaryItem }) => {
+  if (item.meta.selected) {
     return { class: 'bg-green-lighten-5' }
   }
 }
@@ -35,12 +35,15 @@ const rowProps = (item: unknown) => {
       </template>
 
       <template #item.image="{ item }">
-        <v-img
-          :src="item.image.thumb_256_url"
-          :alt="`Mapillary image ${item.id}`"
+        <div
           class="cursor-pointer"
           @click="store.updateItem(item.id, 'selected', !item.meta.selected)"
-        />
+        >
+          <v-img
+            :src="item.image.thumb_256_url"
+            :alt="`Mapillary image ${item.id}`"
+          />
+        </div>
       </template>
 
       <template #item.metadata="{ item }">
