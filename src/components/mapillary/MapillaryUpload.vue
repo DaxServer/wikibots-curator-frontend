@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const store = useMapillaryStore()
+const { stopPolling } = useMapillary()
 
 const headers = [
   { title: '#', key: 'index' },
@@ -12,6 +13,10 @@ const rowProps = ({ item }: { item: MapillaryItem }) => {
   if (status === 'failed') return { class: 'bg-red-lighten-5' }
   return {}
 }
+
+onUnmounted(() => {
+  stopPolling()
+})
 </script>
 
 <template>
