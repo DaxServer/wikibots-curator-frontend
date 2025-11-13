@@ -9,7 +9,7 @@ export const useMapillary = () => {
     }
     store.isStatusChecking = false
   }
-  
+
   const startPolling = (batchId: string) => {
     const statusCheck = async () => {
       store.isStatusChecking = true
