@@ -79,18 +79,6 @@ const updateStep = (step: string) => {
       <MapillaryUpload />
     </div>
 
-    <!-- Loading State -->
-    <div
-      v-if="store.isLoading"
-      class="d-flex justify-center align-center py-8"
-    >
-      <v-progress-circular
-        indeterminate
-        color="primary"
-        size="64"
-      />
-    </div>
-
     <!-- Empty State -->
     <div
       v-if="!store.hasSequence && !store.isLoading"

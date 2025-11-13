@@ -6,6 +6,8 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   const sequenceId = ref<string>('tulzukst7vufhdo1e4z60f')
   const creatorUsername = ref<string>('')
   const creatorId = ref<string>('')
+  const isStatusChecking = ref<boolean>(false)
+  const batchId = ref<string>('')
 
   const layout = ref<Layout>('grid')
   const layoutOptions = ref<{ name: string; value: Layout }[]>([
@@ -61,6 +63,8 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     error.value = null
     creatorUsername.value = ''
     creatorId.value = ''
+    batchId.value = ''
+    isStatusChecking.value = false
     isLoading.value = false
     layout.value = 'grid'
     showSelectedOnly.value = true
@@ -95,6 +99,8 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     sequenceId,
     creatorUsername,
     creatorId,
+    batchId,
+    isStatusChecking,
     globalDescription,
     globalLanguage,
     globalCategories,

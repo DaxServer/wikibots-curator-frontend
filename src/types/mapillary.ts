@@ -34,6 +34,8 @@ export interface Metadata {
   description: Description
   categories: string
   selected: boolean
+  status?: UploadStatus
+  statusReason?: string
 }
 export type MetadataKey = keyof Metadata
 export type MetadataValue = Metadata[MetadataKey]
@@ -47,3 +49,5 @@ export interface MapillaryItem {
 }
 
 export type Layout = 'grid' | 'list'
+
+export type UploadStatus = 'queued' | 'in_progress' | 'completed' | 'failed'
