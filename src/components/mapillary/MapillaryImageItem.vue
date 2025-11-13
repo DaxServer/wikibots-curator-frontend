@@ -1,9 +1,22 @@
 <script setup lang="ts">
-import { mdiOpenInNew } from '@mdi/js'
+import { mdiCheckCircle, mdiCloseCircle, mdiOpenInNew } from '@mdi/js'
 
-defineProps<{ image: MapillaryImage; meta: Metadata; index: number }>()
+const props = defineProps<{ image: MapillaryImage; meta: Metadata; index: number }>()
 
 const store = useMapillaryStore()
+const { checkFileTitleAvailability } = useCommons()
+let titleDebounce: number | null = null
+const scheduleTitleCheck = (title: string) => {
+  if (titleDebounce !== null) {
+    clearTimeout(titleDebounce)
+  }
+  titleDebounce = setTimeout(() => {
+    void (async () => {
+      const available = await checkFileTitleAvailability(title)
+      store.updateItem(props.image.id, 'titleAvailable', available)
+    })()
+  }, 500) as unknown as number
+}
 </script>
 
 <template>
@@ -26,8 +39,26 @@ const store = useMapillaryStore()
         density="compact"
         :hide-details="true"
         class="flex-grow-1 align-center"
-        @update:model-value="(v) => store.updateItem(image.id, 'title', v as string)"
-      />
+        @update:model-value="
+          (v) => {
+            store.updateItem(image.id, 'title', v as string)
+            scheduleTitleCheck(v as string)
+          }
+        "
+      >
+        <template #append-inner>
+          <v-icon
+            v-if="meta.titleAvailable === true"
+            :icon="mdiCheckCircle"
+            color="success"
+          />
+          <v-icon
+            v-else-if="meta.titleAvailable === false"
+            :icon="mdiCloseCircle"
+            color="error"
+          />
+        </template>
+      </v-text-field>
     </div>
 
     <!-- Image and metadata-->

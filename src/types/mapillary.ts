@@ -36,6 +36,7 @@ export interface Metadata {
   selected: boolean
   status?: UploadStatus
   statusReason?: string
+  titleAvailable?: boolean
 }
 export type MetadataKey = keyof Metadata
 export type MetadataValue = Metadata[MetadataKey]

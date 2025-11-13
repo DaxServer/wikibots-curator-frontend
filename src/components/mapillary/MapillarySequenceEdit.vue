@@ -1,8 +1,17 @@
 <script lang="ts" setup>
 import { CloudUploadOutline, EyeOutline } from '@vicons/ionicons5'
+import { onMounted } from 'vue'
 
 const store = useMapillaryStore()
 const { submitUpload } = useMapillary()
+const { checkFileTitleAvailability } = useCommons()
+
+onMounted(async () => {
+  for (const item of store.displayedItems) {
+    const available = await checkFileTitleAvailability(item.meta.title)
+    store.updateItem(item.id, 'titleAvailable', available)
+  }
+})
 </script>
 
 <template>

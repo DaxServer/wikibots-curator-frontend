@@ -6,7 +6,6 @@
     "env.d.ts",
     "interface-extensions.d.ts",
     "src/**/*",
-    "src/**/*.vue"
   ],
   "compilerOptions": {
     // Enable strict type checking

@@ -125,6 +125,7 @@
     "useBotStatus": true,
     "useBotsApi": true,
     "useBotsStore": true,
+    "useCommons": true,
     "useCssModule": true,
     "useCssVars": true,
     "useHarborApi": true,
