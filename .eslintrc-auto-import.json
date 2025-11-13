@@ -138,6 +138,7 @@
     "useModel": true,
     "useSlots": true,
     "useTemplateRef": true,
+    "useUiStore": true,
     "useWikidata": true,
     "watch": true,
     "watchEffect": true,

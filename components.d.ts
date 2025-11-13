@@ -40,6 +40,8 @@ declare module 'vue' {
     StatementItem: typeof import('./src/components/wikidata/StatementItem.vue')['default']
     StatementsList: typeof import('./src/components/wikidata/StatementsList.vue')['default']
     ValueRenderer: typeof import('./src/components/wikidata/ValueRenderer.vue')['default']
+    VB: typeof import('vuetify/lib')['VB']
+    VBt: typeof import('vuetify/lib')['VBt']
     VR: typeof import('./src/components/wikidata/VR.vue')['default']
   }
 }

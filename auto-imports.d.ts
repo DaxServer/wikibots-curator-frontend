@@ -94,6 +94,7 @@ declare global {
   const useModel: typeof import('vue')['useModel']
   const useSlots: typeof import('vue')['useSlots']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
+  const useUiStore: typeof import('./src/stores/ui.store')['useUiStore']
   const useWikidata: typeof import('./src/components/wikidata/useWikidata')['useWikidata']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
@@ -213,6 +214,7 @@ declare module 'vue' {
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useUiStore: UnwrapRef<typeof import('./src/stores/ui.store')['useUiStore']>
     readonly useWikidata: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['useWikidata']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
