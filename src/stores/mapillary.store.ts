@@ -32,6 +32,7 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   }
 
   const updateItem = (id: string, key: MetadataKey, value: MetadataValue) => {
+    console.log(id, key, value)
     const meta = items.value[id]!.meta
     items.value[id]!.meta = {
       ...meta,

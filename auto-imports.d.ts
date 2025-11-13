@@ -81,6 +81,7 @@ declare global {
   const useBotStatus: typeof import('./src/composables/useBotStatus')['default']
   const useBotsApi: typeof import('./src/composables/useBotsApi')['default']
   const useBotsStore: typeof import('./src/stores/bots.store')['useBotsStore']
+  const useCommons: typeof import('./src/composables/useCommons')['useCommons']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useHarborApi: typeof import('./src/composables/useHarborApi')['default']
@@ -199,6 +200,7 @@ declare module 'vue' {
     readonly useBotStatus: UnwrapRef<typeof import('./src/composables/useBotStatus')['default']>
     readonly useBotsApi: UnwrapRef<typeof import('./src/composables/useBotsApi')['default']>
     readonly useBotsStore: UnwrapRef<typeof import('./src/stores/bots.store')['useBotsStore']>
+    readonly useCommons: UnwrapRef<typeof import('./src/composables/useCommons')['useCommons']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useHarborApi: UnwrapRef<typeof import('./src/composables/useHarborApi')['default']>

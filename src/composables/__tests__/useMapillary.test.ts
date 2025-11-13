@@ -1,7 +1,7 @@
+import { useMapillary } from '@/composables/useMapillary'
+import type { MapillaryImage, MapillaryItem } from '@/types/mapillary'
+import type { Statement } from '@/types/wikidata'
 import { describe, expect, it } from 'bun:test'
-import type { MapillaryImage, MapillaryItem } from '../../types/mapillary'
-import type { Statement } from '../../types/wikidata'
-import { useMapillary } from '../useMapillary'
 
 describe('useMapillary.loadSDC', () => {
   it('builds repeated images params and assigns SDC per item', async () => {
