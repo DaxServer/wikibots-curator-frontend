@@ -1,13 +1,13 @@
 import { fileURLToPath, URL } from 'node:url'
+import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
+import Components from 'unplugin-vue-components/vite'
 import type { PluginOption } from 'vite'
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import Components from 'unplugin-vue-components/vite'
-import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
-import AutoImport from 'unplugin-auto-import/vite'
-import tailwindcss from '@tailwindcss/vite'
-import IconsResolver from 'unplugin-icons/resolver'
 import vuetify from 'vite-plugin-vuetify'
 
 export default defineConfig((): import('vite').UserConfig => {
@@ -18,18 +18,14 @@ export default defineConfig((): import('vite').UserConfig => {
       tailwindcss(),
       vuetify({ autoImport: true }),
       AutoImport({
-        imports: [
-          'vue',
-          'pinia',
-        ],
+        imports: ['vue', 'pinia'],
         dirs: ['src/**'],
         dts: true,
         vueTemplate: true,
         include: [/\.ts$/, /\.vue$/],
-        eslintrc: {
+        biomelintrc: {
           enabled: true,
-          filepath: './.eslintrc-auto-import.json',
-          globalsPropValue: true,
+          filepath: './.biomelintrc-auto-import.json',
         },
       }),
       Components({
@@ -37,10 +33,7 @@ export default defineConfig((): import('vite').UserConfig => {
         extensions: ['vue'],
         deep: true,
         dts: true,
-        resolvers: [
-          IconsResolver(),
-          VuetifyResolver(),
-        ],
+        resolvers: [IconsResolver(), VuetifyResolver()],
       }),
     ] as PluginOption[],
     resolve: {
@@ -70,7 +63,7 @@ export default defineConfig((): import('vite').UserConfig => {
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/callback\/wikimedia/, '/auth/callback'),
-        }
+        },
       },
     },
   }

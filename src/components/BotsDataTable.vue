@@ -45,7 +45,7 @@ const getJobDisplay = (item: BotRow) => {
 }
 
 const getCommandDisplay = (item: BotRow) => {
-  return item.command + (item.args ? ' ' + item.args.join(' ') : '')
+  return item.command + (item.args ? ` ${item.args.join(' ')}` : '')
 }
 </script>
 

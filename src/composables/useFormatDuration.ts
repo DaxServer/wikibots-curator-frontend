@@ -7,7 +7,7 @@ export interface FormattedDuration {
 const pad = (num: number): string => num.toString().padStart(2, '0')
 
 export const formatDuration = (startedAt: Date): FormattedDuration => {
-  const diffMs = new Date().getTime() - startedAt.getTime()
+  const diffMs = Date.now() - startedAt.getTime()
 
   const currentTotalSeconds = Math.floor(diffMs / 1000)
   const totalSeconds = Math.max(0, currentTotalSeconds)

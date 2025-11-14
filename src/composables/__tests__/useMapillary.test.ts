@@ -1,11 +1,11 @@
+import { describe, expect, it } from 'bun:test'
 import { useMapillary } from '@/composables/useMapillary'
 import type { MapillaryImage, MapillaryItem } from '@/types/mapillary'
 import type { Statement } from '@/types/wikidata'
-import { describe, expect, it } from 'bun:test'
 
 describe('useMapillary.loadSDC', () => {
   it('builds repeated images params and assigns SDC per item', async () => {
-    const store: any = {}
+    const store: Record<string, unknown> = {}
     store.sequenceId = 'seq123'
 
     const baseImage: MapillaryImage = {
@@ -77,7 +77,7 @@ describe('useMapillary.loadSDC', () => {
     expect(calls[0]).toContain('/api/mapillary/sequences/seq123/sdc?')
     expect(calls[0]).toContain('images=img1')
     expect(calls[0]).toContain('images=img2')
-    expect(store.items.img1!.sdc.length).toBe(1)
-    expect(store.items.img2!.sdc.length).toBe(0)
+    expect(store.items).toHaveProperty('img1', expect.objectContaining({ sdc: [sampleStatement] }))
+    expect(store.items).toHaveProperty('img2', expect.objectContaining({ sdc: [] }))
   })
 })

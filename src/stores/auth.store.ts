@@ -28,9 +28,9 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await fetch('/auth/whoami')
       if (response.ok) {
-        const userData = await response.json()
-        user.value = userData['username']
-        isAuthorized.value = userData['authorized']
+        const userData = (await response.json()) as { username: string; authorized: boolean }
+        user.value = userData.username
+        isAuthorized.value = userData.authorized
       } else {
         reset()
       }

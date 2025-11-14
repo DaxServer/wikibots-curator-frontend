@@ -47,7 +47,7 @@ export const createStatusFromJob = (statusLong: string): BotStatus => {
         statusLong.indexOf("'", startedAtIndex + 12),
       )
       const parsedStartedAt = new Date(dateString)
-      if (!isNaN(parsedStartedAt.getTime())) {
+      if (!Number.isNaN(parsedStartedAt.getTime())) {
         startedAt = parsedStartedAt
       }
     }
