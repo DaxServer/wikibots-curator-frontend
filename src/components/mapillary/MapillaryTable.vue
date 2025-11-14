@@ -30,11 +30,7 @@ const updateStep = (step: string) => {
         v-if="store.error"
         class="d-inline-flex w-auto flex-grow-0 flex-shrink-0 mb-4"
       >
-        <v-alert
-          type="error"
-          closable
-          style="width: max-content"
-        >
+        <v-alert type="error">
           {{ store.error }}
         </v-alert>
       </div>
