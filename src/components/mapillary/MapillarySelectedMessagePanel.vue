@@ -4,13 +4,15 @@ const store = useMapillaryStore()
 
 <template>
   <div class="d-flex justify-space-between align-center mt-4 mb-4 ga-4">
-    <v-alert
-      type="info"
-      variant="tonal"
-      class="flex-shrink-0"
-    >
-      Click on images to select
-    </v-alert>
+    <div class="d-inline-flex w-auto flex-grow-0 flex-shrink-0">
+      <v-alert
+        type="info"
+        variant="tonal"
+        density="comfortable"
+      >
+        Click on images to select
+      </v-alert>
+    </div>
     <div class="d-flex align-center ga-4">
       <span class="text-body-1">
         <span class="text-success font-weight-medium">{{ store.selectedCount }}</span>

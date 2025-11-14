@@ -84,14 +84,14 @@ const handleStopJob = (jobType: string) => refreshBots(() => deleteJob(jobType))
     </div>
 
     <!-- Error Message -->
-    <v-alert
+    <div
       v-if="error"
-      color="error"
-      class="mb-4"
-      :closable="false"
+      class="d-inline-flex w-auto flex-grow-0 flex-shrink-0 mb-4"
     >
-      {{ error }}
-    </v-alert>
+      <v-alert color="error">
+        {{ error }}
+      </v-alert>
+    </div>
 
     <!-- Data Table -->
     <BotsDataTable
