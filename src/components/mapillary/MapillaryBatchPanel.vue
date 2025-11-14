@@ -13,14 +13,16 @@ const store = useMapillaryStore()
       @update:categories="(v) => (store.globalCategories = v)"
     >
       <template #description-help>
-        <v-alert
-          type="info"
-          variant="tonal"
-          class="w-fit font-normal"
-        >
-          Will be applied to all selected images
-          <span class="underline">only as a fallback</span>
-        </v-alert>
+        <div class="d-inline-flex w-auto flex-grow-0 flex-shrink-0 mb-4">
+          <v-alert
+            type="info"
+            variant="tonal"
+            density="comfortable"
+          >
+            Will be applied to all selected images
+            <span class="text-decoration-underline">only as a fallback</span>
+          </v-alert>
+        </div>
       </template>
     </MapillaryInputs>
   </v-card>

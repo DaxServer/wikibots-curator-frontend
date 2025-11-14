@@ -26,14 +26,18 @@ const updateStep = (step: string) => {
     </div>
     <div v-else>
       <!-- Error Message -->
-      <v-alert
+      <div
         v-if="store.error"
-        type="error"
-        class="mb-4"
-        closable
+        class="d-inline-flex w-auto flex-grow-0 flex-shrink-0 mb-4"
       >
-        {{ store.error }}
-      </v-alert>
+        <v-alert
+          type="error"
+          closable
+          style="width: max-content"
+        >
+          {{ store.error }}
+        </v-alert>
+      </div>
 
       <v-stepper
         :model-value="Number(store.stepper)"

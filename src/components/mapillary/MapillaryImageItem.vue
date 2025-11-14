@@ -2,14 +2,18 @@
 import { mdiCheckCircle, mdiCloseCircle, mdiOpenInNew } from '@mdi/js'
 
 const props = defineProps<{ image: MapillaryImage; meta: Metadata; index: number }>()
-
 const store = useMapillaryStore()
 const { checkFileTitleAvailability } = useCommons()
+
 let titleDebounce: number | null = null
-const scheduleTitleCheck = (title: string) => {
+
+const updateTitle = (title: string) => {
+  store.updateItem(props.image.id, 'title', title)
+
   if (titleDebounce !== null) {
     clearTimeout(titleDebounce)
   }
+
   titleDebounce = setTimeout(() => {
     void (async () => {
       const available = await checkFileTitleAvailability(title)
@@ -17,17 +21,27 @@ const scheduleTitleCheck = (title: string) => {
     })()
   }, 500) as unknown as number
 }
+
+onUnmounted(() => {
+  if (titleDebounce !== null) {
+    clearTimeout(titleDebounce)
+  }
+})
 </script>
 
 <template>
   <div
     class="d-flex flex-column pa-4"
-    :class="{ 'border-s-lg border-primary': meta.selected }"
+    :class="{
+      'border-s-lg': meta.selected || meta.titleAvailable === false,
+      'border-error border-opacity-100': meta.titleAvailable === false,
+      'border-primary': meta.titleAvailable !== false && meta.selected,
+    }"
   >
-    <div class="d-flex align-center ga-4 mb-4">
+    <div class="d-flex align-start ga-4">
       <span class="text-h4 font-weight-medium">{{ index }}</span>
       <v-checkbox-btn
-        density="compact"
+        density="comfortable"
         :model-value="meta.selected"
         class="flex-grow-0"
         @update:model-value="(v) => store.updateItem(image.id, 'selected', v ?? false)"
@@ -37,14 +51,10 @@ const scheduleTitleCheck = (title: string) => {
         label="Title"
         variant="outlined"
         density="compact"
-        :hide-details="true"
+        :hide-details="'auto'"
+        :error="meta.titleAvailable === false"
         class="flex-grow-1 align-center"
-        @update:model-value="
-          (v) => {
-            store.updateItem(image.id, 'title', v as string)
-            scheduleTitleCheck(v as string)
-          }
-        "
+        @update:model-value="updateTitle"
       >
         <template #append-inner>
           <v-icon
@@ -57,6 +67,26 @@ const scheduleTitleCheck = (title: string) => {
             :icon="mdiCloseCircle"
             color="error"
           />
+        </template>
+        <template #details>
+          <div
+            v-if="meta.titleAvailable === false"
+            class="d-flex align-center ga-2"
+          >
+            <span class="text-error">Title is not possible.</span>
+            <a
+              :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(meta.title ?? '')}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary d-inline-flex align-center ga-1"
+            >
+              <v-icon
+                :icon="mdiOpenInNew"
+                size="18"
+              />
+              See the file
+            </a>
+          </div>
         </template>
       </v-text-field>
     </div>
@@ -149,11 +179,8 @@ const scheduleTitleCheck = (title: string) => {
 
     <MapillaryInputs
       :language="meta.description.language"
-      :enable-language="store.globalDescription === ''"
       :description="meta.description.text"
-      :enable-description="store.globalDescription === ''"
       :categories="meta.categories"
-      :enable-categories="store.globalCategories === ''"
       @update:language="
         (v) =>
           store.updateItem(image.id, 'description', {

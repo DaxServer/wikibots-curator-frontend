@@ -1,10 +1,16 @@
 <script lang="ts" setup>
-import { CloudUploadOutline, EyeOutline } from '@vicons/ionicons5'
-import { onMounted } from 'vue'
+import { EyeOutline } from '@vicons/ionicons5'
 
 const store = useMapillaryStore()
-const { submitUpload } = useMapillary()
 const { checkFileTitleAvailability } = useCommons()
+
+const disablePreview = computed(() => {
+  if (store.selectedCount === 0) return true
+  for (const item of store.displayedItems) {
+    if (item.meta.selected && item.meta.titleAvailable === false) return true
+  }
+  return false
+})
 
 onMounted(async () => {
   for (const item of store.displayedItems) {
@@ -20,35 +26,18 @@ onMounted(async () => {
 
     <MapillaryBatchPanel />
 
-    <!-- Toggle between showing only selected items vs all items -->
     <div class="d-flex justify-space-between align-center mt-4 mb-4 ga-4">
-      <!-- <div class="flex-shrink-0"> -->
-      <v-alert
-        type="info"
-        variant="tonal"
-      >
-        Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
-      </v-alert>
-      <!-- </div> -->
-      <!-- <div class="flex gap-4"> -->
-      <!-- <v-btn
-          :disabled="store.selectedCount === 0"
-          color="info"
-          @click="store.showSelectedOnly = !store.showSelectedOnly"
+      <div class="d-inline-flex w-auto flex-grow-0 flex-shrink-0">
+        <v-alert
+          type="info"
+          variant="tonal"
+          density="comfortable"
         >
-          <template #prepend>
-            <v-icon>
-              <FilterCircleOutline />
-            </v-icon>
-          </template>
-{{
-store.showSelectedOnly && store.selectedCount > 0
-? 'Show all items'
-: 'Show only selected'
-}}
-</v-btn> -->
+          Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
+        </v-alert>
+      </div>
       <v-btn
-        :disabled="store.selectedCount === 0"
+        :disabled="disablePreview"
         color="primary"
         @click="store.stepper = '4'"
       >
@@ -59,18 +48,6 @@ store.showSelectedOnly && store.selectedCount > 0
         </template>
         Preview edits
       </v-btn>
-      <v-btn
-        :disabled="store.selectedCount === 0"
-        @click="submitUpload"
-      >
-        <template #prepend>
-          <v-icon>
-            <CloudUploadOutline />
-          </v-icon>
-        </template>
-        Upload
-      </v-btn>
-      <!-- </div> -->
     </div>
 
     <div
