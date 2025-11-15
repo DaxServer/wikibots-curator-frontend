@@ -14,12 +14,19 @@ const updateTitle = (title: string) => {
     clearTimeout(titleDebounce)
   }
 
+  store.updateItem(props.image.id, 'titleAvailable', undefined)
+
   titleDebounce = setTimeout(() => {
     void (async () => {
+      store.updateItem(props.image.id, 'titleChecking', true)
       const available = await checkFileTitleAvailability(title)
-      store.updateItem(props.image.id, 'titleAvailable', available)
+      const currentTitle = store.items[props.image.id]!.meta.title
+      if (currentTitle === title) {
+        store.updateItem(props.image.id, 'titleAvailable', available)
+      }
+      store.updateItem(props.image.id, 'titleChecking', false)
     })()
-  }, 500) as unknown as number
+  }, 100) as unknown as number
 }
 
 onUnmounted(() => {
@@ -57,16 +64,14 @@ onUnmounted(() => {
         @update:model-value="updateTitle"
       >
         <template #append-inner>
-          <v-icon
-            v-if="meta.titleAvailable === true"
-            :icon="mdiCheckCircle"
-            color="success"
+          <v-progress-circular
+            v-if="meta.titleChecking"
+            indeterminate
+            size="20"
+            color="primary"
           />
-          <v-icon
-            v-else-if="meta.titleAvailable === false"
-            :icon="mdiCloseCircle"
-            color="error"
-          />
+          <v-icon v-else-if="meta.titleAvailable === true" :icon="mdiCheckCircle" color="success" />
+          <v-icon v-else-if="meta.titleAvailable === false" :icon="mdiCloseCircle" color="error" />
         </template>
         <template #details>
           <div
