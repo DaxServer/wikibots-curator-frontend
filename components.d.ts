@@ -28,6 +28,8 @@ declare module 'vue' {
     MapillaryImageItem: typeof import('./src/components/mapillary/MapillaryImageItem.vue')['default']
     MapillaryInputs: typeof import('./src/components/mapillary/MapillaryInputs.vue')['default']
     MapillaryListView: typeof import('./src/components/mapillary/MapillaryListView.vue')['default']
+    MapillaryMetadata: typeof import('./src/components/mapillary/MapillaryMetadata.vue')['default']
+    MapillaryPagination: typeof import('./src/components/mapillary/MapillaryPagination.vue')['default']
     MapillaryPreview: typeof import('./src/components/mapillary/MapillaryPreview.vue')['default']
     MapillarySelectedMessagePanel: typeof import('./src/components/mapillary/MapillarySelectedMessagePanel.vue')['default']
     MapillarySequenceEdit: typeof import('./src/components/mapillary/MapillarySequenceEdit.vue')['default']

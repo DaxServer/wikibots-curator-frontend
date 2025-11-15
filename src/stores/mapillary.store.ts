@@ -1,3 +1,5 @@
+type Layout = 'list' | 'grid'
+
 export const useMapillaryStore = defineStore('mapillary', () => {
   // State
   const isLoading = ref(false)
@@ -14,6 +16,11 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   // List view preferences
   // When true, the list view will show only selected items by default
   const showSelectedOnly = ref<boolean>(true)
+  const viewMode = ref<Layout>('list')
+  const gridPage = ref<number>(1)
+  const gridItemsPerPage = ref<number>(24)
+  const page = ref<number>(1)
+  const itemsPerPage = ref<number>(10)
 
   // Global batch inputs (persisted in store, not copied in components)
   const globalDescription = ref<string>('')
@@ -52,6 +59,30 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     globalCategories.value = value
   }
 
+  const setViewMode = (mode: Layout) => {
+    viewMode.value = mode
+  }
+
+  const toggleViewMode = () => {
+    viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+  }
+
+  const setGridPage = (p: number) => {
+    gridPage.value = p
+  }
+
+  const setGridItemsPerPage = (n: number) => {
+    gridItemsPerPage.value = n
+  }
+
+  const setPage = (p: number) => {
+    page.value = p
+  }
+
+  const setItemsPerPage = (n: number) => {
+    itemsPerPage.value = n
+  }
+
   const $reset = () => {
     items.value = {}
     error.value = null
@@ -61,6 +92,11 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     isStatusChecking.value = false
     isLoading.value = false
     showSelectedOnly.value = true
+    viewMode.value = 'list'
+    gridPage.value = 1
+    gridItemsPerPage.value = 12
+    page.value = 1
+    itemsPerPage.value = 10
     globalDescription.value = ''
     globalLanguage.value = 'en'
     globalCategories.value = ''
@@ -98,6 +134,11 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     globalLanguage,
     globalCategories,
     showSelectedOnly,
+    viewMode,
+    gridPage,
+    gridItemsPerPage,
+    page,
+    itemsPerPage,
     displayedItems,
     displayRows,
     stepper,
@@ -116,6 +157,12 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     setGlobalCategories,
     updateItem,
     updateSelected,
+    setViewMode,
+    toggleViewMode,
+    setGridPage,
+    setGridItemsPerPage,
+    setPage,
+    setItemsPerPage,
     $reset,
   }
 })

@@ -37,6 +37,7 @@ export interface Metadata {
   status?: UploadStatus
   statusReason?: string
   titleAvailable?: boolean
+  titleChecking?: boolean
   successUrl?: string
   errorInfo?: {
     type: typeof MAPILLARY_ERROR_TYPE.Duplicate | typeof MAPILLARY_ERROR_TYPE.Error
