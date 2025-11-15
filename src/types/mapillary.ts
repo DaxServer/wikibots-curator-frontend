@@ -37,6 +37,12 @@ export interface Metadata {
   status?: UploadStatus
   statusReason?: string
   titleAvailable?: boolean
+  successUrl?: string
+  errorInfo?: {
+    type: typeof MAPILLARY_ERROR_TYPE.Duplicate | typeof MAPILLARY_ERROR_TYPE.Error
+    message: string
+    links?: { title: string; url: string }[]
+  }
 }
 export type MetadataKey = keyof Metadata
 export type MetadataValue = Metadata[MetadataKey]
@@ -49,6 +55,57 @@ export interface MapillaryItem {
   id: string
 }
 
-export type Layout = 'grid' | 'list'
+export const UPLOAD_STATUS = {
+  Queued: 'queued',
+  InProgress: 'in_progress',
+  Completed: 'completed',
+  Failed: 'failed',
+} as const
 
-export type UploadStatus = 'queued' | 'in_progress' | 'completed' | 'failed'
+export type UploadStatus = (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS]
+
+export const MAPILLARY_ERROR_TYPE = {
+  Duplicate: 'duplicate',
+  Error: 'error',
+} as const
+
+export interface MapillaryErrorDuplicate {
+  type: typeof MAPILLARY_ERROR_TYPE.Duplicate
+  message: string
+  links: { title: string; url: string }[]
+}
+
+export interface MapillaryErrorGeneric {
+  type: typeof MAPILLARY_ERROR_TYPE.Error
+  message: string
+}
+
+export type MapillaryStructuredError = MapillaryErrorDuplicate | MapillaryErrorGeneric
+
+export type UploadStatusUpdate =
+  | {
+      image_id: string
+      status: typeof UPLOAD_STATUS.Queued | typeof UPLOAD_STATUS.InProgress
+      error?: never
+      success?: never
+    }
+  | {
+      image_id: string
+      status: typeof UPLOAD_STATUS.Failed
+      error: MapillaryStructuredError
+      success?: never
+    }
+  | {
+      image_id: string
+      status: typeof UPLOAD_STATUS.Completed
+      success: string
+      error?: never
+    }
+
+export interface UploadIngestResponseItem {
+  id: number
+  status: UploadStatus
+  image_id: string
+  sequence_id: string
+  batch_id: string
+}

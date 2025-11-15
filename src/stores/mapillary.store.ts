@@ -9,12 +9,6 @@ export const useMapillaryStore = defineStore('mapillary', () => {
   const isStatusChecking = ref<boolean>(false)
   const batchId = ref<string>('')
 
-  const layout = ref<Layout>('grid')
-  const layoutOptions = ref<{ name: string; value: Layout }[]>([
-    { name: 'Select', value: 'grid' },
-    { name: 'Edit', value: 'list' },
-  ])
-
   const stepper = ref('1')
 
   // List view preferences
@@ -66,7 +60,6 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     batchId.value = ''
     isStatusChecking.value = false
     isLoading.value = false
-    layout.value = 'grid'
     showSelectedOnly.value = true
     globalDescription.value = ''
     globalLanguage.value = 'en'
@@ -104,8 +97,6 @@ export const useMapillaryStore = defineStore('mapillary', () => {
     globalDescription,
     globalLanguage,
     globalCategories,
-    layout,
-    layoutOptions,
     showSelectedOnly,
     displayedItems,
     displayRows,
