@@ -1,27 +1,34 @@
-export interface MapillaryImage {
+export interface Creator {
   id: string
-  captured_at: number
-  geometry: {
-    type: 'Point'
-    coordinates: [number, number] // [longitude, latitude]
-  }
-  height: number
-  width: number
-  thumb_256_url: string
-  thumb_1024_url: string
-  thumb_original_url: string
-  compass_angle: number
-  make?: string
-  model?: string
-  is_pano: boolean
+  username: string
+  profile_url: string
 }
 
-export interface MapillaryApiResponse {
-  creator: {
-    id: string
-    username: string
-  }
-  images: Record<string, MapillaryImage>
+export interface Location {
+  latitude: number
+  longitude: number
+  accuracy?: number
+}
+
+export interface Image {
+  id: string
+  handler: Handler
+  title: string
+  description: string
+  captured_at: number
+  creator: Creator
+  location?: Location
+  url_original: string
+  thumbnail_url: string
+  preview_url: string
+  width: number
+  height: number
+  camera_make?: string
+  camera_model?: string
+  compass_angle?: number
+  is_pano?: boolean
+  license?: string
+  tags?: string[]
 }
 
 interface Description {
@@ -40,7 +47,7 @@ export interface Metadata {
   titleChecking?: boolean
   successUrl?: string
   errorInfo?: {
-    type: typeof MAPILLARY_ERROR_TYPE.Duplicate | typeof MAPILLARY_ERROR_TYPE.Error
+    type: 'duplicate' | 'error'
     message: string
     links?: { title: string; url: string }[]
   }
@@ -48,8 +55,8 @@ export interface Metadata {
 export type MetadataKey = keyof Metadata
 export type MetadataValue = Metadata[MetadataKey]
 
-export interface MapillaryItem {
-  image: MapillaryImage
+export interface Item {
+  image: Image
   meta: Metadata
   sdc: Statement[]
   index: number
@@ -65,24 +72,6 @@ export const UPLOAD_STATUS = {
 
 export type UploadStatus = (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS]
 
-export const MAPILLARY_ERROR_TYPE = {
-  Duplicate: 'duplicate',
-  Error: 'error',
-} as const
-
-export interface MapillaryErrorDuplicate {
-  type: typeof MAPILLARY_ERROR_TYPE.Duplicate
-  message: string
-  links: { title: string; url: string }[]
-}
-
-export interface MapillaryErrorGeneric {
-  type: typeof MAPILLARY_ERROR_TYPE.Error
-  message: string
-}
-
-export type MapillaryStructuredError = MapillaryErrorDuplicate | MapillaryErrorGeneric
-
 export type UploadStatusUpdate =
   | {
       image_id: string
@@ -93,7 +82,11 @@ export type UploadStatusUpdate =
   | {
       image_id: string
       status: typeof UPLOAD_STATUS.Failed
-      error: MapillaryStructuredError
+      error: {
+        type: 'duplicate' | 'error'
+        message: string
+        links?: { title: string; url: string }[]
+      }
       success?: never
     }
   | {
@@ -107,6 +100,6 @@ export interface UploadIngestResponseItem {
   id: number
   status: UploadStatus
   image_id: string
-  sequence_id: string
+  input: string
   batch_id: string
 }

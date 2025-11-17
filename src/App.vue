@@ -7,11 +7,8 @@ const ui = useUiStore()
     <Header />
     <v-main>
       <v-tabs-window v-model="ui.activeTab">
-        <v-tabs-window-item
-          value="mapillary"
-          class="pa-4"
-        >
-          <MapillaryTable />
+        <v-tabs-window-item value="mapillary" class="pa-4">
+          <MapillaryCollections />
         </v-tabs-window-item>
       </v-tabs-window>
     </v-main>

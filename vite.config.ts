@@ -1,4 +1,3 @@
-import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -9,6 +8,7 @@ import type { PluginOption } from 'vite'
 import { defineConfig } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import vuetify from 'vite-plugin-vuetify'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig((): import('vite').UserConfig => {
   return {
@@ -16,6 +16,7 @@ export default defineConfig((): import('vite').UserConfig => {
       vue(),
       vueDevTools(),
       tailwindcss(),
+      tsconfigPaths(),
       vuetify({ autoImport: true }),
       AutoImport({
         imports: ['vue', 'pinia'],
@@ -36,11 +37,6 @@ export default defineConfig((): import('vite').UserConfig => {
         resolvers: [IconsResolver(), VuetifyResolver()],
       }),
     ] as PluginOption[],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
-      },
-    },
     server: {
       port: 5173,
       proxy: {
@@ -49,7 +45,12 @@ export default defineConfig((): import('vite').UserConfig => {
           changeOrigin: true,
           secure: false,
         },
-        '/api/mapillary': {
+        '/api/collections': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+          secure: false,
+        },
+        '/api/ingest': {
           target: 'http://localhost:8000',
           changeOrigin: true,
           secure: false,
