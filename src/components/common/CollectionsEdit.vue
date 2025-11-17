@@ -4,10 +4,6 @@ import { mdiCheckCircle, mdiCloseCircle, mdiEyeOutline, mdiOpenInNew } from '@md
 defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
-const languageOptions = [
-  { label: 'English', value: 'en' },
-  { label: 'Deutsch', value: 'de' },
-]
 const { checkFileTitleAvailability, sourcePageUrl } = useCommons()
 
 const disablePreview = computed(() => {
@@ -208,44 +204,25 @@ onUnmounted(() => {
         </v-row>
       </v-container>
 
-      <div class="d-flex ga-3 mt-4">
-        <div class="flex-grow-0">
-          <v-select
-            :model-value="item.meta.description.language"
-            :items="languageOptions"
-            item-title="label"
-            item-value="value"
-            label="Language"
-            variant="outlined"
-            density="compact"
-            :hide-details="'auto'"
-            @update:model-value="(v) => store.updateItem(item.id, 'description', { ...item.meta.description, language: v })"
-          />
-        </div>
-        <div class="flex-grow-1">
-          <v-textarea
-            :model-value="item.meta.description.text"
-            label="Description"
-            variant="outlined"
-            density="compact"
-            rows="1"
-            auto-grow
-            :hide-details="'auto'"
-            @update:model-value="(v) => store.updateItem(item.id, 'description', { ...item.meta.description, text: v })"
-          />
-        </div>
-      </div>
-
-      <v-textarea
-        :model-value="item.meta.categories"
-        label="Categories"
-        variant="outlined"
-        density="compact"
-        rows="3"
-        auto-grow
-        :hide-details="'auto'"
-        class="mt-2"
-        @update:model-value="(v) => store.updateItem(item.id, 'categories', v)"
+      <ItemInputs
+        :language="item.meta.description.language"
+        :description="item.meta.description.text"
+        :categories="item.meta.categories"
+        @update:language="
+        (language) =>
+          store.updateItem(item.id, 'description', {
+            ...item.meta.description,
+            language,
+          })
+      "
+      @update:description="
+        (text) =>
+          store.updateItem(item.id, 'description', {
+            ...item.meta.description,
+            text,
+          })
+      "
+      @update:categories="(categories) => store.updateItem(item.id, 'categories', categories)"
       />
 
     </div>

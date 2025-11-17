@@ -1,5 +1,6 @@
 <script setup lang="ts">
 defineProps<{ language: string; description: string; categories: string }>()
+
 const emit = defineEmits<{
   (e: 'update:language', value: string): void
   (e: 'update:description', value: string): void

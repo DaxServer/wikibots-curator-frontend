@@ -26,6 +26,7 @@ declare module 'vue' {
     IngestionStepper: typeof import('./src/components/common/IngestionStepper.vue')['default']
     IngestPagination: typeof import('./src/components/common/IngestPagination.vue')['default']
     IngestSelectionList: typeof import('./src/components/common/IngestSelectionList.vue')['default']
+    ItemInputs: typeof import('./src/components/common/ItemInputs.vue')['default']
     JobStatusTag: typeof import('./src/components/JobStatusTag.vue')['default']
     MapillaryCollections: typeof import('./src/components/mapillary/MapillaryCollections.vue')['default']
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']

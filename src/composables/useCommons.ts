@@ -4,14 +4,19 @@ export const useCommons = () => {
   const applyMetaDefaults = (
     meta: Metadata,
     defaults: {
-      language: 'en'
-      descriptionText: ''
+      language: string
+      descriptionText: string
     },
     title: string,
   ): Metadata => ({
     ...meta,
     title: title || meta.title,
-    description: meta.description || store.globalDescription || defaults.descriptionText,
+    description: {
+      language:
+        (meta.description.language || '').trim() || store.globalLanguage || defaults.language,
+      text:
+        (meta.description.text || '').trim() || store.globalDescription || defaults.descriptionText,
+    },
     categories: meta.categories || store.globalCategories,
   })
 
