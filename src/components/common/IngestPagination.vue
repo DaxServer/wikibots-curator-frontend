@@ -1,15 +1,10 @@
 <script lang="ts" setup>
-withDefaults(
-  defineProps<{
-    page: number
-    itemsPerPage: number
-    totalItems: number
-    perPageOptions?: number[]
-  }>(),
-  {
-    perPageOptions: () => [10, 25, 50],
-  },
-)
+defineProps<{
+  page: number
+  itemsPerPage: number
+  totalItems: number
+  perPageOptions: number[]
+}>()
 const emit = defineEmits<{
   'update:page': [number]
   'update:itemsPerPage': [number]

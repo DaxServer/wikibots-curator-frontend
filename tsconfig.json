@@ -1,31 +1,29 @@
 {
   "extends": ["@tsconfig/bun/tsconfig.json", "@vue/tsconfig/tsconfig.dom.json"],
-  "include": [
-    "auto-imports.d.ts",
-    "components.d.ts",
-    "env.d.ts",
-    "interface-extensions.d.ts",
-    "src/**/*"
-  ],
+  "include": ["*.d.ts", "src/**/*"],
   "compilerOptions": {
-    "strict": true,
+    // Some stricter flags (disabled by default)
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": false,
+
+    // Others
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+
+    "lib": ["esnext", "dom"],
+
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "types": ["vite/client", "bun", "node"],
+
+    // Path aliases
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "lib": ["esnext", "dom"],
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
-    "types": ["vite/client", "bun", "unplugin-icons/types/vue", "vuetify"],
-    "plugins": [{ "name": "@vue/typescript-plugin", "allowVueInTs": true }]
-  },
-  "vueCompilerOptions": { "target": 3, "strictTemplates": true }
+    }
+  }
 }
