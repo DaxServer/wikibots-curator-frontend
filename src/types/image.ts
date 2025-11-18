@@ -8,6 +8,12 @@ export interface Location {
   latitude: number
   longitude: number
   accuracy?: number
+  compass_angle?: number
+}
+
+export interface Dates {
+  taken?: string
+  published?: string
 }
 
 export interface Image {
@@ -15,17 +21,17 @@ export interface Image {
   handler: Handler
   title: string
   description: string
-  captured_at: number
+  dates: Dates
   creator: Creator
   location?: Location
   url_original: string
   thumbnail_url: string
   preview_url: string
+  url: string
   width: number
   height: number
   camera_make?: string
   camera_model?: string
-  compass_angle?: number
   is_pano?: boolean
   license?: string
   tags?: string[]
@@ -33,7 +39,7 @@ export interface Image {
 
 interface Description {
   language: string
-  text: string
+  value: string
 }
 
 export interface Metadata {

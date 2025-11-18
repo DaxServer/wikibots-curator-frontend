@@ -4,7 +4,7 @@ import { mdiCheckCircle, mdiCloseCircle, mdiEyeOutline, mdiOpenInNew } from '@md
 defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
-const { checkFileTitleAvailability, sourcePageUrl } = useCommons()
+const { checkFileTitleAvailability } = useCommons()
 
 const disablePreview = computed(() => {
   if (store.selectedCount === 0) return true
@@ -141,8 +141,14 @@ onUnmounted(() => {
             <v-row>
               <v-col>
                 <div>
-                  <span class="text-medium-emphasis">Captured</span>
-                  <div>{{ new Date(item.image.captured_at).toLocaleString() }}</div>
+                  <span class="text-medium-emphasis">Taken</span>
+                  <div>{{ item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—' }}</div>
+                </div>
+              </v-col>
+              <v-col v-if="item.image.dates.published">
+                <div>
+                  <span class="text-medium-emphasis">Published</span>
+                  <div>{{ new Date(item.image.dates.published).toLocaleString() }}</div>
                 </div>
               </v-col>
               <v-col>
@@ -159,7 +165,7 @@ onUnmounted(() => {
               <v-col>
                 <div>
                   <span class="text-medium-emphasis">Compass Angle</span>
-                  <div>{{ item.image.compass_angle ?? '—' }}°</div>
+                  <div>{{ item.image.location?.compass_angle ?? '—' }}°</div>
                 </div>
               </v-col>
               <v-col>
@@ -185,7 +191,7 @@ onUnmounted(() => {
                     View image
                   </v-btn>
                   <v-btn
-                    :href="sourcePageUrl(item.id)"
+                    :href="item.image.url"
                     :append-icon="mdiOpenInNew"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -206,7 +212,7 @@ onUnmounted(() => {
 
       <ItemInputs
         :language="item.meta.description.language"
-        :description="item.meta.description.text"
+        :description="item.meta.description.value"
         :categories="item.meta.categories"
         @update:language="
         (language) =>
@@ -216,10 +222,10 @@ onUnmounted(() => {
           })
       "
       @update:description="
-        (text) =>
+        (value) =>
           store.updateItem(item.id, 'description', {
             ...item.meta.description,
-            text,
+            value,
           })
       "
       @update:categories="(categories) => store.updateItem(item.id, 'categories', categories)"

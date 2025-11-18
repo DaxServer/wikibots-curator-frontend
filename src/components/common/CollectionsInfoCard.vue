@@ -26,7 +26,7 @@ const store = useCollectionsStore()
           <span class="text-body-2 text-medium-emphasis">Creator</span>
           <div>
             <a
-            href="store.creator.profile_url"
+            :href="store.creator.profile_url"
             target="_blank"
             rel="noopener noreferrer"
             class="text-primary text-body-2 d-inline-flex align-center ga-1"

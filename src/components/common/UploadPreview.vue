@@ -28,6 +28,10 @@ onMounted(async () => {
     </v-card-text>
   </v-card>
 
+  <div>
+    <v-alert type="info" variant="tonal" density="comfortable">The <span v-pre>{{Information}}</span> template will be populated from SDC</v-alert>
+  </div>
+
   <v-data-table :headers="headers" :items="store.displayedItems" :items-per-page="10" item-key="id">
     <template #item.index="{ item }">
       <span class="text-body-1 font-weight-medium">{{ item.index }}</span>
@@ -39,11 +43,29 @@ onMounted(async () => {
 
     <template #item.metadata="{ item }">
       <div class="d-flex flex-column ga-3">
-        <div class="text-body-1 font-weight-bold">File: {{ item.meta.title }}</div>
+        <div class="text-body-1 font-weight-bold">File:{{ item.meta.title }}</div>
         <pre class="text-caption bg-grey-lighten-4 pa-2 rounded" style="font-family: monospace">{{ wikitext(item).trim() }}</pre>
         <div>
+          <div class="text-body-1 font-weight-bold">Labels</div>
+          <v-table density="comfortable" class="text-body-2">
+            <thead>
+              <tr>
+                <th class="text-left">Language</th>
+                <th class="text-left">Label</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ item.meta.description.language.trim() || store.globalLanguage.trim() }}</td>
+                <td>{{ item.meta.description.value.trim() || store.globalDescription.trim() }}</td>
+              </tr>
+            </tbody>
+          </v-table>
+        </div>
+        <div>
           <div class="text-body-1 font-weight-bold">SDC</div>
-          <StatementsList :key="item.id" :statements="item.sdc" />
+          <v-progress-circular v-if="store.isSDCLoading" indeterminate color="primary" class="my-2" />
+          <StatementsList v-else :key="item.id" :statements="item.sdc" />
         </div>
       </div>
     </template>

@@ -19,7 +19,7 @@ onMounted(() => {
       <div class="d-flex flex-column align-start">
       <div>
         <strong>Taken:</strong>
-        {{ new Date(item.image.captured_at).toLocaleString() }}
+        {{ item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—' }}
       </div>
       <div>
         <strong>ID:</strong>
@@ -34,7 +34,7 @@ onMounted(() => {
         <v-icon :icon="mdiOpenInNew" class="ml-1" />
       </a>
       <a
-        :href="`https://www.mapillary.com/app/?pKey=${item.id}&focus=photo`"
+        :href="item.image.url"
         target="_blank"
         rel="noopener noreferrer"
       >

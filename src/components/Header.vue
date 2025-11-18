@@ -1,5 +1,12 @@
 <script setup lang="ts">
-const ui = useUiStore()
+defineProps<{
+  tab: Handler
+}>()
+
+defineEmits<{
+  'update:tab': [Handler]
+}>()
+
 const authStore = useAuthStore()
 
 onMounted(async () => {
@@ -12,10 +19,10 @@ onMounted(async () => {
     <div class="d-flex align-center ga-6">
       <span class="text-h6 font-weight-bold text-grey-darken-3">Curator</span>
       <v-tabs
-        :model-value="ui.activeTab"
+        :model-value="tab"
         density="compact"
         class="text-none"
-        @update:model-value="ui.setActiveTab"
+        @update:model-value="$emit('update:tab', $event as Handler)"
       >
         <v-tab
           value="mapillary"
