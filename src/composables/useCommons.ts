@@ -1,45 +1,27 @@
 export const useCommons = () => {
   const store = useCollectionsStore()
 
-  const applyMetaDefaults = (
-    meta: Metadata,
-    defaults: {
-      language: string
-      descriptionText: string
-    },
-    title: string,
-  ): Metadata => ({
+  const applyMetaDefaults = (meta: Metadata, title: string): Metadata => ({
     ...meta,
     title: title || meta.title,
     description: {
-      language:
-        (meta.description.language || '').trim() || store.globalLanguage || defaults.language,
-      text:
-        (meta.description.text || '').trim() || store.globalDescription || defaults.descriptionText,
+      language: meta.description.language.trim() || store.globalLanguage.trim(),
+      value: meta.description.value.trim() || store.globalDescription.trim(),
     },
     categories: meta.categories || store.globalCategories,
   })
 
   const buildWikitext = (item: Item): string => {
-    const date = new Date(item.image.captured_at).toISOString().split('T')[0]!
-    const lang = item.meta.description.language.trim()
-    const description = item.meta.description.text.trim()
     const source = sourceLink(item.id, store.input)
-    const license = licenseTemplate()
-    const location = item.image.location
-      ? `{{Location|${item.image.location.latitude}|${item.image.location.longitude}|heading:${item.image.compass_angle}}}\n`
-      : ''
 
     const info = `== {{int:filedesc}} ==
 {{Information
- | description = {{${lang}|1=${description}}}
- | date        = {{Taken on|${date}}}
  | source      = ${source}
- | author      = [${store.creator.profile_url} ${store.creator.username}]
 }}
-${location}
+{{Location|${item.image.location!.latitude}|${item.image.location!.longitude}|heading:${item.image.location!.compass_angle}}}
+
 == {{int:license-header}} ==
-${license}
+{{cc-by-sa-4.0}}
 
 ${item.meta.categories}
 `
@@ -68,21 +50,13 @@ ${item.meta.categories}
     return Boolean(data.query?.pages?.[0]?.missing)
   }
 
-  const licenseTemplate = (): string => {
-    return '{{cc-by-sa-4.0}}'
-  }
-
   const sourceLink = (id: string, sequenceId?: string): string => {
     return `{{Mapillary-source|key=${id}}} Sequence ID: ${sequenceId ?? ''}`
   }
 
-  const sourcePageUrl = (id: string): string => {
-    return `https://www.mapillary.com/app/?pKey=${id}&focus=photo`
-  }
-
-  const buildTitle = (image: Image, id: string): string => {
-    const date = new Date(image.captured_at).toISOString().split('T')[0]!
-    return `Photo from Mapillary ${date} (${id}).jpg`
+  const buildTitle = (image: Image): string => {
+    const date = new Date(image.dates.taken!).toISOString().split('T')[0]!
+    return `Photo from Mapillary ${date} (${image.id}).jpg`
   }
 
   const buildDescription = (): string => {
@@ -92,9 +66,7 @@ ${item.meta.categories}
   return {
     applyMetaDefaults,
     checkFileTitleAvailability,
-    licenseTemplate,
     sourceLink,
-    sourcePageUrl,
     buildTitle,
     buildDescription,
     buildWikitext,

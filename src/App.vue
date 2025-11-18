@@ -1,12 +1,12 @@
 <script setup lang="ts">
-const ui = useUiStore()
+const tab = ref<Handler>('mapillary')
 </script>
 
 <template>
   <v-app>
-    <Header />
+    <Header :tab="tab" @update:tab="tab = $event" />
     <v-main>
-      <v-tabs-window v-model="ui.activeTab">
+      <v-tabs-window v-model="tab">
         <v-tabs-window-item value="mapillary" class="pa-4">
           <MapillaryCollections />
         </v-tabs-window-item>

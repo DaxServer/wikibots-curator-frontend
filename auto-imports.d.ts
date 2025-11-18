@@ -114,7 +114,7 @@ declare global {
   export type { Process } from './src/types/harbor'
   import('./src/types/harbor')
   // @ts-ignore
-  export type { Creator, Location, Image, Metadata, MetadataKey, MetadataValue, Item, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
+  export type { Creator, Location, Dates, Image, Metadata, MetadataKey, MetadataValue, Item, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
   export type { Job, JobRequest } from './src/types/jobs'
@@ -212,7 +212,6 @@ declare module 'vue' {
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
-    readonly useUiStore: UnwrapRef<typeof import('./src/stores/ui.store')['useUiStore']>
     readonly useWikidata: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['useWikidata']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

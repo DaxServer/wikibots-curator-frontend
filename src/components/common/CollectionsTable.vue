@@ -10,13 +10,10 @@ defineProps<{
 
 const store = useCollectionsStore()
 const auth = useAuthStore()
-const { loadCollection, loadSDC } = useCollections()
+const { loadCollection } = useCollections()
 
 const updateStep = (step: string) => {
   store.stepper = step
-  if (step === '4') {
-    void loadSDC()
-  }
 }
 </script>
 
@@ -42,7 +39,7 @@ const updateStep = (step: string) => {
 
       <div v-if="store.stepper === '1'">
         <v-form class="mt-4 mb-4" @submit.prevent="(e) => (e.preventDefault(), loadCollection())">
-          <v-text-field v-model="store.input" :placeholder="placeholder" variant="outlined" density="compact" class="flex-grow-1" />
+          <v-text-field autofocus v-model="store.input" :placeholder="placeholder" variant="outlined" density="compact" class="flex-grow-1" />
           <v-btn color="primary" type="submit" :loading="store.isLoading" :disabled="!store.input.trim() || store.isLoading">
             Load
           </v-btn>

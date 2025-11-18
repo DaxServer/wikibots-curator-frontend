@@ -42,9 +42,7 @@ const rowProps = ({ item }: { item: Item }) => {
         </template>
 
       <template #item.image="{ item }">
-        <div class="cursor-pointer" @click="onToggleSelect(item.id, !item.meta.selected)">
-          <v-img :src="imageUrl(item)" :alt="`${altPrefix} ${item.id}`" />
-        </div>
+          <v-img :src="imageUrl(item)" :alt="`${altPrefix} ${item.id}`" class="cursor-pointer" @click="onToggleSelect(item.id, !item.meta.selected)"/>
       </template>
 
         <template #item.metadata="{ item }">

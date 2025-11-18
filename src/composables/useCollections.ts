@@ -1,24 +1,9 @@
-const createValidator = (regex: RegExp, required: string, invalid: string) => {
-  return (input: string) => {
-    const trimmed = input.trim()
-    if (!trimmed) return { ok: false, error: required }
-    if (!regex.test(trimmed)) return { ok: false, error: invalid }
-    return { ok: true }
-  }
-}
-
 export const useCollections = () => {
   const store = useCollectionsStore()
   const API_COLLECTIONS = '/api/collections'
   const API_INGEST = '/api/ingest'
   const PATH_UPLOAD_REQUEST = `${API_INGEST}/upload`
   const PATH_UPLOADS = `${API_INGEST}/uploads`
-
-  const SEQUENCE_ID_REGEX = /^[a-zA-Z0-9_-]+$/
-  const ERR_SEQ_REQUIRED = 'Please enter a sequence ID'
-  const ERR_SEQ_INVALID = 'Sequence ID can only contain letters, numbers, underscores, and hyphens'
-
-  const validateSeq = createValidator(SEQUENCE_ID_REGEX, ERR_SEQ_REQUIRED, ERR_SEQ_INVALID)
 
   let poller: number | null = null
 
@@ -37,21 +22,14 @@ export const useCollections = () => {
     sdc: [],
     meta: {
       title,
-      description: { language: 'en', text: descriptionText },
+      description: { language: 'en', value: descriptionText },
       categories: '',
       selected: false,
     },
   })
 
   const wikitext = (item: Item): string => {
-    const meta = commons.applyMetaDefaults(
-      item.meta,
-      {
-        language: 'en',
-        descriptionText: '',
-      },
-      commons.buildTitle(item.image, item.id),
-    )
+    const meta = commons.applyMetaDefaults(item.meta, commons.buildTitle(item.image))
     return commons.buildWikitext({ ...item, meta: meta as Metadata })
   }
 
@@ -102,14 +80,6 @@ export const useCollections = () => {
 
   const loadCollection = async (): Promise<void> => {
     store.$reset()
-    const collectionId = store.input
-    store.error = null
-    const res = validateSeq(collectionId)
-    if (!res.ok) {
-      store.error = res.error || null
-      return
-    }
-
     store.isLoading = true
     try {
       const response = await fetch(`${API_COLLECTIONS}/images`, {
@@ -125,7 +95,7 @@ export const useCollections = () => {
       let index = 0
       for (const [id, image] of Object.entries(apiResponse.images as Record<string, Image>)) {
         index += 1
-        const title = commons.buildTitle(image, id)
+        const title = commons.buildTitle(image)
         const descriptionText = commons.buildDescription()
         allItems[id] = createItem(image, id, index, title, descriptionText)
       }
@@ -140,6 +110,7 @@ export const useCollections = () => {
 
   const loadSDC = async (): Promise<void> => {
     store.isLoading = true
+    store.isSDCLoading = true
     store.error = null
     try {
       const ids = store.selectedItems.map((i) => i.id)
@@ -157,6 +128,7 @@ export const useCollections = () => {
       store.error = err instanceof Error ? err.message : 'An unknown error occurred'
     } finally {
       store.isLoading = false
+      store.isSDCLoading = false
     }
   }
 
@@ -176,6 +148,7 @@ export const useCollections = () => {
           input: store.input,
           title: item.meta.title,
           wikitext: wikitext(item),
+          labels: item.meta.description,
         })),
       }
       const res = await fetch(PATH_UPLOAD_REQUEST, {
