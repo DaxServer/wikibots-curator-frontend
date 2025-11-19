@@ -15,27 +15,29 @@ onMounted(() => {
   >
     <template #metadata="{ item }">
       <div class="d-flex flex-column align-start">
-      <div>
-        <strong>Taken:</strong>
-        {{ item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—' }}
+        <div>
+          <strong>Taken:</strong>
+          {{ item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—' }}
+        </div>
+        <div>
+          <strong>ID:</strong>
+          {{ item.image.id }}
+        </div>
+        <ExternalLink
+          class="text-info"
+          :href="item.image.url_original"
+          show-icon
+        >
+          View image
+        </ExternalLink>
+        <ExternalLink
+          class="text-info"
+          :href="item.image.url"
+          show-icon
+        >
+          View on Mapillary
+        </ExternalLink>
       </div>
-      <div>
-        <strong>ID:</strong>
-        {{ item.image.id }}
-      </div>
-      <ExternalLink
-        :href="item.image.url_original"
-        show-icon
-      >
-        View image
-      </ExternalLink>
-      <ExternalLink
-        :href="item.image.url"
-        show-icon
-      >
-        View on Mapillary
-      </ExternalLink>
-    </div>
     </template>
   </CollectionsTable>
 </template>

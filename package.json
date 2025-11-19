@@ -8,7 +8,7 @@
     "build": "vite build",
     "typecheck": "vue-tsc",
     "lint": "biome lint .",
-    "format": "biome check --write src",
+    "format": "prettier --cache --write src",
     "biome:ci": "biome ci ."
   },
   "dependencies": {
@@ -35,6 +35,8 @@
     "@vue/typescript-plugin": "^3.1.4",
     "autoprefixer": "^10.4.22",
     "jiti": "^2.6.1",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.3.0",
     "tailwindcss": "^4.1.17",
     "typescript": "~5.9.3",
     "unplugin-auto-import": "^20.2.0",

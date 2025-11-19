@@ -19,15 +19,31 @@ const updateStep = (step: string) => {
 
 <template>
   <div>
-    <div v-if="!auth.isAuthenticated" class="py-16 d-flex justify-center align-center" @click="auth.login">
-      <v-btn color="primary" :loading="auth.isLoading" :disabled="auth.isLoading">Login with Wikimedia Commons</v-btn>
+    <div
+      v-if="!auth.isAuthenticated"
+      class="py-16 d-flex justify-center align-center"
+      @click="auth.login"
+    >
+      <v-btn
+        color="primary"
+        :loading="auth.isLoading"
+        :disabled="auth.isLoading"
+      >
+        Login with Wikimedia Commons
+      </v-btn>
     </div>
     <div v-else>
-      <div v-if="store.error" class="d-inline-flex w-auto flex-grow-0 flex-shrink-0 mb-4">
+      <div
+        v-if="store.error"
+        class="d-inline-flex w-auto flex-grow-0 flex-shrink-0 mb-4"
+      >
         <v-alert type="error">{{ store.error }}</v-alert>
       </div>
 
-      <IngestionStepper v-model="store.stepper" @update:model-value="(step) => updateStep(String(step))" />
+      <IngestionStepper
+        v-model="store.stepper"
+        @update:model-value="(step) => updateStep(String(step))"
+      />
 
       <CollectionsInfoCard
         v-if="store.stepper !== '1' && store.stepper !== '5'"
@@ -38,9 +54,24 @@ const updateStep = (step: string) => {
       />
 
       <div v-if="store.stepper === '1'">
-        <v-form class="mt-4 mb-4" @submit.prevent="(e) => (e.preventDefault(), loadCollection())">
-          <v-text-field autofocus v-model="store.input" :placeholder="placeholder" variant="outlined" density="compact" class="flex-grow-1" />
-          <v-btn color="primary" type="submit" :loading="store.isLoading" :disabled="!store.input.trim() || store.isLoading">
+        <v-form
+          class="mt-4 mb-4"
+          @submit.prevent="(e) => (e.preventDefault(), loadCollection())"
+        >
+          <v-text-field
+            autofocus
+            v-model="store.input"
+            :placeholder="placeholder"
+            variant="outlined"
+            density="compact"
+            class="flex-grow-1"
+          />
+          <v-btn
+            color="primary"
+            type="submit"
+            :loading="store.isLoading"
+            :disabled="!store.input.trim() || store.isLoading"
+          >
             Load
           </v-btn>
         </v-form>
@@ -67,8 +98,10 @@ const updateStep = (step: string) => {
           @update:items-per-page="store.setItemsPerPage"
         >
           <template #metadata="{ item }">
-            <slot name="metadata" :item="item">
-            </slot>
+            <slot
+              name="metadata"
+              :item="item"
+            ></slot>
           </template>
         </IngestSelectionList>
       </div>
@@ -85,8 +118,14 @@ const updateStep = (step: string) => {
         <UploadStatusTable :items="store.displayedItems" />
       </div>
 
-      <div v-if="store.totalImages === 0 && !store.isLoading" class="text-center py-8 text-medium-emphasis">
-        <v-icon :icon="mdiImageMultiple" class="mb-4" />
+      <div
+        v-if="store.totalImages === 0 && !store.isLoading"
+        class="text-center py-8 text-medium-emphasis"
+      >
+        <v-icon
+          :icon="mdiImageMultiple"
+          class="mb-4"
+        />
         <p class="text-body-1">{{ emptyMessage }}</p>
       </div>
     </div>
