@@ -1,18 +1,17 @@
 <script setup lang="ts">
 defineProps<{ value: DataValue }>()
+
 const { getEntityLabel } = useWikidata()
 </script>
 
 <template>
   <template v-if="value.type === 'wikibase-entityid'">
-    <a
+    <ExternalLink
       :href="`https://www.wikidata.org/wiki/Q${value.value['numeric-id']}`"
-      class="text-blue hover:underline"
-      target="_blank"
-      rel="noopener noreferrer"
+      class="text-blue"
     >
       {{ getEntityLabel(`Q${value.value['numeric-id']}`) }} (Q{{ value.value['numeric-id'] }})
-    </a>
+    </ExternalLink>
   </template>
   <template v-else-if="value.type === 'monolingualtext'">
     <span>{{ value.value.language }}: {{ value.value.text }}</span>
@@ -27,14 +26,12 @@ const { getEntityLabel } = useWikidata()
     <span>{{ value.value.latitude }}, {{ value.value.longitude }}</span>
   </template>
   <template v-else-if="value.type === 'url'">
-    <a
+    <ExternalLink
       :href="value.value"
-      class="text-blue hover:underline"
-      target="_blank"
-      rel="noopener noreferrer"
+      class="text-blue"
     >
       {{ value.value }}
-    </a>
+    </ExternalLink>
   </template>
   <template v-else-if="value.type === 'string'">
     <span>{{ value.value }}</span>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { mdiOpenInNew } from '@mdi/js'
-
 const store = useCollectionsStore()
 
 onMounted(() => {
@@ -25,22 +23,18 @@ onMounted(() => {
         <strong>ID:</strong>
         {{ item.image.id }}
       </div>
-      <a
+      <ExternalLink
         :href="item.image.url_original"
-        target="_blank"
-        rel="noopener noreferrer"
+        show-icon
       >
         View image
-        <v-icon :icon="mdiOpenInNew" class="ml-1" />
-      </a>
-      <a
+      </ExternalLink>
+      <ExternalLink
         :href="item.image.url"
-        target="_blank"
-        rel="noopener noreferrer"
+        show-icon
       >
         View on Mapillary
-        <v-icon :icon="mdiOpenInNew" class="ml-1" />
-      </a>
+      </ExternalLink>
     </div>
     </template>
   </CollectionsTable>

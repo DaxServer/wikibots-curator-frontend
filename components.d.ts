@@ -19,6 +19,7 @@ declare module 'vue' {
     CollectionsEdit: typeof import('./src/components/common/CollectionsEdit.vue')['default']
     CollectionsInfoCard: typeof import('./src/components/common/CollectionsInfoCard.vue')['default']
     CollectionsTable: typeof import('./src/components/common/CollectionsTable.vue')['default']
+    ExternalLink: typeof import('./src/components/common/ExternalLink.vue')['default']
     Footer: typeof import('./src/components/Footer.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     IngestBatchInputs: typeof import('./src/components/common/IngestBatchInputs.vue')['default']

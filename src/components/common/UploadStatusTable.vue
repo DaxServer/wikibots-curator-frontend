@@ -30,7 +30,7 @@ const rowProps = ({ item }: { item: StatusItem }) => {
           <span>duplicates: </span>
           <span>
             <template v-for="(l, idx) in item.meta.errorInfo!.links">
-              <a :href="decodeURIComponent(l.url)" target="_blank" rel="noopener noreferrer">{{ l.title }}</a>{{ idx < item.meta.errorInfo!.links!.length - 1 ? ', ' : '' }}
+              <ExternalLink :href="decodeURIComponent(l.url)">{{ l.title }}</ExternalLink>{{ idx < item.meta.errorInfo!.links!.length - 1 ? ', ' : '' }}
             </template>
           </span>
         </span>
@@ -38,7 +38,7 @@ const rowProps = ({ item }: { item: StatusItem }) => {
       <span v-else-if="item.meta.status === UPLOAD_STATUS.Completed">
         completed
         <span v-if="item.meta.successUrl">
-          — <a :href="item.meta.successUrl" target="_blank" rel="noopener noreferrer">Open</a>
+          — <ExternalLink :href="item.meta.successUrl">Open</ExternalLink>
         </span>
       </span>
       <span v-else>{{ item.meta.status ?? UPLOAD_STATUS.Queued }}</span>
