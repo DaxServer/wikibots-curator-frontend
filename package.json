@@ -8,8 +8,7 @@
     "build": "vite build",
     "typecheck": "vue-tsc",
     "lint": "biome lint .",
-    "format": "prettier --cache --write src",
-    "biome:ci": "biome ci ."
+    "format": "prettier --cache --write src"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.8",
