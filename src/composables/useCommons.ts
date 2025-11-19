@@ -13,6 +13,13 @@ export const useCommons = () => {
 
   const buildWikitext = (item: Item): string => {
     const source = sourceLink(item.id, store.input)
+    let categories = item.meta.categories
+
+    if (!categories.includes('Category:Images from Mapillary uploaded with Curator')) {
+      categories = `${categories.trim()}\n[[Category:Images from Mapillary uploaded with Curator]]`
+    }
+
+    categories = categories.trim()
 
     const info = `== {{int:filedesc}} ==
 {{Information
@@ -23,7 +30,7 @@ export const useCommons = () => {
 == {{int:license-header}} ==
 {{cc-by-sa-4.0}}
 
-${item.meta.categories}
+${categories}
 `
 
     return info
