@@ -4,7 +4,6 @@ import { mdiOpenInNew } from '@mdi/js'
 const props = withDefaults(
   defineProps<{
     href: string
-    class?: string
     newTab?: boolean
     as?: 'link' | 'button'
     showIcon?: boolean
@@ -19,6 +18,10 @@ const props = withDefaults(
   },
 )
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const target = computed(() => (props.newTab ? '_blank' : undefined))
 const rel = computed(() => (props.newTab ? 'noopener noreferrer' : undefined))
 const iconToUse = computed(() => props.icon ?? mdiOpenInNew)
@@ -27,18 +30,24 @@ const iconToUse = computed(() => props.icon ?? mdiOpenInNew)
 <template>
   <a
     v-if="(as ?? 'link') === 'link'"
-    v-bind="props"
+    v-bind="$attrs"
     class="d-inline-flex align-center"
     :href="href"
     :target="target"
     :rel="rel"
   >
     <slot />
-    <v-icon v-if="showIcon" v-bind="props" :icon="iconToUse" :size="iconSize" class="ml-1" />
+    <v-icon
+      v-if="showIcon"
+      v-bind="$attrs"
+      :icon="iconToUse"
+      :size="iconSize"
+      class="ml-1"
+    />
   </a>
   <v-btn
     v-else
-    v-bind="props"
+    v-bind="$attrs"
     :href="href"
     :target="target"
     :rel="rel"
