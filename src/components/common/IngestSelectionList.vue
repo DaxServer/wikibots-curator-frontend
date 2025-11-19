@@ -41,12 +41,20 @@ const rowProps = ({ item }: { item: Item }) => {
           <span class="text-h6 font-weight-medium">{{ item.index }}</span>
         </template>
 
-      <template #item.image="{ item }">
-          <v-img :src="imageUrl(item)" :alt="`${altPrefix} ${item.id}`" class="cursor-pointer" @click="onToggleSelect(item.id, !item.meta.selected)"/>
-      </template>
+        <template #item.image="{ item }">
+          <v-img
+            :src="imageUrl(item)"
+            :alt="`${altPrefix} ${item.id}`"
+            class="cursor-pointer"
+            @click="onToggleSelect(item.id, !item.meta.selected)"
+          />
+        </template>
 
         <template #item.metadata="{ item }">
-          <slot name="metadata" :item="item" />
+          <slot
+            name="metadata"
+            :item="item"
+          />
         </template>
 
         <template #bottom>
@@ -65,15 +73,34 @@ const rowProps = ({ item }: { item: Item }) => {
 
   <template v-else>
     <div class="mt-4">
-      <v-data-iterator :items="items" :items-per-page="itemsPerPage" :page="page" :item-value="(item) => item.id">
+      <v-data-iterator
+        :items="items"
+        :items-per-page="itemsPerPage"
+        :page="page"
+        :item-value="(item) => item.id"
+      >
         <template #default="{ items }">
           <v-row>
-            <v-col v-for="item in items" :key="item.raw.id" cols="12" sm="6" md="3">
+            <v-col
+              v-for="item in items"
+              :key="item.raw.id"
+              cols="12"
+              sm="6"
+              md="3"
+            >
               <v-card :class="item.raw.meta.selected ? 'bg-green-lighten-5' : ''">
-              <v-img :src="imageUrl(item.raw)" :alt="`${altPrefix} ${item.raw.id}`" class="cursor-pointer" @click="onToggleSelect(item.raw.id, !item.raw.meta.selected)" />
+                <v-img
+                  :src="imageUrl(item.raw)"
+                  :alt="`${altPrefix} ${item.raw.id}`"
+                  class="cursor-pointer"
+                  @click="onToggleSelect(item.raw.id, !item.raw.meta.selected)"
+                />
                 <v-card-text>
                   <div class="text-caption text-medium-emphasis mb-2"># {{ item.raw.index }}</div>
-                  <slot name="metadata" :item="item.raw" />
+                  <slot
+                    name="metadata"
+                    :item="item.raw"
+                  />
                 </v-card-text>
               </v-card>
             </v-col>

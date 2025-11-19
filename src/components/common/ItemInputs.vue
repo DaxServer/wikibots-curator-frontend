@@ -45,7 +45,10 @@ const isFallbackCategories = computed(
         :hide-details="'auto'"
         @update:model-value="$emit('update:language', $event)"
       >
-        <template v-if="isFallbackLanguage" #details>
+        <template
+          v-if="isFallbackLanguage"
+          #details
+        >
           <span class="text-info">Using fallback language: {{ store.globalLanguage }}</span>
         </template>
       </v-select>
@@ -61,7 +64,10 @@ const isFallbackCategories = computed(
         :hide-details="'auto'"
         @update:model-value="$emit('update:description', $event)"
       >
-        <template v-if="isFallbackDescription" #details>
+        <template
+          v-if="isFallbackDescription"
+          #details
+        >
           <span class="text-info">Using fallback description: {{ store.globalDescription }}</span>
         </template>
       </v-textarea>
@@ -86,7 +92,10 @@ const isFallbackCategories = computed(
             class="text-decoration-none"
             href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator"
             show-icon
-          >[[Category:Images from Mapillary uploaded with Curator]]</ExternalLink> will be added.
+          >
+            [[Category:Images from Mapillary uploaded with Curator]]
+          </ExternalLink>
+          will be added.
         </span>
         <span v-if="isFallbackCategories">Using fallback categories.</span>
       </div>

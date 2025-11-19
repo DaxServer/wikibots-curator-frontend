@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'bun:test'
 import { createStatusFromJob } from '@/composables/useBotStatus'
+import { describe, expect, it } from 'bun:test'
 
 describe('useBotStatus', () => {
   it('should correctly identify CrashLoopBackOff with state waiting', () => {

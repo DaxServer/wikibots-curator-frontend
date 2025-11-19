@@ -18,36 +18,72 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-card class="my-4" color="grey-lighten-4">
+  <v-card
+    class="my-4"
+    color="grey-lighten-4"
+  >
     <v-card-text class="d-flex justify-space-between align-center">
       <div class="d-flex align-center ga-2">
         <div class="text-h6 font-weight-bold">Preview</div>
-        <span class="text-body-2 text-medium-emphasis">displaying {{ store.selectedCount }} items to upload</span>
+        <span class="text-body-2 text-medium-emphasis">
+          displaying {{ store.selectedCount }} items to upload
+        </span>
       </div>
-      <v-btn :prepend-icon="mdiCloudUpload" color="primary" :disabled="store.selectedCount === 0" @click="submitUpload">Upload</v-btn>
+      <v-btn
+        :prepend-icon="mdiCloudUpload"
+        color="primary"
+        :disabled="store.selectedCount === 0"
+        @click="submitUpload"
+      >
+        Upload
+      </v-btn>
     </v-card-text>
   </v-card>
 
   <div>
-    <v-alert type="info" variant="tonal" density="comfortable">The <span v-pre>{{Information}}</span> template will be populated from SDC</v-alert>
+    <v-alert
+      type="info"
+      variant="tonal"
+      density="comfortable"
+    >
+      The
+      <span v-pre>{{ Information }}</span>
+      template will be populated from SDC
+    </v-alert>
   </div>
 
-  <v-data-table :headers="headers" :items="store.displayedItems" :items-per-page="10" item-key="id">
+  <v-data-table
+    :headers="headers"
+    :items="store.displayedItems"
+    :items-per-page="10"
+    item-key="id"
+  >
     <template #item.index="{ item }">
       <span class="text-body-1 font-weight-medium">{{ item.index }}</span>
     </template>
 
     <template #item.image="{ item }">
-      <v-img :src="item.image.thumbnail_url" :alt="`${altPrefix} ${item.id}`" class="my-2" />
+      <v-img
+        :src="item.image.thumbnail_url"
+        :alt="`${altPrefix} ${item.id}`"
+        class="my-2"
+      />
     </template>
 
     <template #item.metadata="{ item }">
       <div class="d-flex flex-column ga-3">
         <div class="text-body-1 font-weight-bold">File:{{ item.meta.title }}</div>
-        <pre class="text-caption bg-grey-lighten-4 pa-2 rounded" style="font-family: monospace">{{ wikitext(item).trim() }}</pre>
+        <pre
+          class="text-caption bg-grey-lighten-4 pa-2 rounded"
+          style="font-family: monospace"
+          >{{ wikitext(item).trim() }}</pre
+        >
         <div>
           <div class="text-body-1 font-weight-bold">Labels</div>
-          <v-table density="comfortable" class="text-body-2">
+          <v-table
+            density="comfortable"
+            class="text-body-2"
+          >
             <thead>
               <tr>
                 <th class="text-left">Language</th>
@@ -64,8 +100,17 @@ onMounted(async () => {
         </div>
         <div>
           <div class="text-body-1 font-weight-bold">SDC</div>
-          <v-progress-circular v-if="store.isSDCLoading" indeterminate color="primary" class="my-2" />
-          <StatementsList v-else :key="item.id" :statements="item.sdc" />
+          <v-progress-circular
+            v-if="store.isSDCLoading"
+            indeterminate
+            color="primary"
+            class="my-2"
+          />
+          <StatementsList
+            v-else
+            :key="item.id"
+            :statements="item.sdc"
+          />
         </div>
       </div>
     </template>

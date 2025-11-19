@@ -61,7 +61,10 @@ const languageOptions = [
               class="text-decoration-none"
               href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator"
               show-icon
-            >[[Category:Images from Mapillary uploaded with Curator]]</ExternalLink> will be added.
+            >
+              [[Category:Images from Mapillary uploaded with Curator]]
+            </ExternalLink>
+            will be added.
           </span>
         </template>
       </v-textarea>

@@ -31,7 +31,7 @@ const store = useCollectionsStore()
             >
               {{ store.creator.username }}
             </ExternalLink>
-        </div>
+          </div>
         </v-col>
         <v-col>
           <span class="text-body-2 text-medium-emphasis">{{ idLabel }}</span>

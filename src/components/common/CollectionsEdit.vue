@@ -61,7 +61,11 @@ onUnmounted(() => {
     >
       <template #description-help>
         <div class="d-inline-flex w-auto flex-grow-0 flex-shrink-0 mb-4">
-          <v-alert type="info" variant="tonal" density="comfortable">
+          <v-alert
+            type="info"
+            variant="tonal"
+            density="comfortable"
+          >
             Will be applied to all selected images
             <span class="text-decoration-underline">only as a fallback</span>
           </v-alert>
@@ -72,12 +76,29 @@ onUnmounted(() => {
 
   <div class="d-flex justify-space-between align-center mt-4 mb-4 ga-4">
     <div class="d-inline-flex w-auto flex-grow-0 flex-shrink-0">
-      <v-alert type="info" variant="tonal" density="comfortable">Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items</v-alert>
+      <v-alert
+        type="info"
+        variant="tonal"
+        density="comfortable"
+      >
+        Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
+      </v-alert>
     </div>
-    <v-btn :prepend-icon="mdiEyeOutline" color="primary" :disabled="disablePreview" @click="store.stepper = '4'">Preview edits</v-btn>
+    <v-btn
+      :prepend-icon="mdiEyeOutline"
+      color="primary"
+      :disabled="disablePreview"
+      @click="store.stepper = '4'"
+    >
+      Preview edits
+    </v-btn>
   </div>
 
-  <div v-for="item in store.displayedItems" :key="item.id" class="mb-4">
+  <div
+    v-for="item in store.displayedItems"
+    :key="item.id"
+    class="mb-4"
+  >
     <div
       class="d-flex flex-column pa-4"
       :class="{
@@ -111,12 +132,23 @@ onUnmounted(() => {
               size="20"
               color="primary"
             />
-            <v-icon v-else-if="item.meta.titleAvailable === true" :icon="mdiCheckCircle" color="success" />
-            <v-icon v-else-if="item.meta.titleAvailable === false" :icon="mdiCloseCircle" color="error" />
+            <v-icon
+              v-else-if="item.meta.titleAvailable === true"
+              :icon="mdiCheckCircle"
+              color="success"
+            />
+            <v-icon
+              v-else-if="item.meta.titleAvailable === false"
+              :icon="mdiCloseCircle"
+              color="error"
+            />
           </template>
 
           <template #details>
-            <div v-if="item.meta.titleAvailable === false" class="d-flex align-center ga-2">
+            <div
+              v-if="item.meta.titleAvailable === false"
+              class="d-flex align-center ga-2"
+            >
               <span class="text-error">Title is not possible.</span>
               <ExternalLink
                 :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(item.meta.title ?? '')}`"
@@ -133,14 +165,24 @@ onUnmounted(() => {
       <v-container>
         <v-row>
           <v-col>
-            <v-img :src="item.image.thumbnail_url" :alt="`${altPrefix} ${item.id}`" max-width="400" />
+            <v-img
+              :src="item.image.thumbnail_url"
+              :alt="`${altPrefix} ${item.id}`"
+              max-width="400"
+            />
           </v-col>
           <v-col>
             <v-row>
               <v-col>
                 <div>
                   <span class="text-medium-emphasis">Taken</span>
-                  <div>{{ item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—' }}</div>
+                  <div>
+                    {{
+                      item.image.dates.taken
+                        ? new Date(item.image.dates.taken).toLocaleString()
+                        : '—'
+                    }}
+                  </div>
                 </div>
               </v-col>
               <v-col v-if="item.image.dates.published">
@@ -153,7 +195,8 @@ onUnmounted(() => {
                 <div>
                   <span class="text-medium-emphasis">Coordinates</span>
                   <div>
-                    Lat: {{ item.image.location?.latitude ?? '—' }}<br />
+                    Lat: {{ item.image.location?.latitude ?? '—' }}
+                    <br />
                     Lng: {{ item.image.location?.longitude ?? '—' }}
                   </div>
                 </div>
@@ -198,7 +241,14 @@ onUnmounted(() => {
                   >
                     View on {{ store.handler.charAt(0).toUpperCase() + store.handler.slice(1) }}
                   </ExternalLink>
-                  <v-chip v-if="item.image.is_pano" color="info" size="small" class="align-self-start">Panorama</v-chip>
+                  <v-chip
+                    v-if="item.image.is_pano"
+                    color="info"
+                    size="small"
+                    class="align-self-start"
+                  >
+                    Panorama
+                  </v-chip>
                 </div>
               </v-col>
             </v-row>
@@ -211,22 +261,21 @@ onUnmounted(() => {
         :description="item.meta.description.value"
         :categories="item.meta.categories"
         @update:language="
-        (language) =>
-          store.updateItem(item.id, 'description', {
-            ...item.meta.description,
-            language,
-          })
-      "
-      @update:description="
-        (value) =>
-          store.updateItem(item.id, 'description', {
-            ...item.meta.description,
-            value,
-          })
-      "
-      @update:categories="(categories) => store.updateItem(item.id, 'categories', categories)"
+          (language) =>
+            store.updateItem(item.id, 'description', {
+              ...item.meta.description,
+              language,
+            })
+        "
+        @update:description="
+          (value) =>
+            store.updateItem(item.id, 'description', {
+              ...item.meta.description,
+              value,
+            })
+        "
+        @update:categories="(categories) => store.updateItem(item.id, 'categories', categories)"
       />
-
     </div>
   </div>
 </template>
