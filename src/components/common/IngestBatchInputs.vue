@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { mdiOpenInNew } from '@mdi/js'
-
 defineProps<{ language: string; description: string; categories: string }>()
 
 const emit = defineEmits<{
@@ -59,7 +57,11 @@ const languageOptions = [
       >
         <template #details>
           <span class="text-info">
-            <a class="text-decoration-none d-inline-flex align-center ga-1" href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator" target="_blank" rel="noopener noreferrer">[[Category:Images from Mapillary uploaded with Curator]]<v-icon :icon="mdiOpenInNew" size="12" /></a> will be added.
+            <ExternalLink
+              class="text-decoration-none"
+              href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator"
+              show-icon
+            >[[Category:Images from Mapillary uploaded with Curator]]</ExternalLink> will be added.
           </span>
         </template>
       </v-textarea>

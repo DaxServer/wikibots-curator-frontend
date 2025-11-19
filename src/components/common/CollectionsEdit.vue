@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mdiCheckCircle, mdiCloseCircle, mdiEyeOutline, mdiOpenInNew } from '@mdi/js'
+import { mdiCheckCircle, mdiCloseCircle, mdiEyeOutline } from '@mdi/js'
 
 defineProps<{ altPrefix: string }>()
 
@@ -118,15 +118,13 @@ onUnmounted(() => {
           <template #details>
             <div v-if="item.meta.titleAvailable === false" class="d-flex align-center ga-2">
               <span class="text-error">Title is not possible.</span>
-              <a
+              <ExternalLink
                 :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(item.meta.title ?? '')}`"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-primary d-inline-flex align-center ga-1"
+                class="text-primary"
+                show-icon
               >
                 Check existing file
-                <v-icon :icon="mdiOpenInNew" size="12" />
-              </a>
+              </ExternalLink>
             </div>
           </template>
         </v-text-field>
@@ -178,30 +176,28 @@ onUnmounted(() => {
             <v-row>
               <v-col>
                 <div class="d-flex flex-column ga-2 text-body-2 align-start">
-                  <v-btn
+                  <ExternalLink
+                    as="button"
                     :href="item.image.url_original"
-                    :append-icon="mdiOpenInNew"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    show-icon
                     variant="text"
                     color="primary"
                     size="small"
                     class="align-self-start pl-0 text-none"
                   >
                     View image
-                  </v-btn>
-                  <v-btn
+                  </ExternalLink>
+                  <ExternalLink
+                    as="button"
                     :href="item.image.url"
-                    :append-icon="mdiOpenInNew"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    show-icon
                     variant="text"
                     color="primary"
                     size="small"
                     class="align-self-start pl-0 text-none"
                   >
                     View on {{ store.handler.charAt(0).toUpperCase() + store.handler.slice(1) }}
-                  </v-btn>
+                  </ExternalLink>
                   <v-chip v-if="item.image.is_pano" color="info" size="small" class="align-self-start">Panorama</v-chip>
                 </div>
               </v-col>

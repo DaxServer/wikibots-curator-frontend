@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { mdiOpenInNew } from '@mdi/js'
-
 defineProps<{
   input: string
   selectedCount: number
@@ -25,15 +23,14 @@ const store = useCollectionsStore()
         <v-col>
           <span class="text-body-2 text-medium-emphasis">Creator</span>
           <div>
-            <a
-            :href="store.creator.profile_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-primary text-body-2 d-inline-flex align-center ga-1"
+            <ExternalLink
+              :href="store.creator.profile_url"
+              class="text-primary text-body-2"
+              show-icon
+              icon-size="16"
             >
-            {{ store.creator.username }}
-            <v-icon :icon="mdiOpenInNew" size="18" />
-          </a>
+              {{ store.creator.username }}
+            </ExternalLink>
         </div>
         </v-col>
         <v-col>

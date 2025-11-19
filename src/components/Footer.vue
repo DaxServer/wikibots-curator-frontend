@@ -16,17 +16,16 @@ const sourceLinks = [
       v-for="(link, index) in sourceLinks"
       :key="index"
     >
-      <v-btn
+      <ExternalLink
+        as="button"
         :href="link.url"
-        rel="noopener noreferrer"
         min-width="0"
         variant="text"
         density="compact"
-        target="_blank"
-        class="text-decoration-none text-lowercase text-grey pa-0"
+        class="text-decoration-none text-lowercase text-grey pa-1"
       >
         {{ link.text }}
-      </v-btn>
+      </ExternalLink>
       <template v-if="index < sourceLinks.length - 1">&nbsp;&bull;&nbsp;</template>
     </template>
   </v-footer>
