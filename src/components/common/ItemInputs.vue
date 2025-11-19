@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { mdiOpenInNew } from '@mdi/js'
+
 const props = defineProps<{
   language: string
   description: string
@@ -79,8 +81,13 @@ const isFallbackCategories = computed(
     class="mt-2"
     @update:model-value="$emit('update:categories', $event)"
   >
-    <template v-if="isFallbackCategories" #details>
-      <span class="text-info">Using fallback categories: {{ store.globalCategories }}</span>
+    <template #details>
+      <div class="d-flex flex-column text-info text-right">
+        <span>
+          <a class="text-decoration-none d-inline-flex align-center ga-1" href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator" target="_blank" rel="noopener noreferrer">[[Category:Images from Mapillary uploaded with Curator]]<v-icon :icon="mdiOpenInNew" size="12" /></a> will be added.
+        </span>
+        <span v-if="isFallbackCategories">Using fallback categories.</span>
+      </div>
     </template>
   </v-textarea>
 </template>

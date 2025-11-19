@@ -125,7 +125,7 @@ onUnmounted(() => {
                 class="text-primary d-inline-flex align-center ga-1"
               >
                 Check existing file
-                <v-icon :icon="mdiOpenInNew" size="18" />
+                <v-icon :icon="mdiOpenInNew" size="12" />
               </a>
             </div>
           </template>
