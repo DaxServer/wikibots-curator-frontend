@@ -8,7 +8,7 @@ const { getEntityLabel } = useWikidata()
   <template v-if="value.type === 'wikibase-entityid'">
     <ExternalLink
       :href="`https://www.wikidata.org/wiki/Q${value.value['numeric-id']}`"
-      class="text-blue"
+      class="text-blue text-decoration-none"
     >
       {{ getEntityLabel(`Q${value.value['numeric-id']}`) }} (Q{{ value.value['numeric-id'] }})
     </ExternalLink>
@@ -17,7 +17,7 @@ const { getEntityLabel } = useWikidata()
     <span>{{ value.value.language }}: {{ value.value.text }}</span>
   </template>
   <template v-else-if="value.type === 'quantity'">
-    <span>{{ value.value.amount }} {{ value.value.unit }}</span>
+    <span>{{ value.value.amount }} {{ getEntityLabel(value.value.unit.split('/').at(-1)!) }}</span>
   </template>
   <template v-else-if="value.type === 'time'">
     <span>{{ new Date(value.value.time.replace(/^\+0+/, '')).toISOString().split('T')[0] }}</span>
@@ -28,7 +28,7 @@ const { getEntityLabel } = useWikidata()
   <template v-else-if="value.type === 'url'">
     <ExternalLink
       :href="value.value"
-      class="text-blue"
+      class="text-blue text-decoration-none"
     >
       {{ value.value }}
     </ExternalLink>

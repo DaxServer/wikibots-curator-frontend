@@ -6,7 +6,7 @@ const { getPropertyLabel } = useWikidata()
 <template>
   <ExternalLink
     :href="`https://www.wikidata.org/wiki/Property:${property}`"
-    class="text-body-2 text-blue hover:underline"
+    class="text-body-2 text-blue text-decoration-none"
   >
     {{ getPropertyLabel(property) }} ({{ property }})
   </ExternalLink>
