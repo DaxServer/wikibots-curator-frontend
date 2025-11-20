@@ -37,6 +37,25 @@ onMounted(() => {
         >
           View on Mapillary
         </ExternalLink>
+        <div
+          v-if="item.image.existing.length"
+          class="pa-1 bg-orange-accent-1"
+        >
+          <strong>Existing files:</strong>
+          <div
+            v-for="page in item.image.existing"
+            :key="page.url"
+          >
+            *
+            <ExternalLink
+              :href="page.url"
+              class="text-info"
+              show-icon
+            >
+              {{ page.url }}
+            </ExternalLink>
+          </div>
+        </div>
       </div>
     </template>
   </CollectionsTable>

@@ -114,7 +114,7 @@ declare global {
   export type { Process } from './src/types/harbor'
   import('./src/types/harbor')
   // @ts-ignore
-  export type { Creator, Location, Dates, Image, Metadata, MetadataKey, MetadataValue, Item, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
+  export type { Creator, Location, Dates, ExistingPage, Image, Metadata, MetadataKey, MetadataValue, Item, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
   export type { Job, JobRequest } from './src/types/jobs'

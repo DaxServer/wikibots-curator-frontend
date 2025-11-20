@@ -16,6 +16,10 @@ export interface Dates {
   published?: string
 }
 
+export interface ExistingPage {
+  url: string
+}
+
 export interface Image {
   id: string
   handler: Handler
@@ -35,6 +39,7 @@ export interface Image {
   is_pano?: boolean
   license?: string
   tags?: string[]
+  existing: ExistingPage[]
 }
 
 interface Description {
