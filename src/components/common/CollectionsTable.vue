@@ -85,18 +85,7 @@ const updateStep = (step: string) => {
           @editSelected="store.stepper = '3'"
         />
 
-        <IngestSelectionList
-          :items="store.displayedItems"
-          :view-mode="store.viewMode"
-          :items-per-page="store.itemsPerPage"
-          :page="store.page"
-          :per-page-options="store.viewMode === 'list' ? [10, 25, 50] : [24, 48, 72]"
-          :image-url="(it) => it.image.thumbnail_url"
-          :on-toggle-select="(id, next) => store.updateItem(id, 'selected', next)"
-          :alt-prefix="altPrefix"
-          @update:page="store.setPage"
-          @update:items-per-page="store.setItemsPerPage"
-        >
+        <IngestSelectionList :alt-prefix="altPrefix">
           <template #metadata="{ item }">
             <slot
               name="metadata"

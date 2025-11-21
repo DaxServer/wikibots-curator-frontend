@@ -1,18 +1,9 @@
 <script setup lang="ts">
 defineProps<{
-  items: Item[]
-  viewMode: Layout
-  itemsPerPage: number
-  page: number
-  imageUrl: (item: Item) => string
-  onToggleSelect: (id: string, next: boolean) => void
   altPrefix: string
 }>()
 
-const emit = defineEmits<{
-  'update:page': [number]
-  'update:itemsPerPage': [number]
-}>()
+const store = useCollectionsStore()
 
 const headers = [
   { title: '#', key: 'index' },
@@ -24,18 +15,22 @@ const rowProps = ({ item }: { item: Item }) => {
   if (item.meta.selected) return { class: 'bg-green-lighten-5' }
   return {}
 }
+
+const onToggleSelect = (item: Item) => {
+  store.updateItem(item.id, 'selected', !item.meta.selected)
+}
 </script>
 
 <template>
-  <template v-if="viewMode === 'list'">
+  <template v-if="store.viewMode === 'list'">
     <div class="mt-4">
       <v-data-table
         :headers="headers"
-        :items="items"
+        :items="store.displayedItems"
         :item-value="(item) => item.id"
         :row-props="rowProps"
-        :items-per-page="itemsPerPage"
-        :page="page"
+        :items-per-page="store.itemsPerPage"
+        :page="store.page"
       >
         <template #item.index="{ item }">
           <span class="text-h6 font-weight-medium">{{ item.index }}</span>
@@ -43,10 +38,10 @@ const rowProps = ({ item }: { item: Item }) => {
 
         <template #item.image="{ item }">
           <v-img
-            :src="imageUrl(item)"
+            :src="item.image.thumbnail_url"
             :alt="`${altPrefix} ${item.id}`"
             class="cursor-pointer"
-            @click="onToggleSelect(item.id, !item.meta.selected)"
+            @click="onToggleSelect(item)"
           />
         </template>
 
@@ -59,12 +54,12 @@ const rowProps = ({ item }: { item: Item }) => {
 
         <template #bottom>
           <IngestPagination
-            :page="page"
-            :items-per-page="itemsPerPage"
-            :total-items="items.length"
+            :page="store.page"
+            :items-per-page="store.itemsPerPage"
+            :total-items="store.displayedItems.length"
             :per-page-options="[10, 25, 50]"
-            @update:page="emit('update:page', $event)"
-            @update:items-per-page="emit('update:itemsPerPage', $event)"
+            @update:page="store.setPage"
+            @update:items-per-page="store.setItemsPerPage"
           />
         </template>
       </v-data-table>
@@ -74,9 +69,9 @@ const rowProps = ({ item }: { item: Item }) => {
   <template v-else>
     <div class="mt-4">
       <v-data-iterator
-        :items="items"
-        :items-per-page="itemsPerPage"
-        :page="page"
+        :items="store.displayedItems"
+        :items-per-page="store.itemsPerPage"
+        :page="store.page"
         :item-value="(item) => item.id"
       >
         <template #default="{ items }">
@@ -90,10 +85,10 @@ const rowProps = ({ item }: { item: Item }) => {
             >
               <v-card :class="item.raw.meta.selected ? 'bg-green-lighten-5' : ''">
                 <v-img
-                  :src="imageUrl(item.raw)"
+                  :src="item.raw.image.thumbnail_url"
                   :alt="`${altPrefix} ${item.raw.id}`"
                   class="cursor-pointer"
-                  @click="onToggleSelect(item.raw.id, !item.raw.meta.selected)"
+                  @click="onToggleSelect(item.raw)"
                 />
                 <v-card-text>
                   <div class="text-caption text-medium-emphasis mb-2"># {{ item.raw.index }}</div>
@@ -110,12 +105,12 @@ const rowProps = ({ item }: { item: Item }) => {
     </div>
 
     <IngestPagination
-      :page="page"
-      :items-per-page="itemsPerPage"
-      :total-items="items.length"
+      :page="store.page"
+      :items-per-page="store.itemsPerPage"
+      :total-items="store.displayedItems.length"
       :per-page-options="[24, 48, 72]"
-      @update:page="emit('update:page', $event)"
-      @update:items-per-page="emit('update:itemsPerPage', $event)"
+      @update:page="store.setPage"
+      @update:items-per-page="store.setItemsPerPage"
     />
   </template>
 </template>
