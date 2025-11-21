@@ -74,7 +74,7 @@ export const useCollections = () => {
       }
     }
 
-    poller = setInterval(statusCheck, 5000) as unknown as number
+    poller = setInterval(statusCheck, 2000) as unknown as number
     void statusCheck()
   }
 
@@ -87,6 +87,7 @@ export const useCollections = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ handler: store.handler, input: store.input }),
       })
+      if (response.status === 404) throw new Error('Collection not found')
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
 
       const apiResponse = (await response.json()) as CollectionsApiResponse
