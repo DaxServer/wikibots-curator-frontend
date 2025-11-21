@@ -105,6 +105,8 @@ onUnmounted(() => {
         'border-s-lg': item.meta.selected || item.meta.titleAvailable === false,
         'border-error border-opacity-100': item.meta.titleAvailable === false,
         'border-primary': item.meta.titleAvailable !== false && item.meta.selected,
+        'border-warning border-opacity-100':
+          item.image.existing.length > 0 && item.meta.titleAvailable === true,
       }"
     >
       <div class="d-flex align-start ga-4">
@@ -249,6 +251,26 @@ onUnmounted(() => {
                   >
                     Panorama
                   </v-chip>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row v-if="item.image.existing.length">
+              <v-col>
+                <div class="pa-1 bg-orange-accent-1">
+                  <strong>Existing files:</strong>
+                  <div
+                    v-for="page in item.image.existing"
+                    :key="page.url"
+                  >
+                    *
+                    <ExternalLink
+                      :href="page.url"
+                      class="text-info"
+                      show-icon
+                    >
+                      {{ page.url }}
+                    </ExternalLink>
+                  </div>
                 </div>
               </v-col>
             </v-row>

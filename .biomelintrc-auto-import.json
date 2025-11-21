@@ -18,6 +18,7 @@
       "DirectiveBinding",
       "EffectScope",
       "EntityIdDataValue",
+      "ExistingPage",
       "ExtractDefaultPropTypes",
       "ExtractPropTypes",
       "ExtractPublicPropTypes",
