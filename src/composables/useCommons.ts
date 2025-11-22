@@ -19,13 +19,18 @@ export const useCommons = () => {
       categories = `${categories.trim()}\n[[Category:Images from Mapillary uploaded with Curator]]`
     }
 
+    let additionalInfo = ''
+
+    additionalInfo = `{{Location|${item.image.location!.latitude}|${item.image.location!.longitude}|heading:${item.image.location!.compass_angle}}}`
+    if (item.image.is_pano === true) additionalInfo += '\n{{Pano360}}'
+
     categories = categories.trim()
 
     const info = `== {{int:filedesc}} ==
 {{Information
  | source      = ${source}
 }}
-{{Location|${item.image.location!.latitude}|${item.image.location!.longitude}|heading:${item.image.location!.compass_angle}}}
+${additionalInfo}
 
 == {{int:license-header}} ==
 {{cc-by-sa-4.0}}
