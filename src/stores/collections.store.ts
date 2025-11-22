@@ -39,6 +39,28 @@ export const useCollectionsStore = defineStore('collections', () => {
     })
   }
 
+  const selectAll = () => {
+    Object.values(items.value).forEach((item) => {
+      item.meta.selected = true
+    })
+  }
+
+  const deselectAll = () => {
+    Object.values(items.value).forEach((item) => {
+      item.meta.selected = false
+    })
+  }
+
+  const selectPage = () => {
+    const all = displayedItems.value
+    const start = (page.value - 1) * itemsPerPage.value
+    const end = start + itemsPerPage.value
+    const pageItems = all.slice(start, end)
+    pageItems.forEach((item) => {
+      item.meta.selected = true
+    })
+  }
+
   const setGlobalDescription = (value: string) => {
     globalDescription.value = value
   }
@@ -97,6 +119,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const setHandler = (h: Handler) => {
     handler.value = h
   }
+
   const setInput = (v: string) => {
     input.value = v
   }
@@ -149,6 +172,9 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalCategories,
     updateItem,
     updateSelected,
+    selectAll,
+    deselectAll,
+    selectPage,
     setViewMode,
     toggleViewMode,
     setGridPage,
