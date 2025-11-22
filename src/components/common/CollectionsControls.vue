@@ -82,7 +82,7 @@ const store = useCollectionsStore()
         color="primary"
         variant="elevated"
         :disabled="store.selectedCount === 0"
-        @click="store.stepper = '3'"
+        @click="store.stepper = 3"
       >
         Start editing
       </v-btn>

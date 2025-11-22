@@ -88,7 +88,7 @@ onUnmounted(() => {
       :prepend-icon="mdiEyeOutline"
       color="primary"
       :disabled="disablePreview"
-      @click="store.stepper = '4'"
+      @click="store.stepper = 4"
     >
       Preview edits
     </v-btn>
