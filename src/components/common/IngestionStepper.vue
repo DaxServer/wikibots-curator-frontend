@@ -1,14 +1,11 @@
 <script setup lang="ts">
-const modelValue = defineModel<string>({ required: true })
-const updateStep = (step: string) => {
-  modelValue.value = step
-}
+const store = useCollectionsStore()
 </script>
 
 <template>
   <v-stepper
-    :model-value="Number(modelValue)"
-    @update:model-value="(step) => updateStep(String(step))"
+    :model-value="store.stepper"
+    @update:model-value="store.stepper = Number($event)"
   >
     <v-stepper-header>
       <v-stepper-item
@@ -19,11 +16,13 @@ const updateStep = (step: string) => {
       <v-stepper-item
         :value="2"
         title="Select"
+        :editable="[3, 4].includes(store.stepper)"
       />
       <v-divider />
       <v-stepper-item
         :value="3"
         title="Edit"
+        :editable="4 === store.stepper"
       />
       <v-divider />
       <v-stepper-item

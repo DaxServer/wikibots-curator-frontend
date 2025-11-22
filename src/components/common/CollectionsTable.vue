@@ -11,10 +11,6 @@ defineProps<{
 const store = useCollectionsStore()
 const auth = useAuthStore()
 const { loadCollection } = useCollections()
-
-const updateStep = (step: string) => {
-  store.stepper = step
-}
 </script>
 
 <template>
@@ -40,20 +36,17 @@ const updateStep = (step: string) => {
         <v-alert type="error">{{ store.error }}</v-alert>
       </div>
 
-      <IngestionStepper
-        v-model="store.stepper"
-        @update:model-value="(step) => updateStep(String(step))"
-      />
+      <IngestionStepper />
 
       <CollectionsInfoCard
-        v-if="store.stepper !== '1' && store.stepper !== '5'"
+        v-if="store.stepper !== 1 && store.stepper !== 5"
         :input="store.input"
         :selected-count="store.selectedCount"
         :total-images="store.totalImages"
         :id-label="idLabel"
       />
 
-      <div v-if="store.stepper === '1'">
+      <div v-if="store.stepper === 1">
         <v-form
           class="mt-4 mb-4"
           @submit.prevent="(e) => (e.preventDefault(), loadCollection())"
@@ -77,7 +70,7 @@ const updateStep = (step: string) => {
         </v-form>
       </div>
 
-      <div v-if="store.stepper === '2'">
+      <div v-if="store.stepper === 2">
         <CollectionsControls />
 
         <IngestSelectionList :alt-prefix="altPrefix">
@@ -90,15 +83,15 @@ const updateStep = (step: string) => {
         </IngestSelectionList>
       </div>
 
-      <div v-if="store.stepper === '3'">
+      <div v-if="store.stepper === 3">
         <CollectionsEdit :alt-prefix="altPrefix" />
       </div>
 
-      <div v-if="store.stepper === '4'">
+      <div v-if="store.stepper === 4">
         <UploadPreview :alt-prefix="altPrefix" />
       </div>
 
-      <div v-if="store.stepper === '5'">
+      <div v-if="store.stepper === 5">
         <UploadStatusTable :items="store.displayedItems" />
       </div>
 
