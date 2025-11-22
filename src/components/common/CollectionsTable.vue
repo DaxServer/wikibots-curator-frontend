@@ -78,12 +78,7 @@ const updateStep = (step: string) => {
       </div>
 
       <div v-if="store.stepper === '2'">
-        <CollectionsControls
-          :view-mode="store.viewMode"
-          :selected-count="store.selectedCount"
-          @update:viewMode="(v) => (store.viewMode = v)"
-          @editSelected="store.stepper = '3'"
-        />
+        <CollectionsControls />
 
         <IngestSelectionList :alt-prefix="altPrefix">
           <template #metadata="{ item }">

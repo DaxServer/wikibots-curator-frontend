@@ -1,15 +1,7 @@
 <script setup lang="ts">
-import { mdiViewGrid, mdiViewList } from '@mdi/js'
+import { mdiChevronDown, mdiViewGrid, mdiViewList } from '@mdi/js'
 
-defineProps<{
-  viewMode: Layout
-  selectedCount: number
-}>()
-
-const emit = defineEmits<{
-  'update:viewMode': [Layout]
-  editSelected: []
-}>()
+const store = useCollectionsStore()
 </script>
 
 <template>
@@ -23,9 +15,9 @@ const emit = defineEmits<{
         Click on images to select
       </v-alert>
       <v-btn-toggle
-        :model-value="viewMode"
+        :model-value="store.viewMode"
         mandatory
-        @update:model-value="(v) => emit('update:viewMode', v as Layout)"
+        @update:model-value="store.viewMode = $event"
       >
         <v-btn
           value="list"
@@ -52,15 +44,45 @@ const emit = defineEmits<{
       </v-btn-toggle>
     </div>
     <div class="d-flex align-center ga-4">
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            variant="outlined"
+          >
+            Select
+            <v-icon
+              :icon="mdiChevronDown"
+              end
+            />
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="store.selectAll">
+            <v-list-item-title>All images</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="store.selectPage">
+            <v-list-item-title>Current page</v-list-item-title>
+          </v-list-item>
+          <v-divider />
+          <v-list-item
+            @click="store.deselectAll"
+            :disabled="store.selectedCount === 0"
+          >
+            <v-list-item-title class="text-error">Deselect all</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
       <span class="text-body-1">
-        <span class="text-success font-weight-medium">{{ selectedCount }}</span>
+        <span class="text-success font-weight-medium">{{ store.selectedCount }}</span>
         selected
       </span>
       <v-btn
         color="primary"
         variant="elevated"
-        :disabled="selectedCount === 0"
-        @click="emit('editSelected')"
+        :disabled="store.selectedCount === 0"
+        @click="store.stepper = '3'"
       >
         Start editing
       </v-btn>
