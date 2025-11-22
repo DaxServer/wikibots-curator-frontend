@@ -23,6 +23,14 @@ onMounted(() => {
           <strong>ID:</strong>
           {{ item.image.id }}
         </div>
+        <v-chip
+          v-if="item.image.is_pano"
+          color="info"
+          size="small"
+          class="align-self-start"
+        >
+          Panorama
+        </v-chip>
         <ExternalLink
           class="text-info"
           :href="item.image.url_original"
