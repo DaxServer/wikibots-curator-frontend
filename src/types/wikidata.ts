@@ -2,26 +2,30 @@
 // References:
 // - Wikidata Data model overview: https://www.wikidata.org/wiki/Wikidata:Data_model
 
-export type WikibaseEntityType = 'item' | 'property' | 'lexeme' | 'form' | 'sense'
+export type WikibaseEntityType = 'item' | 'property'
 
-export interface DataValueEntityId {
-  'numeric-id': number
+export type NumericId = number
+export type PropertyId = `P${NumericId}`
+export type ItemId = `Q${NumericId}`
+
+export type DataValueEntityId = {
+  'numeric-id': NumericId
   'entity-type': WikibaseEntityType
 }
 
-export interface DataValueMonolingualText {
+export type DataValueMonolingualText = {
   text: string
   language: string
 }
 
-export interface DataValueQuantity {
+export type DataValueQuantity = {
   amount: string // e.g. "+12.34"
   unit: string // e.g. "http://www.wikidata.org/entity/Q123"
-  upperBound?: string
-  lowerBound?: string
+  upperBound?: string | null
+  lowerBound?: string | null
 }
 
-export interface DataValueTime {
+export type DataValueTime = {
   time: string // e.g. "+2013-01-01T00:00:00Z"
   timezone?: number
   before?: number
@@ -30,79 +34,124 @@ export interface DataValueTime {
   calendarmodel?: string
 }
 
-export interface DataValueGlobeCoordinate {
-  latitude: number
-  longitude: number
-  altitude?: number | null
-  precision?: number | null
-  globe?: string
-}
+export const DataValueType = {
+  ExternalId: 'external-id',
+  Quantity: 'quantity',
+  String: 'string',
+  Time: 'time',
+  WikibaseEntityId: 'wikibase-entityid',
+} as const
 
-export interface StringDataValue {
-  type: 'string'
+export type StringDataValue = {
+  type: typeof DataValueType.String
   value: string
 }
 
-export interface EntityIdDataValue {
-  type: 'wikibase-entityid'
+export type EntityIdDataValue = {
+  type: typeof DataValueType.WikibaseEntityId
   value: DataValueEntityId
 }
 
-export interface MonolingualTextDataValue {
-  type: 'monolingualtext'
-  value: DataValueMonolingualText
-}
-
-export interface QuantityDataValue {
-  type: 'quantity'
+export type QuantityDataValue = {
+  type: typeof DataValueType.Quantity
   value: DataValueQuantity
 }
 
-export interface TimeDataValue {
-  type: 'time'
+export type TimeDataValue = {
+  type: typeof DataValueType.Time
   value: DataValueTime
 }
 
-export interface GlobeCoordinateDataValue {
-  type: 'globecoordinate'
-  value: DataValueGlobeCoordinate
-}
-
-export interface UrlDataValue {
-  type: 'url'
+export type UrlDataValue = {
+  type: typeof DataValueType.String
   value: string
 }
 
 export type DataValue =
   | StringDataValue
   | EntityIdDataValue
-  | MonolingualTextDataValue
   | QuantityDataValue
   | TimeDataValue
-  | GlobeCoordinateDataValue
   | UrlDataValue
 
-export type SnakType = 'value' | 'somevalue' | 'novalue'
+export const SnakDataType = {
+  ExternalId: 'external-id',
+  Quantity: 'quantity',
+  String: 'string',
+  Time: 'time',
+  Url: 'url',
+  WikibaseItem: 'wikibase-item',
+} as const
 
-export interface ValueSnak {
-  snaktype: 'value'
-  datavalue: DataValue
-  property: string
+export const SnakType = {
+  Value: 'value',
+  SomeValue: 'somevalue',
+  NoValue: 'novalue',
+} as const
+
+export type StringValueSnak = {
+  snaktype: typeof SnakType.Value
+  datavalue: StringDataValue
+  property: PropertyId
+  datatype: typeof SnakDataType.String
 }
 
-export interface SomeValueSnak {
-  snaktype: 'somevalue'
-  property: string
+export type EntityIdValueSnak = {
+  snaktype: typeof SnakType.Value
+  datavalue: EntityIdDataValue
+  property: PropertyId
+  datatype: typeof SnakDataType.WikibaseItem
 }
 
-export interface NoValueSnak {
-  snaktype: 'novalue'
-  property: string
+export type ExternalIdValueSnak = {
+  snaktype: typeof SnakType.Value
+  datavalue: StringDataValue
+  property: PropertyId
+  datatype: typeof SnakDataType.ExternalId
+}
+
+export type QuantityValueSnak = {
+  snaktype: typeof SnakType.Value
+  datavalue: QuantityDataValue
+  property: PropertyId
+  datatype: typeof SnakDataType.Quantity
+}
+
+export type TimeValueSnak = {
+  snaktype: typeof SnakType.Value
+  datavalue: TimeDataValue
+  property: PropertyId
+  datatype: typeof SnakDataType.Time
+}
+
+export type UrlValueSnak = {
+  snaktype: typeof SnakType.Value
+  datavalue: UrlDataValue
+  property: PropertyId
+  datatype: typeof SnakDataType.Url
+}
+
+export type ValueSnak =
+  | StringValueSnak
+  | EntityIdValueSnak
+  | ExternalIdValueSnak
+  | QuantityValueSnak
+  | TimeValueSnak
+  | UrlValueSnak
+
+export type SomeValueSnak = {
+  snaktype: typeof SnakType.SomeValue
+  property: PropertyId
+}
+
+export type NoValueSnak = {
+  snaktype: typeof SnakType.NoValue
+  property: PropertyId
 }
 
 export type Snak = ValueSnak | SomeValueSnak | NoValueSnak
 
-export interface Reference {
+export type Reference = {
   snaks: Record<string, Snak[]>
   'snaks-order'?: string[]
   hash?: string
@@ -110,10 +159,36 @@ export interface Reference {
 
 export type Rank = 'preferred' | 'normal' | 'deprecated'
 
-export interface Statement {
+export type Statement = {
   mainsnak: Snak
   rank: Rank
   qualifiers?: Record<string, Snak[]>
   'qualifiers-order'?: string[]
   references?: Reference[]
+  type?: 'statement'
 }
+
+export const WikidataEntity = {
+  CCBYSA40: 'Q18199165',
+  Copyrighted: 'Q50423863',
+  FileAvailableOnInternet: 'Q74228490',
+  Mapillary: 'Q17985544',
+  MapillaryDatabase: 'Q26757498',
+  Pixel: 'Q355198',
+} as const
+
+export const WikidataProperty = {
+  AuthorNameString: 'P2093',
+  CopyrightLicense: 'P275',
+  CopyrightStatus: 'P6216',
+  Creator: 'P170',
+  DescribedAtUrl: 'P973',
+  Height: 'P2048',
+  Inception: 'P571',
+  MapillaryPhotoID: 'P1947',
+  Operator: 'P137',
+  PublishedIn: 'P1433',
+  SourceOfFile: 'P7482',
+  Url: 'P2699',
+  Width: 'P2049',
+} as const

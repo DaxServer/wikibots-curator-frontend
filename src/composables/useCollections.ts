@@ -109,27 +109,9 @@ export const useCollections = () => {
     }
   }
 
-  const loadSDC = async (): Promise<void> => {
-    store.isLoading = true
-    store.isSDCLoading = true
-    store.error = null
-    try {
-      const ids = store.selectedItems.map((i) => i.id)
-      const response = await fetch(`${API_COLLECTIONS}/sdc`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ handler: store.handler, input: store.input, images: ids }),
-      })
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-      const sdcById = (await response.json()) as Record<string, Statement[]>
-      for (const [id, sdc] of Object.entries(sdcById)) {
-        store.items[id]!.sdc = sdc
-      }
-    } catch (err) {
-      store.error = err instanceof Error ? err.message : 'An unknown error occurred'
-    } finally {
-      store.isLoading = false
-      store.isSDCLoading = false
+  const loadSDC = (): void => {
+    for (const item of store.selectedItems) {
+      store.items[item.id]!.sdc = commons.buildSDC(item.image)
     }
   }
 
@@ -150,6 +132,7 @@ export const useCollections = () => {
           title: item.meta.title,
           wikitext: wikitext(item),
           labels: item.meta.description,
+          sdc: item.sdc,
         })),
       }
       const res = await fetch(PATH_UPLOAD_REQUEST, {
