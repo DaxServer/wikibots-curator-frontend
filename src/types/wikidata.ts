@@ -92,42 +92,42 @@ export const SnakType = {
 export type StringValueSnak = {
   snaktype: typeof SnakType.Value
   datavalue: StringDataValue
-  property: string
+  property: PropertyId
   datatype: typeof SnakDataType.String
 }
 
 export type EntityIdValueSnak = {
   snaktype: typeof SnakType.Value
   datavalue: EntityIdDataValue
-  property: string
+  property: PropertyId
   datatype: typeof SnakDataType.WikibaseItem
 }
 
 export type ExternalIdValueSnak = {
   snaktype: typeof SnakType.Value
   datavalue: StringDataValue
-  property: string
+  property: PropertyId
   datatype: typeof SnakDataType.ExternalId
 }
 
 export type QuantityValueSnak = {
   snaktype: typeof SnakType.Value
   datavalue: QuantityDataValue
-  property: string
+  property: PropertyId
   datatype: typeof SnakDataType.Quantity
 }
 
 export type TimeValueSnak = {
   snaktype: typeof SnakType.Value
   datavalue: TimeDataValue
-  property: string
+  property: PropertyId
   datatype: typeof SnakDataType.Time
 }
 
 export type UrlValueSnak = {
   snaktype: typeof SnakType.Value
   datavalue: UrlDataValue
-  property: string
+  property: PropertyId
   datatype: typeof SnakDataType.Url
 }
 
@@ -141,12 +141,12 @@ export type ValueSnak =
 
 export type SomeValueSnak = {
   snaktype: typeof SnakType.SomeValue
-  property: string
+  property: PropertyId
 }
 
 export type NoValueSnak = {
   snaktype: typeof SnakType.NoValue
-  property: string
+  property: PropertyId
 }
 
 export type Snak = ValueSnak | SomeValueSnak | NoValueSnak
