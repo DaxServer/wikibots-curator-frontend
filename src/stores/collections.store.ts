@@ -4,7 +4,6 @@ export const useCollectionsStore = defineStore('collections', () => {
   const creator = ref<Creator>({ id: '', username: '', profile_url: '' })
 
   const isLoading = ref(false)
-  const isSDCLoading = ref<boolean>(false)
   const error = ref<string | null>(null)
   const items = ref<Record<string, Item>>({})
   const isStatusChecking = ref<boolean>(false)
@@ -143,7 +142,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     creator,
 
     isLoading,
-    isSDCLoading,
     error,
     items,
     isStatusChecking,

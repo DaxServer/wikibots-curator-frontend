@@ -75,6 +75,39 @@ ${categories}
     return 'Photo from Mapillary'
   }
 
+  const buildSDC = (image: Image): Statement[] => {
+    const claims: Statement[] = []
+
+    // Creator
+    claims.push(createCreatorClaim(image.creator.username, image.creator.profile_url))
+
+    // Mapillary ID
+    claims.push(createMapillaryIdClaim(image.id))
+
+    // Published in
+    claims.push(createPublishedInMapillaryClaim())
+
+    // Inception
+    claims.push(createInceptionClaim(new Date(image.dates.taken!)))
+
+    // Source of file
+    claims.push(createSourceOfFileClaim(image.url))
+
+    // Copyright status
+    claims.push(createCopyrightStatusClaim())
+
+    // Copyright license
+    claims.push(createCopyrightLicenseClaim())
+
+    // Width
+    claims.push(createWidthClaim(image.width))
+
+    // Height
+    claims.push(createHeightClaim(image.height))
+
+    return claims
+  }
+
   return {
     applyMetaDefaults,
     checkFileTitleAvailability,
@@ -82,5 +115,6 @@ ${categories}
     buildTitle,
     buildDescription,
     buildWikitext,
+    buildSDC,
   }
 }

@@ -100,14 +100,7 @@ onMounted(async () => {
         </div>
         <div>
           <div class="text-body-1 font-weight-bold">SDC</div>
-          <v-progress-circular
-            v-if="store.isSDCLoading"
-            indeterminate
-            color="primary"
-            class="my-2"
-          />
           <StatementsList
-            v-else
             :key="item.id"
             :statements="item.sdc"
           />

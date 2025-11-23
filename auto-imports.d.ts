@@ -6,14 +6,40 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const DataValueType: typeof import('./src/types/wikidata').DataValueType
   const EffectScope: typeof import('vue').EffectScope
+  const SnakDataType: typeof import('./src/types/wikidata').SnakDataType
+  const SnakType: typeof import('./src/types/wikidata').SnakType
   const UPLOAD_STATUS: typeof import('./src/types/image').UPLOAD_STATUS
+  const WikidataEntity: typeof import('./src/types/wikidata').WikidataEntity
+  const WikidataProperty: typeof import('./src/types/wikidata').WikidataProperty
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const botsStore: typeof import('./src/stores/bots.store').default
   const computed: typeof import('vue').computed
   const createApp: typeof import('vue').createApp
+  const createCopyrightLicenseClaim: typeof import('./src/composables/sdc').createCopyrightLicenseClaim
+  const createCopyrightStatusClaim: typeof import('./src/composables/sdc').createCopyrightStatusClaim
+  const createCreatorClaim: typeof import('./src/composables/sdc').createCreatorClaim
+  const createExternalIdSnak: typeof import('./src/composables/sdc').createExternalIdSnak
+  const createExternalIdStatement: typeof import('./src/composables/sdc').createExternalIdStatement
+  const createHeightClaim: typeof import('./src/composables/sdc').createHeightClaim
+  const createInceptionClaim: typeof import('./src/composables/sdc').createInceptionClaim
+  const createMapillaryIdClaim: typeof import('./src/composables/sdc').createMapillaryIdClaim
   const createPinia: typeof import('pinia').createPinia
+  const createPublishedInMapillaryClaim: typeof import('./src/composables/sdc').createPublishedInMapillaryClaim
+  const createQuantitySnak: typeof import('./src/composables/sdc').createQuantitySnak
+  const createQuantityStatement: typeof import('./src/composables/sdc').createQuantityStatement
+  const createSomeValueSnak: typeof import('./src/composables/sdc').createSomeValueSnak
+  const createSourceOfFileClaim: typeof import('./src/composables/sdc').createSourceOfFileClaim
+  const createStatement: typeof import('./src/composables/sdc').createStatement
   const createStatusFromJob: typeof import('./src/composables/useBotStatus').createStatusFromJob
+  const createStringSnak: typeof import('./src/composables/sdc').createStringSnak
+  const createTimeSnak: typeof import('./src/composables/sdc').createTimeSnak
+  const createTimeStatement: typeof import('./src/composables/sdc').createTimeStatement
+  const createUrlSnak: typeof import('./src/composables/sdc').createUrlSnak
+  const createWidthClaim: typeof import('./src/composables/sdc').createWidthClaim
+  const createWikibaseItemSnak: typeof import('./src/composables/sdc').createWikibaseItemSnak
+  const createWikibaseItemStatement: typeof import('./src/composables/sdc').createWikibaseItemStatement
   const customRef: typeof import('vue').customRef
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
@@ -24,6 +50,7 @@ declare global {
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
+  const getNumericId: typeof import('./src/composables/sdc').getNumericId
   const h: typeof import('vue').h
   const harborStore: typeof import('./src/stores/harbor.store').default
   const inject: typeof import('vue').inject
@@ -89,7 +116,6 @@ declare global {
   const useModel: typeof import('vue').useModel
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
-  const useUiStore: typeof import('./src/stores/ui.store').useUiStore
   const useWikidata: typeof import('./src/components/wikidata/useWikidata').useWikidata
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
@@ -120,7 +146,7 @@ declare global {
   export type { Job, JobRequest } from './src/types/jobs'
   import('./src/types/jobs')
   // @ts-ignore
-  export type { WikibaseEntityType, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, DataValueGlobeCoordinate, StringDataValue, EntityIdDataValue, MonolingualTextDataValue, QuantityDataValue, TimeDataValue, GlobeCoordinateDataValue, UrlDataValue, DataValue, SnakType, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
+  export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
   import('./src/types/wikidata')
 }
 
@@ -129,14 +155,40 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly DataValueType: UnwrapRef<typeof import('./src/types/wikidata')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly SnakDataType: UnwrapRef<typeof import('./src/types/wikidata')['SnakDataType']>
+    readonly SnakType: UnwrapRef<typeof import('./src/types/wikidata')['SnakType']>
     readonly UPLOAD_STATUS: UnwrapRef<typeof import('./src/types/image')['UPLOAD_STATUS']>
+    readonly WikidataEntity: UnwrapRef<typeof import('./src/types/wikidata')['WikidataEntity']>
+    readonly WikidataProperty: UnwrapRef<typeof import('./src/types/wikidata')['WikidataProperty']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly botsStore: UnwrapRef<typeof import('./src/stores/bots.store')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
+    readonly createCopyrightLicenseClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCopyrightLicenseClaim']>
+    readonly createCopyrightStatusClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCopyrightStatusClaim']>
+    readonly createCreatorClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCreatorClaim']>
+    readonly createExternalIdSnak: UnwrapRef<typeof import('./src/composables/sdc')['createExternalIdSnak']>
+    readonly createExternalIdStatement: UnwrapRef<typeof import('./src/composables/sdc')['createExternalIdStatement']>
+    readonly createHeightClaim: UnwrapRef<typeof import('./src/composables/sdc')['createHeightClaim']>
+    readonly createInceptionClaim: UnwrapRef<typeof import('./src/composables/sdc')['createInceptionClaim']>
+    readonly createMapillaryIdClaim: UnwrapRef<typeof import('./src/composables/sdc')['createMapillaryIdClaim']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
+    readonly createPublishedInMapillaryClaim: UnwrapRef<typeof import('./src/composables/sdc')['createPublishedInMapillaryClaim']>
+    readonly createQuantitySnak: UnwrapRef<typeof import('./src/composables/sdc')['createQuantitySnak']>
+    readonly createQuantityStatement: UnwrapRef<typeof import('./src/composables/sdc')['createQuantityStatement']>
+    readonly createSomeValueSnak: UnwrapRef<typeof import('./src/composables/sdc')['createSomeValueSnak']>
+    readonly createSourceOfFileClaim: UnwrapRef<typeof import('./src/composables/sdc')['createSourceOfFileClaim']>
+    readonly createStatement: UnwrapRef<typeof import('./src/composables/sdc')['createStatement']>
     readonly createStatusFromJob: UnwrapRef<typeof import('./src/composables/useBotStatus')['createStatusFromJob']>
+    readonly createStringSnak: UnwrapRef<typeof import('./src/composables/sdc')['createStringSnak']>
+    readonly createTimeSnak: UnwrapRef<typeof import('./src/composables/sdc')['createTimeSnak']>
+    readonly createTimeStatement: UnwrapRef<typeof import('./src/composables/sdc')['createTimeStatement']>
+    readonly createUrlSnak: UnwrapRef<typeof import('./src/composables/sdc')['createUrlSnak']>
+    readonly createWidthClaim: UnwrapRef<typeof import('./src/composables/sdc')['createWidthClaim']>
+    readonly createWikibaseItemSnak: UnwrapRef<typeof import('./src/composables/sdc')['createWikibaseItemSnak']>
+    readonly createWikibaseItemStatement: UnwrapRef<typeof import('./src/composables/sdc')['createWikibaseItemStatement']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
@@ -147,6 +199,7 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
+    readonly getNumericId: UnwrapRef<typeof import('./src/composables/sdc')['getNumericId']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly harborStore: UnwrapRef<typeof import('./src/stores/harbor.store')['default']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
