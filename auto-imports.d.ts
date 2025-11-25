@@ -128,26 +128,14 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { FormattedDuration } from './src/composables/useFormatDuration'
-  import('./src/composables/useFormatDuration')
-  // @ts-ignore
-  export type { StatusInfo, StatusConfig, BotStatus, Bot } from './src/types/bots'
-  import('./src/types/bots')
-  // @ts-ignore
   export type { Handler, Layout, CollectionsApiResponse } from './src/types/collections'
   import('./src/types/collections')
-  // @ts-ignore
-  export type { Process } from './src/types/harbor'
-  import('./src/types/harbor')
   // @ts-ignore
   export type { Creator, Location, Dates, ExistingPage, Image, Metadata, MetadataKey, MetadataValue, Item, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
   export type { Batch, UploadRequest, LoadItemsOptions, PaginatedResponse } from './src/types/ingest'
   import('./src/types/ingest')
-  // @ts-ignore
-  export type { Job, JobRequest } from './src/types/jobs'
-  import('./src/types/jobs')
   // @ts-ignore
   export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
   import('./src/types/wikidata')
@@ -166,7 +154,6 @@ declare module 'vue' {
     readonly WikidataEntity: UnwrapRef<typeof import('./src/types/wikidata')['WikidataEntity']>
     readonly WikidataProperty: UnwrapRef<typeof import('./src/types/wikidata')['WikidataProperty']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
-    readonly botsStore: UnwrapRef<typeof import('./src/stores/bots.store')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createCopyrightLicenseClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCopyrightLicenseClaim']>
@@ -184,7 +171,6 @@ declare module 'vue' {
     readonly createSomeValueSnak: UnwrapRef<typeof import('./src/composables/sdc')['createSomeValueSnak']>
     readonly createSourceOfFileClaim: UnwrapRef<typeof import('./src/composables/sdc')['createSourceOfFileClaim']>
     readonly createStatement: UnwrapRef<typeof import('./src/composables/sdc')['createStatement']>
-    readonly createStatusFromJob: UnwrapRef<typeof import('./src/composables/useBotStatus')['createStatusFromJob']>
     readonly createStringSnak: UnwrapRef<typeof import('./src/composables/sdc')['createStringSnak']>
     readonly createTimeSnak: UnwrapRef<typeof import('./src/composables/sdc')['createTimeSnak']>
     readonly createTimeStatement: UnwrapRef<typeof import('./src/composables/sdc')['createTimeStatement']>
@@ -197,21 +183,18 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly formatDuration: UnwrapRef<typeof import('./src/composables/useFormatDuration')['formatDuration']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly getNumericId: UnwrapRef<typeof import('./src/composables/sdc')['getNumericId']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
-    readonly harborStore: UnwrapRef<typeof import('./src/stores/harbor.store')['default']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
-    readonly jobsStore: UnwrapRef<typeof import('./src/stores/jobs.store')['default']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
@@ -252,19 +235,12 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('./src/stores/auth.store')['useAuthStore']>
-    readonly useBotStatus: UnwrapRef<typeof import('./src/composables/useBotStatus')['default']>
-    readonly useBotsApi: UnwrapRef<typeof import('./src/composables/useBotsApi')['default']>
-    readonly useBotsStore: UnwrapRef<typeof import('./src/stores/bots.store')['useBotsStore']>
     readonly useCollections: UnwrapRef<typeof import('./src/composables/useCollections')['useCollections']>
     readonly useCollectionsStore: UnwrapRef<typeof import('./src/stores/collections.store')['useCollectionsStore']>
     readonly useCommons: UnwrapRef<typeof import('./src/composables/useCommons')['useCommons']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useHarborApi: UnwrapRef<typeof import('./src/composables/useHarborApi')['default']>
-    readonly useHarborStore: UnwrapRef<typeof import('./src/stores/harbor.store')['useHarborStore']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
-    readonly useJobsApi: UnwrapRef<typeof import('./src/composables/useJobsApi')['default']>
-    readonly useJobsStore: UnwrapRef<typeof import('./src/stores/jobs.store')['useJobsStore']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
