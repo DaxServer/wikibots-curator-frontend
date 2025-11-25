@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 
-const view = ref<'batches' | 'uploads'>('batches')
-const selectedBatchId = ref<string>()
+const selectedBatchId = ref<string | null>(null)
 
 const headers = [
   { title: 'Batch ID', key: 'batch_uid' },
@@ -35,7 +34,7 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
 <template>
   <v-card
     title="My Batches"
-    v-if="view === 'batches'"
+    v-if="!selectedBatchId"
   >
     <v-data-table-server
       :items-per-page="itemsPerPage"
@@ -60,8 +59,8 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
     </v-data-table-server>
   </v-card>
   <BatchUploadsView
-    v-if="view === 'uploads' && selectedBatchId"
+    v-else
     :batch-id="selectedBatchId"
-    @back="view = 'batches'"
+    @back="selectedBatchId = null"
   />
 </template>
