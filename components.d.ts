@@ -12,6 +12,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./src/App.vue')['default']
+    BatchesView: typeof import('./src/components/BatchesView.vue')['default']
+    BatchUploadsView: typeof import('./src/components/BatchUploadsView.vue')['default']
     BotActions: typeof import('./src/components/BotActions.vue')['default']
     BotsDataTable: typeof import('./src/components/BotsDataTable.vue')['default']
     BotsTable: typeof import('./src/components/BotsTable.vue')['default']
