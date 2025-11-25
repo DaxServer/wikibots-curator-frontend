@@ -143,6 +143,9 @@ declare global {
   export type { Creator, Location, Dates, ExistingPage, Image, Metadata, MetadataKey, MetadataValue, Item, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
+  export type { Batch, UploadRequest, LoadItemsOptions, PaginatedResponse } from './src/types/ingest'
+  import('./src/types/ingest')
+  // @ts-ignore
   export type { Job, JobRequest } from './src/types/jobs'
   import('./src/types/jobs')
   // @ts-ignore

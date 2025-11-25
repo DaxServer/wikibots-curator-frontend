@@ -5,6 +5,7 @@ defineProps<{
 
 defineEmits<{
   'update:tab': [Handler]
+  'open-history': []
 }>()
 
 const authStore = useAuthStore()
@@ -33,7 +34,7 @@ onMounted(async () => {
       </v-tabs>
     </div>
 
-    <div class="d-flex align-center ga-4">
+    <div class="d-flex align-center ga-1">
       <v-btn
         v-if="!authStore.isAuthenticated"
         color="primary"
@@ -42,9 +43,17 @@ onMounted(async () => {
         Login
       </v-btn>
       <template v-else>
-        <span class="text-grey-darken-1">{{ authStore.user }}</span>
+        <span class="text-grey-darken-1">Hello, {{ authStore.user }}!</span>
+        <v-btn
+          class="text-none"
+          variant="text"
+          @click="$emit('open-history')"
+        >
+          My uploads
+        </v-btn>
         <v-btn
           variant="outlined"
+          class="text-none"
           @click="authStore.logout"
         >
           Logout
