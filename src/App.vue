@@ -1,25 +1,10 @@
 <script setup lang="ts">
-const tab = ref<Handler>('mapillary')
-const confirmOpen = ref<boolean>(false)
-const pendingTab = ref<Handler | null>(null)
 const store = useCollectionsStore()
 
-const currentView = ref<'ingest' | 'batches' | 'batch-uploads'>('ingest')
-const selectedBatchId = ref<string | null>(null)
-
-const openHistory = () => {
-  currentView.value = 'batches'
-}
-
-const onSelectBatch = (batchId: string) => {
-  selectedBatchId.value = batchId
-  currentView.value = 'batch-uploads'
-}
-
-const onBackToBatches = () => {
-  currentView.value = 'batches'
-  selectedBatchId.value = null
-}
+const tab = ref<Handler>('mapillary')
+const pendingTab = ref<Handler | null>(null)
+const currentView = ref<'ingest' | 'batches'>('ingest')
+const confirmOpen = ref<boolean>(false)
 
 const switchProvider = (next: Handler) => {
   store.$reset()
@@ -61,24 +46,14 @@ const cancelSwitch = () => {
     <Header
       :tab="tab"
       @update:tab="onTabUpdate"
-      @open-history="openHistory"
+      @open-history="currentView = 'batches'"
     />
     <v-main>
       <div class="pa-4">
         <template v-if="currentView === 'ingest'">
-          <template v-if="tab === 'mapillary'">
-            <MapillaryCollections />
-          </template>
+          <MapillaryCollections v-if="tab === 'mapillary'" />
         </template>
-        <template v-else-if="currentView === 'batches'">
-          <BatchesView @select-batch="onSelectBatch" />
-        </template>
-        <template v-else-if="currentView === 'batch-uploads'">
-          <BatchUploadsView
-            :batch-id="selectedBatchId!"
-            @back="onBackToBatches"
-          />
-        </template>
+        <BatchesView v-else />
       </div>
     </v-main>
     <Footer />

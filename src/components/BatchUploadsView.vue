@@ -9,6 +9,8 @@ defineEmits<{
   back: []
 }>()
 
+const store = useCollectionsStore()
+
 const headers = [
   { title: 'ID', key: 'id' },
   { title: 'Image ID', key: 'image_id' },
@@ -34,6 +36,7 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
     totalItems.value = data.total
   } catch (e) {
     console.error(e)
+    store.error = e instanceof Error ? e.message : 'Unknown error'
   } finally {
     loading.value = false
   }

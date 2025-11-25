@@ -1,7 +1,12 @@
 <script setup lang="ts">
+const store = useCollectionsStore()
+
+const view = ref<'batches' | 'uploads'>('batches')
+const selectedBatchId = ref<string>()
+
 const headers = [
-  { title: 'Batch ID', key: 'batch_uid', align: 'start' as const },
-  { title: 'Created At', key: 'created_at', align: 'start' as const },
+  { title: 'Batch ID', key: 'batch_uid' },
+  { title: 'Created At', key: 'created_at' },
 ]
 
 const items = ref<Batch[]>([])
@@ -9,10 +14,6 @@ const loading = ref(false)
 const totalItems = ref(0)
 const itemsPerPage = ref(100)
 const page = ref(1)
-
-const emit = defineEmits<{
-  selectBatch: [batchId: string]
-}>()
 
 const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => {
   loading.value = true
@@ -24,6 +25,7 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
     totalItems.value = data.total
   } catch (e) {
     console.error(e)
+    store.error = e instanceof Error ? e.message : 'Unknown error'
   } finally {
     loading.value = false
   }
@@ -31,7 +33,10 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
 </script>
 
 <template>
-  <v-card title="My Batches">
+  <v-card
+    title="My Batches"
+    v-if="view === 'batches'"
+  >
     <v-data-table-server
       :items-per-page="itemsPerPage"
       :headers="headers"
@@ -44,7 +49,7 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
       <template #item.batch_uid="{ item }">
         <a
           href="#"
-          @click.prevent="emit('selectBatch', item.batch_uid)"
+          @click.prevent="selectedBatchId = item.batch_uid"
         >
           {{ item.batch_uid }}
         </a>
@@ -54,4 +59,9 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
       </template>
     </v-data-table-server>
   </v-card>
+  <BatchUploadsView
+    v-if="view === 'uploads' && selectedBatchId"
+    :batch-id="selectedBatchId"
+    @back="view = 'batches'"
+  />
 </template>
