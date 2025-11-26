@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { mdiGithub } from '@mdi/js'
-
 const sourceLinks = [
   { text: 'bots', url: 'https://github.com/DaxServer/wikibots' },
   { text: 'app backend', url: 'https://github.com/DaxServer/wikibots-curator-backend' },
@@ -9,24 +7,21 @@ const sourceLinks = [
 </script>
 
 <template>
-  <v-footer class="align-end">
-    <v-icon :icon="mdiGithub"></v-icon>
+  <div class="flex items-center gap-1 max-w-7xl mx-auto mt-10">
+    <i class="pi pi-github"></i>
     &nbsp;
     <template
       v-for="(link, index) in sourceLinks"
       :key="index"
     >
-      <ExternalLink
-        as="button"
+      <a
         :href="link.url"
-        min-width="0"
-        variant="text"
-        density="compact"
-        class="text-decoration-none text-lowercase text-grey pa-1"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         {{ link.text }}
-      </ExternalLink>
+      </a>
       <template v-if="index < sourceLinks.length - 1">&nbsp;&bull;&nbsp;</template>
     </template>
-  </v-footer>
+  </div>
 </template>

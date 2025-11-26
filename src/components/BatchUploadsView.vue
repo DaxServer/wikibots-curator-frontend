@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { mdiArrowLeft } from '@mdi/js'
-
 const props = defineProps<{
   batchId: string
 }>()
@@ -11,29 +9,36 @@ defineEmits<{
 
 const store = useCollectionsStore()
 
-const headers = [
-  { title: 'ID', key: 'id' },
-  { title: 'Image ID', key: 'image_id' },
-  { title: 'Status', key: 'status' },
-  { title: 'Result', key: 'result' },
-  { title: 'Error', key: 'error' },
-  { title: 'Success', key: 'success' },
+const columns = [
+  { field: 'id', header: 'ID' },
+  { field: 'image_id', header: 'Image ID' },
+  { field: 'status', header: 'Status' },
+  { field: 'result', header: 'Result' },
+  { field: 'error', header: 'Error' },
+  { field: 'success', header: 'Success' },
 ]
 
 const items = ref<UploadRequest[]>([])
 const loading = ref(false)
-const totalItems = ref(0)
-const itemsPerPage = ref(100)
-const page = ref(1)
+const totalRecords = ref(0)
+const lazyParams = ref({
+  first: 0,
+  rows: 100,
+  page: 1,
+})
 
-const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => {
+const loadLazyData = async (event: { page: number; first: number; rows: number }) => {
   loading.value = true
+  lazyParams.value = event
   try {
-    const response = await fetch(`/api/ingest/uploads/${props.batchId}?page=${p}&limit=${limit}`)
+    const page = event.first / event.rows + 1
+    const response = await fetch(
+      `/api/ingest/uploads/${props.batchId}?page=${page}&limit=${event.rows}`,
+    )
     if (!response.ok) throw new Error('Failed to fetch uploads')
     const data: PaginatedResponse<UploadRequest> = await response.json()
     items.value = data.items
-    totalItems.value = data.total
+    totalRecords.value = data.total
   } catch (e) {
     console.error(e)
     store.error = e instanceof Error ? e.message : 'Unknown error'
@@ -41,50 +46,71 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
     loading.value = false
   }
 }
+
+onMounted(() => {
+  loadLazyData(lazyParams.value)
+})
 </script>
 
 <template>
-  <v-card>
-    <v-card-title class="d-flex align-center">
-      <v-btn
-        :prepend-icon="mdiArrowLeft"
-        variant="text"
-        @click="$emit('back')"
-        class="mr-2"
-      ></v-btn>
-      Batch: {{ batchId }}
-    </v-card-title>
-    <v-data-table-server
-      v-model:items-per-page="itemsPerPage"
-      :headers="headers"
-      :items="items"
-      :items-length="totalItems"
-      :loading="loading"
-      :page="page"
-      @update:options="loadItems"
-    >
-      <template #item.error="{ item }">
-        <span
-          v-if="item.error"
-          class="text-error"
+  <Card>
+    <template #header>
+      <div class="flex items-center">
+        <Button
+          icon="pi pi-arrow-left"
+          text
+          @click="$emit('back')"
+          class="mr-2"
+        />
+        <div class="text-xl font-medium">Batch: {{ batchId }}</div>
+      </div>
+    </template>
+    <template #content>
+      <DataTable
+        :value="items"
+        lazy
+        paginator
+        :rows="lazyParams.rows"
+        :totalRecords="totalRecords"
+        :loading="loading"
+        @page="loadLazyData"
+        :first="lazyParams.first"
+      >
+        <Column
+          v-for="col of columns"
+          :key="col.field"
+          :field="col.field"
+          :header="col.header"
         >
-          {{ item.error }}
-        </span>
-      </template>
-
-      <template #item.success="{ item }">
-        <span
-          v-if="item.success"
-          class="text-success"
-        >
-          <ExternalLink
-            :href="decodeURIComponent(item.success)"
-            show-icon
+          <template
+            v-if="col.field === 'error'"
+            #body="slotProps"
           >
-            View file on Commons
-          </ExternalLink>
-        </span>
-      </template>
-    </v-data-table-server>
-  </v-card>
+            <span
+              v-if="slotProps.data.error"
+              class="text-red-500"
+            >
+              {{ slotProps.data.error }}
+            </span>
+          </template>
+          <template
+            v-if="col.field === 'success'"
+            #body="slotProps"
+          >
+            <span
+              v-if="slotProps.data.success"
+              class="text-green-500"
+            >
+              <ExternalLink
+                :href="decodeURIComponent(slotProps.data.success)"
+                show-icon
+              >
+                View file on Commons
+              </ExternalLink>
+            </span>
+          </template>
+        </Column>
+      </DataTable>
+    </template>
+  </Card>
 </template>

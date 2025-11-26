@@ -1,9 +1,15 @@
 <script lang="ts" setup>
-const props = defineProps<{
-  language: string
-  description: string
-  categories: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    language: string
+    description: string
+    categories: string
+    showFallbackMessages?: boolean
+  }>(),
+  {
+    showFallbackMessages: false,
+  },
+)
 
 defineEmits<{
   'update:language': [string]
@@ -32,73 +38,87 @@ const isFallbackCategories = computed(
 </script>
 
 <template>
-  <div class="d-flex ga-3 mt-4">
-    <div class="flex-grow-0">
-      <v-select
-        :model-value="language"
-        :items="languageOptions"
-        item-title="label"
-        item-value="value"
-        label="Language"
-        variant="outlined"
-        density="compact"
-        :hide-details="'auto'"
-        @update:model-value="$emit('update:language', $event)"
-      >
-        <template
-          v-if="isFallbackLanguage"
-          #details
-        >
-          <span class="text-info">Using fallback language: {{ store.globalLanguage }}</span>
-        </template>
-      </v-select>
-    </div>
-    <div class="flex-grow-1">
-      <v-textarea
-        :model-value="description"
-        label="Description"
-        variant="outlined"
-        density="compact"
-        rows="1"
-        auto-grow
-        :hide-details="'auto'"
-        @update:model-value="$emit('update:description', $event)"
-      >
-        <template
-          v-if="isFallbackDescription"
-          #details
-        >
-          <span class="text-info">Using fallback description: {{ store.globalDescription }}</span>
-        </template>
-      </v-textarea>
-    </div>
-  </div>
+  <div class="flex flex-col gap-4">
+    <!-- Optional slot for help text above inputs -->
+    <slot name="description-help" />
 
-  <v-textarea
-    :model-value="categories"
-    label="Categories"
-    variant="outlined"
-    density="compact"
-    rows="3"
-    auto-grow
-    :hide-details="'auto'"
-    class="mt-2"
-    @update:model-value="$emit('update:categories', $event)"
-  >
-    <template #details>
-      <div class="d-flex flex-column text-info text-right">
-        <span>
-          <ExternalLink
-            class="text-decoration-none"
-            href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator"
-            show-icon
-          >
-            [[Category:Images from Mapillary uploaded with Curator]]
-          </ExternalLink>
-          will be added.
-        </span>
-        <span v-if="isFallbackCategories">Using fallback categories.</span>
+    <div class="flex gap-3">
+      <div>
+        <Select
+          :model-value="language"
+          :options="languageOptions"
+          option-label="label"
+          option-value="value"
+          @update:model-value="$emit('update:language', $event)"
+        />
+        <small
+          v-if="showFallbackMessages && isFallbackLanguage"
+          class="text-blue-600"
+        >
+          Using fallback language: {{ store.globalLanguage }}
+        </small>
       </div>
-    </template>
-  </v-textarea>
+
+      <div class="flex-1">
+        <FloatLabel variant="on">
+          <Textarea
+            :model-value="description"
+            id="description_input"
+            rows="1"
+            auto-resize
+            @update:model-value="$emit('update:description', $event)"
+            fluid
+          />
+          <label for="description_input">Description</label>
+        </FloatLabel>
+        <Message
+          v-if="showFallbackMessages && isFallbackDescription"
+          :severity="isFallbackDescription ? 'warn' : 'secondary'"
+          variant="simple"
+          size="small"
+        >
+          Using fallback description: {{ store.globalDescription }}
+        </Message>
+      </div>
+    </div>
+
+    <FloatLabel variant="on">
+      <Textarea
+        :model-value="categories"
+        id="categories_input"
+        rows="3"
+        auto-resize
+        @update:model-value="$emit('update:categories', $event)"
+        fluid
+      />
+      <label for="categories_input">Categories</label>
+    </FloatLabel>
+
+    <!-- Category info message with slot for custom styling -->
+    <slot name="category-message">
+      <Message
+        :severity="isFallbackCategories ? 'warn' : 'secondary'"
+        variant="simple"
+        size="small"
+        class="-mt-3"
+      >
+        <a
+          href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:underline hover:text-primary"
+        >
+          [[Category:Images from Mapillary uploaded with Curator]]
+          <i class="pi pi-external-link text-xs!"></i>
+        </a>
+        will be added.
+        <span
+          v-if="isFallbackCategories"
+          class="block mt-1"
+        >
+          Using fallback categories.
+        </span>
+      </Message>
+    </slot>
+  </div>
 </template>

@@ -50,7 +50,7 @@ export const useCollections = () => {
         return
       }
 
-      const updates = (await resp.json()) as UploadStatusUpdate[]
+      const { items: updates } = (await resp.json()) as { items: UploadStatusUpdate[] }
       for (const update of updates) {
         store.updateItem(update.image_id, 'status', update.status)
 
@@ -101,7 +101,7 @@ export const useCollections = () => {
         allItems[id] = createItem(image, id, index, title, descriptionText)
       }
       store.items = allItems
-      store.stepper = 2
+      store.stepper = '2'
     } catch (err) {
       store.error = err instanceof Error ? err.message : 'An unknown error occurred'
     } finally {
@@ -121,7 +121,7 @@ export const useCollections = () => {
       store.error = 'Please select at least one image to upload'
       return
     }
-    store.stepper = 5
+    store.stepper = '5'
     store.isLoading = true
     try {
       const payload = {

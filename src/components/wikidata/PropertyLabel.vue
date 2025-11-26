@@ -1,13 +1,16 @@
 <script setup lang="ts">
 defineProps<{ property: string }>()
+
 const { getPropertyLabel } = useWikidata()
 </script>
 
 <template>
-  <ExternalLink
+  <a
     :href="`https://www.wikidata.org/wiki/Property:${property}`"
-    class="text-body-2 text-blue text-decoration-none"
+    class="hover:underline"
+    target="_blank"
+    rel="noopener noreferrer"
   >
     {{ getPropertyLabel(property) }} ({{ property }})
-  </ExternalLink>
+  </a>
 </template>

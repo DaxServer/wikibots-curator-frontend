@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { mdiOpenInNew } from '@mdi/js'
-
 const props = withDefaults(
   defineProps<{
     href: string
@@ -24,35 +22,52 @@ defineOptions({
 
 const target = computed(() => (props.newTab ? '_blank' : undefined))
 const rel = computed(() => (props.newTab ? 'noopener noreferrer' : undefined))
-const iconToUse = computed(() => props.icon ?? mdiOpenInNew)
+const iconToUse = computed(() => props.icon ?? 'pi pi-external-link') // Placeholder for PrimeVue icon
+
+const iconSizePx = computed(() => {
+  if (typeof props.iconSize === 'number') {
+    return `${props.iconSize}px`
+  }
+  return props.iconSize
+})
 </script>
 
 <template>
   <a
     v-if="(as ?? 'link') === 'link'"
     v-bind="$attrs"
-    class="d-inline-flex align-center"
+    class="inline-flex items-center"
     :href="href"
     :target="target"
     :rel="rel"
   >
     <slot />
-    <v-icon
+    <i
       v-if="showIcon"
-      v-bind="$attrs"
-      :icon="iconToUse"
-      :size="iconSize"
+      :class="iconToUse"
+      :style="{ fontSize: iconSizePx, lineHeight: iconSizePx }"
       class="ml-1"
     />
   </a>
-  <v-btn
+  <Button
     v-else
     v-bind="$attrs"
+    :pt="{
+      root: { class: 'p-0' },
+    }"
+    link
     :href="href"
     :target="target"
     :rel="rel"
-    :append-icon="showIcon ? iconToUse : undefined"
   >
-    <slot />
-  </v-btn>
+    <div class="flex items-center text-decoration-none text-lowercase text-grey">
+      <slot />
+      <i
+        v-if="showIcon"
+        :class="iconToUse"
+        :style="{ fontSize: iconSizePx, lineHeight: iconSizePx }"
+        class="ml-1"
+      />
+    </div>
+  </Button>
 </template>

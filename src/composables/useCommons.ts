@@ -41,25 +41,37 @@ ${categories}
     return info
   }
 
-  const checkFileTitleAvailability = async (title: string): Promise<boolean> => {
-    const fileTitle = `File:${title}`
+  const checkFileTitleAvailability = async (titles: string[]): Promise<Record<string, boolean>> => {
+    const fileTitles = titles.map((title) => `File:${title}`)
     const params = new URLSearchParams()
     params.set('action', 'query')
     params.set('prop', 'revisions')
-    params.set('titles', fileTitle)
+    params.set('titles', fileTitles.join('|'))
     params.set('format', 'json')
     params.set('origin', '*')
     params.set('formatversion', '2')
 
-    const res = await fetch(`https://commons.wikimedia.org/w/api.php?${params.toString()}`)
-    if (!res || !res.ok) return false
+    const res = await fetch('https://commons.wikimedia.org/w/api.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    })
+    if (!res || !res.ok) return {}
     const data = (await res.json()) as {
       query?: {
-        pages?: { missing?: boolean }[]
+        pages?: Record<string, { missing?: boolean; title: string }>
       }
     }
 
-    return Boolean(data.query?.pages?.[0]?.missing)
+    const availability: Record<string, boolean> = {}
+    for (const title of titles) {
+      const page = Object.values(data.query?.pages || {}).find((p) => p.title === `File:${title}`)
+      availability[title] = Boolean(page?.missing)
+    }
+
+    return availability
   }
 
   const sourceLink = (id: string, sequenceId?: string): string => {

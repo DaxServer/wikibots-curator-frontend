@@ -1,91 +1,85 @@
 <script setup lang="ts">
-import { mdiChevronDown, mdiViewGrid, mdiViewList } from '@mdi/js'
-
 const store = useCollectionsStore()
+
+const emit = defineEmits(['select:currentPage'])
+
+const menu = ref()
+const menuItems = computed(() => [
+  {
+    label: 'All images',
+    command: () => store.selectAll(),
+  },
+  {
+    label: 'Current page',
+    command: () => emit('select:currentPage'),
+  },
+  {
+    separator: true,
+  },
+  {
+    label: 'Deselect all',
+    command: () => store.deselectAll(),
+    disabled: store.selectedCount === 0,
+    class: {
+      'bg-red-100': store.selectedCount > 0,
+    },
+  },
+])
 </script>
 
 <template>
-  <div class="d-flex justify-space-between align-center mt-4 mb-4 ga-4">
-    <div class="d-flex align-center ga-4 w-auto flex-grow-0 flex-shrink-0">
-      <v-alert
-        type="info"
-        variant="tonal"
-        density="comfortable"
+  <div class="flex justify-between items-center mt-4 mb-4 gap-4">
+    <div class="flex items-center gap-4 w-auto flex-grow-0 flex-shrink-0">
+      <Message
+        severity="info"
+        :closable="false"
+        icon="pi pi-info-circle"
       >
         Click on images to select
-      </v-alert>
-      <v-btn-toggle
-        :model-value="store.viewMode"
-        mandatory
+      </Message>
+
+      <SelectButton
+        v-model="store.viewMode"
+        :options="[
+          { label: 'List', value: 'list', icon: 'pi pi-list' },
+          { label: 'Grid', value: 'grid', icon: 'pi pi-th-large' },
+        ]"
+        :allowEmpty="false"
+        option-label="label"
+        option-value="value"
+        data-key="value"
         @update:model-value="store.viewMode = $event"
       >
-        <v-btn
-          value="list"
-          variant="outlined"
-          density="comfortable"
-        >
-          <v-icon
-            :icon="mdiViewList"
-            class="mr-2"
-          />
-          List
-        </v-btn>
-        <v-btn
-          value="grid"
-          variant="outlined"
-          density="comfortable"
-        >
-          <v-icon
-            :icon="mdiViewGrid"
-            class="mr-2"
-          />
-          Grid
-        </v-btn>
-      </v-btn-toggle>
-    </div>
-    <div class="d-flex align-center ga-4">
-      <v-menu>
-        <template #activator="{ props }">
-          <v-btn
-            v-bind="props"
-            variant="outlined"
-          >
-            Select
-            <v-icon
-              :icon="mdiChevronDown"
-              end
-            />
-          </v-btn>
+        <template #option="{ option }">
+          <i :class="option.icon" />
+          <span>{{ option.label }}</span>
         </template>
-        <v-list>
-          <v-list-item @click="store.selectAll">
-            <v-list-item-title>All images</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="store.selectPage">
-            <v-list-item-title>Current page</v-list-item-title>
-          </v-list-item>
-          <v-divider />
-          <v-list-item
-            @click="store.deselectAll"
-            :disabled="store.selectedCount === 0"
-          >
-            <v-list-item-title class="text-error">Deselect all</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <span class="text-body-1">
-        <span class="text-success font-weight-medium">{{ store.selectedCount }}</span>
+      </SelectButton>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-base">
+        <span class="text-green-600 font-medium">{{ store.selectedCount }}</span>
         selected
       </span>
-      <v-btn
-        color="primary"
-        variant="elevated"
-        :disabled="store.selectedCount === 0"
-        @click="store.stepper = 3"
+      <Menu
+        ref="menu"
+        :model="menuItems"
+        :popup="true"
+      ></Menu>
+      <Button
+        severity="secondary"
+        outlined
+        @click="menu.toggle($event)"
       >
-        Start editing
-      </v-btn>
+        Select
+        <i class="pi pi-chevron-down ml-2"></i>
+      </Button>
+      <Button
+        severity="primary"
+        :disabled="store.selectedCount === 0"
+        @click="store.stepper = '3'"
+        :label="store.selectedCount === 0 ? 'Select items' : 'Start editing'"
+      />
     </div>
   </div>
 </template>

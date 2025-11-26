@@ -14,7 +14,11 @@ onMounted(() => {
     alt-prefix="Mapillary image"
   >
     <template #metadata="{ item }">
-      <div class="d-flex flex-column align-start">
+      <div class="flex flex-col gap-3">
+        <span class="text-4xl font-thin">
+          #
+          <span class="text-4xl font-medium">{{ item.index }}</span>
+        </span>
         <div>
           <strong>Taken:</strong>
           {{ item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—' }}
@@ -23,31 +27,37 @@ onMounted(() => {
           <strong>ID:</strong>
           {{ item.image.id }}
         </div>
-        <v-chip
+        <Tag
           v-if="item.image.is_pano"
-          color="info"
-          size="small"
+          severity="info"
+          value="Panorama"
           class="align-self-start"
-        >
-          Panorama
-        </v-chip>
-        <ExternalLink
-          class="text-info"
+        />
+        <Button
+          as="a"
           :href="item.image.url_original"
-          show-icon
-        >
-          View image
-        </ExternalLink>
-        <ExternalLink
-          class="text-info"
+          class="w-fit pl-0!"
+          variant="link"
+          label="View image"
+          target="_blank"
+          icon="pi pi-external-link"
+          iconPos="right"
+          rel="noopener noreferrer"
+        />
+        <Button
+          as="a"
+          class="w-fit pl-0!"
+          variant="link"
+          label="View on Mapillary"
           :href="item.image.url"
-          show-icon
-        >
-          View on Mapillary
-        </ExternalLink>
-        <div
+          target="_blank"
+          icon="pi pi-external-link"
+          iconPos="right"
+          rel="noopener noreferrer"
+        />
+        <Message
           v-if="item.image.existing.length"
-          class="pa-1 bg-orange-accent-1"
+          severity="warn"
         >
           <strong>Existing files:</strong>
           <div
@@ -55,15 +65,17 @@ onMounted(() => {
             :key="page.url"
           >
             *
-            <ExternalLink
+            <a
               :href="page.url"
-              class="text-info"
-              show-icon
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:underline"
             >
-              {{ page.url }}
-            </ExternalLink>
+              {{ page.url.split('/').pop() }}
+              <i class="pi pi-external-link"></i>
+            </a>
           </div>
-        </div>
+        </Message>
       </div>
     </template>
   </CollectionsTable>

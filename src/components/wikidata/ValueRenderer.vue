@@ -6,23 +6,25 @@ const { getEntityLabel } = useWikidata()
 
 <template>
   <template v-if="value.type === 'wikibase-entityid'">
-    <ExternalLink
+    <a
       :href="`https://www.wikidata.org/wiki/Q${value.value['numeric-id']}`"
-      class="text-blue text-decoration-none"
+      class="hover:underline"
+      target="_blank"
+      rel="noopener noreferrer"
     >
       {{ getEntityLabel(`Q${value.value['numeric-id']}`) }} (Q{{ value.value['numeric-id'] }})
-    </ExternalLink>
+    </a>
   </template>
-  <template v-else-if="value.type === 'monolingualtext'">
+  <!-- <template v-else-if="value.type === 'monolingualtext'">
     <span>{{ value.value.language }}: {{ value.value.text }}</span>
-  </template>
+  </template> -->
   <template v-else-if="value.type === 'quantity'">
     <span>{{ value.value.amount }} {{ getEntityLabel(value.value.unit.split('/').at(-1)!) }}</span>
   </template>
   <template v-else-if="value.type === 'time'">
     <span>{{ new Date(value.value.time.replace(/^\+0+/, '')).toISOString().split('T')[0] }}</span>
   </template>
-  <template v-else-if="value.type === 'globecoordinate'">
+  <!-- <template v-else-if="value.type === 'globecoordinate'">
     <span>{{ value.value.latitude }}, {{ value.value.longitude }}</span>
   </template>
   <template v-else-if="value.type === 'url'">
@@ -32,16 +34,11 @@ const { getEntityLabel } = useWikidata()
     >
       {{ value.value }}
     </ExternalLink>
-  </template>
+  </template> -->
   <template v-else-if="value.type === 'string'">
     <span>{{ value.value }}</span>
   </template>
   <template v-else>
-    <v-chip
-      size="small"
-      class="text-xs"
-    >
-      Unsupported value
-    </v-chip>
+    <Chip class="text-xs">Unsupported value</Chip>
   </template>
 </template>

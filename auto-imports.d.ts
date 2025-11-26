@@ -8,6 +8,7 @@ export {}
 declare global {
   const DataValueType: typeof import('./src/types/wikidata').DataValueType
   const EffectScope: typeof import('vue').EffectScope
+  const Noir: typeof import('./src/assets/Noir').default
   const SnakDataType: typeof import('./src/types/wikidata').SnakDataType
   const SnakType: typeof import('./src/types/wikidata').SnakType
   const UPLOAD_STATUS: typeof import('./src/types/image').UPLOAD_STATUS
@@ -41,6 +42,7 @@ declare global {
   const createWikibaseItemSnak: typeof import('./src/composables/sdc').createWikibaseItemSnak
   const createWikibaseItemStatement: typeof import('./src/composables/sdc').createWikibaseItemStatement
   const customRef: typeof import('vue').customRef
+  const debounce: typeof import('ts-debounce').debounce
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
   const defineStore: typeof import('pinia').defineStore
@@ -128,6 +130,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { DataViewPageEvent } from 'primevue/dataview'
+  import('primevue/dataview')
+  // @ts-ignore
   export type { Handler, Layout, CollectionsApiResponse } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
@@ -148,6 +153,7 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly DataValueType: UnwrapRef<typeof import('./src/types/wikidata')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly Noir: UnwrapRef<typeof import('./src/assets/Noir')['default']>
     readonly SnakDataType: UnwrapRef<typeof import('./src/types/wikidata')['SnakDataType']>
     readonly SnakType: UnwrapRef<typeof import('./src/types/wikidata')['SnakType']>
     readonly UPLOAD_STATUS: UnwrapRef<typeof import('./src/types/image')['UPLOAD_STATUS']>
@@ -179,6 +185,7 @@ declare module 'vue' {
     readonly createWikibaseItemSnak: UnwrapRef<typeof import('./src/composables/sdc')['createWikibaseItemSnak']>
     readonly createWikibaseItemStatement: UnwrapRef<typeof import('./src/composables/sdc')['createWikibaseItemStatement']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
+    readonly debounce: UnwrapRef<typeof import('ts-debounce')['debounce']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
