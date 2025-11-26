@@ -19,7 +19,7 @@ const onTabUpdate = (next: Handler) => {
   }
 
   if (next === tab.value) return
-  if (store.stepper !== 1 && store.stepper !== 5) {
+  if (store.stepper !== '1' && store.stepper !== '5') {
     pendingTab.value = next
     confirmOpen.value = true
     return
@@ -42,45 +42,43 @@ const cancelSwitch = () => {
 </script>
 
 <template>
-  <v-app>
+  <main>
     <Header
       :tab="tab"
       @update:tab="onTabUpdate"
       @open-history="currentView = 'batches'"
     />
-    <v-main>
-      <div class="pa-4">
-        <template v-if="currentView === 'ingest'">
-          <MapillaryCollections v-if="tab === 'mapillary'" />
-        </template>
-        <BatchesView v-else />
-      </div>
-    </v-main>
+
+    <template v-if="currentView === 'ingest'">
+      <MapillaryCollections v-if="tab === 'mapillary'" />
+    </template>
+    <BatchesView v-else />
+
     <Footer />
 
-    <v-dialog
-      v-model="confirmOpen"
-      max-width="400"
+    <Dialog
+      v-model:visible="confirmOpen"
+      modal
+      header="Switch provider?"
     >
-      <v-card>
-        <v-card-title>Switch provider?</v-card-title>
-        <v-card-text>Switching provider will clear current progress.</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            variant="text"
-            @click="cancelSwitch"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="primary"
-            @click="confirmSwitch"
-          >
-            Switch
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-app>
+      <Card>
+        <template #content>Switching provider will clear current progress.</template>
+        <template #footer>
+          <div class="flex justify-content-end gap-2">
+            <Button
+              type="button"
+              label="Cancel"
+              severity="secondary"
+              @click="cancelSwitch"
+            />
+            <Button
+              type="button"
+              label="Switch"
+              @click="confirmSwitch"
+            />
+          </div>
+        </template>
+      </Card>
+    </Dialog>
+  </main>
 </template>

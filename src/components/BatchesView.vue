@@ -3,25 +3,30 @@ const store = useCollectionsStore()
 
 const selectedBatchId = ref<string | null>(null)
 
-const headers = [
-  { title: 'Batch ID', key: 'batch_uid' },
-  { title: 'Created At', key: 'created_at' },
+const columns = [
+  { field: 'batch_uid', header: 'Batch ID' },
+  { field: 'created_at', header: 'Created At' },
 ]
 
 const items = ref<Batch[]>([])
 const loading = ref(false)
-const totalItems = ref(0)
-const itemsPerPage = ref(100)
-const page = ref(1)
+const totalRecords = ref(0)
+const lazyParams = ref({
+  first: 0,
+  rows: 100,
+  page: 1,
+})
 
-const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => {
+const loadLazyData = async (event: { page: number; first: number; rows: number }) => {
   loading.value = true
+  lazyParams.value = event
   try {
-    const response = await fetch(`/api/ingest/batches?page=${p}&limit=${limit}`)
+    const page = event.first / event.rows + 1
+    const response = await fetch(`/api/ingest/batches?page=${page}&limit=${event.rows}`)
     if (!response.ok) throw new Error('Failed to fetch batches')
     const data: PaginatedResponse<Batch> = await response.json()
     items.value = data.items
-    totalItems.value = data.total
+    totalRecords.value = data.total
   } catch (e) {
     console.error(e)
     store.error = e instanceof Error ? e.message : 'Unknown error'
@@ -29,35 +34,56 @@ const loadItems = async ({ page: p, itemsPerPage: limit }: LoadItemsOptions) => 
     loading.value = false
   }
 }
+
+onMounted(() => {
+  loadLazyData(lazyParams.value)
+})
 </script>
 
 <template>
-  <v-card
+  <Card
     title="My Batches"
     v-if="!selectedBatchId"
   >
-    <v-data-table-server
-      :items-per-page="itemsPerPage"
-      :headers="headers"
-      :items="items"
-      :items-length="totalItems"
-      :loading="loading"
-      :page="page"
-      @update:options="loadItems"
-    >
-      <template #item.batch_uid="{ item }">
-        <a
-          href="#"
-          @click.prevent="selectedBatchId = item.batch_uid"
+    <template #content>
+      <DataTable
+        :value="items"
+        lazy
+        paginator
+        :rows="lazyParams.rows"
+        :totalRecords="totalRecords"
+        :loading="loading"
+        @page="loadLazyData"
+        :first="lazyParams.first"
+        tableStyle="min-width: 50rem"
+      >
+        <Column
+          v-for="col of columns"
+          :key="col.field"
+          :field="col.field"
+          :header="col.header"
         >
-          {{ item.batch_uid }}
-        </a>
-      </template>
-      <template #item.created_at="{ item }">
-        {{ new Date(item.created_at).toLocaleString() }}
-      </template>
-    </v-data-table-server>
-  </v-card>
+          <template
+            v-if="col.field === 'batch_uid'"
+            #body="slotProps"
+          >
+            <a
+              href="#"
+              @click.prevent="selectedBatchId = slotProps.data.batch_uid"
+            >
+              {{ slotProps.data.batch_uid }}
+            </a>
+          </template>
+          <template
+            v-if="col.field === 'created_at'"
+            #body="slotProps"
+          >
+            {{ new Date(slotProps.data.created_at).toLocaleString() }}
+          </template>
+        </Column>
+      </DataTable>
+    </template>
+  </Card>
   <BatchUploadsView
     v-else
     :batch-id="selectedBatchId"

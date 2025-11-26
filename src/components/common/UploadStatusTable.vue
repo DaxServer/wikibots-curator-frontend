@@ -10,49 +10,75 @@ type StatusMeta = {
 type StatusItem = { id: string; index: number; meta: StatusMeta }
 
 defineProps<{ items: Array<StatusItem> }>()
-const rowProps = ({ item }: { item: StatusItem }) => {
-  const status = item.meta.status
-  if (status === UPLOAD_STATUS.Completed) return { class: 'bg-green-lighten-5' }
-  if (status === UPLOAD_STATUS.Failed) return { class: 'bg-red-lighten-5' }
-  if (status === UPLOAD_STATUS.InProgress) return { class: 'bg-blue-lighten-5' }
-  return {}
+const getRowClass = (data: StatusItem) => {
+  const status = data.meta.status
+  if (status === UPLOAD_STATUS.Completed) return 'bg-green-100'
+  if (status === UPLOAD_STATUS.Failed) return 'bg-red-100'
+  if (status === UPLOAD_STATUS.InProgress) return 'bg-blue-100'
+  return ''
 }
 </script>
 
 <template>
-  <v-data-table
-    :headers="[
-      { title: '#', key: 'index' },
-      { title: 'Title', key: 'title' },
-      { title: 'Status', key: 'status' },
-    ]"
-    :items="items"
-    :row-props="rowProps"
+  <DataTable
+    :value="items"
+    :row-class="getRowClass"
     class="mt-4 mb-20"
   >
-    <template #item.title="{ item }">File:{{ item.meta.title }}</template>
-    <template #item.status="{ item }">
-      <span v-if="item.meta.status === UPLOAD_STATUS.Failed">
-        failed: {{ item.meta.errorInfo?.message ?? item.meta.statusReason ?? '' }}
-        <span v-if="item.meta.errorInfo?.links?.length">
-          —
-          <span>duplicates:</span>
-          <span>
-            <template v-for="(l, idx) in item.meta.errorInfo!.links">
-              <ExternalLink :href="decodeURIComponent(l.url)">{{ l.title }}</ExternalLink>
-              {{ idx < item.meta.errorInfo!.links!.length - 1 ? ', ' : '' }}
-            </template>
+    <Column
+      field="index"
+      header="#"
+    />
+
+    <Column
+      field="title"
+      header="Title"
+    >
+      <template #body="{ data }">File:{{ data.meta.title }}</template>
+    </Column>
+
+    <Column
+      field="status"
+      header="Status"
+    >
+      <template #body="{ data }">
+        <span v-if="data.meta.status === UPLOAD_STATUS.Failed">
+          failed: {{ data.meta.errorInfo?.message ?? data.meta.statusReason ?? '' }}
+          <span v-if="data.meta.errorInfo?.links?.length">
+            —
+            <span>duplicates:</span>
+            <span>
+              <template v-for="(l, idx) in data.meta.errorInfo!.links">
+                <a
+                  :href="decodeURIComponent(l.url)"
+                  class="text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ l.title }}
+                </a>
+                {{ idx < data.meta.errorInfo!.links!.length - 1 ? ', ' : '' }}
+              </template>
+            </span>
           </span>
         </span>
-      </span>
-      <span v-else-if="item.meta.status === UPLOAD_STATUS.Completed">
-        completed
-        <span v-if="item.meta.successUrl">
-          —
-          <ExternalLink :href="item.meta.successUrl">Open</ExternalLink>
+        <span v-else-if="data.meta.status === UPLOAD_STATUS.Completed">
+          completed
+          <span v-if="data.meta.successUrl">
+            —
+            <a
+              :href="data.meta.successUrl"
+              class="text-primary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open
+              <i class="pi pi-external-link text-xs!"></i>
+            </a>
+          </span>
         </span>
-      </span>
-      <span v-else>{{ item.meta.status ?? UPLOAD_STATUS.Queued }}</span>
-    </template>
-  </v-data-table>
+        <span v-else>{{ data.meta.status ?? UPLOAD_STATUS.Queued }}</span>
+      </template>
+    </Column>
+  </DataTable>
 </template>

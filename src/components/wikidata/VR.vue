@@ -8,22 +8,20 @@ defineProps<{ snak: Snak }>()
       <ValueRenderer :value="snak.datavalue" />
     </template>
     <template v-else-if="snak.snaktype === 'novalue'">
-      <v-chip
-        color="warning"
-        size="small"
+      <Chip
+        severity="warn"
         class="text-xs"
       >
         no value
-      </v-chip>
+      </Chip>
     </template>
     <template v-else-if="snak.snaktype === 'somevalue'">
-      <v-chip
-        color="info"
-        size="small"
+      <Chip
+        severity="info"
         class="text-xs"
       >
         some value
-      </v-chip>
+      </Chip>
     </template>
   </div>
 </template>

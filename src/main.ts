@@ -1,9 +1,9 @@
-// Vuetify
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
-import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import 'vuetify/styles'
+import '@/assets/tailwind.css'
+
+// PrimeVue
+import 'primeicons/primeicons.css'
+import { FocusTrap } from 'primevue'
+import PrimeVue from 'primevue/config'
 
 import App from '@/App.vue'
 
@@ -16,23 +16,14 @@ const pinia = createPinia()
 // Register plugins
 app.use(pinia)
 
-// Register Vuetify
-app.use(
-  createVuetify({
-    components,
-    directives,
-    icons: {
-      defaultSet: 'mdi',
-      aliases,
-      sets: {
-        mdi,
-      },
-    },
-    theme: {
-      defaultTheme: 'light',
-    },
-  }),
-)
+// Register PrimeVue
+app.use(PrimeVue, {
+  theme: {
+    preset: Noir,
+  },
+})
+
+app.directive('focustrap', FocusTrap)
 
 // Mount the app
 app.mount('#app')

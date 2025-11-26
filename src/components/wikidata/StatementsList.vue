@@ -3,30 +3,32 @@ defineProps<{ statements: Statement[] }>()
 </script>
 
 <template>
-  <VDataTable
-    :items="statements"
-    :headers="[
-      { title: 'Property', key: 'property', align: 'start' },
-      { title: 'Value', key: 'value' },
-    ]"
-    :item-key="'id'"
-    :items-per-page="0"
-    density="compact"
-    class="elevation-1"
+  <DataTable
+    :value="statements"
+    data-key="id"
+    size="small"
+    striped-rows
   >
-    <template #[`item.property`]="{ item }">
-      <div class="align-baseline text-start">
-        <PropertyLabel :property="item.mainsnak.property" />
-      </div>
-    </template>
-    <template #[`item.value`]="{ item }">
-      <div class="align-top">
+    <Column
+      field="property"
+      header="Property"
+    >
+      <template #body="{ data }">
+        <div class="items-baseline text-start">
+          <PropertyLabel :property="data.mainsnak.property" />
+        </div>
+      </template>
+    </Column>
+    <Column
+      field="value"
+      header="Value"
+    >
+      <template #body="{ data }">
         <StatementItem
-          :snak="item.mainsnak"
-          :qualifiers="item.qualifiers || {}"
+          :snak="data.mainsnak"
+          :qualifiers="data.qualifiers || {}"
         />
-      </div>
-    </template>
-    <template #bottom></template>
-  </VDataTable>
+      </template>
+    </Column>
+  </DataTable>
 </template>

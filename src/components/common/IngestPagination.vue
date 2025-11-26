@@ -12,23 +12,20 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="d-flex align-center justify-space-between mt-4">
-    <v-select
+  <div class="flex items-center justify-between mt-4">
+    <Select
       :model-value="itemsPerPage"
-      :items="perPageOptions"
+      :options="perPageOptions"
       @update:model-value="$emit('update:itemsPerPage', $event)"
-      label="Items per page"
-      hide-details="auto"
-      variant="outlined"
-      density="comfortable"
+      placeholder="Items per page"
+      class="w-48"
     />
-    <v-pagination
-      :model-value="page"
-      :length="Math.max(1, Math.ceil(totalItems / itemsPerPage))"
-      @update:model-value="$emit('update:page', $event)"
-      density="comfortable"
-      rounded
-      size="small"
+    <Paginator
+      :first="(page - 1) * itemsPerPage"
+      :rows="itemsPerPage"
+      :total-records="totalItems"
+      @page="$emit('update:page', $event.page + 1)"
+      template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
     />
   </div>
 </template>

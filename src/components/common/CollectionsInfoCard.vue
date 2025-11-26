@@ -10,34 +10,33 @@ const store = useCollectionsStore()
 </script>
 
 <template>
-  <v-card class="mt-4 mb-4 pa-4">
-    <v-container>
-      <v-row>
-        <v-col>
-          <span class="text-body-2 text-medium-emphasis">Total Images</span>
-          <div class="text-h6 font-weight-medium">
-            <span class="text-primary">{{ selectedCount }}</span>
+  <Card class="">
+    <template #content>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <span class="text-sm text-gray-500">Total Images</span>
+          <div class="text-xl font-medium">
+            <span class="text-blue-600">{{ selectedCount }}</span>
             / {{ totalImages }}
           </div>
-        </v-col>
-        <v-col>
-          <span class="text-body-2 text-medium-emphasis">Creator</span>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">Creator</span>
           <div>
-            <ExternalLink
+            <a
               :href="store.creator.profile_url"
-              class="text-primary text-body-2"
-              show-icon
-              icon-size="16"
+              class="hover:underline"
             >
               {{ store.creator.username }}
-            </ExternalLink>
+              <i class="pi pi-external-link" />
+            </a>
           </div>
-        </v-col>
-        <v-col>
-          <span class="text-body-2 text-medium-emphasis">{{ idLabel }}</span>
-          <div class="text-body-2">{{ input }}</div>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-card>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">{{ idLabel }}</span>
+          <div>{{ input }}</div>
+        </div>
+      </div>
+    </template>
+  </Card>
 </template>
