@@ -46,7 +46,7 @@ onMounted(() => {
   </Message>
 
   <DataTable
-    :value="store.displayedItems"
+    :value="store.selectedItems"
     :paginator="true"
     :rows="10"
     data-key="id"

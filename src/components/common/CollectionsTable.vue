@@ -64,7 +64,7 @@ const { loadCollection } = useCollections()
                 type="submit"
                 :loading="store.isLoading"
                 :disabled="!store.input.trim() || store.isLoading"
-                label="Load sequence"
+                :label="store.isLoading ? 'Loading...' : 'Load sequence'"
                 class="w-fit"
               />
             </Form>
@@ -109,7 +109,7 @@ const { loadCollection } = useCollections()
 
       <UploadStatusTable
         v-if="store.stepper === '5'"
-        :items="store.displayedItems"
+        :items="store.selectedItems"
       />
 
       <!-- <div

@@ -24,6 +24,10 @@ export default defineConfig((): import('vite').UserConfig => {
             imports: ['DataViewPageEvent'],
             type: true,
           },
+          {
+            from: 'ts-debounce',
+            imports: ['debounce'],
+          }
         ],
         dirs: ['src/**'],
         dts: true,

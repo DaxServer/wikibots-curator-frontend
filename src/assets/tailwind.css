@@ -11,7 +11,9 @@
   --overlay-background: #ffffff;
 
   /* Inter font https://rsms.me/inter/ */
-  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-feature-settings:
+    'liga' 1,
+    'calt' 1;
   font-family: 'Inter', sans-serif; /* fix for Chrome */
 }
 

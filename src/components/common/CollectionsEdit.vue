@@ -6,37 +6,41 @@ const { checkFileTitleAvailability } = useCommons()
 
 const disablePreview = computed(() => {
   if (store.selectedCount === 0) return true
-  for (const item of store.displayedItems) {
+  for (const item of store.selectedItems) {
     if (item.meta.selected && item.meta.titleAvailable === false) return true
   }
   return false
 })
 
-// biome-ignore lint/suspicious/noExplicitAny: Generic debounce function
-const debounce = <T extends (...args: any[]) => any>(func: T, delay: number) => {
-  let timeout: number
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), delay) as unknown as number
-  }
-}
-
 const updateTitle = (id: string, title: string) => {
   store.updateItem(id, 'title', title)
   store.updateItem(id, 'titleChecking', true)
-  debouncedCheckTitle(id, title)
+  getDebouncedCheckTitle(id)(title)
 }
 
-const debouncedCheckTitle = debounce(async (id: string, title: string) => {
-  const available = await checkFileTitleAvailability(title)
-  store.updateItem(id, 'titleAvailable', available)
-  store.updateItem(id, 'titleChecking', false)
-}, 100)
+const debouncedCheckTitleMap = new Map<string, ReturnType<typeof debounce>>()
+
+const getDebouncedCheckTitle = (id: string) => {
+  if (!debouncedCheckTitleMap.has(id)) {
+    const debounced = debounce(async (title: string) => {
+      const availability = await checkFileTitleAvailability([title])
+      store.updateItem(id, 'titleAvailable', availability[title])
+      store.updateItem(id, 'titleChecking', false)
+    }, 100)
+    debouncedCheckTitleMap.set(id, debounced)
+  }
+  return debouncedCheckTitleMap.get(id)!
+}
 
 onMounted(async () => {
-  for (const item of store.displayedItems) {
+  const titles = store.selectedItems.map((item) => item.meta.title)
+  for (const item of store.selectedItems) {
     store.updateItem(item.id, 'titleChecking', true)
-    debouncedCheckTitle(item.id, item.meta.title ?? '')
+  }
+  const availability = await checkFileTitleAvailability(titles)
+  for (const item of store.selectedItems) {
+    store.updateItem(item.id, 'titleAvailable', availability[item.meta.title])
+    store.updateItem(item.id, 'titleChecking', false)
   }
 })
 </script>
@@ -76,27 +80,34 @@ onMounted(async () => {
       >
         Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
       </Message>
-      <Button
-        icon="pi pi-eye"
-        icon-pos="left"
-        label="Preview edits"
-        severity="primary"
-        :disabled="disablePreview"
-        @click="store.stepper = '4'"
-      />
+      <div class="flex items-center gap-2">
+        <Message
+          v-if="store.itemsWithErrors > 0"
+          severity="error"
+          icon="pi pi-exclamation-triangle"
+        >
+          {{ store.itemsWithErrors }} item{{ store.itemsWithErrors > 1 ? 's' : '' }} with errors
+        </Message>
+        <Button
+          icon="pi pi-eye"
+          icon-pos="left"
+          label="Preview edits"
+          severity="primary"
+          :disabled="disablePreview"
+          @click="store.stepper = '4'"
+        />
+      </div>
     </div>
 
-    <div
-      v-for="item in store.displayedItems"
-      :key="item.id"
-      class="gap-4"
-    >
+    <div>
       <div
-        class="flex flex-col p-4"
+        v-for="item in store.selectedItems"
+        :key="item.id"
+        class="flex flex-col p-4 py-8 border-l-4"
         :class="{
-          'border-l-4': item.meta.selected || item.meta.titleAvailable === false,
+          'border-green-600': item.meta.titleAvailable === true,
           'border-red-500': item.meta.titleAvailable === false,
-          'border-primary': item.meta.titleAvailable !== false && item.meta.selected,
+          'border-gray-200': item.meta.titleAvailable === undefined,
           'border-yellow-500': item.image.existing.length > 0 && item.meta.titleAvailable === true,
         }"
       >
@@ -114,12 +125,16 @@ onMounted(async () => {
               <InputText
                 :modelValue="item.meta.title ?? ''"
                 :invalid="item.meta.titleAvailable === false"
-                @update:modelValue="(v) => updateTitle(item.id, v)"
+                @update:modelValue="(v) => updateTitle(item.id, v ?? '')"
                 fluid
               />
               <InputIcon
-                v-if="item.meta.titleChecking"
-                class="pi pi-spinner pi-spin"
+                class="pi"
+                :class="{
+                  'text-inherit! pi-spin pi-spinner': item.meta.titleChecking,
+                  'text-green-600! pi-check-circle': item.meta.titleAvailable === true,
+                  'text-red-500! pi-times-circle': item.meta.titleAvailable === false,
+                }"
               />
             </IconField>
             <Message

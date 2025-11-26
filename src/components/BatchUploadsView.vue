@@ -62,7 +62,7 @@ onMounted(() => {
           @click="$emit('back')"
           class="mr-2"
         />
-        Batch: {{ batchId }}
+        <div class="text-xl font-medium">Batch: {{ batchId }}</div>
       </div>
     </template>
     <template #content>
@@ -75,7 +75,6 @@ onMounted(() => {
         :loading="loading"
         @page="loadLazyData"
         :first="lazyParams.first"
-        tableStyle="min-width: 50rem"
       >
         <Column
           v-for="col of columns"

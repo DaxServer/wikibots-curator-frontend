@@ -20,6 +20,9 @@ app.use(pinia)
 app.use(PrimeVue, {
   theme: {
     preset: Noir,
+    options: {
+      darkModeSelector: false,
+    },
   },
 })
 

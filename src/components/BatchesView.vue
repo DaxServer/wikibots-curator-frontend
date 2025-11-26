@@ -41,49 +41,48 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card
-    title="My Batches"
+  <div
     v-if="!selectedBatchId"
+    class="text-2xl font-bold mb-4"
   >
-    <template #content>
-      <DataTable
-        :value="items"
-        lazy
-        paginator
-        :rows="lazyParams.rows"
-        :totalRecords="totalRecords"
-        :loading="loading"
-        @page="loadLazyData"
-        :first="lazyParams.first"
-        tableStyle="min-width: 50rem"
+    My past batches
+  </div>
+  <DataTable
+    v-if="!selectedBatchId"
+    :value="items"
+    lazy
+    paginator
+    :rows="lazyParams.rows"
+    :totalRecords="totalRecords"
+    :loading="loading"
+    @page="loadLazyData"
+    :first="lazyParams.first"
+  >
+    <Column
+      v-for="col of columns"
+      :key="col.field"
+      :field="col.field"
+      :header="col.header"
+    >
+      <template
+        v-if="col.field === 'batch_uid'"
+        #body="slotProps"
       >
-        <Column
-          v-for="col of columns"
-          :key="col.field"
-          :field="col.field"
-          :header="col.header"
+        <a
+          href="#"
+          @click.prevent="selectedBatchId = slotProps.data.batch_uid"
         >
-          <template
-            v-if="col.field === 'batch_uid'"
-            #body="slotProps"
-          >
-            <a
-              href="#"
-              @click.prevent="selectedBatchId = slotProps.data.batch_uid"
-            >
-              {{ slotProps.data.batch_uid }}
-            </a>
-          </template>
-          <template
-            v-if="col.field === 'created_at'"
-            #body="slotProps"
-          >
-            {{ new Date(slotProps.data.created_at).toLocaleString() }}
-          </template>
-        </Column>
-      </DataTable>
-    </template>
-  </Card>
+          {{ slotProps.data.batch_uid }}
+        </a>
+      </template>
+      <template
+        v-if="col.field === 'created_at'"
+        #body="slotProps"
+      >
+        {{ new Date(slotProps.data.created_at).toLocaleString() }}
+      </template>
+    </Column>
+  </DataTable>
   <BatchUploadsView
     v-else
     :batch-id="selectedBatchId"

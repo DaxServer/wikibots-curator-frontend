@@ -4,7 +4,7 @@ const store = useCollectionsStore()
 const emit = defineEmits(['select:currentPage'])
 
 const menu = ref()
-const menuItems = ref([
+const menuItems = computed(() => [
   {
     label: 'All images',
     command: () => store.selectAll(),
@@ -19,10 +19,10 @@ const menuItems = ref([
   {
     label: 'Deselect all',
     command: () => store.deselectAll(),
-    disabled: computed(() => store.selectedCount === 0),
-    class: computed(() => ({
+    disabled: store.selectedCount === 0,
+    class: {
       'bg-red-100': store.selectedCount > 0,
-    })),
+    },
   },
 ])
 </script>
@@ -57,6 +57,10 @@ const menuItems = ref([
       </SelectButton>
     </div>
     <div class="flex items-center gap-4">
+      <span class="text-base">
+        <span class="text-green-600 font-medium">{{ store.selectedCount }}</span>
+        selected
+      </span>
       <Menu
         ref="menu"
         :model="menuItems"
@@ -70,18 +74,12 @@ const menuItems = ref([
         Select
         <i class="pi pi-chevron-down ml-2"></i>
       </Button>
-
-      <span class="text-base">
-        <span class="text-green-600 font-medium">{{ store.selectedCount }}</span>
-        selected
-      </span>
       <Button
         severity="primary"
         :disabled="store.selectedCount === 0"
         @click="store.stepper = '3'"
-      >
-        Start editing
-      </Button>
+        :label="store.selectedCount === 0 ? 'Select items' : 'Start editing'"
+      />
     </div>
   </div>
 </template>

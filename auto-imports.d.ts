@@ -42,6 +42,7 @@ declare global {
   const createWikibaseItemSnak: typeof import('./src/composables/sdc').createWikibaseItemSnak
   const createWikibaseItemStatement: typeof import('./src/composables/sdc').createWikibaseItemStatement
   const customRef: typeof import('vue').customRef
+  const debounce: typeof import('ts-debounce').debounce
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
   const defineStore: typeof import('pinia').defineStore
@@ -184,6 +185,7 @@ declare module 'vue' {
     readonly createWikibaseItemSnak: UnwrapRef<typeof import('./src/composables/sdc')['createWikibaseItemSnak']>
     readonly createWikibaseItemStatement: UnwrapRef<typeof import('./src/composables/sdc')['createWikibaseItemStatement']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
+    readonly debounce: UnwrapRef<typeof import('ts-debounce')['debounce']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>

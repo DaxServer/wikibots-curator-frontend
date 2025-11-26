@@ -99,6 +99,7 @@
       "createWikibaseItemSnak",
       "createWikibaseItemStatement",
       "customRef",
+      "debounce",
       "defineAsyncComponent",
       "defineComponent",
       "defineStore",

@@ -7,7 +7,7 @@ const sourceLinks = [
 </script>
 
 <template>
-  <div class="flex items-center gap-1 max-w-7xl mx-auto">
+  <div class="flex items-center gap-1 max-w-7xl mx-auto mt-10">
     <i class="pi pi-github"></i>
     &nbsp;
     <template

@@ -52,7 +52,7 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const selectPage = (start: number, rows: number) => {
     const end = start + rows
-    const pageItems = displayedItems.value.slice(start, end)
+    const pageItems = selectedItems.value.slice(start, end)
     pageItems.forEach((item) => {
       item.meta.selected = true
     })
@@ -125,14 +125,9 @@ export const useCollectionsStore = defineStore('collections', () => {
   const selectedItems = computed(() => Object.values(items.value).filter((i) => i.meta.selected))
   const selectedItemsKeys = computed(() => selectedItems.value.map((i) => i.id))
   const selectedCount = computed(() => selectedItems.value.length)
-  const displayedItems = computed(() => {
-    if (stepper.value === '2') {
-      return Object.values(items.value)
-    }
-    return selectedCount.value > 0 && showSelectedOnly.value
-      ? selectedItems.value
-      : Object.values(items.value)
-  })
+  const itemsWithErrors = computed(
+    () => selectedItems.value.filter((i) => i.meta.titleAvailable === false).length,
+  )
 
   return {
     handler,
@@ -154,11 +149,11 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalDescription,
     globalLanguage,
     globalCategories,
-    displayedItems,
     totalImages,
     selectedCount,
     selectedItems,
     selectedItemsKeys,
+    itemsWithErrors,
 
     setLoading,
     setGlobalDescription,

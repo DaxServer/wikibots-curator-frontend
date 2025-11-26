@@ -48,7 +48,10 @@ const getRowClass = (data: StatusItem) => {
             —
             <span>duplicates:</span>
             <span>
-              <template v-for="(l, idx) in data.meta.errorInfo!.links">
+              <template
+                v-for="(l, idx) in data.meta.errorInfo!.links"
+                :key="l.url"
+              >
                 <a
                   :href="decodeURIComponent(l.url)"
                   class="text-primary hover:underline"
