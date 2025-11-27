@@ -4,7 +4,7 @@ const store = useCollectionsStore()
 const selectedBatchId = ref<string | null>(null)
 
 const columns = [
-  { field: 'batch_uid', header: 'Batch ID' },
+  { field: 'batch_id', header: 'Batch ID' },
   { field: 'created_at', header: 'Created At' },
 ]
 
@@ -65,14 +65,14 @@ onMounted(() => {
       :header="col.header"
     >
       <template
-        v-if="col.field === 'batch_uid'"
+        v-if="col.field === 'batch_id'"
         #body="slotProps"
       >
         <a
           href="#"
-          @click.prevent="selectedBatchId = slotProps.data.batch_uid"
+          @click.prevent="selectedBatchId = slotProps.data.batch_id"
         >
-          {{ slotProps.data.batch_uid }}
+          {{ slotProps.data.batch_id }}
         </a>
       </template>
       <template

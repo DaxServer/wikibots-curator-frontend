@@ -1,13 +1,13 @@
 export const useCollectionsStore = defineStore('collections', () => {
   const handler = ref<Handler>('mapillary')
-  const input = ref<string>('')
+  const input = ref<string>('tulzukst7vufhdo1e4z60f')
   const creator = ref<Creator>({ id: '', username: '', profile_url: '' })
 
   const isLoading = ref(false)
   const error = ref<string | null>(null)
   const items = ref<Record<string, Item>>({})
   const isStatusChecking = ref<boolean>(false)
-  const batchId = ref<string>('')
+  const batchId = ref<number | null>(null)
   const stepper = ref('1')
 
   const showSelectedOnly = ref<boolean>(true)
@@ -97,7 +97,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const $reset = () => {
     items.value = {}
     error.value = null
-    batchId.value = ''
+    batchId.value = null
     isStatusChecking.value = false
     isLoading.value = false
     showSelectedOnly.value = true

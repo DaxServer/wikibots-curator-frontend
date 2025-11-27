@@ -41,7 +41,7 @@ export const useCollections = () => {
     store.isStatusChecking = false
   }
 
-  const startPolling = (batchId: string): void => {
+  const startPolling = (batchId: number): void => {
     const statusCheck = async (): Promise<void> => {
       store.isStatusChecking = true
       const resp = await fetch(`${PATH_UPLOADS}/${batchId}`)
@@ -146,7 +146,7 @@ export const useCollections = () => {
         return
       }
       const body = (await res.json()) as Array<{
-        batch_id: string
+        batch_id: number
         image_id: string
         status: string
       }>

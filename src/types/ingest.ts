@@ -1,5 +1,5 @@
 export interface Batch {
-  batch_uid: string
+  id: number
   created_at: string
 }
 
@@ -7,7 +7,7 @@ export interface UploadRequest {
   id: number
   status: string
   image_id: string
-  batch_id: string
+  batch_id: number
   result: string | null
   error: unknown | null
   success: string | null
