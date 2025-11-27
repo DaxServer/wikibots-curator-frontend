@@ -47,6 +47,21 @@ const loadLazyData = async (event: { page: number; first: number; rows: number }
   }
 }
 
+const statusTagSeverity = (status: UploadStatus) => {
+  switch (status) {
+    case UPLOAD_STATUS.InProgress:
+      return 'info'
+    case UPLOAD_STATUS.Queued:
+      return 'secondary'
+    case UPLOAD_STATUS.Failed:
+      return 'danger'
+    case UPLOAD_STATUS.Completed:
+      return 'success'
+    default:
+      return 'secondary'
+  }
+}
+
 onMounted(() => {
   loadLazyData(lazyParams.value)
 })
@@ -82,6 +97,14 @@ onMounted(() => {
           :field="col.field"
           :header="col.header"
         >
+          <template
+            v-if="col.field === 'status'"
+            #body="slotProps"
+          >
+            <Tag :severity="statusTagSeverity(slotProps.data.status)">
+              {{ slotProps.data.status }}
+            </Tag>
+          </template>
           <template
             v-if="col.field === 'error'"
             #body="slotProps"
