@@ -6,6 +6,7 @@ const selectedBatchId = ref<string | null>(null)
 const columns = [
   { field: 'batch_id', header: 'Batch ID' },
   { field: 'created_at', header: 'Created At' },
+  { field: 'uploads', header: 'Uploads' },
 ]
 
 const items = ref<Batch[]>([])
@@ -35,6 +36,22 @@ const loadLazyData = async (event: { page: number; first: number; rows: number }
   }
 }
 
+const getSuccessfulUploadCount = (batch: Batch) => {
+  return batch.uploads.filter((u: UploadRequest) => u.success).length
+}
+
+const getFailedUploadCount = (batch: Batch) => {
+  return batch.uploads.filter((u: UploadRequest) => u.error).length
+}
+
+const getInProgressUploadCount = (batch: Batch) => {
+  return batch.uploads.filter((u: UploadRequest) => u.status === UPLOAD_STATUS.InProgress).length
+}
+
+const getQueuedUploadCount = (batch: Batch) => {
+  return batch.uploads.filter((u: UploadRequest) => u.status === UPLOAD_STATUS.Queued).length
+}
+
 onMounted(() => {
   loadLazyData(lazyParams.value)
 })
@@ -57,6 +74,12 @@ onMounted(() => {
     :loading="loading"
     @page="loadLazyData"
     :first="lazyParams.first"
+    @row-click="(event) => (selectedBatchId = event.data.batch_id)"
+    :pt="{
+      bodyRow: () => ({
+        class: 'cursor-pointer',
+      }),
+    }"
   >
     <Column
       v-for="col of columns"
@@ -65,21 +88,41 @@ onMounted(() => {
       :header="col.header"
     >
       <template
-        v-if="col.field === 'batch_id'"
-        #body="slotProps"
-      >
-        <a
-          href="#"
-          @click.prevent="selectedBatchId = slotProps.data.batch_id"
-        >
-          {{ slotProps.data.batch_id }}
-        </a>
-      </template>
-      <template
         v-if="col.field === 'created_at'"
         #body="slotProps"
       >
         {{ new Date(slotProps.data.created_at).toLocaleString() }}
+      </template>
+      <template
+        v-else-if="col.field === 'uploads'"
+        #body="slotProps"
+      >
+        <div
+          v-if="slotProps.data.uploads"
+          class="flex items-center gap-1"
+        >
+          <Tag
+            v-if="getSuccessfulUploadCount(slotProps.data) > 0"
+            severity="success"
+            :value="`${getSuccessfulUploadCount(slotProps.data)} successful`"
+          />
+          <Tag
+            v-if="getFailedUploadCount(slotProps.data) > 0"
+            severity="danger"
+            :value="`${getFailedUploadCount(slotProps.data)} failed`"
+          />
+          <Tag
+            v-if="getInProgressUploadCount(slotProps.data) > 0"
+            severity="info"
+            :value="`${getInProgressUploadCount(slotProps.data)} in progress`"
+          />
+          <Tag
+            v-if="getQueuedUploadCount(slotProps.data) > 0"
+            severity="secondary"
+            :value="`${getQueuedUploadCount(slotProps.data)} queued`"
+          />
+        </div>
+        <div v-else>No uploads</div>
       </template>
     </Column>
   </DataTable>
