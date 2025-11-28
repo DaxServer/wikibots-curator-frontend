@@ -5,7 +5,7 @@ const authStore = useAuthStore()
 const selectedBatchId = ref<number | null>(null)
 
 const selectedBatch = computed(() => {
-  return items.value.find((b) => b.id === selectedBatchId.value)!
+  return items.value.find((b) => b.id === selectedBatchId.value)
 })
 
 const filterOptions = ref([
@@ -41,7 +41,7 @@ const loadLazyData = async (event: { page: number; first: number; rows: number }
   try {
     const page = event.first / event.rows + 1
     let url = `/api/ingest/batches?page=${page}&limit=${event.rows}`
-    if (selectedFilter.value?.value === 'my') {
+    if (selectedFilter.value?.value === 'my' && authStore.userid) {
       url += `&userid=${authStore.userid}`
     }
     const response = await fetch(url)
@@ -155,7 +155,7 @@ onMounted(() => {
     </Column>
   </DataTable>
   <BatchUploadsView
-    v-else
+    v-else-if="selectedBatch"
     :batch="selectedBatch"
     @back="selectedBatchId = null"
   />

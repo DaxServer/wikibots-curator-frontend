@@ -104,40 +104,36 @@ onMounted(() => {
         :field="col.field"
         :header="col.header"
       >
-        <template
-          v-if="col.field === 'status'"
-          #body="slotProps"
-        >
-          <Tag :severity="statusTagSeverity(slotProps.data.status)">
-            {{ slotProps.data.status }}
-          </Tag>
-        </template>
-        <template
-          v-if="col.field === 'error'"
-          #body="slotProps"
-        >
-          <span
-            v-if="slotProps.data.error"
-            class="text-red-500"
-          >
-            {{ slotProps.data.error }}
-          </span>
-        </template>
-        <template
-          v-if="col.field === 'success'"
-          #body="slotProps"
-        >
-          <span
-            v-if="slotProps.data.success"
-            class="text-green-500"
-          >
-            <ExternalLink
-              :href="decodeURIComponent(slotProps.data.success)"
-              show-icon
+        <template #body="slotProps">
+          <template v-if="col.field === 'status'">
+            <Tag :severity="statusTagSeverity(slotProps.data.status)">
+              {{ slotProps.data.status }}
+            </Tag>
+          </template>
+          <template v-else-if="col.field === 'error'">
+            <span
+              v-if="slotProps.data.error"
+              class="text-red-500"
             >
-              View file on Commons
-            </ExternalLink>
-          </span>
+              {{ slotProps.data.error }}
+            </span>
+          </template>
+          <template v-else-if="col.field === 'success'">
+            <span
+              v-if="slotProps.data.success"
+              class="text-green-500"
+            >
+              <ExternalLink
+                :href="decodeURIComponent(slotProps.data.success)"
+                show-icon
+              >
+                View file on Commons
+              </ExternalLink>
+            </span>
+          </template>
+          <template v-else>
+            {{ slotProps.data[col.field] }}
+          </template>
         </template>
       </Column>
     </DataTable>
