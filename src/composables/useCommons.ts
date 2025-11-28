@@ -70,9 +70,13 @@ ${categories}
         }
       }
 
+      const pages = Object.values(data.query?.pages || {})
+
       for (const title of chunk) {
-        const page = Object.values(data.query?.pages || {}).find((p) => p.title === `File:${title}`)
-        availability[title] = 'missing' in page!
+        const page = pages.find((p) => p.title === `File:${title}`) || {
+          missing: false, // ToDo Fix
+        }
+        availability[title] = 'missing' in page
       }
     }
 
