@@ -47,6 +47,7 @@ export const useCollections = () => {
       const resp = await fetch(`${PATH_UPLOADS}/${batchId}`)
       if (!resp || !resp.ok) {
         store.isStatusChecking = false
+        store.error = (await resp.json()).detail
         return
       }
 
@@ -88,7 +89,7 @@ export const useCollections = () => {
         body: JSON.stringify({ handler: store.handler, input: store.input }),
       })
       if (response.status === 404) throw new Error('Collection not found')
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+      if (!response.ok) throw new Error((await response.json()).detail)
 
       const apiResponse = (await response.json()) as CollectionsApiResponse
       store.creator = apiResponse.creator
@@ -141,8 +142,8 @@ export const useCollections = () => {
         body: JSON.stringify(payload),
       })
       if (!res.ok) {
-        const text = await res.text()
-        store.error = `Upload failed: ${res.status} ${text}`
+        const detail = (await res.json()).detail
+        store.error = `Upload failed: ${res.status} ${detail}`
         return
       }
       const body = (await res.json()) as Array<{
