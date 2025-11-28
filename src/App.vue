@@ -3,7 +3,7 @@ const store = useCollectionsStore()
 
 const tab = ref<Handler>('mapillary')
 const pendingTab = ref<Handler | null>(null)
-const currentView = ref<'ingest' | 'batches'>('ingest')
+const currentView = ref<'ingest' | 'batches' | 'admin'>('ingest')
 const confirmOpen = ref<boolean>(false)
 
 const switchProvider = (next: Handler) => {
@@ -47,12 +47,14 @@ const cancelSwitch = () => {
       :tab="tab"
       @update:tab="onTabUpdate"
       @open-history="currentView = 'batches'"
+      @open-admin="currentView = 'admin'"
     />
 
     <template v-if="currentView === 'ingest'">
       <MapillaryCollections v-if="tab === 'mapillary'" />
     </template>
-    <BatchesView v-else />
+    <BatchesView v-else-if="currentView === 'batches'" />
+    <AdminView v-else-if="currentView === 'admin'" />
 
     <Footer />
 

@@ -2,6 +2,7 @@ export interface Batch {
   id: number
   created_at: string
   username: string
+  userid: string
   uploads: UploadRequest[]
 }
 
@@ -27,4 +28,11 @@ export interface LoadItemsOptions {
 export interface PaginatedResponse<T> {
   items: T[]
   total: number
+}
+
+export interface User {
+  userid: string
+  username: string
+  created_at: string
+  updated_at: string
 }
