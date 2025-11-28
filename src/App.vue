@@ -59,9 +59,12 @@ const cancelSwitch = () => {
     <template v-if="auth.isAuthenticated">
       <div
         v-if="store.error"
-        class="inline-flex flex-none mb-4"
+        class="max-w-7xl mx-auto mb-4"
       >
-        <Message severity="error">
+        <Message
+          severity="error"
+          icon="pi pi-exclamation-triangle"
+        >
           {{ store.error }}
         </Message>
       </div>

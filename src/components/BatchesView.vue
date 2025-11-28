@@ -81,7 +81,7 @@ onMounted(() => {
 <template>
   <div
     v-if="!selectedBatchId"
-    class="flex justify-between items-center mb-4"
+    class="flex justify-between items-center mb-4 max-w-7xl mx-auto"
   >
     <div class="text-2xl font-bold">Past uploads</div>
     <SelectButton
