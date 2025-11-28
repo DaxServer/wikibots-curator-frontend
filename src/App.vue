@@ -1,10 +1,15 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
+const auth = useAuthStore()
 
 const tab = ref<Handler>('mapillary')
 const pendingTab = ref<Handler | null>(null)
 const currentView = ref<'ingest' | 'batches' | 'admin'>('ingest')
 const confirmOpen = ref<boolean>(false)
+
+watch(currentView, () => {
+  store.error = ''
+})
 
 const switchProvider = (next: Handler) => {
   store.$reset()
@@ -14,6 +19,7 @@ const switchProvider = (next: Handler) => {
 }
 
 const onTabUpdate = (next: Handler) => {
+  store.error = ''
   if (currentView.value !== 'ingest') {
     currentView.value = 'ingest'
   }
@@ -50,11 +56,34 @@ const cancelSwitch = () => {
       @open-admin="currentView = 'admin'"
     />
 
-    <template v-if="currentView === 'ingest'">
-      <MapillaryCollections v-if="tab === 'mapillary'" />
+    <template v-if="auth.isAuthenticated">
+      <div
+        v-if="store.error"
+        class="inline-flex flex-none mb-4"
+      >
+        <Message severity="error">
+          {{ store.error }}
+        </Message>
+      </div>
+      <template v-if="currentView === 'ingest'">
+        <MapillaryCollections v-if="tab === 'mapillary'" />
+      </template>
+      <BatchesView v-else-if="currentView === 'batches'" />
+      <AdminView v-else-if="currentView === 'admin'" />
     </template>
-    <BatchesView v-else-if="currentView === 'batches'" />
-    <AdminView v-else-if="currentView === 'admin'" />
+
+    <div
+      v-else
+      class="py-48 flex justify-center items-center"
+    >
+      <Button
+        color="primary"
+        :loading="auth.isLoading"
+        :disabled="auth.isLoading"
+        label="Login with Wikimedia Commons"
+        @click="auth.login"
+      />
+    </div>
 
     <Footer />
 

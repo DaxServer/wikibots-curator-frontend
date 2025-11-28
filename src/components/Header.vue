@@ -9,7 +9,7 @@ const emit = defineEmits<{
   'open-admin': []
 }>()
 
-const authStore = useAuthStore()
+const auth = useAuthStore()
 
 const handleTabChange = (event: { value: string }) => {
   if (event.value === 'mapillary') {
@@ -18,12 +18,12 @@ const handleTabChange = (event: { value: string }) => {
 }
 
 onMounted(async () => {
-  await authStore.checkAuth()
+  await auth.checkAuth()
 })
 </script>
 
 <template>
-  <div class="container max-w-7xl mx-auto flex justify-between">
+  <div class="max-w-7xl mx-auto flex justify-between">
     <div class="flex items-end">
       <span class="text-2xl mr-5">Curator</span>
       <Button
@@ -33,16 +33,17 @@ onMounted(async () => {
     </div>
 
     <div class="flex items-center gap-2">
-      <template v-if="!authStore.isAuthenticated">
-        <Button
-          label="Login"
-          @click="authStore.login"
-        />
-      </template>
+      <Button
+        v-if="!auth.isAuthenticated"
+        label="Login"
+        :loading="auth.isLoading"
+        :disabled="auth.isLoading"
+        @click="auth.login"
+      />
       <template v-else>
-        <span class="text-gray-600">Hello, {{ authStore.user }}!</span>
+        <span class="text-gray-600">Hello, {{ auth.user }}!</span>
         <Button
-          v-if="authStore.user === 'DaxServer'"
+          v-if="auth.user === 'DaxServer'"
           label="Admin"
           severity="info"
           class="mr-2"
@@ -57,7 +58,7 @@ onMounted(async () => {
           label="Logout"
           outlined
           severity="danger"
-          @click="authStore.logout"
+          @click="auth.logout"
         />
       </template>
     </div>

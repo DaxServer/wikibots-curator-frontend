@@ -12,6 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const login = () => {
+    isLoading.value = true
     window.location.href = '/auth/login'
   }
 
@@ -22,6 +23,8 @@ export const useAuthStore = defineStore('auth', () => {
       reset()
     } catch (error) {
       console.error('Logout failed:', error)
+    } finally {
+      isLoading.value = false
     }
   }
 
