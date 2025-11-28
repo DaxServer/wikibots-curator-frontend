@@ -52,7 +52,7 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const selectPage = (start: number, rows: number) => {
     const end = start + rows
-    const pageItems = selectedItems.value.slice(start, end)
+    const pageItems = Object.values(items.value).slice(start, end)
     pageItems.forEach((item) => {
       item.meta.selected = true
     })

@@ -42,33 +42,38 @@ ${categories}
   }
 
   const checkFileTitleAvailability = async (titles: string[]): Promise<Record<string, boolean>> => {
-    const fileTitles = titles.map((title) => `File:${title}`)
-    const params = new URLSearchParams()
-    params.set('action', 'query')
-    params.set('prop', 'revisions')
-    params.set('titles', fileTitles.join('|'))
-    params.set('format', 'json')
-    params.set('origin', '*')
-    params.set('formatversion', '2')
-
-    const res = await fetch('https://commons.wikimedia.org/w/api.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params.toString(),
-    })
-    if (!res || !res.ok) return {}
-    const data = (await res.json()) as {
-      query?: {
-        pages?: Record<string, { missing?: boolean; title: string }>
-      }
-    }
-
     const availability: Record<string, boolean> = {}
-    for (const title of titles) {
-      const page = Object.values(data.query?.pages || {}).find((p) => p.title === `File:${title}`)
-      availability[title] = Boolean(page?.missing)
+    const chunkSize = 50
+
+    for (let i = 0; i < titles.length; i += chunkSize) {
+      const chunk = titles.slice(i, i + chunkSize)
+      const fileTitles = chunk.map((title) => `File:${title}`)
+      const params = new URLSearchParams()
+      params.set('action', 'query')
+      params.set('prop', 'revisions')
+      params.set('titles', fileTitles.join('|'))
+      params.set('format', 'json')
+      params.set('origin', '*')
+      params.set('formatversion', '2')
+
+      const res = await fetch('https://commons.wikimedia.org/w/api.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString(),
+      })
+      if (!res || !res.ok) continue
+      const data = (await res.json()) as {
+        query?: {
+          pages?: Record<string, { missing?: boolean; title: string }>
+        }
+      }
+
+      for (const title of chunk) {
+        const page = Object.values(data.query?.pages || {}).find((p) => p.title === `File:${title}`)
+        availability[title] = 'missing' in page!
+      }
     }
 
     return availability
