@@ -1,6 +1,7 @@
 export interface Batch {
   id: number
   created_at: string
+  username: string
   uploads: UploadRequest[]
 }
 
