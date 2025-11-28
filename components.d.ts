@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminView: typeof import('./src/components/AdminView.vue')['default']
     App: typeof import('./src/App.vue')['default']
     BatchesView: typeof import('./src/components/BatchesView.vue')['default']
     BatchUploadsView: typeof import('./src/components/BatchUploadsView.vue')['default']

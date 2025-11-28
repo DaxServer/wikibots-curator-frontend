@@ -6,6 +6,7 @@ defineProps<{
 const emit = defineEmits<{
   'update:tab': [Handler]
   'open-history': []
+  'open-admin': []
 }>()
 
 const authStore = useAuthStore()
@@ -40,6 +41,13 @@ onMounted(async () => {
       </template>
       <template v-else>
         <span class="text-gray-600">Hello, {{ authStore.user }}!</span>
+        <Button
+          v-if="authStore.user === 'DaxServer'"
+          label="Admin"
+          severity="info"
+          class="mr-2"
+          @click="$emit('open-admin')"
+        />
         <Button
           label="Past uploads"
           severity="secondary"

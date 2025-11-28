@@ -67,6 +67,7 @@
       "UploadStatusUpdate",
       "UrlDataValue",
       "UrlValueSnak",
+      "User",
       "VNode",
       "ValueSnak",
       "WikibaseEntityType",
