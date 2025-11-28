@@ -1,13 +1,30 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
+const authStore = useAuthStore()
 
-const selectedBatchId = ref<string | null>(null)
+const selectedBatchId = ref<number | null>(null)
 
-const columns = [
-  { field: 'batch_id', header: 'Batch ID' },
-  { field: 'created_at', header: 'Created At' },
-  { field: 'uploads', header: 'Uploads' },
-]
+const selectedBatch = computed(() => {
+  return items.value.find((b) => b.id === selectedBatchId.value)
+})
+
+const filterOptions = ref([
+  { label: 'My uploads', value: 'my' },
+  { label: 'All uploads', value: 'all' },
+])
+const selectedFilter = ref(filterOptions.value[0])
+
+const columns = computed(() => {
+  const cols = [
+    { field: 'id', header: 'Batch ID' },
+    { field: 'uploads', header: 'Uploads' },
+    { field: 'created_at', header: 'Created At' },
+  ]
+  if (selectedFilter.value?.value === 'all') {
+    cols.splice(1, 0, { field: 'username', header: 'Username' })
+  }
+  return cols
+})
 
 const items = ref<Batch[]>([])
 const loading = ref(false)
@@ -23,7 +40,11 @@ const loadLazyData = async (event: { page: number; first: number; rows: number }
   lazyParams.value = event
   try {
     const page = event.first / event.rows + 1
-    const response = await fetch(`/api/ingest/batches?page=${page}&limit=${event.rows}`)
+    let url = `/api/ingest/batches?page=${page}&limit=${event.rows}`
+    if (selectedFilter.value?.value === 'my' && authStore.userid) {
+      url += `&userid=${authStore.userid}`
+    }
+    const response = await fetch(url)
     if (!response.ok) throw new Error('Failed to fetch batches')
     const data: PaginatedResponse<Batch> = await response.json()
     items.value = data.items
@@ -60,9 +81,16 @@ onMounted(() => {
 <template>
   <div
     v-if="!selectedBatchId"
-    class="text-2xl font-bold mb-4"
+    class="flex justify-between items-center mb-4"
   >
-    My past batches
+    <div class="text-2xl font-bold">Past uploads</div>
+    <SelectButton
+      v-model="selectedFilter"
+      :options="filterOptions"
+      optionLabel="label"
+      :allowEmpty="false"
+      @change="loadLazyData(lazyParams)"
+    />
   </div>
   <DataTable
     v-if="!selectedBatchId"
@@ -74,7 +102,7 @@ onMounted(() => {
     :loading="loading"
     @page="loadLazyData"
     :first="lazyParams.first"
-    @row-click="(event) => (selectedBatchId = event.data.batch_id)"
+    @row-click="(event) => (selectedBatchId = event.data.id)"
     :pt="{
       bodyRow: () => ({
         class: 'cursor-pointer',
@@ -127,8 +155,8 @@ onMounted(() => {
     </Column>
   </DataTable>
   <BatchUploadsView
-    v-else
-    :batch-id="selectedBatchId"
+    v-else-if="selectedBatch"
+    :batch="selectedBatch"
     @back="selectedBatchId = null"
   />
 </template>

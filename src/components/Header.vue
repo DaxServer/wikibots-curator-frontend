@@ -41,7 +41,7 @@ onMounted(async () => {
       <template v-else>
         <span class="text-gray-600">Hello, {{ authStore.user }}!</span>
         <Button
-          label="My uploads"
+          label="Past uploads"
           severity="secondary"
           @click="$emit('open-history')"
         />

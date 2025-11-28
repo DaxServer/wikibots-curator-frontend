@@ -1,11 +1,13 @@
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<string>('')
+  const userid = ref<string>('')
   const isAuthenticated = computed(() => !!user.value)
   const isAuthorized = ref(false)
   const isLoading = ref(false)
 
   const reset = () => {
     user.value = ''
+    userid.value = ''
     isAuthorized.value = false
   }
 
@@ -28,8 +30,13 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await fetch('/auth/whoami')
       if (response.ok) {
-        const userData = (await response.json()) as { username: string; authorized: boolean }
+        const userData = (await response.json()) as {
+          username: string
+          userid: string
+          authorized: boolean
+        }
         user.value = userData.username
+        userid.value = userData.userid
         isAuthorized.value = userData.authorized
       } else {
         reset()
@@ -48,6 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthorized,
     isLoading,
     user,
+    userid,
 
     // Actions
     login,
