@@ -28,6 +28,7 @@ declare module 'vue' {
     DataView: typeof import('primevue/dataview')['default']
     Dialog: typeof import('primevue/dialog')['default']
     Divider: typeof import('primevue/divider')['default']
+    EditItem: typeof import('./src/components/common/EditItem.vue')['default']
     ExternalLink: typeof import('./src/components/common/ExternalLink.vue')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
     Footer: typeof import('./src/components/Footer.vue')['default']

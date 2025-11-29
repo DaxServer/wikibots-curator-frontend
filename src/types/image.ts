@@ -54,8 +54,7 @@ export interface Metadata {
   selected: boolean
   status?: UploadStatus
   statusReason?: string
-  titleAvailable?: boolean
-  titleChecking?: boolean
+  titleStatus?: TitleStatus
   successUrl?: string
   errorInfo?: {
     type: 'duplicate' | 'error'
@@ -73,6 +72,8 @@ export interface Item {
   index: number
   id: string
 }
+
+export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown'
 
 export const UPLOAD_STATUS = {
   Queued: 'queued',
