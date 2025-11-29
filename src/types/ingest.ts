@@ -1,3 +1,21 @@
+export interface ErrorLink {
+  title: string
+  url: string
+}
+
+export interface DuplicateError {
+  type: 'duplicate'
+  message: string
+  links: ErrorLink[]
+}
+
+export interface GenericError {
+  type: 'error'
+  message: string
+}
+
+export type StructuredError = DuplicateError | GenericError
+
 export interface Batch {
   id: number
   created_at: string
@@ -12,7 +30,7 @@ export interface UploadRequest {
   image_id: string
   batch_id: number
   result: string | null
-  error: unknown | null
+  error: StructuredError | null
   success: string | null
   handler: string
 }

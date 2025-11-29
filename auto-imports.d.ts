@@ -139,7 +139,7 @@ declare global {
   export type { Creator, Location, Dates, ExistingPage, Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
-  export type { Batch, UploadRequest, LoadItemsOptions, PaginatedResponse, User } from './src/types/ingest'
+  export type { ErrorLink, DuplicateError, GenericError, StructuredError, Batch, UploadRequest, LoadItemsOptions, PaginatedResponse, User } from './src/types/ingest'
   import('./src/types/ingest')
   // @ts-ignore
   export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'

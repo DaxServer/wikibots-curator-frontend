@@ -56,11 +56,7 @@ export interface Metadata {
   statusReason?: string
   titleStatus?: TitleStatus
   successUrl?: string
-  errorInfo?: {
-    type: 'duplicate' | 'error'
-    message: string
-    links?: { title: string; url: string }[]
-  }
+  errorInfo?: StructuredError
 }
 export type MetadataKey = keyof Metadata
 export type MetadataValue = Metadata[MetadataKey]
@@ -94,11 +90,7 @@ export type UploadStatusUpdate =
   | {
       image_id: string
       status: typeof UPLOAD_STATUS.Failed
-      error: {
-        type: 'duplicate' | 'error'
-        message: string
-        links?: { title: string; url: string }[]
-      }
+      error: StructuredError
       success?: never
     }
   | {
