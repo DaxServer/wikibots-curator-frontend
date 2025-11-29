@@ -45,6 +45,13 @@ const onSelectCurrentPage = () => {
     paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
     current-page-report-template="Page {currentPage} of {totalPages}"
     @page="page = $event"
+    :pt="{
+      pcPaginator: {
+        root: {
+          class: 'justify-end!',
+        },
+      },
+    }"
   >
     <template #header>
       <CollectionsControls @select:current-page="onSelectCurrentPage" />

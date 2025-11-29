@@ -100,22 +100,43 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div>
-      <EditItem
-        v-for="item in displayedItems"
-        :key="item.id"
-        class="flex flex-col p-4 py-8 border-l-4"
-        :class="{
-          'border-green-600': item.meta.titleStatus === 'available',
-          'border-red-500': item.meta.titleStatus === 'taken',
-          'border-gray-200': item.meta.titleStatus === undefined,
-          'border-yellow-500':
-            item.meta.titleStatus === 'unknown' ||
-            (item.image.existing.length > 0 && item.meta.titleStatus === 'available'),
-        }"
-        :item="item"
-        :altPrefix="altPrefix"
-      />
-    </div>
+    <DataView
+      :value="displayedItems"
+      :paginator="true"
+      :rows="10"
+      layout="list"
+      paginator-position="both"
+      :always-show-paginator="false"
+      :rows-per-page-options="[10, 20, 50]"
+      paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
+      current-page-report-template="Page {currentPage} of {totalPages}"
+      :pt="{
+        pcPaginator: {
+          root: {
+            class: 'justify-end!',
+          },
+        },
+      }"
+    >
+      <template #list="slotProps">
+        <div class="flex flex-col">
+          <EditItem
+            v-for="item in slotProps.items"
+            :key="item.id"
+            class="flex flex-col p-4 py-8 border-l-4"
+            :class="{
+              'border-green-600': item.meta.titleStatus === 'available',
+              'border-red-500': item.meta.titleStatus === 'taken',
+              'border-gray-200': item.meta.titleStatus === undefined,
+              'border-yellow-500':
+                item.meta.titleStatus === 'unknown' ||
+                (item.image.existing.length > 0 && item.meta.titleStatus === 'available'),
+            }"
+            :item="item"
+            :altPrefix="altPrefix"
+          />
+        </div>
+      </template>
+    </DataView>
   </div>
 </template>
