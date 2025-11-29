@@ -1,15 +1,15 @@
 <script setup lang="ts">
-type LinkInfo = { title: string; url: string }
 type StatusMeta = {
   title: string
   status?: (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS] | undefined
   statusReason?: string
   successUrl?: string
-  errorInfo?: { message: string; links?: LinkInfo[] }
+  errorInfo?: StructuredError
 }
 type StatusItem = { id: string; index: number; meta: StatusMeta }
 
 defineProps<{ items: Array<StatusItem> }>()
+
 const getRowClass = (data: StatusItem) => {
   const status = data.meta.status
   if (status === UPLOAD_STATUS.Completed) return 'bg-green-100'
@@ -43,27 +43,11 @@ const getRowClass = (data: StatusItem) => {
     >
       <template #body="{ data }">
         <span v-if="data.meta.status === UPLOAD_STATUS.Failed">
-          failed: {{ data.meta.errorInfo?.message ?? data.meta.statusReason ?? '' }}
-          <span v-if="data.meta.errorInfo?.links?.length">
-            —
-            <span>duplicates:</span>
-            <span>
-              <template
-                v-for="(l, idx) in data.meta.errorInfo!.links"
-                :key="l.url"
-              >
-                <a
-                  :href="decodeURIComponent(l.url)"
-                  class="text-primary hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {{ l.title }}
-                </a>
-                {{ idx < data.meta.errorInfo!.links!.length - 1 ? ', ' : '' }}
-              </template>
-            </span>
-          </span>
+          <ErrorDisplay
+            v-if="data.meta.errorInfo"
+            :error="data.meta.errorInfo"
+          />
+          <span v-else>failed: {{ data.meta.statusReason }}</span>
         </span>
         <span v-else-if="data.meta.status === UPLOAD_STATUS.Completed">
           completed

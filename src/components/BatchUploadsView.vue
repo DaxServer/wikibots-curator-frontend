@@ -111,12 +111,10 @@ onMounted(() => {
             </Tag>
           </template>
           <template v-else-if="col.field === 'error'">
-            <span
+            <ErrorDisplay
               v-if="slotProps.data.error"
-              class="text-red-500"
-            >
-              {{ slotProps.data.error }}
-            </span>
+              :error="slotProps.data.error"
+            />
           </template>
           <template v-else-if="col.field === 'success'">
             <span

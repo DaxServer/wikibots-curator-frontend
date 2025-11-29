@@ -104,6 +104,14 @@ onMounted(() => {
         >
           <pre class="text-xs">{{ slotProps.data[col.field] }}</pre>
         </template>
+        <template
+          v-else-if="col.field === 'error' || col.field === 'labels'"
+          #body="slotProps"
+        >
+          <pre class="text-xs whitespace-pre-wrap">{{
+            JSON.stringify(slotProps.data[col.field], null, 2)
+          }}</pre>
+        </template>
       </Column>
     </DataTable>
   </div>
