@@ -1,3 +1,19 @@
+import {
+  createCopyrightLicenseClaim,
+  createCopyrightStatusClaim,
+  createCreatorClaim,
+  createHeightClaim,
+  createInceptionClaim,
+  createMapillaryIdClaim,
+  createPublishedInMapillaryClaim,
+  createSourceOfFileClaim,
+  createWidthClaim,
+} from '@/composables/sdc'
+import { useCollectionsStore } from '@/stores/collections.store'
+import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
+import type { Statement } from '@/types/wikidata'
+import { debounce } from 'ts-debounce'
+
 export const useCommons = () => {
   const store = useCollectionsStore()
 
@@ -41,13 +57,41 @@ ${categories}
     return info
   }
 
-  const checkFileTitleAvailability = async (titles: string[]): Promise<Record<string, boolean>> => {
-    const availability: Record<string, boolean> = {}
+  const debouncedCheckTitleMap = new Map<string, ReturnType<typeof debounce>>()
+
+  const verifyTitles = async (
+    items: { id: string; title: string }[],
+    options: { debounce?: boolean } = {},
+  ): Promise<void> => {
+    if (options.debounce) {
+      for (const item of items) {
+        store.updateItem(item.id, 'titleStatus', 'checking')
+        if (!debouncedCheckTitleMap.has(item.id)) {
+          const debounced = debounce(async (id: string, title: string) => {
+            await checkFileTitleAvailability([{ id, title }])
+          }, 100)
+          debouncedCheckTitleMap.set(item.id, debounced)
+        }
+        debouncedCheckTitleMap.get(item.id)!(item.id, item.title)
+      }
+      return
+    }
+
+    for (const item of items) {
+      store.updateItem(item.id, 'titleStatus', 'checking')
+    }
+
+    await checkFileTitleAvailability(items)
+  }
+
+  const checkFileTitleAvailability = async (
+    items: { id: string; title: string }[],
+  ): Promise<void> => {
     const chunkSize = 50
 
-    for (let i = 0; i < titles.length; i += chunkSize) {
-      const chunk = titles.slice(i, i + chunkSize)
-      const fileTitles = chunk.map((title) => `File:${title}`)
+    for (let i = 0; i < items.length; i += chunkSize) {
+      const chunk = items.slice(i, i + chunkSize)
+      const fileTitles = chunk.map((item) => `File:${item.title}`)
       const params = new URLSearchParams()
       params.set('action', 'query')
       params.set('prop', 'revisions')
@@ -66,21 +110,27 @@ ${categories}
       if (!res || !res.ok) continue
       const data = (await res.json()) as {
         query?: {
-          pages?: Record<string, { missing?: boolean; title: string }>
+          pages?: Record<string, { missing?: boolean; title: string; revisions?: unknown[] }>
         }
       }
 
       const pages = Object.values(data.query?.pages || {})
 
-      for (const title of chunk) {
-        const page = pages.find((p) => p.title === `File:${title}`) || {
-          missing: false, // ToDo Fix
+      for (const item of chunk) {
+        const page = pages.find((p) => p.title === `File:${item.title}`)
+        let status: TitleStatus = 'unknown'
+
+        if (!page) {
+          status = 'unknown'
+        } else if (page.missing) {
+          status = 'available'
+        } else if (page.revisions) {
+          status = 'taken'
         }
-        availability[title] = 'missing' in page
+
+        store.updateItem(item.id, 'titleStatus', status)
       }
     }
-
-    return availability
   }
 
   const sourceLink = (id: string, sequenceId?: string): string => {
@@ -131,7 +181,7 @@ ${categories}
 
   return {
     applyMetaDefaults,
-    checkFileTitleAvailability,
+    verifyTitles,
     sourceLink,
     buildTitle,
     buildDescription,

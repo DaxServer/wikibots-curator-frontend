@@ -1,6 +1,11 @@
+import type { Handler, Layout } from '@/types/collections'
+import type { Creator, Item, MetadataKey, MetadataValue } from '@/types/image'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+
 export const useCollectionsStore = defineStore('collections', () => {
   const handler = ref<Handler>('mapillary')
-  const input = ref<string>('tulzukst7vufhdo1e4z60f')
+  const input = ref<string>('')
   const creator = ref<Creator>({ id: '', username: '', profile_url: '' })
 
   const isLoading = ref(false)
@@ -126,7 +131,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const selectedItemsKeys = computed(() => selectedItems.value.map((i) => i.id))
   const selectedCount = computed(() => selectedItems.value.length)
   const itemsWithErrors = computed(
-    () => selectedItems.value.filter((i) => i.meta.titleAvailable === false).length,
+    () => selectedItems.value.filter((i) => i.meta.titleStatus === 'taken').length,
   )
 
   return {

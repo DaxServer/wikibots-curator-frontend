@@ -136,7 +136,7 @@ declare global {
   export type { Handler, Layout, CollectionsApiResponse } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
-  export type { Creator, Location, Dates, ExistingPage, Image, Metadata, MetadataKey, MetadataValue, Item, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
+  export type { Creator, Location, Dates, ExistingPage, Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
   export type { Batch, UploadRequest, LoadItemsOptions, PaginatedResponse, User } from './src/types/ingest'

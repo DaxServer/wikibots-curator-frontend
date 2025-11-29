@@ -60,6 +60,7 @@
       "StringValueSnak",
       "TimeDataValue",
       "TimeValueSnak",
+      "TitleStatus",
       "UPLOAD_STATUS",
       "UploadIngestResponseItem",
       "UploadRequest",
