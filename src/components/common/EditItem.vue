@@ -44,6 +44,13 @@ const onTitleChange = (id: string, title: string) => {
           severity="info"
           variant="simple"
           size="small"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
         >
           Checking title availability...
         </Message>
@@ -52,8 +59,15 @@ const onTitleChange = (id: string, title: string) => {
           severity="error"
           variant="simple"
           size="small"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
         >
-          Title is not possible.
+          Title is not possible
           <a
             :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(item.meta.title ?? '')}`"
             class="text-primary hover:underline"
@@ -69,16 +83,30 @@ const onTitleChange = (id: string, title: string) => {
           severity="warn"
           variant="simple"
           size="small"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
         >
-          Unable to verify title availability.
+          Unable to verify title availability
         </Message>
         <Message
           v-else-if="item.meta.titleStatus === 'available'"
           severity="success"
           variant="simple"
           size="small"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
         >
-          Title is available.
+          Title is available
         </Message>
       </div>
     </div>
