@@ -47,10 +47,17 @@ onMounted(async () => {
               <Message
                 severity="info"
                 icon="pi pi-info-circle"
+                size="small"
+                :pt="{
+                  transition: {
+                    name: 'none',
+                    enterActiveClass: 'none',
+                    leaveActiveClass: 'none',
+                  },
+                }"
               >
                 Will be applied to all selected images
                 <span class="underline">only as a fallback</span>
-                .
               </Message>
             </div>
           </template>

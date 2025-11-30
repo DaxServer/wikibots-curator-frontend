@@ -58,6 +58,13 @@ onMounted(() => {
         <Message
           v-if="item.image.existing.length"
           severity="warn"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
         >
           <strong>Existing files:</strong>
           <div

@@ -34,6 +34,13 @@ const menuItems = computed(() => [
         severity="info"
         :closable="false"
         icon="pi pi-info-circle"
+        :pt="{
+          transition: {
+            name: 'none',
+            enterActiveClass: 'none',
+            leaveActiveClass: 'none',
+          },
+        }"
       >
         Click on images to select
       </Message>

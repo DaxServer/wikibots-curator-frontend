@@ -76,6 +76,13 @@ const isFallbackCategories = computed(
           :severity="isFallbackDescription ? 'warn' : 'secondary'"
           variant="simple"
           size="small"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
         >
           Using fallback description: {{ store.globalDescription }}
         </Message>
@@ -101,6 +108,13 @@ const isFallbackCategories = computed(
         variant="simple"
         size="small"
         class="-mt-3"
+        :pt="{
+          transition: {
+            name: 'none',
+            enterActiveClass: 'none',
+            leaveActiveClass: 'none',
+          },
+        }"
       >
         <a
           href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator"
@@ -111,12 +125,12 @@ const isFallbackCategories = computed(
           [[Category:Images from Mapillary uploaded with Curator]]
           <i class="pi pi-external-link text-xs!"></i>
         </a>
-        will be added.
+        will be added
         <span
           v-if="isFallbackCategories"
           class="block mt-1"
         >
-          Using fallback categories.
+          Using fallback categories
         </span>
       </Message>
     </slot>
