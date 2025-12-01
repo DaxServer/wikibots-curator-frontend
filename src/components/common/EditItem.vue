@@ -1,12 +1,23 @@
 <script lang="ts" setup>
-defineProps<{ item: Item; altPrefix: string }>()
+const props = defineProps<{ item: Item; altPrefix: string }>()
 
 const store = useCollectionsStore()
 const { verifyTitles } = useCommons()
+const { applyTitleTemplate } = useTitleTemplate()
+
+const computedTitle = computed(() =>
+  applyTitleTemplate(store.globalTitleTemplate, props.item.image),
+)
+const effectiveTitle = computed(() => props.item.meta.title ?? computedTitle.value)
 
 const onTitleChange = (id: string, title: string) => {
-  store.updateItem(id, 'title', title)
-  verifyTitles([{ id, title }], { debounce: true })
+  if (!title) {
+    store.updateItem(id, 'title', undefined)
+    verifyTitles([{ id, title: computedTitle.value }], { debounce: true })
+  } else {
+    store.updateItem(id, 'title', title)
+    verifyTitles([{ id, title }], { debounce: true })
+  }
 }
 </script>
 
@@ -24,7 +35,7 @@ const onTitleChange = (id: string, title: string) => {
       <div class="flex-1 flex flex-col gap-1">
         <IconField>
           <InputText
-            :modelValue="item.meta.title ?? ''"
+            :modelValue="effectiveTitle"
             :invalid="item.meta.titleStatus === 'taken'"
             @update:modelValue="(v) => onTitleChange(item.id, v ?? '')"
             fluid
@@ -69,7 +80,7 @@ const onTitleChange = (id: string, title: string) => {
         >
           Title is not possible
           <a
-            :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(item.meta.title ?? '')}`"
+            :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(effectiveTitle)}`"
             class="text-primary hover:underline"
             target="_blank"
             rel="noopener noreferrer"
@@ -123,25 +134,17 @@ const onTitleChange = (id: string, title: string) => {
             <div>
               <span class="text-gray-500">Taken</span>
               <div>
-                {{
-                  item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—'
-                }}
+                {{ item.image.dates.taken.toLocaleString() }}
               </div>
-            </div>
-          </div>
-          <div v-if="item.image.dates.published">
-            <div>
-              <span class="text-gray-500">Published</span>
-              <div>{{ new Date(item.image.dates.published).toLocaleString() }}</div>
             </div>
           </div>
           <div>
             <div>
               <span class="text-gray-500">Coordinates</span>
               <div>
-                Lat: {{ item.image.location?.latitude ?? '—' }}
+                Lat: {{ item.image.location.latitude }}
                 <br />
-                Lng: {{ item.image.location?.longitude ?? '—' }}
+                Lng: {{ item.image.location.longitude }}
               </div>
             </div>
           </div>
@@ -150,7 +153,7 @@ const onTitleChange = (id: string, title: string) => {
           <div>
             <div>
               <span class="text-gray-500">Compass Angle</span>
-              <div>{{ item.image.location?.compass_angle ?? '—' }}°</div>
+              <div>{{ item.image.location.compass_angle }}°</div>
             </div>
           </div>
           <div>

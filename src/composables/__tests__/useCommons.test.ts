@@ -41,7 +41,7 @@ describe('useCommons', () => {
       thumbnail_url: 'http://example.com/thumbnail.jpg',
       width: 100,
       height: 100,
-      dates: { taken: '2023-01-01' },
+      dates: { taken: new Date('2023-01-01T00:00:00Z') },
       location: { latitude: 0, longitude: 0, compass_angle: 0 },
       creator: { id: 'user', username: 'user', profile_url: '' },
       is_pano: false,

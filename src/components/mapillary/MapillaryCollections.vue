@@ -21,7 +21,7 @@ onMounted(() => {
         </span>
         <div>
           <strong>Taken:</strong>
-          {{ item.image.dates.taken ? new Date(item.image.dates.taken).toLocaleString() : '—' }}
+          {{ item.image.dates.taken ? item.image.dates.taken.toLocaleString() : '—' }}
         </div>
         <div>
           <strong>ID:</strong>

@@ -18,10 +18,21 @@ const sourceLinks = [
         :href="link.url"
         target="_blank"
         rel="noopener noreferrer"
+        class="hover:underline"
       >
         {{ link.text }}
       </a>
-      <template v-if="index < sourceLinks.length - 1">&nbsp;&bull;&nbsp;</template>
+      &nbsp;&bull;&nbsp;
     </template>
+    <i class="pi pi-share-alt text-sm!"></i>
+    &nbsp;
+    <a
+      href="https://opensource.org/license/mit"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:underline"
+    >
+      MIT license
+    </a>
   </div>
 </template>

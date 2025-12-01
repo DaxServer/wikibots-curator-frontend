@@ -58,6 +58,7 @@ declare module 'vue' {
     Stepper: typeof import('primevue/stepper')['default']
     Tag: typeof import('primevue/tag')['default']
     Textarea: typeof import('primevue/textarea')['default']
+    TitleTemplateEditor: typeof import('./src/components/common/TitleTemplateEditor.vue')['default']
     UploadPreview: typeof import('./src/components/common/UploadPreview.vue')['default']
     UploadStatusTable: typeof import('./src/components/common/UploadStatusTable.vue')['default']
     ValueRenderer: typeof import('./src/components/wikidata/ValueRenderer.vue')['default']
@@ -65,5 +66,6 @@ declare module 'vue' {
   }
   export interface GlobalDirectives {
     FocusTrap: typeof import('primevue/focustrap')['default']
+    Tooltip: typeof import('primevue/tooltip')['default']
   }
 }
