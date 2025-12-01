@@ -62,7 +62,7 @@ describe('useTitleTemplate', () => {
       const store = useCollectionsStore()
       const { template, error, applyTemplate } = useTitleTemplate()
 
-      template.value = 'Photo by {{mapillary.user.username}}'
+      template.value = 'Photo by {{mapillary.user.username}}.jpg'
 
       expect(error.value).toBeNull()
 
@@ -74,7 +74,7 @@ describe('useTitleTemplate', () => {
 
       await applyTemplate()
 
-      expect(store.globalTitleTemplate).toBe('Photo by {{mapillary.user.username}}')
+      expect(store.globalTitleTemplate).toBe('Photo by {{mapillary.user.username}}.jpg')
     })
 
     it('does not update store if template is invalid', async () => {
@@ -97,7 +97,7 @@ describe('useTitleTemplate', () => {
       store.input = 'seq123'
       const { template, applyTemplate } = useTitleTemplate()
 
-      template.value = '{{mapillary.user.username}}'
+      template.value = '{{mapillary.user.username}}.jpg'
 
       const mockFetch = mock(() =>
         Promise.resolve(
@@ -110,7 +110,7 @@ describe('useTitleTemplate', () => {
 
       await applyTemplate()
 
-      expect(store.globalTitleTemplate).toBe('{{mapillary.user.username}}')
+      expect(store.globalTitleTemplate).toBe('{{mapillary.user.username}}.jpg')
       expect(mockFetch).toHaveBeenCalled()
       // Check if fetch was called with the correct title in the body
       const calls = mockFetch.mock.calls as unknown as [RequestInfo, RequestInit?][]
@@ -125,7 +125,7 @@ describe('useTitleTemplate', () => {
       store.items = { '1': item }
       const { template, applyTemplate } = useTitleTemplate()
 
-      template.value = '{{mapillary.user.username}}'
+      template.value = '{{mapillary.user.username}}.jpg'
 
       const mockFetch = mock(() =>
         Promise.resolve(new Response(JSON.stringify({ query: { pages: {} } }))),
@@ -134,7 +134,7 @@ describe('useTitleTemplate', () => {
 
       await applyTemplate()
 
-      expect(store.globalTitleTemplate).toBe('{{mapillary.user.username}}')
+      expect(store.globalTitleTemplate).toBe('{{mapillary.user.username}}.jpg')
       expect(mockFetch).not.toHaveBeenCalled()
     })
 

@@ -35,7 +35,7 @@ const onTitleChange = (id: string, title: string) => {
         <IconField>
           <InputText
             :modelValue="effectiveTitle"
-            :invalid="item.meta.titleStatus === 'taken'"
+            :invalid="item.meta.titleStatus === 'taken' || item.meta.titleStatus === 'invalid'"
             @update:modelValue="(v) => onTitleChange(item.id, v ?? '')"
             fluid
           />
@@ -44,7 +44,8 @@ const onTitleChange = (id: string, title: string) => {
             :class="{
               'text-inherit! pi-spin pi-spinner': item.meta.titleStatus === 'checking',
               'text-green-600! pi-check-circle': item.meta.titleStatus === 'available',
-              'text-red-500! pi-times-circle': item.meta.titleStatus === 'taken',
+              'text-red-500! pi-times-circle':
+                item.meta.titleStatus === 'taken' || item.meta.titleStatus === 'invalid',
               'text-yellow-500! pi-exclamation-triangle': item.meta.titleStatus === 'unknown',
             }"
           />
@@ -87,6 +88,21 @@ const onTitleChange = (id: string, title: string) => {
             Check existing file
             <i class="pi pi-external-link text-xs!"></i>
           </a>
+        </Message>
+        <Message
+          v-else-if="item.meta.titleStatus === 'invalid'"
+          severity="error"
+          variant="simple"
+          size="small"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
+        >
+          Extension is not valid. Valid extensions are: {{ VALID_EXTENSIONS.join(', ') }}
         </Message>
         <Message
           v-else-if="item.meta.titleStatus === 'unknown'"

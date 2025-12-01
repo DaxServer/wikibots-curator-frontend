@@ -68,7 +68,7 @@ export interface Item {
   id: string
 }
 
-export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown'
+export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown' | 'invalid'
 
 export const UPLOAD_STATUS = {
   Queued: 'queued',

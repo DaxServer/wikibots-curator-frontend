@@ -13,6 +13,7 @@ declare global {
   const SnakDataType: typeof import('./src/types/wikidata').SnakDataType
   const SnakType: typeof import('./src/types/wikidata').SnakType
   const UPLOAD_STATUS: typeof import('./src/types/image').UPLOAD_STATUS
+  const VALID_EXTENSIONS: typeof import('./src/utils/titleTemplate').VALID_EXTENSIONS
   const WikidataEntity: typeof import('./src/types/wikidata').WikidataEntity
   const WikidataProperty: typeof import('./src/types/wikidata').WikidataProperty
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
@@ -63,6 +64,7 @@ declare global {
   const isReadonly: typeof import('vue').isReadonly
   const isRef: typeof import('vue').isRef
   const isShallow: typeof import('vue').isShallow
+  const isValidExtension: typeof import('./src/utils/titleTemplate').isValidExtension
   const jobsStore: typeof import('./src/stores/jobs.store').default
   const mapActions: typeof import('pinia').mapActions
   const mapGetters: typeof import('pinia').mapGetters
@@ -163,6 +165,7 @@ declare module 'vue' {
     readonly SnakDataType: UnwrapRef<typeof import('./src/types/wikidata')['SnakDataType']>
     readonly SnakType: UnwrapRef<typeof import('./src/types/wikidata')['SnakType']>
     readonly UPLOAD_STATUS: UnwrapRef<typeof import('./src/types/image')['UPLOAD_STATUS']>
+    readonly VALID_EXTENSIONS: UnwrapRef<typeof import('./src/utils/titleTemplate')['VALID_EXTENSIONS']>
     readonly WikidataEntity: UnwrapRef<typeof import('./src/types/wikidata')['WikidataEntity']>
     readonly WikidataProperty: UnwrapRef<typeof import('./src/types/wikidata')['WikidataProperty']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
@@ -209,6 +212,7 @@ declare module 'vue' {
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
+    readonly isValidExtension: UnwrapRef<typeof import('./src/utils/titleTemplate')['isValidExtension']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>

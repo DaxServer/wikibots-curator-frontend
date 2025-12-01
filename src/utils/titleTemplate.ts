@@ -151,6 +151,24 @@ export const applyTitleTemplate = (templateStr: string, image: Image, sequence: 
   }
 }
 
+export const VALID_EXTENSIONS = [
+  'gif',
+  'jpeg',
+  'jpg',
+  'pdf',
+  'png',
+  'svg',
+  'tif',
+  'tiff',
+  'webm',
+  'webp',
+]
+
+export const isValidExtension = (filename: string): boolean => {
+  const lower = filename.toLowerCase()
+  return VALID_EXTENSIONS.some((ext) => lower.endsWith(`.${ext}`))
+}
+
 export const validateTemplate = (t: string): { valid: boolean; error: string | null } => {
   if (!t) {
     return { valid: true, error: null }
@@ -190,6 +208,14 @@ export const validateTemplate = (t: string): { valid: boolean; error: string | n
         valid: false,
         error: `Unknown variable: ${match}. Please use one of the available variables.`,
       }
+    }
+  }
+
+  // 3. Validate extension
+  if (!isValidExtension(t)) {
+    return {
+      valid: false,
+      error: `Invalid extension. Valid extensions are: ${VALID_EXTENSIONS.join(', ')}`,
     }
   }
 
