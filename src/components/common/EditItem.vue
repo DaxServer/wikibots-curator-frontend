@@ -3,10 +3,9 @@ const props = defineProps<{ item: Item; altPrefix: string }>()
 
 const store = useCollectionsStore()
 const { verifyTitles } = useCommons()
-const { applyTitleTemplate } = useTitleTemplate()
 
 const computedTitle = computed(() =>
-  applyTitleTemplate(store.globalTitleTemplate, props.item.image),
+  applyTitleTemplate(store.globalTitleTemplate, props.item.image, store.input),
 )
 const effectiveTitle = computed(() => props.item.meta.title ?? computedTitle.value)
 
