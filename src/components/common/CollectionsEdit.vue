@@ -130,7 +130,8 @@ const disablePreview = computed(() => {
             class="flex flex-col p-4 py-8 border-l-4"
             :class="{
               'border-green-600': item.meta.titleStatus === 'available',
-              'border-red-500': item.meta.titleStatus === 'taken',
+              'border-red-500':
+                item.meta.titleStatus === 'taken' || item.meta.titleStatus === 'invalid',
               'border-gray-200': item.meta.titleStatus === undefined,
               'border-yellow-500':
                 item.meta.titleStatus === 'unknown' ||

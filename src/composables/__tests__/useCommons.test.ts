@@ -72,7 +72,7 @@ describe('useCommons', () => {
           Promise.resolve({
             query: {
               pages: {
-                '123': { missing: true, title: 'File:Test Title' },
+                '123': { missing: true, title: 'File:Test Title.jpeg' },
               },
             },
           }),
@@ -80,7 +80,7 @@ describe('useCommons', () => {
     )
     global.fetch = mockFetch as unknown as typeof fetch
 
-    await verifyTitles([{ id: '1', title: 'Test Title' }])
+    await verifyTitles([{ id: '1', title: 'Test Title.jpeg' }])
 
     expect(store.items['1']!.meta.titleStatus).toBe('available')
     expect(mockFetch).toHaveBeenCalled()
@@ -88,7 +88,7 @@ describe('useCommons', () => {
 
   it('immediate verifyTitles updates status to checking then taken', async () => {
     const store = useCollectionsStore()
-    const item = createMockItem('1', 'Taken Title')
+    const item = createMockItem('1', 'Taken Title.jpeg')
     store.items = { '1': item }
 
     const { verifyTitles } = useCommons()
@@ -101,7 +101,7 @@ describe('useCommons', () => {
           Promise.resolve({
             query: {
               pages: {
-                '123': { title: 'File:Taken Title', revisions: [{}] },
+                '123': { title: 'File:Taken Title.jpeg', revisions: [{}] },
               },
             },
           }),
@@ -109,7 +109,7 @@ describe('useCommons', () => {
     )
     global.fetch = mockFetch as unknown as typeof fetch
 
-    await verifyTitles([{ id: '1', title: 'Taken Title' }])
+    await verifyTitles([{ id: '1', title: 'Taken Title.jpeg' }])
 
     expect(store.items['1']!.meta.titleStatus).toBe('taken')
   })
@@ -128,7 +128,7 @@ describe('useCommons', () => {
           Promise.resolve({
             query: {
               pages: {
-                '123': { missing: true, title: 'File:Debounce Title' },
+                '123': { missing: true, title: 'File:Debounce Title.jpeg' },
               },
             },
           }),
@@ -137,7 +137,7 @@ describe('useCommons', () => {
     global.fetch = mockFetch as unknown as typeof fetch
 
     // Call with debounce
-    verifyTitles([{ id: '1', title: 'Debounce Title' }], { debounce: true })
+    verifyTitles([{ id: '1', title: 'Debounce Title.jpeg' }], { debounce: true })
 
     // Status should be checking immediately
     expect(store.items['1']!.meta.titleStatus).toBe('checking')

@@ -12,6 +12,7 @@ import {
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
 import type { Statement } from '@/types/wikidata'
+import { isValidExtension } from '@/utils/titleTemplate'
 import { debounce } from 'ts-debounce'
 
 export const useCommons = () => {
@@ -65,6 +66,11 @@ ${categories}
   ): Promise<void> => {
     if (options.debounce) {
       for (const item of items) {
+        if (!isValidExtension(item.title)) {
+          store.updateItem(item.id, 'titleStatus', 'invalid')
+          continue
+        }
+
         store.updateItem(item.id, 'titleStatus', 'checking')
         if (!debouncedCheckTitleMap.has(item.id)) {
           const debounced = debounce(async (id: string, title: string) => {
@@ -77,11 +83,19 @@ ${categories}
       return
     }
 
+    const validItems: { id: string; title: string }[] = []
     for (const item of items) {
-      store.updateItem(item.id, 'titleStatus', 'checking')
+      if (!isValidExtension(item.title)) {
+        store.updateItem(item.id, 'titleStatus', 'invalid')
+      } else {
+        store.updateItem(item.id, 'titleStatus', 'checking')
+        validItems.push(item)
+      }
     }
 
-    await checkFileTitleAvailability(items)
+    if (validItems.length > 0) {
+      await checkFileTitleAvailability(validItems)
+    }
   }
 
   const checkFileTitleAvailability = async (

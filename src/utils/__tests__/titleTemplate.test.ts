@@ -1,6 +1,11 @@
 import type { Image } from '@/types/image'
 import { describe, expect, it } from 'bun:test'
-import { applyTitleTemplate, validateTemplate } from '../titleTemplate'
+import {
+  applyTitleTemplate,
+  isValidExtension,
+  VALID_EXTENSIONS,
+  validateTemplate,
+} from '../titleTemplate'
 
 describe('titleTemplate utils', () => {
   const createMockImage = (id: string): Image => ({
@@ -66,7 +71,7 @@ describe('titleTemplate utils', () => {
     })
 
     it('returns valid for valid template', () => {
-      expect(validateTemplate('Photo by {{mapillary.user.username}}').valid).toBe(true)
+      expect(validateTemplate('Photo by {{mapillary.user.username}}.jpg').valid).toBe(true)
     })
 
     it('detects mismatched braces', () => {
@@ -94,7 +99,19 @@ describe('titleTemplate utils', () => {
     })
 
     it('allows whitespace in valid variables', () => {
-      expect(validateTemplate('Photo {{ mapillary.user.username }}').valid).toBe(true)
+      expect(validateTemplate('Photo {{ mapillary.user.username }}.jpg').valid).toBe(true)
+    })
+  })
+
+  describe('isValidExtension', () => {
+    VALID_EXTENSIONS.forEach((ext) => {
+      it(`returns true for valid extension ${ext}`, () => {
+        expect(isValidExtension(`image.${ext}`)).toBe(true)
+      })
+    })
+
+    it('returns false for empty string', () => {
+      expect(isValidExtension('')).toBe(false)
     })
   })
 })
