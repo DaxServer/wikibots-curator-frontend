@@ -2,7 +2,6 @@
 defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
-const { verifyTitles } = useCommons()
 
 const showErrorsOnly = ref(false)
 
@@ -20,21 +19,17 @@ const disablePreview = computed(() => {
   }
   return false
 })
-
-onMounted(async () => {
-  const itemsToCheck = store.selectedItems.map((item) => ({
-    id: item.id,
-    title: item.meta.title,
-  }))
-  void verifyTitles(itemsToCheck)
-})
 </script>
 
 <template>
   <div class="flex flex-col gap-6">
+    <TitleTemplateEditor />
+
     <Card class="bg-gray-100">
+      <template #title>Fallbacks</template>
       <template #content>
         <ItemInputs
+          class="mt-2"
           :language="store.globalLanguage"
           :description="store.globalDescription"
           :categories="store.globalCategories"
@@ -43,22 +38,24 @@ onMounted(async () => {
           @update:categories="(v: string) => (store.globalCategories = v)"
         >
           <template #description-help>
-            <div class="inline-flex flex-none">
-              <Message
-                severity="info"
-                icon="pi pi-info-circle"
-                size="small"
-                :pt="{
-                  transition: {
-                    name: 'none',
-                    enterActiveClass: 'none',
-                    leaveActiveClass: 'none',
-                  },
-                }"
-              >
-                Will be applied to all selected images
-                <span class="underline">only as a fallback</span>
-              </Message>
+            <div class="flex flex-col gap-4">
+              <div class="inline-flex flex-none">
+                <Message
+                  severity="info"
+                  icon="pi pi-info-circle"
+                  size="small"
+                  :pt="{
+                    transition: {
+                      name: 'none',
+                      enterActiveClass: 'none',
+                      leaveActiveClass: 'none',
+                    },
+                  }"
+                >
+                  Will be applied to all selected images
+                  <span class="underline">only as a fallback</span>
+                </Message>
+              </div>
             </div>
           </template>
         </ItemInputs>

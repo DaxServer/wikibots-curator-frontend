@@ -6,6 +6,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const AVAILABLE_IMAGE_FIELDS: typeof import('./src/utils/titleTemplate').AVAILABLE_IMAGE_FIELDS
   const DataValueType: typeof import('./src/types/wikidata').DataValueType
   const EffectScope: typeof import('vue').EffectScope
   const Noir: typeof import('./src/assets/Noir').default
@@ -15,6 +16,7 @@ declare global {
   const WikidataEntity: typeof import('./src/types/wikidata').WikidataEntity
   const WikidataProperty: typeof import('./src/types/wikidata').WikidataProperty
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
+  const applyTitleTemplate: typeof import('./src/utils/titleTemplate').applyTitleTemplate
   const botsStore: typeof import('./src/stores/bots.store').default
   const computed: typeof import('vue').computed
   const createApp: typeof import('vue').createApp
@@ -118,7 +120,10 @@ declare global {
   const useModel: typeof import('vue').useModel
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
+  const useTitleTemplate: typeof import('./src/composables/useTitleTemplate').useTitleTemplate
   const useWikidata: typeof import('./src/components/wikidata/useWikidata').useWikidata
+  const validPaths: typeof import('./src/utils/titleTemplate').validPaths
+  const validateTemplate: typeof import('./src/utils/titleTemplate').validateTemplate
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
   const watchPostEffect: typeof import('vue').watchPostEffect
@@ -151,6 +156,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly AVAILABLE_IMAGE_FIELDS: UnwrapRef<typeof import('./src/utils/titleTemplate')['AVAILABLE_IMAGE_FIELDS']>
     readonly DataValueType: UnwrapRef<typeof import('./src/types/wikidata')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Noir: UnwrapRef<typeof import('./src/assets/Noir')['default']>
@@ -160,6 +166,7 @@ declare module 'vue' {
     readonly WikidataEntity: UnwrapRef<typeof import('./src/types/wikidata')['WikidataEntity']>
     readonly WikidataProperty: UnwrapRef<typeof import('./src/types/wikidata')['WikidataProperty']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
+    readonly applyTitleTemplate: UnwrapRef<typeof import('./src/utils/titleTemplate')['applyTitleTemplate']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createCopyrightLicenseClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCopyrightLicenseClaim']>
@@ -251,7 +258,10 @@ declare module 'vue' {
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useTitleTemplate: UnwrapRef<typeof import('./src/composables/useTitleTemplate')['useTitleTemplate']>
     readonly useWikidata: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['useWikidata']>
+    readonly validPaths: UnwrapRef<typeof import('./src/utils/titleTemplate')['validPaths']>
+    readonly validateTemplate: UnwrapRef<typeof import('./src/utils/titleTemplate')['validateTemplate']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

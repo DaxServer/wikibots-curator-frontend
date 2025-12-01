@@ -9,19 +9,13 @@ export const useCollections = () => {
 
   const commons = useCommons()
 
-  const createItem = (
-    image: Image,
-    id: string,
-    index: number,
-    title: string,
-    descriptionText: string,
-  ): Item => ({
+  const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
     id,
     index,
     image,
     sdc: [],
     meta: {
-      title,
+      title: undefined,
       description: { language: 'en', value: descriptionText },
       categories: '',
       selected: false,
@@ -96,10 +90,11 @@ export const useCollections = () => {
       const allItems: Record<string, Item> = {}
       let index = 0
       for (const [id, image] of Object.entries(apiResponse.images as Record<string, Image>)) {
+        image.dates.taken = new Date(image.dates.taken)
+
         index += 1
-        const title = commons.buildTitle(image)
         const descriptionText = commons.buildDescription()
-        allItems[id] = createItem(image, id, index, title, descriptionText)
+        allItems[id] = createItem(image, id, index, descriptionText)
       }
       store.items = allItems
       store.stepper = '2'

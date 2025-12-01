@@ -1,5 +1,6 @@
 import type { Handler, Layout } from '@/types/collections'
 import type { Creator, Item, MetadataKey, MetadataValue } from '@/types/image'
+import { applyTitleTemplate } from '@/utils/titleTemplate'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -25,6 +26,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const globalDescription = ref<string>('')
   const globalLanguage = ref<string>('en')
   const globalCategories = ref<string>('')
+  const globalTitleTemplate = ref<string>('')
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -75,6 +77,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalCategories.value = value
   }
 
+  const setGlobalTitleTemplate = (value: string) => {
+    globalTitleTemplate.value = value
+  }
+
   const setViewMode = (mode: Layout) => {
     viewMode.value = mode
   }
@@ -115,6 +121,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalLanguage.value = 'en'
     globalCategories.value = ''
     stepper.value = '1'
+    globalTitleTemplate.value = ''
     creator.value = { id: '', username: '', profile_url: '' }
   }
 
@@ -127,7 +134,20 @@ export const useCollectionsStore = defineStore('collections', () => {
   }
 
   const totalImages = computed(() => Object.values(items.value).length)
-  const selectedItems = computed(() => Object.values(items.value).filter((i) => i.meta.selected))
+  const selectedItems = computed(() =>
+    Object.values(items.value)
+      .filter((i) => i.meta.selected)
+      .map((i) => {
+        if (i.meta.title) return i
+        return {
+          ...i,
+          meta: {
+            ...i.meta,
+            title: applyTitleTemplate(globalTitleTemplate.value, i.image, input.value),
+          },
+        }
+      }),
+  )
   const selectedItemsKeys = computed(() => selectedItems.value.map((i) => i.id))
   const selectedCount = computed(() => selectedItems.value.length)
   const itemsWithErrors = computed(
@@ -154,6 +174,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalDescription,
     globalLanguage,
     globalCategories,
+    globalTitleTemplate,
     totalImages,
     selectedCount,
     selectedItems,
@@ -164,6 +185,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalDescription,
     setGlobalLanguage,
     setGlobalCategories,
+    setGlobalTitleTemplate,
     updateItem,
     updateSelected,
     selectAll,

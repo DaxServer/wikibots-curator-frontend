@@ -8,12 +8,11 @@ export interface Location {
   latitude: number
   longitude: number
   accuracy?: number
-  compass_angle?: number
+  compass_angle: number
 }
 
 export interface Dates {
-  taken?: string
-  published?: string
+  taken: Date
 }
 
 export interface ExistingPage {
@@ -27,7 +26,7 @@ export interface Image {
   description: string
   dates: Dates
   creator: Creator
-  location?: Location
+  location: Location
   url_original: string
   thumbnail_url: string
   preview_url: string
@@ -48,7 +47,7 @@ interface Description {
 }
 
 export interface Metadata {
-  title: string
+  title?: string
   description: Description
   categories: string
   selected: boolean

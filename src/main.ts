@@ -2,7 +2,7 @@ import '@/assets/tailwind.css'
 
 // PrimeVue
 import 'primeicons/primeicons.css'
-import { FocusTrap } from 'primevue'
+import { FocusTrap, Tooltip } from 'primevue'
 import PrimeVue from 'primevue/config'
 
 import App from '@/App.vue'
@@ -27,6 +27,7 @@ app.use(PrimeVue, {
 })
 
 app.directive('focustrap', FocusTrap)
+app.directive('tooltip', Tooltip)
 
 // Mount the app
 app.mount('#app')

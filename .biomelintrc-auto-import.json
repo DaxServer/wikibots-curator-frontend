@@ -1,6 +1,7 @@
 {
   "javascript": {
     "globals": [
+      "AVAILABLE_IMAGE_FIELDS",
       "Batch",
       "CollectionsApiResponse",
       "Component",
@@ -80,6 +81,7 @@
       "WikidataProperty",
       "WritableComputedRef",
       "acceptHMRUpdate",
+      "applyTitleTemplate",
       "computed",
       "createApp",
       "createCopyrightLicenseClaim",
@@ -171,7 +173,10 @@
       "useModel",
       "useSlots",
       "useTemplateRef",
+      "useTitleTemplate",
       "useWikidata",
+      "validPaths",
+      "validateTemplate",
       "watch",
       "watchEffect",
       "watchPostEffect",

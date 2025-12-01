@@ -37,7 +37,7 @@ export const useCommons = () => {
 
     let additionalInfo = ''
 
-    additionalInfo = `{{Location|${item.image.location!.latitude}|${item.image.location!.longitude}|heading:${item.image.location!.compass_angle}}}`
+    additionalInfo = `{{Location|${item.image.location.latitude}|${item.image.location.longitude}|heading:${item.image.location.compass_angle}}}`
     if (item.image.is_pano === true) additionalInfo += '\n{{Pano360}}'
 
     categories = categories.trim()
@@ -138,7 +138,7 @@ ${categories}
   }
 
   const buildTitle = (image: Image): string => {
-    const date = new Date(image.dates.taken!).toISOString().split('T')[0]!
+    const date = image.dates.taken.toISOString().split('T')[0]!
     return `Photo from Mapillary ${date} (${image.id}).jpg`
   }
 
@@ -159,7 +159,7 @@ ${categories}
     claims.push(createPublishedInMapillaryClaim())
 
     // Inception
-    claims.push(createInceptionClaim(new Date(image.dates.taken!)))
+    claims.push(createInceptionClaim(image.dates.taken!))
 
     // Source of file
     claims.push(createSourceOfFileClaim(image.url))
