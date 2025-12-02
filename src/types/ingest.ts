@@ -32,7 +32,9 @@ export interface UploadRequest {
   batch_id: number
   error: StructuredError | null
   success: string | null
-  handler: string
+  handler?: string
+  filename?: string
+  wikitext?: string
 }
 
 export interface LoadItemsOptions {
