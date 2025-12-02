@@ -28,11 +28,13 @@ export interface UploadRequest {
   id: number
   status: string
   image_id: string
+  key?: string
   batch_id: number
-  result: string | null
   error: StructuredError | null
   success: string | null
-  handler: string
+  handler?: string
+  filename?: string
+  wikitext?: string
 }
 
 export interface LoadItemsOptions {

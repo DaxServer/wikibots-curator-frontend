@@ -11,11 +11,12 @@ const store = useCollectionsStore()
 
 const columns = [
   { field: 'id', header: 'ID' },
-  { field: 'image_id', header: 'Image ID' },
+  { field: 'key', header: 'Mapillary image ID' },
   { field: 'status', header: 'Status' },
-  { field: 'result', header: 'Result' },
   { field: 'error', header: 'Error' },
   { field: 'success', header: 'Success' },
+  { field: 'filename', header: 'File name' },
+  { field: 'wikitext', header: 'Wikitext' },
 ]
 
 const items = ref<UploadRequest[]>([])
@@ -32,8 +33,9 @@ const loadLazyData = async (event: { page: number; first: number; rows: number }
   lazyParams.value = event
   try {
     const page = event.first / event.rows + 1
+    const columnsStr = columns.map((col) => col.field).join(',')
     const response = await fetch(
-      `/api/ingest/uploads/${props.batch.id}?page=${page}&limit=${event.rows}`,
+      `/api/ingest/uploads/${props.batch.id}?page=${page}&limit=${event.rows}&columns=${columnsStr}`,
     )
     if (!response.ok) throw new Error('Failed to fetch uploads')
     const data: PaginatedResponse<UploadRequest> = await response.json()
@@ -97,6 +99,7 @@ onMounted(() => {
       :loading="loading"
       @page="loadLazyData"
       :first="lazyParams.first"
+      :row-class="() => ({ 'align-top': true })"
     >
       <Column
         v-for="col of columns"
@@ -105,7 +108,18 @@ onMounted(() => {
         :header="col.header"
       >
         <template #body="slotProps">
-          <template v-if="col.field === 'status'">
+          <template v-if="col.field === 'key'">
+            <a
+              :href="`https://www.mapillary.com/app/?pKey=${slotProps.data.key}&focus=photo`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:underline"
+            >
+              {{ slotProps.data.key }}&nbsp;
+              <i class="pi pi-external-link text-sm!"></i>
+            </a>
+          </template>
+          <template v-else-if="col.field === 'status'">
             <Tag :severity="statusTagSeverity(slotProps.data.status)">
               {{ slotProps.data.status }}
             </Tag>
@@ -128,6 +142,23 @@ onMounted(() => {
                 View file on Commons
               </ExternalLink>
             </span>
+          </template>
+          <!-- <template v-else-if="col.field === 'filename'">
+            <a
+              v-if="statusTagSeverity(slotProps.data.status) === 'danger'"
+              :href="decodeURIComponent(slotProps.data.filename)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:underline"
+            >
+              {{ slotProps.data.filename }}&nbsp;<i class="pi pi-external-link text-sm!"></i>
+            </a>
+            <template v-else>
+              {{ slotProps.data[col.field] }}
+            </template>
+          </template> -->
+          <template v-else-if="col.field === 'wikitext'">
+            <pre class="text-xs">{{ slotProps.data[col.field] }}</pre>
           </template>
           <template v-else>
             {{ slotProps.data[col.field] }}

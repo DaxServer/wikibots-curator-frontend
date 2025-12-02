@@ -81,19 +81,19 @@ export type UploadStatus = (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS]
 
 export type UploadStatusUpdate =
   | {
-      image_id: string
+      key: string
       status: typeof UPLOAD_STATUS.Queued | typeof UPLOAD_STATUS.InProgress
       error?: never
       success?: never
     }
   | {
-      image_id: string
+      key: string
       status: typeof UPLOAD_STATUS.Failed
       error: StructuredError
       success?: never
     }
   | {
-      image_id: string
+      key: string
       status: typeof UPLOAD_STATUS.Completed
       success: string
       error?: never
