@@ -47,15 +47,15 @@ export const useCollections = () => {
 
       const { items: updates } = (await resp.json()) as { items: UploadStatusUpdate[] }
       for (const update of updates) {
-        store.updateItem(update.image_id, 'status', update.status)
+        store.updateItem(update.key, 'status', update.status)
 
         if (update.status === UPLOAD_STATUS.Failed) {
-          store.updateItem(update.image_id, 'statusReason', update.error.message)
-          store.updateItem(update.image_id, 'errorInfo', update.error)
+          store.updateItem(update.key, 'statusReason', update.error.message)
+          store.updateItem(update.key, 'errorInfo', update.error)
         }
 
         if (update.status === UPLOAD_STATUS.Completed) {
-          store.updateItem(update.image_id, 'successUrl', update.success)
+          store.updateItem(update.key, 'successUrl', update.success)
         }
       }
 
