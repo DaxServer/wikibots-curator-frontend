@@ -1,11 +1,35 @@
 export const useCollections = () => {
   const store = useCollectionsStore()
-  const API_COLLECTIONS = '/api/collections'
-  const API_INGEST = '/api/ingest'
-  const PATH_UPLOAD_REQUEST = `${API_INGEST}/upload`
-  const PATH_UPLOADS = `${API_INGEST}/uploads`
+  const { data, send } = useSocket
 
-  let poller: number | null = null
+  type UploadsUpdateMessage = { type: 'UPLOADS_UPDATE'; data: UploadStatusUpdate[] }
+  type UploadsCompleteMessage = { type: 'UPLOADS_COMPLETE'; data: number }
+  type CollectionImagesMessage = {
+    type: 'COLLECTION_IMAGES'
+    data: {
+      creator: Creator
+      images: Record<string, Image | { dates: { taken: string | Date } }>
+    }
+  }
+  type ErrorMessage = { type: 'ERROR'; data: string }
+  type UploadCreatedMessage = {
+    type: 'UPLOAD_CREATED'
+    data: Array<{ batch_id: number; image_id: string; status: UploadStatus }>
+  }
+  type SubscribedMessage = { type: 'SUBSCRIBED'; data: number }
+
+  type ServerMessage =
+    | UploadsUpdateMessage
+    | UploadsCompleteMessage
+    | CollectionImagesMessage
+    | ErrorMessage
+    | UploadCreatedMessage
+    | SubscribedMessage
+
+  const sendSubscribeBatch = (batchId: number): void => {
+    store.isStatusChecking = true
+    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId }))
+  }
 
   const commons = useCommons()
 
@@ -27,82 +51,10 @@ export const useCollections = () => {
     return commons.buildWikitext({ ...item, meta: meta as Metadata })
   }
 
-  const stopPolling = (): void => {
-    if (poller !== null) {
-      clearInterval(poller)
-      poller = null
-    }
-    store.isStatusChecking = false
-  }
-
-  const startPolling = (batchId: number): void => {
-    const statusCheck = async (): Promise<void> => {
-      store.isStatusChecking = true
-      const resp = await fetch(`${PATH_UPLOADS}/${batchId}`)
-      if (!resp || !resp.ok) {
-        store.isStatusChecking = false
-        store.error = (await resp.json()).detail
-        return
-      }
-
-      const { items: updates } = (await resp.json()) as { items: UploadStatusUpdate[] }
-      for (const update of updates) {
-        store.updateItem(update.key, 'status', update.status)
-
-        if (update.status === UPLOAD_STATUS.Failed) {
-          store.updateItem(update.key, 'statusReason', update.error.message)
-          store.updateItem(update.key, 'errorInfo', update.error)
-        }
-
-        if (update.status === UPLOAD_STATUS.Completed) {
-          store.updateItem(update.key, 'successUrl', update.success)
-        }
-      }
-
-      if (
-        store.selectedItems.every(
-          (i) =>
-            i.meta.status === UPLOAD_STATUS.Completed || i.meta.status === UPLOAD_STATUS.Failed,
-        )
-      ) {
-        stopPolling()
-      }
-    }
-
-    poller = setInterval(statusCheck, 2000) as unknown as number
-    void statusCheck()
-  }
-
-  const loadCollection = async (): Promise<void> => {
+  const loadCollection = (): void => {
     store.$reset()
     store.isLoading = true
-    try {
-      const response = await fetch(`${API_COLLECTIONS}/images`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ handler: store.handler, input: store.input }),
-      })
-      if (response.status === 404) throw new Error('Collection not found')
-      if (!response.ok) throw new Error((await response.json()).detail)
-
-      const apiResponse = (await response.json()) as CollectionsApiResponse
-      store.creator = apiResponse.creator
-      const allItems: Record<string, Item> = {}
-      let index = 0
-      for (const [id, image] of Object.entries(apiResponse.images as Record<string, Image>)) {
-        image.dates.taken = new Date(image.dates.taken)
-
-        index += 1
-        const descriptionText = commons.buildDescription()
-        allItems[id] = createItem(image, id, index, descriptionText)
-      }
-      store.items = allItems
-      store.stepper = '2'
-    } catch (err) {
-      store.error = err instanceof Error ? err.message : 'An unknown error occurred'
-    } finally {
-      store.isLoading = false
-    }
+    send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input }))
   }
 
   const loadSDC = (): void => {
@@ -111,7 +63,7 @@ export const useCollections = () => {
     }
   }
 
-  const submitUpload = async (): Promise<void> => {
+  const submitUpload = (): void => {
     store.error = null
     if (store.selectedCount === 0) {
       store.error = 'Please select at least one image to upload'
@@ -119,47 +71,80 @@ export const useCollections = () => {
     }
     store.stepper = '5'
     store.isLoading = true
-    try {
-      const payload = {
-        handler: store.handler,
-        items: store.selectedItems.map((item) => ({
-          id: item.id,
-          input: store.input,
-          title: item.meta.title,
-          wikitext: wikitext(item),
-          labels: item.meta.description,
-          sdc: item.sdc,
-        })),
-      }
-      const res = await fetch(PATH_UPLOAD_REQUEST, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!res.ok) {
-        const detail = (await res.json()).detail
-        store.error = `Upload failed: ${res.status} ${detail}`
-        return
-      }
-      const body = (await res.json()) as Array<{
-        batch_id: number
-        image_id: string
-        status: string
-      }>
-      if (body.length > 0) {
-        store.batchId = body[0]!.batch_id
-        for (const r of body) {
-          store.updateItem(r.image_id, 'status', r.status as UploadStatus)
-        }
-        stopPolling()
-        startPolling(store.batchId)
-      }
-    } catch (err) {
-      store.error = err instanceof Error ? err.message : 'Failed to submit upload request'
-    } finally {
-      store.isLoading = false
+    const payload = {
+      handler: store.handler,
+      items: store.selectedItems.map((item) => ({
+        id: item.id,
+        input: store.input,
+        title: item.meta.title,
+        wikitext: wikitext(item),
+        labels: item.meta.description,
+        sdc: item.sdc,
+      })),
     }
+    send(JSON.stringify({ type: 'UPLOAD', data: payload }))
   }
 
-  return { loadCollection, loadSDC, wikitext, stopPolling, submitUpload }
+  watch(data, (raw) => {
+    if (!raw) return
+    const msg = JSON.parse(raw as string) as ServerMessage
+
+    switch (msg.type) {
+      case 'UPLOADS_UPDATE': {
+        for (const update of msg.data) {
+          store.updateItem(update.key, 'status', update.status)
+          if (update.status === UPLOAD_STATUS.Failed) {
+            store.updateItem(update.key, 'statusReason', update.error.message)
+            store.updateItem(update.key, 'errorInfo', update.error)
+          }
+          if (update.status === UPLOAD_STATUS.Completed) {
+            store.updateItem(update.key, 'successUrl', update.success)
+          }
+        }
+        const allDone = store.selectedItems.every(
+          (i) =>
+            i.meta.status === UPLOAD_STATUS.Completed || i.meta.status === UPLOAD_STATUS.Failed,
+        )
+        if (allDone) store.isStatusChecking = false
+        break
+      }
+      case 'UPLOADS_COMPLETE':
+        store.isStatusChecking = false
+        break
+      case 'COLLECTION_IMAGES': {
+        store.creator = msg.data.creator
+        const allItems: Record<string, Item> = {}
+        let index = 0
+        for (const [id, image] of Object.entries(msg.data.images)) {
+          const img = image as Image
+          img.dates.taken = new Date(img.dates.taken as unknown as string)
+          index += 1
+          const descriptionText = commons.buildDescription()
+          allItems[id] = createItem(img, id, index, descriptionText)
+        }
+        store.items = allItems
+        store.stepper = '2'
+        store.isLoading = false
+        break
+      }
+      case 'ERROR':
+        store.error = msg.data || 'Failed'
+        store.isLoading = false
+        break
+      case 'UPLOAD_CREATED': {
+        const items = msg.data
+        if (items.length > 0) {
+          store.batchId = items[0]!.batch_id
+          for (const r of items) {
+            store.updateItem(r.image_id, 'status', r.status as UploadStatus)
+          }
+          if (store.batchId) sendSubscribeBatch(store.batchId)
+        }
+        store.isLoading = false
+        break
+      }
+    }
+  })
+
+  return { loadCollection, loadSDC, wikitext, submitUpload }
 }

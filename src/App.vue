@@ -1,11 +1,16 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 const auth = useAuthStore()
+const { open } = useSocket
 
 const tab = ref<Handler>('mapillary')
 const pendingTab = ref<Handler | null>(null)
 const currentView = ref<'ingest' | 'batches' | 'admin'>('ingest')
 const confirmOpen = ref<boolean>(false)
+
+onMounted(() => {
+  open()
+})
 
 watch(currentView, () => {
   store.error = ''

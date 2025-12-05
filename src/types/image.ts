@@ -104,5 +104,5 @@ export interface UploadIngestResponseItem {
   status: UploadStatus
   image_id: string
   input: string
-  batch_id: string
+  batch_id: number
 }

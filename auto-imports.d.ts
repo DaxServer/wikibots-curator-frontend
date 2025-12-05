@@ -121,6 +121,7 @@ declare global {
   const useJobsStore: typeof import('./src/stores/jobs.store').useJobsStore
   const useModel: typeof import('vue').useModel
   const useSlots: typeof import('vue').useSlots
+  const useSocket: typeof import('./src/composables/useSocket').useSocket
   const useTemplateRef: typeof import('vue').useTemplateRef
   const useTitleTemplate: typeof import('./src/composables/useTitleTemplate').useTitleTemplate
   const useWikidata: typeof import('./src/components/wikidata/useWikidata').useWikidata
@@ -261,6 +262,7 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
+    readonly useSocket: UnwrapRef<typeof import('./src/composables/useSocket')['useSocket']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTitleTemplate: UnwrapRef<typeof import('./src/composables/useTitleTemplate')['useTitleTemplate']>
     readonly useWikidata: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['useWikidata']>

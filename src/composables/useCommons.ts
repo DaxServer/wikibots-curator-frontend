@@ -29,6 +29,7 @@ export const useCommons = () => {
   })
 
   const buildWikitext = (item: Item): string => {
+    const date = item.image.dates.taken.toISOString().split('T')[0]
     const source = sourceLink(item.id, store.input)
     let categories = item.meta.categories
 
@@ -45,6 +46,7 @@ export const useCommons = () => {
 
     const info = `== {{int:filedesc}} ==
 {{Information
+ | date        = {{Taken on|${date}}}
  | source      = ${source}
 }}
 ${additionalInfo}
@@ -173,7 +175,7 @@ ${categories}
     claims.push(createPublishedInMapillaryClaim())
 
     // Inception
-    claims.push(createInceptionClaim(image.dates.taken!))
+    claims.push(createInceptionClaim(image.dates.taken))
 
     // Source of file
     claims.push(createSourceOfFileClaim(image.url))

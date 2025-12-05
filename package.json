@@ -8,11 +8,12 @@
     "build": "vite build",
     "typecheck": "vue-tsc",
     "lint": "biome lint .",
-    "format": "prettier --cache --write src"
+    "format": "prettier --cache --log-level warn --write src"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.1",
     "@primevue/forms": "^4.5.0",
+    "@vueuse/core": "^14.1.0",
     "handlebars": "^4.7.8",
     "pinia": "^3.0.4",
     "primeicons": "^7.0.0",
