@@ -174,6 +174,7 @@
       "useId",
       "useModel",
       "useSlots",
+      "useSocket",
       "useTemplateRef",
       "useTitleTemplate",
       "useWikidata",

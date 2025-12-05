@@ -22,7 +22,7 @@ const { getEntityLabel } = useWikidata()
     <span>{{ value.value.amount }} {{ getEntityLabel(value.value.unit.split('/').at(-1)!) }}</span>
   </template>
   <template v-else-if="value.type === 'time'">
-    <span>{{ new Date(value.value.time.replace(/^\+0+/, '')).toISOString().split('T')[0] }}</span>
+    <span>{{ value.value.time.replace(/^\+0+/, '').split('T')[0] }}</span>
   </template>
   <!-- <template v-else-if="value.type === 'globecoordinate'">
     <span>{{ value.value.latitude }}, {{ value.value.longitude }}</span>

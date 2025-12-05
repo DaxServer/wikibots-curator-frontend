@@ -63,10 +63,8 @@ export const createExternalIdSnak = (property: PropertyId, value: string): Exter
 })
 
 export const createTimeSnak = (property: PropertyId, date: Date): TimeValueSnak => {
-  const year = date.getFullYear().toString().padStart(11, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const day = date.getDate().toString().padStart(2, '0')
-  const time = `+${year}-${month}-${day}T00:00:00Z`
+  const dateString = date.toISOString().split('T')[0]
+  const time = `+0000000${dateString}T00:00:00Z`
 
   return {
     snaktype: SnakType.Value,
