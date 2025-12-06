@@ -50,6 +50,7 @@ export interface Metadata {
   title?: string
   description: Description
   categories: string
+  license?: string
   selected: boolean
   status?: UploadStatus
   statusReason?: string

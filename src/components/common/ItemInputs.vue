@@ -4,10 +4,12 @@ const props = withDefaults(
     language: string
     description: string
     categories: string
+    license?: string
     showFallbackMessages?: boolean
   }>(),
   {
     showFallbackMessages: false,
+    license: '',
   },
 )
 
@@ -15,6 +17,7 @@ defineEmits<{
   'update:language': [string]
   'update:description': [string]
   'update:categories': [string]
+  'update:license': [string]
 }>()
 
 const store = useCollectionsStore()
@@ -35,6 +38,12 @@ const isFallbackDescription = computed(
 const isFallbackCategories = computed(
   () => store.globalCategories.trim() !== '' && props.categories.trim() === '',
 )
+
+const isFallbackLicense = computed(
+  () => store.globalLicense.trim() !== '' && props.license.trim() === '',
+)
+
+const licenseTemplate = `{{cc-by-sa-4.0}}`
 </script>
 
 <template>
@@ -134,5 +143,44 @@ const isFallbackCategories = computed(
         </span>
       </Message>
     </slot>
+
+    <div>
+      <FloatLabel variant="on">
+        <Textarea
+          :model-value="license"
+          id="license_input"
+          rows="2"
+          auto-resize
+          @update:model-value="$emit('update:license', $event)"
+          fluid
+        />
+        <label for="license_input">License template override</label>
+      </FloatLabel>
+      <Message
+        severity="secondary"
+        variant="simple"
+        size="small"
+        icon="pi pi-info-circle"
+      >
+        SDC copyright license and copyright status will not be generated. Example:
+        {{ licenseTemplate }}
+      </Message>
+      <Message
+        v-if="showFallbackMessages && isFallbackLicense"
+        :severity="isFallbackLicense ? 'warn' : 'secondary'"
+        variant="simple"
+        size="small"
+        class="mt-1"
+        :pt="{
+          transition: {
+            name: 'none',
+            enterActiveClass: 'none',
+            leaveActiveClass: 'none',
+          },
+        }"
+      >
+        Using fallback license template
+      </Message>
+    </div>
   </div>
 </template>

@@ -239,6 +239,7 @@ const onTitleChange = (id: string, title: string) => {
       :language="item.meta.description.language"
       :description="item.meta.description.value"
       :categories="item.meta.categories"
+      :license="item.meta.license"
       show-fallback-messages
       @update:language="
         (language: string) =>
@@ -257,6 +258,7 @@ const onTitleChange = (id: string, title: string) => {
       @update:categories="
         (categories: string) => store.updateItem(item.id, 'categories', categories)
       "
+      @update:license="(license: string) => store.updateItem(item.id, 'license', license)"
     />
   </div>
 </template>

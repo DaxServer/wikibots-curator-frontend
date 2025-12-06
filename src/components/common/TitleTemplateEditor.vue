@@ -21,10 +21,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Card>
+  <Card class="border-l-4 border-indigo-500">
     <template #title>
       <div class="flex justify-between items-center">
-        Title Template
+        <span>Title Template</span>
         <Button
           :label="isDirty ? 'Apply' : 'Applied'"
           size="small"
@@ -71,14 +71,28 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex flex-col gap-2">
-          <div class="text-sm font-medium text-gray-600">Available variables (drag to add)</div>
+          <Message
+            class="w-fit"
+            severity="info"
+            icon="pi pi-info-circle"
+            size="small"
+            :pt="{
+              transition: {
+                name: 'none',
+                enterActiveClass: 'none',
+                leaveActiveClass: 'none',
+              },
+            }"
+          >
+            Available variables (drag to add)
+          </Message>
           <div class="flex flex-col gap-4">
             <div
               v-for="(fields, group) in AVAILABLE_IMAGE_FIELDS"
               :key="group"
               class="flex flex-col gap-1 p-1 rounded odd:bg-gray-50"
             >
-              <span class="text-sm font-bold uppercase text-gray-500">{{ group }}</span>
+              <span class="text-sm font-bold uppercase text-gray-700 pl-2">{{ group }}</span>
               <div class="flex flex-wrap gap-3">
                 <div
                   v-tooltip.top="field.description"

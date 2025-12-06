@@ -26,6 +26,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const globalDescription = ref<string>('')
   const globalLanguage = ref<string>('en')
   const globalCategories = ref<string>('')
+  const globalLicense = ref<string>('')
   const globalTitleTemplate = ref<string>('')
 
   const setLoading = (loading: boolean) => {
@@ -77,6 +78,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalCategories.value = value
   }
 
+  const setGlobalLicense = (value: string) => {
+    globalLicense.value = value
+  }
+
   const setGlobalTitleTemplate = (value: string) => {
     globalTitleTemplate.value = value
   }
@@ -120,6 +125,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalDescription.value = ''
     globalLanguage.value = 'en'
     globalCategories.value = ''
+    globalLicense.value = ''
     stepper.value = '1'
     globalTitleTemplate.value = ''
     creator.value = { id: '', username: '', profile_url: '' }
@@ -174,6 +180,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalDescription,
     globalLanguage,
     globalCategories,
+    globalLicense,
     globalTitleTemplate,
     totalImages,
     selectedCount,
@@ -185,6 +192,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalDescription,
     setGlobalLanguage,
     setGlobalCategories,
+    setGlobalLicense,
     setGlobalTitleTemplate,
     updateItem,
     updateSelected,

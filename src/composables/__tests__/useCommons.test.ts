@@ -155,4 +155,122 @@ describe('useCommons', () => {
     expect(mockFetch).toHaveBeenCalled()
     expect(store.items['1']!.meta.titleStatus).toBe('available')
   })
+
+  describe('buildWikitext', () => {
+    it('should use default license when no overrides provided', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{cc-by-sa-4.0}}')
+    })
+
+    it('should use global license override when provided', () => {
+      const store = useCollectionsStore()
+      store.globalLicense = '{{cc-zero}}'
+
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{cc-zero}}')
+      expect(wikitext).not.toContain('{{cc-by-sa-4.0}}')
+    })
+
+    it('should use item specific license override when provided', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.meta.license = '{{cc-by-3.0}}'
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{cc-by-3.0}}')
+      expect(wikitext).not.toContain('{{cc-by-sa-4.0}}')
+    })
+
+    it('should prioritize item license over global license', () => {
+      const store = useCollectionsStore()
+      store.globalLicense = '{{cc-zero}}'
+
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.meta.license = '{{cc-by-3.0}}'
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{cc-by-3.0}}')
+      expect(wikitext).not.toContain('{{cc-zero}}')
+      expect(wikitext).not.toContain('{{cc-by-sa-4.0}}')
+    })
+
+    it('should handle whitespace in license strings', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.meta.license = '  {{cc-by-3.0}}  '
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{cc-by-3.0}}')
+      expect(wikitext).not.toContain('  {{cc-by-3.0}}  ')
+    })
+    describe('buildSDC', () => {
+      it('should include copyright claims when no override provided', () => {
+        const { buildSDC } = useCommons()
+        const item = createMockItem('1')
+
+        const claims = buildSDC(item)
+
+        const hasCopyrightStatus = claims.some(
+          (c) => c.mainsnak.property === 'P6216', // Copyright status
+        )
+        const hasCopyrightLicense = claims.some(
+          (c) => c.mainsnak.property === 'P275', // Copyright license
+        )
+
+        expect(hasCopyrightStatus).toBe(true)
+        expect(hasCopyrightLicense).toBe(true)
+      })
+
+      it('should not include copyright claims when global override provided', () => {
+        const store = useCollectionsStore()
+        store.globalLicense = '{{cc-zero}}'
+
+        const { buildSDC } = useCommons()
+        const item = createMockItem('1')
+
+        const claims = buildSDC(item)
+
+        const hasCopyrightStatus = claims.some((c) => c.mainsnak.property === 'P6216')
+        const hasCopyrightLicense = claims.some((c) => c.mainsnak.property === 'P275')
+
+        expect(hasCopyrightStatus).toBe(false)
+        expect(hasCopyrightLicense).toBe(false)
+      })
+
+      it('should not include copyright claims when item override provided', () => {
+        const { buildSDC } = useCommons()
+        const item = createMockItem('1')
+        item.meta.license = '{{cc-by-3.0}}'
+
+        const claims = buildSDC(item)
+
+        const hasCopyrightStatus = claims.some((c) => c.mainsnak.property === 'P6216')
+        const hasCopyrightLicense = claims.some((c) => c.mainsnak.property === 'P275')
+
+        expect(hasCopyrightStatus).toBe(false)
+        expect(hasCopyrightLicense).toBe(false)
+      })
+
+      it('should handle whitespace in override check', () => {
+        const { buildSDC } = useCommons()
+        const item = createMockItem('1')
+        item.meta.license = '  ' // Empty but with whitespace
+
+        const claims = buildSDC(item)
+
+        const hasCopyrightStatus = claims.some((c) => c.mainsnak.property === 'P6216')
+        const hasCopyrightLicense = claims.some((c) => c.mainsnak.property === 'P275')
+
+        expect(hasCopyrightStatus).toBe(true)
+        expect(hasCopyrightLicense).toBe(true)
+      })
+    })
+  })
 })
