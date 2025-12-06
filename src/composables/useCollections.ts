@@ -1,26 +1,7 @@
-type UploadsUpdateMessage = { type: 'UPLOADS_UPDATE'; data: UploadStatusUpdate[] }
-type UploadsCompleteMessage = { type: 'UPLOADS_COMPLETE'; data: number }
-type CollectionImagesMessage = {
-  type: 'COLLECTION_IMAGES'
-  data: {
-    creator: Creator
-    images: Record<string, Image | { dates: { taken: string | Date } }>
-  }
-}
-type ErrorMessage = { type: 'ERROR'; data: string }
-type UploadCreatedMessage = {
-  type: 'UPLOAD_CREATED'
-  data: Array<{ batch_id: number; image_id: string; status: UploadStatus }>
-}
-type SubscribedMessage = { type: 'SUBSCRIBED'; data: number }
-
-type ServerMessage =
-  | UploadsUpdateMessage
-  | UploadsCompleteMessage
-  | CollectionImagesMessage
-  | ErrorMessage
-  | UploadCreatedMessage
-  | SubscribedMessage
+import type { Image } from '@/types/image'
+import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
+import type { FetchBatchUploadsMessage, FetchBatchesMessage, ServerMessage } from '@/types/messages'
+import { watch } from 'vue'
 
 export const useCollections = () => {
   const store = useCollectionsStore()
@@ -55,6 +36,38 @@ export const useCollections = () => {
     store.$reset()
     store.isLoading = true
     send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input }))
+  }
+
+  const loadBatches = (page: number, rows: number, userid?: string) => {
+    store.isLoading = true
+    const payload: FetchBatchesMessage['data'] = {
+      page: page / rows + 1,
+      limit: rows,
+    }
+    if (userid) {
+      payload.userid = userid
+    }
+    send(
+      JSON.stringify({
+        type: 'FETCH_BATCHES',
+        data: payload,
+      } as FetchBatchesMessage),
+    )
+  }
+
+  const loadBatchUploads = (batchId: number, page: number, rows: number, columnsStr: string) => {
+    store.isLoading = true
+    send(
+      JSON.stringify({
+        type: 'FETCH_BATCH_UPLOADS',
+        data: {
+          batch_id: batchId,
+          page: page / rows + 1,
+          limit: rows,
+          columns: columnsStr,
+        },
+      } as FetchBatchUploadsMessage),
+    )
   }
 
   const loadSDC = (): void => {
@@ -143,8 +156,18 @@ export const useCollections = () => {
         store.isLoading = false
         break
       }
+      case 'BATCHES_LIST':
+        store.batches = msg.data.items
+        store.totalBatches = msg.data.total
+        store.isLoading = false
+        break
+      case 'BATCH_UPLOADS_LIST':
+        store.batchUploads = msg.data.items
+        store.totalBatchUploads = msg.data.total
+        store.isLoading = false
+        break
     }
   })
 
-  return { loadCollection, loadSDC, wikitext, submitUpload }
+  return { loadCollection, loadSDC, wikitext, submitUpload, loadBatches, loadBatchUploads }
 }

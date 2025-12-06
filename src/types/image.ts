@@ -41,7 +41,7 @@ export interface Image {
   existing: ExistingPage[]
 }
 
-interface Description {
+export interface Description {
   language: string
   value: string
 }

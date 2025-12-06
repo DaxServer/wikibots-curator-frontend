@@ -1,5 +1,3 @@
-import type { Handler, Layout } from '@/types/collections'
-import type { Creator, Item, MetadataKey, MetadataValue } from '@/types/image'
 import { applyTitleTemplate } from '@/utils/titleTemplate'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -28,6 +26,12 @@ export const useCollectionsStore = defineStore('collections', () => {
   const globalCategories = ref<string>('')
   const globalLicense = ref<string>('')
   const globalTitleTemplate = ref<string>('')
+
+  // Batches state
+  const batches = ref<Batch[]>([])
+  const totalBatches = ref<number>(0)
+  const batchUploads = ref<UploadRequest[]>([])
+  const totalBatchUploads = ref<number>(0)
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -129,6 +133,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     stepper.value = '1'
     globalTitleTemplate.value = ''
     creator.value = { id: '', username: '', profile_url: '' }
+    batches.value = []
+    totalBatches.value = 0
+    batchUploads.value = []
+    totalBatchUploads.value = 0
   }
 
   const setHandler = (h: Handler) => {
@@ -164,7 +172,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     handler,
     input,
     creator,
-
     isLoading,
     error,
     items,
@@ -187,6 +194,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     selectedItems,
     selectedItemsKeys,
     itemsWithErrors,
+    batches,
+    totalBatches,
+    batchUploads,
+    totalBatchUploads,
 
     setLoading,
     setGlobalDescription,

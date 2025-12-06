@@ -144,11 +144,14 @@ declare global {
   export type { Handler, Layout, CollectionsApiResponse } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
-  export type { Creator, Location, Dates, ExistingPage, Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
+  export type { Creator, Location, Dates, ExistingPage, Image, Description, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
   export type { ErrorLink, DuplicateError, GenericError, StructuredError, Batch, UploadRequest, LoadItemsOptions, PaginatedResponse, User } from './src/types/ingest'
   import('./src/types/ingest')
+  // @ts-ignore
+  export type { UploadsUpdateMessage, UploadsCompleteMessage, CollectionImagesMessage, ErrorMessage, UploadCreatedMessage, SubscribedMessage, BatchesListMessage, BatchUploadsListMessage, ServerMessage, FetchImagesMessage, UploadMessagePayload, UploadMessage, SubscribeBatchMessage, FetchBatchesPayload, FetchBatchesMessage, FetchBatchUploadsPayload, FetchBatchUploadsMessage, ClientMessage } from './src/types/messages'
+  import('./src/types/messages')
   // @ts-ignore
   export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
   import('./src/types/wikidata')
