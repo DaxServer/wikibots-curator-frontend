@@ -25,7 +25,7 @@ const disablePreview = computed(() => {
   <div class="flex flex-col gap-6">
     <TitleTemplateEditor />
 
-    <Card class="bg-gray-100">
+    <Card class="bg-gray-100 border-l-4 border-blue-500">
       <template #title>Fallbacks</template>
       <template #content>
         <ItemInputs
@@ -33,9 +33,11 @@ const disablePreview = computed(() => {
           :language="store.globalLanguage"
           :description="store.globalDescription"
           :categories="store.globalCategories"
+          :license="store.globalLicense"
           @update:language="(v: string) => (store.globalLanguage = v)"
           @update:description="(v: string) => (store.globalDescription = v)"
           @update:categories="(v: string) => (store.globalCategories = v)"
+          @update:license="(v: string) => (store.globalLicense = v)"
         >
           <template #description-help>
             <div class="flex flex-col gap-4">

@@ -44,6 +44,8 @@ export const useCommons = () => {
 
     categories = categories.trim()
 
+    const license = item.meta.license?.trim() || store.globalLicense.trim() || '{{cc-by-sa-4.0}}'
+
     const info = `== {{int:filedesc}} ==
 {{Information
  | date        = {{Taken on|${date}}}
@@ -52,7 +54,7 @@ export const useCommons = () => {
 ${additionalInfo}
 
 == {{int:license-header}} ==
-{{cc-by-sa-4.0}}
+${license}
 
 ${categories}
 `
@@ -162,35 +164,40 @@ ${categories}
     return 'Photo from Mapillary'
   }
 
-  const buildSDC = (image: Image): Statement[] => {
+  const buildSDC = (item: Item): Statement[] => {
     const claims: Statement[] = []
 
     // Creator
-    claims.push(createCreatorClaim(image.creator.username, image.creator.profile_url))
+    claims.push(createCreatorClaim(item.image.creator.username, item.image.creator.profile_url))
 
     // Mapillary ID
-    claims.push(createMapillaryIdClaim(image.id))
+    claims.push(createMapillaryIdClaim(item.image.id))
 
     // Published in
     claims.push(createPublishedInMapillaryClaim())
 
     // Inception
-    claims.push(createInceptionClaim(image.dates.taken))
+    claims.push(createInceptionClaim(item.image.dates.taken))
 
     // Source of file
-    claims.push(createSourceOfFileClaim(image.url))
+    claims.push(createSourceOfFileClaim(item.image.url))
 
-    // Copyright status
-    claims.push(createCopyrightStatusClaim())
+    // Check for license override
+    const hasLicenseOverride = (item.meta.license?.trim() || store.globalLicense.trim()) !== ''
 
-    // Copyright license
-    claims.push(createCopyrightLicenseClaim())
+    if (!hasLicenseOverride) {
+      // Copyright status
+      claims.push(createCopyrightStatusClaim())
+
+      // Copyright license
+      claims.push(createCopyrightLicenseClaim())
+    }
 
     // Width
-    claims.push(createWidthClaim(image.width))
+    claims.push(createWidthClaim(item.image.width))
 
     // Height
-    claims.push(createHeightClaim(image.height))
+    claims.push(createHeightClaim(item.image.height))
 
     return claims
   }

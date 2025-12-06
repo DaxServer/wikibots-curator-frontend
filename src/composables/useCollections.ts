@@ -32,7 +32,6 @@ export const useCollections = () => {
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId }))
   }
 
-
   const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
     id,
     index,
@@ -42,6 +41,7 @@ export const useCollections = () => {
       title: undefined,
       description: { language: 'en', value: descriptionText },
       categories: '',
+      license: '',
       selected: false,
     },
   })
@@ -59,7 +59,7 @@ export const useCollections = () => {
 
   const loadSDC = (): void => {
     for (const item of store.selectedItems) {
-      store.items[item.id]!.sdc = commons.buildSDC(item.image)
+      store.items[item.id]!.sdc = commons.buildSDC(item)
     }
   }
 
