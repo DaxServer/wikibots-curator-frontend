@@ -1,37 +1,37 @@
+type UploadsUpdateMessage = { type: 'UPLOADS_UPDATE'; data: UploadStatusUpdate[] }
+type UploadsCompleteMessage = { type: 'UPLOADS_COMPLETE'; data: number }
+type CollectionImagesMessage = {
+  type: 'COLLECTION_IMAGES'
+  data: {
+    creator: Creator
+    images: Record<string, Image | { dates: { taken: string | Date } }>
+  }
+}
+type ErrorMessage = { type: 'ERROR'; data: string }
+type UploadCreatedMessage = {
+  type: 'UPLOAD_CREATED'
+  data: Array<{ batch_id: number; image_id: string; status: UploadStatus }>
+}
+type SubscribedMessage = { type: 'SUBSCRIBED'; data: number }
+
+type ServerMessage =
+  | UploadsUpdateMessage
+  | UploadsCompleteMessage
+  | CollectionImagesMessage
+  | ErrorMessage
+  | UploadCreatedMessage
+  | SubscribedMessage
+
 export const useCollections = () => {
   const store = useCollectionsStore()
+  const commons = useCommons()
   const { data, send } = useSocket
-
-  type UploadsUpdateMessage = { type: 'UPLOADS_UPDATE'; data: UploadStatusUpdate[] }
-  type UploadsCompleteMessage = { type: 'UPLOADS_COMPLETE'; data: number }
-  type CollectionImagesMessage = {
-    type: 'COLLECTION_IMAGES'
-    data: {
-      creator: Creator
-      images: Record<string, Image | { dates: { taken: string | Date } }>
-    }
-  }
-  type ErrorMessage = { type: 'ERROR'; data: string }
-  type UploadCreatedMessage = {
-    type: 'UPLOAD_CREATED'
-    data: Array<{ batch_id: number; image_id: string; status: UploadStatus }>
-  }
-  type SubscribedMessage = { type: 'SUBSCRIBED'; data: number }
-
-  type ServerMessage =
-    | UploadsUpdateMessage
-    | UploadsCompleteMessage
-    | CollectionImagesMessage
-    | ErrorMessage
-    | UploadCreatedMessage
-    | SubscribedMessage
 
   const sendSubscribeBatch = (batchId: number): void => {
     store.isStatusChecking = true
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId }))
   }
 
-  const commons = useCommons()
 
   const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
     id,
