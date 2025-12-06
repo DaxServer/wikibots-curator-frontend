@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 const authStore = useAuthStore()
+const { loadBatches } = useCollections()
 
 const selectedBatchId = ref<number | null>(null)
 
 const selectedBatch = computed(() => {
-  return items.value.find((b) => b.id === selectedBatchId.value)
+  return store.batches.find((b) => b.id === selectedBatchId.value)
 })
 
 const filterOptions = ref([
@@ -26,35 +27,17 @@ const columns = computed(() => {
   return cols
 })
 
-const items = ref<Batch[]>([])
-const loading = ref(false)
-const totalRecords = ref(0)
-const lazyParams = ref({
+const params = ref({
   first: 0,
   rows: 100,
   page: 1,
 })
 
-const loadLazyData = async (event: { page: number; first: number; rows: number }) => {
-  loading.value = true
-  lazyParams.value = event
-  try {
-    const page = event.first / event.rows + 1
-    let url = `/api/ingest/batches?page=${page}&limit=${event.rows}`
-    if (selectedFilter.value?.value === 'my' && authStore.userid) {
-      url += `&userid=${authStore.userid}`
-    }
-    const response = await fetch(url)
-    if (!response.ok) throw new Error('Failed to fetch batches')
-    const data: PaginatedResponse<Batch> = await response.json()
-    items.value = data.items
-    totalRecords.value = data.total
-  } catch (e) {
-    console.error(e)
-    store.error = e instanceof Error ? e.message : 'Unknown error'
-  } finally {
-    loading.value = false
-  }
+const loadData = async (event: { page: number; first: number; rows: number }) => {
+  params.value = event
+  const userid =
+    selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
+  loadBatches(params.value.first, params.value.rows, userid)
 }
 
 const getSuccessfulUploadCount = (batch: Batch) => {
@@ -74,7 +57,7 @@ const getQueuedUploadCount = (batch: Batch) => {
 }
 
 onMounted(() => {
-  loadLazyData(lazyParams.value)
+  loadData(params.value)
 })
 </script>
 
@@ -89,19 +72,17 @@ onMounted(() => {
       :options="filterOptions"
       optionLabel="label"
       :allowEmpty="false"
-      @change="loadLazyData(lazyParams)"
+      @change="loadData(params)"
     />
   </div>
   <DataTable
     v-if="!selectedBatchId"
-    :value="items"
-    lazy
+    :value="store.batches"
     paginator
-    :rows="lazyParams.rows"
-    :totalRecords="totalRecords"
-    :loading="loading"
-    @page="loadLazyData"
-    :first="lazyParams.first"
+    :rows="params.rows"
+    :totalRecords="store.totalBatches"
+    @page="loadData"
+    :first="params.first"
     @row-click="(event) => (selectedBatchId = event.data.id)"
     :pt="{
       bodyRow: () => ({

@@ -8,6 +8,7 @@ defineEmits<{
 }>()
 
 const store = useCollectionsStore()
+const { loadBatchUploads } = useCollections()
 
 const columns = [
   { field: 'id', header: 'ID' },
@@ -19,34 +20,16 @@ const columns = [
   { field: 'wikitext', header: 'Wikitext' },
 ]
 
-const items = ref<UploadRequest[]>([])
-const loading = ref(false)
-const totalRecords = ref(0)
-const lazyParams = ref({
+const params = ref({
   first: 0,
   rows: 100,
   page: 1,
 })
 
-const loadLazyData = async (event: { page: number; first: number; rows: number }) => {
-  loading.value = true
-  lazyParams.value = event
-  try {
-    const page = event.first / event.rows + 1
-    const columnsStr = columns.map((col) => col.field).join(',')
-    const response = await fetch(
-      `/api/ingest/uploads/${props.batch.id}?page=${page}&limit=${event.rows}&columns=${columnsStr}`,
-    )
-    if (!response.ok) throw new Error('Failed to fetch uploads')
-    const data: PaginatedResponse<UploadRequest> = await response.json()
-    items.value = data.items
-    totalRecords.value = data.total
-  } catch (e) {
-    console.error(e)
-    store.error = e instanceof Error ? e.message : 'Unknown error'
-  } finally {
-    loading.value = false
-  }
+const loadData = (event: { page: number; first: number; rows: number }) => {
+  params.value = event
+  const columnsStr = columns.map((col) => col.field).join(',')
+  loadBatchUploads(props.batch.id, params.value.first, params.value.rows, columnsStr)
 }
 
 const statusTagSeverity = (status: UploadStatus) => {
@@ -65,7 +48,7 @@ const statusTagSeverity = (status: UploadStatus) => {
 }
 
 onMounted(() => {
-  loadLazyData(lazyParams.value)
+  loadData(params.value)
 })
 </script>
 
@@ -91,14 +74,12 @@ onMounted(() => {
     </div>
 
     <DataTable
-      :value="items"
-      lazy
+      :value="store.batchUploads"
       paginator
-      :rows="lazyParams.rows"
-      :totalRecords="totalRecords"
-      :loading="loading"
-      @page="loadLazyData"
-      :first="lazyParams.first"
+      :rows="params.rows"
+      :totalRecords="store.totalBatchUploads"
+      @page="loadData"
+      :first="params.first"
       :row-class="() => ({ 'align-top': true })"
     >
       <Column
