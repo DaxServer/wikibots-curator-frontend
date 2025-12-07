@@ -26,8 +26,8 @@ const params = ref({
   page: 1,
 })
 
-const loadData = (event: { page: number; first: number; rows: number }) => {
-  params.value = event
+const loadData = (event?: DataTablePageEvent) => {
+  params.value = event || params.value
   const columnsStr = columns.map((col) => col.field).join(',')
   loadBatchUploads(props.batch.id, params.value.first, params.value.rows, columnsStr)
 }
@@ -48,7 +48,7 @@ const statusTagSeverity = (status: UploadStatus) => {
 }
 
 onMounted(() => {
-  loadData(params.value)
+  loadData()
 })
 </script>
 
@@ -73,79 +73,58 @@ onMounted(() => {
       </Card>
     </div>
 
-    <DataTable
+    <SharedDataTable
       :value="store.batchUploads"
-      paginator
       :rows="params.rows"
-      :totalRecords="store.totalBatchUploads"
-      @page="loadData"
+      :totalRecords="store.batchUploadsTotal"
       :first="params.first"
+      :columns="columns"
       :row-class="() => ({ 'align-top': true })"
+      @page="loadData"
     >
-      <Column
-        v-for="col of columns"
-        :key="col.field"
-        :field="col.field"
-        :header="col.header"
-      >
-        <template #body="slotProps">
-          <template v-if="col.field === 'key'">
-            <a
-              :href="`https://www.mapillary.com/app/?pKey=${slotProps.data.key}&focus=photo`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hover:underline"
-            >
-              {{ slotProps.data.key }}&nbsp;
-              <i class="pi pi-external-link text-sm!"></i>
-            </a>
-          </template>
-          <template v-else-if="col.field === 'status'">
-            <Tag :severity="statusTagSeverity(slotProps.data.status)">
-              {{ slotProps.data.status }}
-            </Tag>
-          </template>
-          <template v-else-if="col.field === 'error'">
-            <ErrorDisplay
-              v-if="slotProps.data.error"
-              :error="slotProps.data.error"
-            />
-          </template>
-          <template v-else-if="col.field === 'success'">
-            <span
-              v-if="slotProps.data.success"
-              class="text-green-500"
-            >
-              <ExternalLink
-                :href="decodeURIComponent(slotProps.data.success)"
-                show-icon
-              >
-                View file on Commons
-              </ExternalLink>
-            </span>
-          </template>
-          <!-- <template v-else-if="col.field === 'filename'">
-            <a
-              v-if="statusTagSeverity(slotProps.data.status) === 'danger'"
-              :href="decodeURIComponent(slotProps.data.filename)"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hover:underline"
-            >
-              {{ slotProps.data.filename }}&nbsp;<i class="pi pi-external-link text-sm!"></i>
-            </a>
-            <template v-else>
-              {{ slotProps.data[col.field] }}
-            </template>
-          </template> -->
-          <template v-else-if="col.field === 'wikitext'">
-            <pre class="text-xs">{{ slotProps.data[col.field] }}</pre>
-          </template>
-          <template v-else>
-            {{ slotProps.data[col.field] }}
-          </template>
+      <template #body-cell="{ col, data }">
+        <template v-if="col.field === 'key'">
+          <a
+            :href="`https://www.mapillary.com/app/?pKey=${data.key}&focus=photo`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:underline"
+          >
+            {{ data.key }}&nbsp;
+            <i class="pi pi-external-link text-sm!"></i>
+          </a>
         </template>
-      </Column>
-    </DataTable>
+        <template v-else-if="col.field === 'status'">
+          <Tag :severity="statusTagSeverity(data.status)">
+            {{ data.status }}
+          </Tag>
+        </template>
+        <template v-else-if="col.field === 'error'">
+          <ErrorDisplay
+            v-if="data.error"
+            :error="data.error"
+          />
+        </template>
+        <template v-else-if="col.field === 'success'">
+          <span
+            v-if="data.success"
+            class="text-green-500"
+          >
+            <ExternalLink
+              :href="decodeURIComponent(data.success)"
+              show-icon
+            >
+              View file on Commons
+            </ExternalLink>
+          </span>
+        </template>
+        <template v-else-if="col.field === 'wikitext'">
+          <pre class="text-xs">{{ data[col.field] }}</pre>
+        </template>
+        <template v-else>
+          {{ data[col.field] }}
+        </template>
+      </template>
+    </SharedDataTable>
   </div>
 </template>

@@ -39,7 +39,6 @@ export const useCollections = () => {
   }
 
   const loadBatches = (page: number, rows: number, userid?: string) => {
-    store.isLoading = true
     const payload: FetchBatchesMessage['data'] = {
       page: page / rows + 1,
       limit: rows,
@@ -56,7 +55,6 @@ export const useCollections = () => {
   }
 
   const loadBatchUploads = (batchId: number, page: number, rows: number, columnsStr: string) => {
-    store.isLoading = true
     send(
       JSON.stringify({
         type: 'FETCH_BATCH_UPLOADS',
@@ -83,7 +81,6 @@ export const useCollections = () => {
       return
     }
     store.stepper = '5'
-    store.isLoading = true
     const payload = {
       handler: store.handler,
       items: store.selectedItems.map((item) => ({
@@ -158,13 +155,11 @@ export const useCollections = () => {
       }
       case 'BATCHES_LIST':
         store.batches = msg.data.items
-        store.totalBatches = msg.data.total
-        store.isLoading = false
+        store.batchesTotal = msg.data.total
         break
       case 'BATCH_UPLOADS_LIST':
         store.batchUploads = msg.data.items
-        store.totalBatchUploads = msg.data.total
-        store.isLoading = false
+        store.batchUploadsTotal = msg.data.total
         break
     }
   })

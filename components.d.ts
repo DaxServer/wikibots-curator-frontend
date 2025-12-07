@@ -49,6 +49,7 @@ declare module 'vue' {
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']
     Select: typeof import('primevue/select')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']
+    SharedDataTable: typeof import('./src/components/SharedDataTable.vue')['default']
     StatementItem: typeof import('./src/components/wikidata/StatementItem.vue')['default']
     StatementsList: typeof import('./src/components/wikidata/StatementsList.vue')['default']
     Step: typeof import('primevue/step')['default']
