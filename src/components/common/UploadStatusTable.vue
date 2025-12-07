@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 
-const total = store.selectedItems.length
+const total = Math.max(1, store.selectedItems.length) // To avoid division by zero
 
 const meters = computed<MeterItem[]>(() => {
   const successful = store.selectedItems.filter(
