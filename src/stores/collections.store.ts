@@ -1,6 +1,6 @@
 import { applyTitleTemplate } from '@/utils/titleTemplate'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 
 export const useCollectionsStore = defineStore('collections', () => {
   const handler = ref<Handler>('mapillary')
@@ -28,10 +28,10 @@ export const useCollectionsStore = defineStore('collections', () => {
   const globalTitleTemplate = ref<string>('')
 
   // Batches state
-  const batches = ref<Batch[]>([])
-  const totalBatches = ref<number>(0)
+  const batches = shallowRef<Batch[]>([])
+  const batchesTotal = ref<number>(0)
   const batchUploads = ref<UploadRequest[]>([])
-  const totalBatchUploads = ref<number>(0)
+  const batchUploadsTotal = ref<number>(0)
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -134,9 +134,9 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalTitleTemplate.value = ''
     creator.value = { id: '', username: '', profile_url: '' }
     batches.value = []
-    totalBatches.value = 0
+    batchesTotal.value = 0
     batchUploads.value = []
-    totalBatchUploads.value = 0
+    batchUploadsTotal.value = 0
   }
 
   const setHandler = (h: Handler) => {
@@ -195,9 +195,9 @@ export const useCollectionsStore = defineStore('collections', () => {
     selectedItemsKeys,
     itemsWithErrors,
     batches,
-    totalBatches,
+    batchesTotal,
     batchUploads,
-    totalBatchUploads,
+    batchUploadsTotal,
 
     setLoading,
     setGlobalDescription,

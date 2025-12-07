@@ -12,6 +12,7 @@
       "ComponentPublicInstance",
       "ComputedRef",
       "Creator",
+      "DataTablePageEvent",
       "DataValue",
       "DataValueEntityId",
       "DataValueMonolingualText",

@@ -33,8 +33,8 @@ const params = ref({
   page: 1,
 })
 
-const loadData = async (event: { page: number; first: number; rows: number }) => {
-  params.value = event
+const loadData = async (event?: DataTablePageEvent) => {
+  params.value = event || params.value
   const userid =
     selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
   loadBatches(params.value.first, params.value.rows, userid)
@@ -57,7 +57,7 @@ const getQueuedUploadCount = (batch: Batch) => {
 }
 
 onMounted(() => {
-  loadData(params.value)
+  loadData()
 })
 </script>
 
@@ -72,69 +72,61 @@ onMounted(() => {
       :options="filterOptions"
       optionLabel="label"
       :allowEmpty="false"
-      @change="loadData(params)"
+      @change="loadData()"
     />
   </div>
-  <DataTable
+  <SharedDataTable
     v-if="!selectedBatchId"
     :value="store.batches"
-    paginator
     :rows="params.rows"
-    :totalRecords="store.totalBatches"
-    @page="loadData"
+    :totalRecords="store.batchesTotal"
     :first="params.first"
-    @row-click="(event) => (selectedBatchId = event.data.id)"
+    :columns="columns"
+    @page="loadData"
+    @row-click="selectedBatchId = $event.data.id"
     :pt="{
       bodyRow: () => ({
         class: 'cursor-pointer',
       }),
     }"
   >
-    <Column
-      v-for="col of columns"
-      :key="col.field"
-      :field="col.field"
-      :header="col.header"
-    >
-      <template
-        v-if="col.field === 'created_at'"
-        #body="slotProps"
-      >
-        {{ new Date(slotProps.data.created_at).toLocaleString() }}
+    <template #body-cell="{ col, data }">
+      <template v-if="col.field === 'created_at'">
+        {{ new Date(data.created_at).toLocaleString() }}
       </template>
-      <template
-        v-else-if="col.field === 'uploads'"
-        #body="slotProps"
-      >
+      <template v-else-if="col.field === 'uploads'">
         <div
-          v-if="slotProps.data.uploads"
+          v-if="data.uploads"
           class="flex items-center gap-1"
         >
           <Tag
-            v-if="getSuccessfulUploadCount(slotProps.data) > 0"
+            v-if="getSuccessfulUploadCount(data) > 0"
             severity="success"
-            :value="`${getSuccessfulUploadCount(slotProps.data)} successful`"
+            :value="`${getSuccessfulUploadCount(data)} successful`"
           />
           <Tag
-            v-if="getFailedUploadCount(slotProps.data) > 0"
+            v-if="getFailedUploadCount(data) > 0"
             severity="danger"
-            :value="`${getFailedUploadCount(slotProps.data)} failed`"
+            :value="`${getFailedUploadCount(data)} failed`"
           />
           <Tag
-            v-if="getInProgressUploadCount(slotProps.data) > 0"
+            v-if="getInProgressUploadCount(data) > 0"
             severity="info"
-            :value="`${getInProgressUploadCount(slotProps.data)} in progress`"
+            :value="`${getInProgressUploadCount(data)} in progress`"
           />
           <Tag
-            v-if="getQueuedUploadCount(slotProps.data) > 0"
+            v-if="getQueuedUploadCount(data) > 0"
             severity="secondary"
-            :value="`${getQueuedUploadCount(slotProps.data)} queued`"
+            :value="`${getQueuedUploadCount(data)} queued`"
           />
         </div>
         <div v-else>No uploads</div>
       </template>
-    </Column>
-  </DataTable>
+      <template v-else>
+        {{ data[col.field] }}
+      </template>
+    </template>
+  </SharedDataTable>
   <BatchUploadsView
     v-else-if="selectedBatch"
     :batch="selectedBatch"
