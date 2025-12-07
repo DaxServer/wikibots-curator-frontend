@@ -53,6 +53,7 @@
       "Metadata",
       "MetadataKey",
       "MetadataValue",
+      "MeterItem",
       "NoValueSnak",
       "Noir",
       "NumericId",

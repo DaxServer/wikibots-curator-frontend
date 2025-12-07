@@ -1,47 +1,30 @@
 <script setup lang="ts">
-const props = defineProps<{
-  batch: Batch
+defineProps<{
+  stats: Batch['stats']
 }>()
-
-const successfulCount = computed(() => {
-  return props.batch.uploads.filter((u: UploadRequest) => u.success).length
-})
-
-const failedCount = computed(() => {
-  return props.batch.uploads.filter((u: UploadRequest) => u.error).length
-})
-
-const inProgressCount = computed(() => {
-  return props.batch.uploads.filter((u: UploadRequest) => u.status === UPLOAD_STATUS.InProgress)
-    .length
-})
-
-const queuedCount = computed(() => {
-  return props.batch.uploads.filter((u: UploadRequest) => u.status === UPLOAD_STATUS.Queued).length
-})
 </script>
 
 <template>
   <div class="flex items-center gap-1">
     <Tag
-      v-if="successfulCount > 0"
+      v-if="stats.completed > 0"
       severity="success"
-      :value="`${successfulCount} successful`"
+      :value="`${stats.completed} successful`"
     />
     <Tag
-      v-if="failedCount > 0"
+      v-if="stats.failed > 0"
       severity="danger"
-      :value="`${failedCount} failed`"
+      :value="`${stats.failed} failed`"
     />
     <Tag
-      v-if="inProgressCount > 0"
+      v-if="stats.in_progress > 0"
       severity="info"
-      :value="`${inProgressCount} in progress`"
+      :value="`${stats.in_progress} in progress`"
     />
     <Tag
-      v-if="queuedCount > 0"
+      v-if="stats.queued > 0"
       severity="secondary"
-      :value="`${queuedCount} queued`"
+      :value="`${stats.queued} queued`"
     />
   </div>
 </template>

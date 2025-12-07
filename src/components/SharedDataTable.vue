@@ -1,11 +1,18 @@
 <script setup lang="ts" generic="T">
-defineProps<{
-  value: T[]
-  totalRecords: number
-  columns: { field: string; header: string }[]
-  rows: number
-  first: number
-}>()
+withDefaults(
+  defineProps<{
+    value: T[]
+    columns: { field: string; header: string }[]
+    totalRecords?: number
+    rows?: number
+    first?: number
+    lazy?: boolean
+  }>(),
+  {
+    rows: 100,
+    lazy: false,
+  },
+)
 
 defineEmits<{
   page: [DataTablePageEvent]
@@ -17,9 +24,11 @@ defineEmits<{
     v-bind="$attrs"
     :value="value"
     paginator
+    :alwaysShowPaginator="false"
     :rows="rows"
     :totalRecords="totalRecords"
     :first="first"
+    :lazy="lazy"
     @page="$emit('page', $event)"
   >
     <Column

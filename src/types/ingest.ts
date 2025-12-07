@@ -21,7 +21,13 @@ export interface Batch {
   created_at: string
   username: string
   userid: string
-  uploads: UploadRequest[]
+  stats: {
+    total: number
+    completed: number
+    failed: number
+    queued: number
+    in_progress: number
+  }
 }
 
 export interface UploadRequest {
@@ -29,7 +35,7 @@ export interface UploadRequest {
   status: string
   image_id: string
   key?: string
-  batch_id: number
+  batch_id?: number
   error: StructuredError | null
   success: string | null
   handler?: string

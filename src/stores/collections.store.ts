@@ -30,8 +30,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   // Batches state
   const batches = shallowRef<Batch[]>([])
   const batchesTotal = ref<number>(0)
-  const batchUploads = ref<UploadRequest[]>([])
-  const batchUploadsTotal = ref<number>(0)
+  const batchUploads = shallowRef<UploadRequest[]>([])
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -136,7 +135,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     batches.value = []
     batchesTotal.value = 0
     batchUploads.value = []
-    batchUploadsTotal.value = 0
   }
 
   const setHandler = (h: Handler) => {
@@ -197,7 +195,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     batches,
     batchesTotal,
     batchUploads,
-    batchUploadsTotal,
 
     setLoading,
     setGlobalDescription,
