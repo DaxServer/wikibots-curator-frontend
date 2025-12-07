@@ -40,22 +40,6 @@ const loadData = async (event?: DataTablePageEvent) => {
   loadBatches(params.value.first, params.value.rows, userid)
 }
 
-const getSuccessfulUploadCount = (batch: Batch) => {
-  return batch.uploads.filter((u: UploadRequest) => u.success).length
-}
-
-const getFailedUploadCount = (batch: Batch) => {
-  return batch.uploads.filter((u: UploadRequest) => u.error).length
-}
-
-const getInProgressUploadCount = (batch: Batch) => {
-  return batch.uploads.filter((u: UploadRequest) => u.status === UPLOAD_STATUS.InProgress).length
-}
-
-const getQueuedUploadCount = (batch: Batch) => {
-  return batch.uploads.filter((u: UploadRequest) => u.status === UPLOAD_STATUS.Queued).length
-}
-
 onMounted(() => {
   loadData()
 })
@@ -95,31 +79,10 @@ onMounted(() => {
         {{ new Date(data.created_at).toLocaleString() }}
       </template>
       <template v-else-if="col.field === 'uploads'">
-        <div
+        <BatchStats
           v-if="data.uploads"
-          class="flex items-center gap-1"
-        >
-          <Tag
-            v-if="getSuccessfulUploadCount(data) > 0"
-            severity="success"
-            :value="`${getSuccessfulUploadCount(data)} successful`"
-          />
-          <Tag
-            v-if="getFailedUploadCount(data) > 0"
-            severity="danger"
-            :value="`${getFailedUploadCount(data)} failed`"
-          />
-          <Tag
-            v-if="getInProgressUploadCount(data) > 0"
-            severity="info"
-            :value="`${getInProgressUploadCount(data)} in progress`"
-          />
-          <Tag
-            v-if="getQueuedUploadCount(data) > 0"
-            severity="secondary"
-            :value="`${getQueuedUploadCount(data)} queued`"
-          />
-        </div>
+          :batch="data"
+        />
         <div v-else>No uploads</div>
       </template>
       <template v-else>
