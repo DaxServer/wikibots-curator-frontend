@@ -28,10 +28,7 @@ export type BatchesListMessage = {
 
 export type BatchUploadsListMessage = {
   type: 'BATCH_UPLOADS_LIST'
-  data: {
-    items: UploadRequest[]
-    total: number
-  }
+  data: UploadRequest[]
 }
 
 export type ServerMessage =
@@ -86,9 +83,6 @@ export type FetchBatchesMessage = {
 
 export type FetchBatchUploadsPayload = {
   batch_id: number
-  page: number
-  limit: number
-  columns?: string
 }
 
 export type FetchBatchUploadsMessage = {

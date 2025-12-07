@@ -66,6 +66,7 @@ onMounted(() => {
     :totalRecords="store.batchesTotal"
     :first="params.first"
     :columns="columns"
+    lazy
     @page="loadData"
     @row-click="selectedBatchId = $event.data.id"
     :pt="{
@@ -80,8 +81,8 @@ onMounted(() => {
       </template>
       <template v-else-if="col.field === 'uploads'">
         <BatchStats
-          v-if="data.uploads"
-          :batch="data"
+          v-if="data.stats"
+          :stats="data.stats"
         />
         <div v-else>No uploads</div>
       </template>

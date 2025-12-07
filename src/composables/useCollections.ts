@@ -54,15 +54,12 @@ export const useCollections = () => {
     )
   }
 
-  const loadBatchUploads = (batchId: number, page: number, rows: number, columnsStr: string) => {
+  const loadBatchUploads = (batchId: number) => {
     send(
       JSON.stringify({
         type: 'FETCH_BATCH_UPLOADS',
         data: {
           batch_id: batchId,
-          page: page / rows + 1,
-          limit: rows,
-          columns: columnsStr,
         },
       } as FetchBatchUploadsMessage),
     )
@@ -158,8 +155,7 @@ export const useCollections = () => {
         store.batchesTotal = msg.data.total
         break
       case 'BATCH_UPLOADS_LIST':
-        store.batchUploads = msg.data.items
-        store.batchUploadsTotal = msg.data.total
+        store.batchUploads = msg.data
         break
     }
   })

@@ -20,6 +20,11 @@ export default defineConfig((): import('vite').UserConfig => {
           'vue',
           'pinia',
           {
+            from: 'primevue',
+            imports: ['MeterItem'],
+            type: true,
+          },
+          {
             from: 'primevue/datatable',
             imports: ['DataTablePageEvent'],
             type: true,

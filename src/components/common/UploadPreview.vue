@@ -5,6 +5,10 @@ const store = useCollectionsStore()
 const { wikitext, submitUpload, loadSDC } = useCollections()
 
 onMounted(() => {
+  window.scroll({
+    top: 0,
+    behavior: 'smooth',
+  })
   loadSDC()
 })
 </script>

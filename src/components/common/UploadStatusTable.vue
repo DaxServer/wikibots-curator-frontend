@@ -1,30 +1,59 @@
 <script setup lang="ts">
-type StatusMeta = {
-  title: string
-  status?: (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS] | undefined
-  statusReason?: string
-  successUrl?: string
-  errorInfo?: StructuredError
-}
-type StatusItem = { id: string; index: number; meta: StatusMeta }
+const store = useCollectionsStore()
 
-defineProps<{ items: Array<StatusItem> }>()
+const total = store.selectedItems.length
 
-const getRowClass = (data: StatusItem) => {
+const meters = computed<MeterItem[]>(() => {
+  const successful = store.selectedItems.filter(
+    (item) => item.meta.status === UPLOAD_STATUS.Completed,
+  ).length
+  const inProgress = store.selectedItems.filter(
+    (item) => item.meta.status === UPLOAD_STATUS.InProgress,
+  ).length
+  const failed = store.selectedItems.filter(
+    (item) => item.meta.status === UPLOAD_STATUS.Failed,
+  ).length
+  const queued = store.selectedItems.filter(
+    (item) => item.meta.status === UPLOAD_STATUS.Queued,
+  ).length
+
+  return [
+    { label: 'Successful', value: (successful * 100) / total, color: 'var(--p-green-500)' },
+    { label: 'Failed', value: (failed * 100) / total, color: 'var(--p-red-500)' },
+    { label: 'Processing', value: (inProgress * 100) / total, color: 'var(--p-blue-500)' },
+    { label: 'Queued', value: (queued * 100) / total },
+  ]
+})
+
+const getRowClass = (data: Item) => {
   const status = data.meta.status
   if (status === UPLOAD_STATUS.Completed) return 'bg-green-100'
   if (status === UPLOAD_STATUS.Failed) return 'bg-red-100'
   if (status === UPLOAD_STATUS.InProgress) return 'bg-blue-100'
   return ''
 }
+
+onMounted(() => {
+  window.scroll({
+    top: 0,
+    behavior: 'smooth',
+  })
+})
 </script>
 
 <template>
   <DataTable
-    :value="items"
+    :value="store.selectedItems"
     :row-class="getRowClass"
     class="mt-4 mb-20"
   >
+    <template #header>
+      <div class="flex flex-col gap-3">
+        Uploading
+        <MeterGroup :value="meters" />
+      </div>
+    </template>
+
     <Column
       field="index"
       header="#"

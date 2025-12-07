@@ -138,6 +138,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { MeterItem } from 'primevue'
+  import('primevue')
+  // @ts-ignore
   export type { DataTablePageEvent } from 'primevue/datatable'
   import('primevue/datatable')
   // @ts-ignore

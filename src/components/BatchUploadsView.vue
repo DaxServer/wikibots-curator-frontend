@@ -20,18 +20,6 @@ const columns = [
   { field: 'wikitext', header: 'Wikitext' },
 ]
 
-const params = ref({
-  first: 0,
-  rows: 100,
-  page: 1,
-})
-
-const loadData = (event?: DataTablePageEvent) => {
-  params.value = event || params.value
-  const columnsStr = columns.map((col) => col.field).join(',')
-  loadBatchUploads(props.batch.id, params.value.first, params.value.rows, columnsStr)
-}
-
 const statusTagSeverity = (status: UploadStatus) => {
   switch (status) {
     case UPLOAD_STATUS.InProgress:
@@ -48,7 +36,7 @@ const statusTagSeverity = (status: UploadStatus) => {
 }
 
 onMounted(() => {
-  loadData()
+  loadBatchUploads(props.batch.id)
 })
 </script>
 
@@ -71,24 +59,20 @@ onMounted(() => {
       >
         <template #content>
           <div class="text-xl font-medium">Batch: {{ batch.id }}</div>
-          <div class="text-xl font-small">Uploads: {{ batch.uploads.length }}</div>
+          <div class="text-xl font-small">Uploads: {{ batch.stats.total }}</div>
           <div class="text-sm text-gray-500">
             Uploaded by: {{ batch.username }} | Created at:
             {{ new Date(batch.created_at).toLocaleString() }}
           </div>
-          <BatchStats :batch="batch" />
+          <BatchStats :stats="batch.stats" />
         </template>
       </Card>
     </div>
 
     <SharedDataTable
       :value="store.batchUploads"
-      :rows="params.rows"
-      :totalRecords="store.batchUploadsTotal"
-      :first="params.first"
       :columns="columns"
       :row-class="() => ({ 'align-top': true })"
-      @page="loadData"
     >
       <template #body-cell="{ col, data }">
         <template v-if="col.field === 'key'">

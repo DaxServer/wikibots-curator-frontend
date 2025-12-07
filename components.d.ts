@@ -47,6 +47,7 @@ declare module 'vue' {
     MapillaryCollections: typeof import('./src/components/mapillary/MapillaryCollections.vue')['default']
     Menu: typeof import('primevue/menu')['default']
     Message: typeof import('primevue/message')['default']
+    MeterGroup: typeof import('primevue/metergroup')['default']
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']
     Select: typeof import('primevue/select')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']
