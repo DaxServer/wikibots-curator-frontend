@@ -1,6 +1,6 @@
 import { applyTitleTemplate } from '@/utils/titleTemplate'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 
 export const useCollectionsStore = defineStore('collections', () => {
   const handler = ref<Handler>('mapillary')
