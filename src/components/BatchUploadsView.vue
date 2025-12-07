@@ -62,13 +62,21 @@ onMounted(() => {
         class="mr-2"
         label="Back to batches"
       />
-      <Card>
+      <Card
+        :pt="{
+          content: {
+            class: 'flex flex-col gap-2',
+          },
+        }"
+      >
         <template #content>
           <div class="text-xl font-medium">Batch: {{ batch.id }}</div>
+          <div class="text-xl font-small">Uploads: {{ batch.uploads.length }}</div>
           <div class="text-sm text-gray-500">
             Uploaded by: {{ batch.username }} | Created at:
             {{ new Date(batch.created_at).toLocaleString() }}
           </div>
+          <BatchStats :batch="batch" />
         </template>
       </Card>
     </div>
