@@ -5,8 +5,6 @@ import {
   createExternalIdSnak,
   createHeightClaim,
   createInceptionClaim,
-  createMapillaryIdClaim,
-  createPublishedInMapillaryClaim,
   createQuantitySnak,
   createSourceOfFileClaim,
   createStatement,
@@ -145,9 +143,12 @@ describe('SDC Builders', () => {
 
   it('should create creator claim with qualifiers', () => {
     const username = 'testuser'
-    const profileUrl = 'https://example.com/user/testuser'
 
-    expect(createCreatorClaim(username, profileUrl)).toEqual({
+    expect(
+      createCreatorClaim(username, [
+        createExternalIdSnak(WikidataProperty.MapillaryUsername, username),
+      ]),
+    ).toEqual({
       mainsnak: {
         property: WikidataProperty.Creator,
         snaktype: 'somevalue',
@@ -164,56 +165,19 @@ describe('SDC Builders', () => {
             },
           },
         ],
-        [WikidataProperty.Url]: [
+        [WikidataProperty.MapillaryUsername]: [
           {
             snaktype: 'value',
-            property: WikidataProperty.Url,
-            datatype: 'url',
+            property: WikidataProperty.MapillaryUsername,
+            datatype: 'external-id',
             datavalue: {
-              value: profileUrl,
+              value: username,
               type: 'string',
             },
           },
         ],
       },
-      'qualifiers-order': [WikidataProperty.AuthorNameString, WikidataProperty.Url],
-      type: 'statement',
-      rank: 'normal',
-    })
-  })
-
-  it('should create Mapillary ID claim', () => {
-    const id = '12345'
-
-    expect(createMapillaryIdClaim(id)).toEqual({
-      mainsnak: {
-        property: WikidataProperty.MapillaryPhotoID,
-        snaktype: 'value',
-        datatype: 'external-id',
-        datavalue: {
-          value: id,
-          type: 'string',
-        },
-      },
-      type: 'statement',
-      rank: 'normal',
-    })
-  })
-
-  it('should create Published In Mapillary claim', () => {
-    expect(createPublishedInMapillaryClaim()).toEqual({
-      mainsnak: {
-        property: WikidataProperty.PublishedIn,
-        snaktype: 'value',
-        datatype: 'wikibase-item',
-        datavalue: {
-          value: {
-            'entity-type': 'item',
-            'numeric-id': getNumericId(WikidataEntity.MapillaryDatabase),
-          },
-          type: 'wikibase-entityid',
-        },
-      },
+      'qualifiers-order': [WikidataProperty.AuthorNameString, WikidataProperty.MapillaryUsername],
       type: 'statement',
       rank: 'normal',
     })

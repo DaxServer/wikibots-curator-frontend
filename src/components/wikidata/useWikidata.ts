@@ -1,5 +1,6 @@
 const properties: Record<string, string> = {
   P137: 'operator',
+  P13988: 'Mapillary username',
   P1433: 'published in',
   P1476: 'title',
   P170: 'creator',

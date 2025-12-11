@@ -159,19 +159,11 @@ export const createQuantityStatement = (
 
 export const getNumericId = (entity: ItemId): NumericId => parseInt(entity.slice(1), 10)
 
-export const createCreatorClaim = (username: string, profileUrl: string): Statement => {
+export const createCreatorClaim = (username: string, snaks?: Snak[]): Statement => {
   return createStatement(createSomeValueSnak(WikidataProperty.Creator), [
     createStringSnak(WikidataProperty.AuthorNameString, username),
-    createUrlSnak(WikidataProperty.Url, profileUrl),
+    ...(snaks || []),
   ])
-}
-
-export const createMapillaryIdClaim = (id: string): Statement => {
-  return createExternalIdStatement(WikidataProperty.MapillaryPhotoID, id)
-}
-
-export const createPublishedInMapillaryClaim = (): Statement => {
-  return createWikibaseItemStatement(WikidataProperty.PublishedIn, WikidataEntity.MapillaryDatabase)
 }
 
 export const createInceptionClaim = (date: Date): Statement => {

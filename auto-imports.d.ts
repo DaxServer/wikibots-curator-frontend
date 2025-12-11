@@ -189,9 +189,7 @@ declare module 'vue' {
     readonly createExternalIdStatement: UnwrapRef<typeof import('./src/composables/sdc')['createExternalIdStatement']>
     readonly createHeightClaim: UnwrapRef<typeof import('./src/composables/sdc')['createHeightClaim']>
     readonly createInceptionClaim: UnwrapRef<typeof import('./src/composables/sdc')['createInceptionClaim']>
-    readonly createMapillaryIdClaim: UnwrapRef<typeof import('./src/composables/sdc')['createMapillaryIdClaim']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
-    readonly createPublishedInMapillaryClaim: UnwrapRef<typeof import('./src/composables/sdc')['createPublishedInMapillaryClaim']>
     readonly createQuantitySnak: UnwrapRef<typeof import('./src/composables/sdc')['createQuantitySnak']>
     readonly createQuantityStatement: UnwrapRef<typeof import('./src/composables/sdc')['createQuantityStatement']>
     readonly createSomeValueSnak: UnwrapRef<typeof import('./src/composables/sdc')['createSomeValueSnak']>
