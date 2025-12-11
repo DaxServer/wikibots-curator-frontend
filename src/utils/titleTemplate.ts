@@ -27,11 +27,15 @@ export const AVAILABLE_IMAGE_FIELDS: Record<string, Record<string, FieldDefiniti
   },
   captured: {
     date: { path: 'captured.date', name: 'Date', description: 'UTC date in YYYY-MM-DD format' },
-    time: { path: 'captured.time', name: 'Time', description: 'UTC time in HH:MM:SS format' },
+    time: {
+      path: 'captured.time',
+      name: 'Time',
+      description: 'UTC time in HHHMMMSSS format (Example: 02H05M30S)',
+    },
     time_ms: {
       path: 'captured.time_ms',
       name: 'Time in milliseconds',
-      description: 'UTC time with milliseconds in HH:MM:SS.ms format',
+      description: 'UTC time with milliseconds in HHHMMMSSSsss format (Example: 02H05M30S030)',
     },
     year: { path: 'captured.year', name: 'Year', description: 'UTC year when the photo was taken' },
     month: {
@@ -112,8 +116,8 @@ const prepareContext = (image: Image, sequence: string) => {
     },
     captured: {
       date: `${dates.year}-${dates.month}-${dates.day_of_month}`,
-      time: `${dates.hours}:${dates.minutes}:${dates.seconds}`,
-      time_ms: `${dates.hours}:${dates.minutes}:${dates.seconds}.${dates.milliseconds}`,
+      time: `${dates.hours}H${dates.minutes}M${dates.seconds}S`,
+      time_ms: `${dates.hours}H${dates.minutes}M${dates.seconds}S${dates.milliseconds}`,
       year: dates.year,
       month: dates.month,
       day_of_month: dates.day_of_month,
