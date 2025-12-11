@@ -186,6 +186,7 @@ export const WikidataProperty = {
   Height: 'P2048',
   Inception: 'P571',
   MapillaryPhotoID: 'P1947',
+  MapillaryUsername: 'P13988',
   Operator: 'P137',
   PublishedIn: 'P1433',
   SourceOfFile: 'P7482',

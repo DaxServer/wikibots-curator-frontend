@@ -2,16 +2,17 @@ import {
   createCopyrightLicenseClaim,
   createCopyrightStatusClaim,
   createCreatorClaim,
+  createExternalIdSnak,
+  createExternalIdStatement,
   createHeightClaim,
   createInceptionClaim,
-  createMapillaryIdClaim,
-  createPublishedInMapillaryClaim,
   createSourceOfFileClaim,
   createWidthClaim,
+  createWikibaseItemStatement,
 } from '@/composables/sdc'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
-import type { Statement } from '@/types/wikidata'
+import { WikidataEntity, WikidataProperty } from '@/types/wikidata'
 import { isValidExtension } from '@/utils/titleTemplate'
 import { debounce } from 'ts-debounce'
 
@@ -168,13 +169,19 @@ ${categories}
     const claims: Statement[] = []
 
     // Creator
-    claims.push(createCreatorClaim(item.image.creator.username, item.image.creator.profile_url))
+    claims.push(
+      createCreatorClaim(item.image.creator.username, [
+        createExternalIdSnak(WikidataProperty.MapillaryUsername, item.image.creator.username),
+      ]),
+    )
 
     // Mapillary ID
-    claims.push(createMapillaryIdClaim(item.image.id))
+    claims.push(createExternalIdStatement(WikidataProperty.MapillaryPhotoID, item.image.id))
 
     // Published in
-    claims.push(createPublishedInMapillaryClaim())
+    claims.push(
+      createWikibaseItemStatement(WikidataProperty.PublishedIn, WikidataEntity.MapillaryDatabase),
+    )
 
     // Inception
     claims.push(createInceptionClaim(item.image.dates.taken))

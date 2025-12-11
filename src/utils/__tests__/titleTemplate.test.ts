@@ -63,6 +63,59 @@ describe('titleTemplate utils', () => {
       const result = applyTitleTemplate(template, image, 'test_sequence_id')
       expect(result).toBe('Sequence: test_sequence_id')
     })
+
+    describe('Field substitutions', () => {
+      // Create a specific image with all fields populated for testing
+      const fullImage: Image = {
+        ...createMockImage('img_123'),
+        width: 1920,
+        height: 1080,
+        // 2023-12-25 14:30:45.123 UTC
+        dates: { taken: new Date('2023-12-25T14:30:45.123Z') },
+        camera_make: 'TestMake',
+        camera_model: 'TestModel',
+        location: {
+          latitude: 12.3456,
+          longitude: -98.7654,
+          compass_angle: 180.5,
+        },
+        creator: {
+          id: 'user_456',
+          username: 'test_user',
+          profile_url: '',
+        },
+      }
+      const sequence = 'seq_789'
+
+      const testCases = [
+        ['{{mapillary.photo.id}}', 'img_123'],
+        ['{{mapillary.photo.sequence}}', 'seq_789'],
+        ['{{image.width}}', '1920'],
+        ['{{image.height}}', '1080'],
+        ['{{captured.date}}', '2023-12-25'],
+        ['{{captured.time}}', '14H30M45S'],
+        ['{{captured.time_ms}}', '14H30M45S123'],
+        ['{{captured.year}}', '2023'],
+        ['{{captured.month}}', '12'],
+        ['{{captured.day_of_month}}', '25'],
+        ['{{captured.hours}}', '14'],
+        ['{{captured.minutes}}', '30'],
+        ['{{captured.seconds}}', '45'],
+        ['{{captured.milliseconds}}', '123'],
+        ['{{captured.raw}}', '2023-12-25T14:30:45.123Z'],
+        ['{{camera.make}}', 'TestMake'],
+        ['{{camera.model}}', 'TestModel'],
+        ['{{mapillary.user.id}}', 'user_456'],
+        ['{{mapillary.user.username}}', 'test_user'],
+        ['{{location.latitude}}', '12.3456'],
+        ['{{location.longitude}}', '-98.7654'],
+        ['{{location.compass_angle}}', '180.5'],
+      ] as const
+
+      it.each(testCases)('replaces %s with %s', (template, expected) => {
+        expect(applyTitleTemplate(template, fullImage, sequence)).toBe(expected)
+      })
+    })
   })
 
   describe('validateTemplate', () => {
