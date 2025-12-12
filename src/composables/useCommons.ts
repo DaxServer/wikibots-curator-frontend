@@ -30,7 +30,7 @@ export const useCommons = () => {
   })
 
   const buildWikitext = (item: Item): string => {
-    const date = item.image.dates.taken.toISOString().split('.')[0] + 'Z'
+    const date = `${item.image.dates.taken.toISOString().split('.')[0]}Z`
     const source = sourceLink(item.id, store.input)
     let categories = item.meta.categories
 

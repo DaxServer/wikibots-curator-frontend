@@ -24,6 +24,9 @@ defineEmits<{
     v-bind="$attrs"
     :value="value"
     paginator
+    paginatorPosition="both"
+    paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
+    current-page-report-template="Page {currentPage} of {totalPages}"
     :alwaysShowPaginator="false"
     :rows="rows"
     :totalRecords="totalRecords"
@@ -47,5 +50,8 @@ defineEmits<{
         </slot>
       </template>
     </Column>
+    <template #empty>
+      <div class="text-center py-4">No data available</div>
+    </template>
   </DataTable>
 </template>

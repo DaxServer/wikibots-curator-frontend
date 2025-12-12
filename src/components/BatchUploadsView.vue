@@ -20,6 +20,22 @@ const columns = [
   { field: 'wikitext', header: 'Wikitext' },
 ]
 
+const selectValues = ref('all')
+const selectOptions = ref([
+  { label: 'All', value: 'all' },
+  { label: 'Queued', value: UPLOAD_STATUS.Queued },
+  { label: 'In Progress', value: UPLOAD_STATUS.InProgress },
+  { label: 'Successful', value: UPLOAD_STATUS.Completed },
+  { label: 'Failed', value: UPLOAD_STATUS.Failed },
+])
+
+const filteredUploads = computed(() => {
+  if (selectValues.value === 'all') {
+    return store.batchUploads
+  }
+  return store.batchUploads.filter((upload) => upload.status === selectValues.value)
+})
+
 const statusTagSeverity = (status: UploadStatus) => {
   switch (status) {
     case UPLOAD_STATUS.InProgress:
@@ -67,12 +83,23 @@ onMounted(() => {
           <BatchStats :stats="batch.stats" />
         </template>
       </Card>
+
+      <div class="flex items-center gap-2">
+        <span class="font-bold">Showing</span>
+        <SelectButton
+          v-model="selectValues"
+          :options="selectOptions"
+          option-value="value"
+          option-label="label"
+        />
+      </div>
     </div>
 
     <SharedDataTable
-      :value="store.batchUploads"
+      :value="filteredUploads"
       :columns="columns"
       :row-class="() => ({ 'align-top': true })"
+      :rows-per-page-options="[10, 20, 50, 100]"
     >
       <template #body-cell="{ col, data }">
         <template v-if="col.field === 'key'">
