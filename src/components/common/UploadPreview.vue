@@ -66,7 +66,7 @@ onMounted(() => {
     >
       <template #body="{ data }">
         <Image
-          :src="data.image.thumbnail_url"
+          :src="data.image.preview_url"
           :alt="`${altPrefix} ${data.id}`"
         />
       </template>
