@@ -61,6 +61,7 @@ onMounted(() => {
   </div>
   <SharedDataTable
     v-if="!selectedBatchId"
+    class="max-w-7xl mx-auto"
     :value="store.batches"
     :rows="params.rows"
     :totalRecords="store.batchesTotal"
