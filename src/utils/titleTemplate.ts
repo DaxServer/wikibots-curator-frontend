@@ -59,7 +59,8 @@ export const AVAILABLE_IMAGE_FIELDS: Record<string, Record<string, FieldDefiniti
     raw: {
       path: 'captured.raw',
       name: 'ISO format',
-      description: 'Longer version in YYYY-MM-DDTHHHMMMSSSsssZ format (Example: 2023-08-15T02H05M30S030Z)',
+      description:
+        'Longer version in YYYY-MM-DDTHHHMMMSSSsssZ format (Example: 2023-08-15T02H05M30S030Z)',
     },
   },
   camera: {
