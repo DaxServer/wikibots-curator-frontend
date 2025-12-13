@@ -102,7 +102,7 @@ describe('titleTemplate utils', () => {
         ['{{captured.minutes}}', '30'],
         ['{{captured.seconds}}', '45'],
         ['{{captured.milliseconds}}', '123'],
-        ['{{captured.raw}}', '2023-12-25T14:30:45.123Z'],
+        ['{{captured.raw}}', '2023-12-25T14H30M45S123Z'],
         ['{{camera.make}}', 'TestMake'],
         ['{{camera.model}}', 'TestModel'],
         ['{{mapillary.user.id}}', 'user_456'],
