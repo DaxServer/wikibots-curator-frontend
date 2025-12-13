@@ -59,7 +59,7 @@ export const AVAILABLE_IMAGE_FIELDS: Record<string, Record<string, FieldDefiniti
     raw: {
       path: 'captured.raw',
       name: 'ISO format',
-      description: 'UTC ISO format (YYYY-MM-DDTHH:MM:SS.sssZ)',
+      description: 'Longer version in YYYY-MM-DDTHHHMMMSSSsssZ format (Example: 2023-08-15T02H05M30S030Z)',
     },
   },
   camera: {
@@ -109,15 +109,19 @@ const prepareContext = (image: Image, sequence: string) => {
     milliseconds: pad(taken.getUTCMilliseconds(), 3),
   }
 
+  const d = `${dates.year}-${dates.month}-${dates.day_of_month}`
+  const time = `${dates.hours}H${dates.minutes}M${dates.seconds}S`
+  const time_ms = `${time}${dates.milliseconds}`
+
   return {
     camera: {
       make: image.camera_make,
       model: image.camera_model,
     },
     captured: {
-      date: `${dates.year}-${dates.month}-${dates.day_of_month}`,
-      time: `${dates.hours}H${dates.minutes}M${dates.seconds}S`,
-      time_ms: `${dates.hours}H${dates.minutes}M${dates.seconds}S${dates.milliseconds}`,
+      date: d,
+      time,
+      time_ms,
       year: dates.year,
       month: dates.month,
       day_of_month: dates.day_of_month,
@@ -125,7 +129,7 @@ const prepareContext = (image: Image, sequence: string) => {
       minutes: dates.minutes,
       seconds: dates.seconds,
       milliseconds: dates.milliseconds,
-      raw: taken.toISOString(),
+      raw: `${d}T${time_ms}Z`,
     },
     image: {
       width: image.width,
