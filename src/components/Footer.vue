@@ -52,5 +52,21 @@ const sourceLinks = [
         phabricator
       </a>
     </div>
+    <div class="flex items-center gap-1">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/3/3b/Grafana_icon.svg"
+        alt="Grafana logo"
+        class="w-4 h-4"
+      />
+      &nbsp;
+      <a
+        href="https://grafana.wmcloud.org/d/TJuKfnt4z/tool-dashboard?orgId=1&var-namespace=tool-curator&var-cluster=P8433460076D33992&from=now-1h&to=now&timezone=utc"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:underline"
+      >
+        grafana
+      </a>
+    </div>
   </div>
 </template>
