@@ -134,14 +134,14 @@ onMounted(() => {
           />
         </template>
         <template v-else-if="col.field === 'filename' && data.status === UPLOAD_STATUS.Completed">
-            <a
-              :href="decodeURIComponent(data.success)"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-green-600 hover:underline"
-            >
-              {{ data.filename }}
-            </a>
+          <a
+            :href="decodeURIComponent(data.success)"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-green-600 hover:underline"
+          >
+            {{ data.filename }}
+          </a>
         </template>
         <template v-else-if="col.field === 'wikitext'">
           <pre class="text-xs">{{ data[col.field] }}</pre>

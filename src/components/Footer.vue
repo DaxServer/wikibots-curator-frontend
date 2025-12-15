@@ -44,7 +44,7 @@ const sourceLinks = [
       />
       &nbsp;
       <a
-        href="https://phabricator.wikimedia.org/tag/tool-curator/"
+        href="https://phabricator.wikimedia.org/project/profile/8377/"
         target="_blank"
         rel="noopener noreferrer"
         class="hover:underline"
