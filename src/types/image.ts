@@ -76,6 +76,7 @@ export const UPLOAD_STATUS = {
   InProgress: 'in_progress',
   Completed: 'completed',
   Failed: 'failed',
+  Duplicate: 'duplicate',
 } as const
 
 export type UploadStatus = (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS]
@@ -89,7 +90,7 @@ export type UploadStatusUpdate =
     }
   | {
       key: string
-      status: typeof UPLOAD_STATUS.Failed
+      status: typeof UPLOAD_STATUS.Failed | typeof UPLOAD_STATUS.Duplicate
       error: StructuredError
       success?: never
     }

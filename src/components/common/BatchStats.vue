@@ -12,6 +12,12 @@ defineProps<{
       :value="`${stats.completed} successful`"
     />
     <Tag
+      v-if="stats.duplicate > 0"
+      severity="contrast"
+      :value="`${stats.duplicate} duplicate${stats.duplicate > 1 ? 's' : ''}`"
+      :style="{ backgroundColor: 'var(--p-fuchsia-50)', color: 'var(--p-fuchsia-800)' }"
+    />
+    <Tag
       v-if="stats.failed > 0"
       severity="danger"
       :value="`${stats.failed} failed`"

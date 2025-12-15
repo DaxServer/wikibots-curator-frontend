@@ -27,6 +27,7 @@ const selectOptions = ref([
   { label: 'In Progress', value: UPLOAD_STATUS.InProgress },
   { label: 'Successful', value: UPLOAD_STATUS.Completed },
   { label: 'Failed', value: UPLOAD_STATUS.Failed },
+  { label: 'Duplicate', value: UPLOAD_STATUS.Duplicate },
 ])
 
 const filteredUploads = computed(() => {
@@ -44,6 +45,8 @@ const statusTagSeverity = (status: UploadStatus) => {
       return 'secondary'
     case UPLOAD_STATUS.Failed:
       return 'danger'
+    case UPLOAD_STATUS.Duplicate:
+      return 'contrast'
     case UPLOAD_STATUS.Completed:
       return 'success'
     default:
@@ -114,7 +117,14 @@ onMounted(() => {
           </a>
         </template>
         <template v-else-if="col.field === 'status'">
-          <Tag :severity="statusTagSeverity(data.status)">
+          <Tag
+            :severity="statusTagSeverity(data.status)"
+            :style="
+              data.status === UPLOAD_STATUS.Duplicate
+                ? { backgroundColor: 'var(--p-fuchsia-50)', color: 'var(--p-fuchsia-800)' }
+                : {}
+            "
+          >
             {{ data.status }}
           </Tag>
         </template>

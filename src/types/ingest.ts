@@ -27,6 +27,7 @@ export interface Batch {
     failed: number
     queued: number
     in_progress: number
+    duplicate: number
   }
 }
 

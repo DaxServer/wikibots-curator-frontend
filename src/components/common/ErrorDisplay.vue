@@ -4,14 +4,9 @@ defineProps<{ error: StructuredError }>()
 
 <template>
   <div class="text-sm">
-    <div class="text-red-500">{{ error.message }}</div>
-
     <template v-if="error.type === 'duplicate'">
-      <div
-        v-if="error.links.length > 0"
-        class="mt-1"
-      >
-        <span class="font-semibold">Duplicates:</span>
+      <div v-if="error.links.length > 0">
+        <span class="font-semibold text-fuchsia-800">Duplicates:</span>
         <ul class="list-disc list-inside">
           <li
             v-for="(link, idx) in error.links"
@@ -30,5 +25,12 @@ defineProps<{ error: StructuredError }>()
         </ul>
       </div>
     </template>
+
+    <div
+      v-else
+      class="text-red-500"
+    >
+      {{ error.message }}
+    </div>
   </div>
 </template>

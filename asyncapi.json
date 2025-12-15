@@ -567,28 +567,30 @@
       },
       "BatchStats": {
         "type": "object",
-        "required": [
-          "total",
-          "queued",
-          "in_progress",
-          "completed",
-          "failed"
-        ],
         "properties": {
           "total": {
-            "type": "integer"
+            "type": "integer",
+            "default": 0
           },
           "queued": {
-            "type": "integer"
+            "type": "integer",
+            "default": 0
           },
           "in_progress": {
-            "type": "integer"
+            "type": "integer",
+            "default": 0
           },
           "completed": {
-            "type": "integer"
+            "type": "integer",
+            "default": 0
           },
           "failed": {
-            "type": "integer"
+            "type": "integer",
+            "default": 0
+          },
+          "duplicate": {
+            "type": "integer",
+            "default": 0
           }
         }
       },

@@ -30,12 +30,12 @@ const CUSTOM_PYDANTIC_PRESET = {
 
       const decoratorArgs = []
 
-      if (property.property.originalInput['description']) {
-        decoratorArgs.push(`description='''${property.property.originalInput['description']}'''`)
+      if (property.property.originalInput.description) {
+        decoratorArgs.push(`description='''${property.property.originalInput.description}'''`)
       }
 
       // Fix: Check for default value in originalInput
-      const defaultValue = property.property.originalInput['default']
+      const defaultValue = property.property.originalInput.default
       if (defaultValue !== undefined) {
         if (typeof defaultValue === 'string') {
           decoratorArgs.push(`default='${defaultValue}'`)
