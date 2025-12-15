@@ -69,9 +69,10 @@ const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
       body: JSON.stringify({ [event.field]: event.newValue }),
     })
     if (!response.ok) throw new Error('Failed to update data')
-    loadLazyData()
   } catch (e) {
-    console.error(e)
+    alert('Failed to update data')
+  } finally {
+    loadLazyData()
   }
 }
 
