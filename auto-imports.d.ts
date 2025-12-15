@@ -141,7 +141,7 @@ declare global {
   export type { MeterItem } from 'primevue'
   import('primevue')
   // @ts-ignore
-  export type { DataTablePageEvent } from 'primevue/datatable'
+  export type { DataTableCellEditCompleteEvent, DataTablePageEvent } from 'primevue/datatable'
   import('primevue/datatable')
   // @ts-ignore
   export type { DataViewPageEvent } from 'primevue/dataview'

@@ -55,6 +55,8 @@ const onTitleChange = (id: string, title: string) => {
           severity="info"
           variant="simple"
           size="small"
+          icon="pi pi-spinner pi-spin"
+          class="pl-3"
           :pt="{
             transition: {
               name: 'none',
@@ -70,6 +72,8 @@ const onTitleChange = (id: string, title: string) => {
           severity="error"
           variant="simple"
           size="small"
+          icon="pi pi-times-circle"
+          class="pl-3"
           :pt="{
             transition: {
               name: 'none',
@@ -78,7 +82,7 @@ const onTitleChange = (id: string, title: string) => {
             },
           }"
         >
-          Title is not possible
+          Title is not possible.
           <a
             :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(effectiveTitle)}`"
             class="text-primary hover:underline"
@@ -94,6 +98,8 @@ const onTitleChange = (id: string, title: string) => {
           severity="error"
           variant="simple"
           size="small"
+          icon="pi pi-times-circle"
+          class="pl-3"
           :pt="{
             transition: {
               name: 'none',
@@ -109,6 +115,8 @@ const onTitleChange = (id: string, title: string) => {
           severity="warn"
           variant="simple"
           size="small"
+          icon="pi pi-exclamation-triangle"
+          class="pl-3"
           :pt="{
             transition: {
               name: 'none',
@@ -124,6 +132,8 @@ const onTitleChange = (id: string, title: string) => {
           severity="success"
           variant="simple"
           size="small"
+          icon="pi pi-check-circle"
+          class="pl-3"
           :pt="{
             transition: {
               name: 'none',

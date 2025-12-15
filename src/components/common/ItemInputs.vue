@@ -85,6 +85,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
           :severity="isFallbackDescription ? 'warn' : 'secondary'"
           variant="simple"
           size="small"
+          class="pl-3"
           :pt="{
             transition: {
               name: 'none',
@@ -116,7 +117,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         :severity="isFallbackCategories ? 'warn' : 'secondary'"
         variant="simple"
         size="small"
-        class="-mt-3"
+        class="-mt-3 pl-3"
         :pt="{
           transition: {
             name: 'none',
@@ -160,7 +161,8 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         severity="secondary"
         variant="simple"
         size="small"
-        icon="pi pi-info-circle"
+        icon="pi pi-exclamation-triangle"
+        class="pl-3"
       >
         SDC copyright license and copyright status will not be generated. Example:
         {{ licenseTemplate }}
@@ -170,7 +172,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         :severity="isFallbackLicense ? 'warn' : 'secondary'"
         variant="simple"
         size="small"
-        class="mt-1"
+        class="mt-1 pl-3"
         :pt="{
           transition: {
             name: 'none',
