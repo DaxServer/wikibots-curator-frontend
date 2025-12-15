@@ -162,8 +162,11 @@ export const useCollectionsStore = defineStore('collections', () => {
   )
   const selectedItemsKeys = computed(() => selectedItems.value.map((i) => i.id))
   const selectedCount = computed(() => selectedItems.value.length)
-  const itemsWithErrors = computed(
+  const itemsWithErrorsCount = computed(
     () => selectedItems.value.filter((i) => i.meta.titleStatus === 'taken').length,
+  )
+  const itemsWithExistingTitlesCount = computed(
+    () => selectedItems.value.filter((i) => i.image.existing.length > 0).length,
   )
 
   return {
@@ -191,7 +194,8 @@ export const useCollectionsStore = defineStore('collections', () => {
     selectedCount,
     selectedItems,
     selectedItemsKeys,
-    itemsWithErrors,
+    itemsWithErrorsCount,
+    itemsWithExistingTitlesCount,
     batches,
     batchesTotal,
     batchUploads,

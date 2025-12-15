@@ -56,6 +56,25 @@ const onTableChange = () => {
   loadLazyData()
 }
 
+const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
+  if (event.newValue === event.value) return
+
+  try {
+    const url = `/api/admin/${selectedTable.value}/${event.data.id}`
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ [event.field]: event.newValue }),
+    })
+    if (!response.ok) throw new Error('Failed to update data')
+    loadLazyData()
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 onMounted(() => {
   loadLazyData()
 })
@@ -79,11 +98,17 @@ onMounted(() => {
       :value="items"
       lazy
       paginator
+      paginator-position="both"
+      paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
+      current-page-report-template="Page {currentPage} of {totalPages}"
+      :alwaysShowPaginator="false"
+      :rows-per-page-options="[10, 25, 50, 100, 200]"
+      :edit-mode="selectedTable === 'upload_requests' ? 'cell' : undefined"
+      :first="lazyParams.first"
       :rows="lazyParams.rows"
       :total-records="totalRecords"
-      :loading="loading"
       @page="loadLazyData"
-      :first="lazyParams.first"
+      @cell-edit-complete="onCellEditComplete"
       :row-class="() => ({ 'align-top': true })"
     >
       <Column
@@ -92,25 +117,30 @@ onMounted(() => {
         :field="col.field"
         :header="col.header"
       >
-        <template
-          v-if="['created_at', 'updated_at'].includes(col.field)"
-          #body="slotProps"
-        >
-          {{ new Date(slotProps.data[col.field]).toLocaleString() }}
+        <template #editor="{ data, field }">
+          <Textarea
+            v-model="data[field]"
+            autofocus
+            fluid
+            auto-resize
+          />
         </template>
-        <template
-          v-else-if="col.field === 'wikitext'"
-          #body="slotProps"
-        >
-          <pre class="text-xs">{{ slotProps.data[col.field] }}</pre>
-        </template>
-        <template
-          v-else-if="col.field === 'error' || col.field === 'labels'"
-          #body="slotProps"
-        >
-          <pre class="text-xs whitespace-pre-wrap">{{
-            JSON.stringify(slotProps.data[col.field], null, 2)
-          }}</pre>
+        <template #body="{ data, field }">
+          <Skeleton v-if="loading" />
+          <template v-else-if="['created_at', 'updated_at'].includes(col.field)">
+            {{ new Date(data[field as string]).toLocaleString() }}
+          </template>
+          <template v-else-if="col.field === 'wikitext'">
+            <pre class="text-xs">{{ data[field as string] }}</pre>
+          </template>
+          <template v-else-if="col.field === 'error' || col.field === 'labels'">
+            <pre class="text-xs whitespace-pre-wrap">{{
+              JSON.stringify(data[field as string], null, 2)
+            }}</pre>
+          </template>
+          <template v-else>
+            {{ data[field as string] }}
+          </template>
         </template>
       </Column>
     </DataTable>

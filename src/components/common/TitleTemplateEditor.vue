@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { useTitleTemplate } from '@/composables/useTitleTemplate'
-import { AVAILABLE_IMAGE_FIELDS } from '@/utils/titleTemplate'
-import { onMounted } from 'vue'
-
 const {
   error,
   highlightedTemplate,

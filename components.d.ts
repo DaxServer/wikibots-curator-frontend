@@ -52,6 +52,7 @@ declare module 'vue' {
     Select: typeof import('primevue/select')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']
     SharedDataTable: typeof import('./src/components/SharedDataTable.vue')['default']
+    Skeleton: typeof import('primevue/skeleton')['default']
     StatementItem: typeof import('./src/components/wikidata/StatementItem.vue')['default']
     StatementsList: typeof import('./src/components/wikidata/StatementsList.vue')['default']
     Step: typeof import('primevue/step')['default']

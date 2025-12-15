@@ -72,10 +72,7 @@ const disablePreview = computed(() => {
         Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
       </Message>
       <div class="flex items-center gap-2">
-        <div
-          v-if="store.itemsWithErrors > 0"
-          class="flex items-center gap-2 mr-2"
-        >
+        <div class="flex items-center gap-2 mr-2">
           <Checkbox
             v-model="showErrorsOnly"
             binary
@@ -89,11 +86,12 @@ const disablePreview = computed(() => {
           </label>
         </div>
         <Message
-          v-if="store.itemsWithErrors > 0"
+          v-if="store.itemsWithErrorsCount > 0"
           severity="error"
           icon="pi pi-exclamation-triangle"
         >
-          {{ store.itemsWithErrors }} item{{ store.itemsWithErrors > 1 ? 's' : '' }} with errors
+          {{ store.itemsWithErrorsCount }} item{{ store.itemsWithErrorsCount > 1 ? 's' : '' }} with
+          errors
         </Message>
         <Button
           icon="pi pi-eye"
@@ -143,6 +141,15 @@ const disablePreview = computed(() => {
             :altPrefix="altPrefix"
           />
         </div>
+      </template>
+
+      <template #empty>
+        <Message
+          severity="error"
+          icon="pi pi-info-circle"
+        >
+          No items to display
+        </Message>
       </template>
     </DataView>
   </div>

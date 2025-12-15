@@ -26,7 +26,7 @@ export default defineConfig((): import('vite').UserConfig => {
           },
           {
             from: 'primevue/datatable',
-            imports: ['DataTablePageEvent'],
+            imports: ['DataTableCellEditCompleteEvent', 'DataTablePageEvent'],
             type: true,
           },
           {

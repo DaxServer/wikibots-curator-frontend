@@ -12,6 +12,7 @@
       "ComponentPublicInstance",
       "ComputedRef",
       "Creator",
+      "DataTableCellEditCompleteEvent",
       "DataTablePageEvent",
       "DataValue",
       "DataValueEntityId",
