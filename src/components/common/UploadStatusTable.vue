@@ -13,12 +13,16 @@ const meters = computed<MeterItem[]>(() => {
   const failed = store.selectedItems.filter(
     (item) => item.meta.status === UPLOAD_STATUS.Failed,
   ).length
+  const duplicate = store.selectedItems.filter(
+    (item) => item.meta.status === UPLOAD_STATUS.Duplicate,
+  ).length
   const queued = store.selectedItems.filter(
     (item) => item.meta.status === UPLOAD_STATUS.Queued,
   ).length
 
   return [
     { label: 'Successful', value: (successful * 100) / total, color: 'var(--p-green-500)' },
+    { label: 'Duplicate', value: (duplicate * 100) / total, color: 'var(--p-fuchsia-800)' },
     { label: 'Failed', value: (failed * 100) / total, color: 'var(--p-red-500)' },
     { label: 'Processing', value: (inProgress * 100) / total, color: 'var(--p-blue-500)' },
     { label: 'Queued', value: (queued * 100) / total },
@@ -29,6 +33,7 @@ const getRowClass = (data: Item) => {
   const status = data.meta.status
   if (status === UPLOAD_STATUS.Completed) return 'bg-green-100'
   if (status === UPLOAD_STATUS.Failed) return 'bg-red-100'
+  if (status === UPLOAD_STATUS.Duplicate) return 'bg-fuchsia-50'
   if (status === UPLOAD_STATUS.InProgress) return 'bg-blue-100'
   return ''
 }
