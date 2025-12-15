@@ -9,7 +9,7 @@ defineProps<{
     <Tag
       v-if="stats.completed > 0"
       severity="success"
-      :value="`${stats.completed} successful`"
+      :value="`${stats.completed} uploaded`"
     />
     <Tag
       v-if="stats.duplicate > 0"

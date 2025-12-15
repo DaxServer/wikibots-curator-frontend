@@ -15,7 +15,6 @@ const columns = [
   { field: 'key', header: 'Mapillary image ID' },
   { field: 'status', header: 'Status' },
   { field: 'error', header: 'Error' },
-  { field: 'success', header: 'Success' },
   { field: 'filename', header: 'File name' },
   { field: 'wikitext', header: 'Wikitext' },
 ]
@@ -23,11 +22,11 @@ const columns = [
 const selectValues = ref('all')
 const selectOptions = ref([
   { label: 'All', value: 'all' },
-  { label: 'Queued', value: UPLOAD_STATUS.Queued },
-  { label: 'In Progress', value: UPLOAD_STATUS.InProgress },
-  { label: 'Successful', value: UPLOAD_STATUS.Completed },
+  { label: 'Uploaded', value: UPLOAD_STATUS.Completed },
+  { label: 'Duplicates', value: UPLOAD_STATUS.Duplicate },
   { label: 'Failed', value: UPLOAD_STATUS.Failed },
-  { label: 'Duplicate', value: UPLOAD_STATUS.Duplicate },
+  { label: 'In progress', value: UPLOAD_STATUS.InProgress },
+  { label: 'Queued', value: UPLOAD_STATUS.Queued },
 ])
 
 const filteredUploads = computed(() => {
@@ -134,18 +133,15 @@ onMounted(() => {
             :error="data.error"
           />
         </template>
-        <template v-else-if="col.field === 'success'">
-          <span
-            v-if="data.success"
-            class="text-green-500"
-          >
-            <ExternalLink
+        <template v-else-if="col.field === 'filename' && data.status === UPLOAD_STATUS.Completed">
+            <a
               :href="decodeURIComponent(data.success)"
-              show-icon
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-green-600 hover:underline"
             >
-              View file on Commons
-            </ExternalLink>
-          </span>
+              {{ data.filename }}
+            </a>
         </template>
         <template v-else-if="col.field === 'wikitext'">
           <pre class="text-xs">{{ data[col.field] }}</pre>
