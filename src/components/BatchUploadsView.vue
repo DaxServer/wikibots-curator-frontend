@@ -8,14 +8,15 @@ defineEmits<{
 }>()
 
 const store = useCollectionsStore()
-const { loadBatchUploads } = useCollections()
+const { loadBatchUploads, retryUploads } = useCollections()
+const authStore = useAuthStore()
 
 const columns = [
   { field: 'id', header: 'ID' },
-  { field: 'key', header: 'Mapillary image ID' },
+  { field: 'key', header: 'Mapillary Image ID' },
   { field: 'status', header: 'Status' },
   { field: 'error', header: 'Error' },
-  { field: 'filename', header: 'File name' },
+  { field: 'filename', header: 'Filename' },
   { field: 'wikitext', header: 'Wikitext' },
 ]
 
@@ -53,6 +54,46 @@ const statusTagSeverity = (status: UploadStatus) => {
   }
 }
 
+const statCards = computed(() => [
+  {
+    label: 'Total',
+    count: props.batch.stats.total,
+    color: 'gray' as const,
+    value: 'all',
+    alwaysActive: true,
+  },
+  {
+    label: 'Uploaded',
+    count: props.batch.stats.completed,
+    color: 'green' as const,
+    value: UPLOAD_STATUS.Completed,
+  },
+  {
+    label: 'Failed',
+    count: props.batch.stats.failed,
+    color: 'red' as const,
+    value: UPLOAD_STATUS.Failed,
+  },
+  {
+    label: 'Duplicates',
+    count: props.batch.stats.duplicate,
+    color: 'fuchsia' as const,
+    value: UPLOAD_STATUS.Duplicate,
+  },
+  {
+    label: 'Processing',
+    count: props.batch.stats.in_progress,
+    color: 'blue' as const,
+    value: UPLOAD_STATUS.InProgress,
+  },
+  {
+    label: 'Queued',
+    count: props.batch.stats.queued,
+    color: 'gray' as const,
+    value: UPLOAD_STATUS.Queued,
+  },
+])
+
 onMounted(() => {
   loadBatchUploads(props.batch.id)
 })
@@ -68,21 +109,44 @@ onMounted(() => {
         class="mr-2"
         label="Back to batches"
       />
-      <Card
-        :pt="{
-          content: {
-            class: 'flex flex-col gap-2',
-          },
-        }"
-      >
-        <template #content>
-          <div class="text-xl font-medium">Batch: {{ batch.id }}</div>
-          <div class="text-xl font-small">Uploads: {{ batch.stats.total }}</div>
-          <div class="text-sm text-gray-500">
-            Uploaded by: {{ batch.username }} | Created at:
-            {{ new Date(batch.created_at).toLocaleString() }}
+      <Card>
+        <template #title>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span>Batch #{{ batch.id }}</span>
+              <span class="text-sm font-normal text-gray-500">
+                {{ new Date(batch.created_at).toLocaleString() }}
+              </span>
+            </div>
+            <Button
+              v-if="batch.stats.failed > 0 && authStore.userid === batch.userid"
+              icon="pi pi-refresh"
+              severity="danger"
+              label="Retry Failed"
+              size="small"
+              @click="retryUploads(batch.id)"
+            />
           </div>
-          <BatchStats :stats="batch.stats" />
+        </template>
+        <template #subtitle>
+          <div class="flex items-center gap-2 mt-1">
+            <i class="pi pi-user text-sm"></i>
+            <span>{{ batch.username }}</span>
+          </div>
+        </template>
+        <template #content>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-2">
+            <BatchStatCard
+              v-for="stat in statCards"
+              :key="stat.label"
+              :label="stat.label"
+              :count="stat.count"
+              :color="stat.color"
+              :always-active="stat.alwaysActive"
+              :selected="selectValues === stat.value"
+              @click="selectValues = stat.value"
+            />
+          </div>
         </template>
       </Card>
 

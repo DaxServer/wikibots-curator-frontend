@@ -14,6 +14,7 @@ declare module 'vue' {
     AdminView: typeof import('./src/components/AdminView.vue')['default']
     App: typeof import('./src/App.vue')['default']
     BatchesView: typeof import('./src/components/BatchesView.vue')['default']
+    BatchStatCard: typeof import('./src/components/common/BatchStatCard.vue')['default']
     BatchStats: typeof import('./src/components/common/BatchStats.vue')['default']
     BatchUploadsView: typeof import('./src/components/BatchUploadsView.vue')['default']
     Button: typeof import('primevue/button')['default']

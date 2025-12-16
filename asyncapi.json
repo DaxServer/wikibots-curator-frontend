@@ -48,6 +48,9 @@
         },
         "UploadsComplete": {
           "$ref": "#/components/messages/UploadsComplete"
+        },
+        "RetryUploads": {
+          "$ref": "#/components/messages/RetryUploads"
         }
       }
     }
@@ -73,6 +76,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/FetchBatchUploads"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/RetryUploads"
         }
       ]
     },
@@ -200,6 +206,13 @@
         "title": "Notification that a batch has completed processing",
         "payload": {
           "$ref": "#/components/schemas/UploadsCompletePayload"
+        }
+      },
+      "RetryUploads": {
+        "name": "RETRY_UPLOADS",
+        "title": "Retry failed uploads for a batch",
+        "payload": {
+          "$ref": "#/components/schemas/RetryUploadsPayload"
         }
       }
     },
@@ -497,6 +510,33 @@
           "data": {
             "type": "integer",
             "description": "Completed batch identifier"
+          }
+        }
+      },
+      "RetryUploadsPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "RETRY_UPLOADS"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RetryUploadsData"
+          }
+        }
+      },
+      "RetryUploadsData": {
+        "type": "object",
+        "required": [
+          "batch_id"
+        ],
+        "properties": {
+          "batch_id": {
+            "type": "integer",
+            "description": "Batch identifier"
           }
         }
       },
