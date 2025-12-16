@@ -1,6 +1,11 @@
 import type { Image } from '@/types/image'
 import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
-import type { FetchBatchUploadsMessage, FetchBatchesMessage, ServerMessage } from '@/types/messages'
+import type {
+  FetchBatchUploadsMessage,
+  FetchBatchesMessage,
+  RetryUploadsMessage,
+  ServerMessage,
+} from '@/types/messages'
 import { watch } from 'vue'
 
 export const useCollections = () => {
@@ -62,6 +67,17 @@ export const useCollections = () => {
           batch_id: batchId,
         },
       } as FetchBatchUploadsMessage),
+    )
+  }
+
+  const retryUploads = (batchId: number) => {
+    send(
+      JSON.stringify({
+        type: 'RETRY_UPLOADS',
+        data: {
+          batch_id: batchId,
+        },
+      } as RetryUploadsMessage),
     )
   }
 
@@ -160,5 +176,13 @@ export const useCollections = () => {
     }
   })
 
-  return { loadCollection, loadSDC, wikitext, submitUpload, loadBatches, loadBatchUploads }
+  return {
+    loadCollection,
+    loadSDC,
+    wikitext,
+    submitUpload,
+    loadBatches,
+    loadBatchUploads,
+    retryUploads,
+  }
 }

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 
+const { retryUploads } = useCollections()
+
 const total = Math.max(1, store.selectedItems.length) // To avoid division by zero
 
 const meters = computed<MeterItem[]>(() => {
@@ -38,6 +40,21 @@ const getRowClass = (data: Item) => {
   return ''
 }
 
+const canRetry = computed(() => {
+  const hasFailed = store.selectedItems.some((item) => item.meta.status === UPLOAD_STATUS.Failed)
+  const isCompleted = !store.selectedItems.some(
+    (item) =>
+      item.meta.status === UPLOAD_STATUS.InProgress || item.meta.status === UPLOAD_STATUS.Queued,
+  )
+  return hasFailed && !!store.batchId && isCompleted
+})
+
+const onRetry = () => {
+  if (store.batchId) {
+    retryUploads(store.batchId)
+  }
+}
+
 onMounted(() => {
   window.scroll({
     top: 0,
@@ -54,7 +71,17 @@ onMounted(() => {
   >
     <template #header>
       <div class="flex flex-col gap-3">
-        Uploading
+        <div class="flex items-center justify-between">
+          <span class="text-xl font-bold">Upload Status</span>
+          <Button
+            v-if="canRetry"
+            icon="pi pi-refresh"
+            severity="danger"
+            label="Retry Failed"
+            @click="onRetry"
+            size="small"
+          />
+        </div>
         <MeterGroup :value="meters" />
       </div>
     </template>

@@ -156,7 +156,7 @@ declare global {
   export type { ErrorLink, DuplicateError, GenericError, StructuredError, Batch, UploadRequest, LoadItemsOptions, PaginatedResponse, User } from './src/types/ingest'
   import('./src/types/ingest')
   // @ts-ignore
-  export type { UploadsUpdateMessage, UploadsCompleteMessage, CollectionImagesMessage, ErrorMessage, UploadCreatedMessage, SubscribedMessage, BatchesListMessage, BatchUploadsListMessage, ServerMessage, FetchImagesMessage, UploadMessagePayload, UploadMessage, SubscribeBatchMessage, FetchBatchesPayload, FetchBatchesMessage, FetchBatchUploadsPayload, FetchBatchUploadsMessage, ClientMessage } from './src/types/messages'
+  export type { UploadsUpdateMessage, UploadsCompleteMessage, CollectionImagesMessage, ErrorMessage, UploadCreatedMessage, SubscribedMessage, BatchesListMessage, BatchUploadsListMessage, ServerMessage, FetchImagesMessage, UploadMessagePayload, UploadMessage, SubscribeBatchMessage, FetchBatchesPayload, FetchBatchesMessage, FetchBatchUploadsPayload, FetchBatchUploadsMessage, RetryUploadsPayload, RetryUploadsMessage, ClientMessage } from './src/types/messages'
   import('./src/types/messages')
   // @ts-ignore
   export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'

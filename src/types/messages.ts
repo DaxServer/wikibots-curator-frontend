@@ -90,9 +90,19 @@ export type FetchBatchUploadsMessage = {
   data: FetchBatchUploadsPayload
 }
 
+export type RetryUploadsPayload = {
+  batch_id: number
+}
+
+export type RetryUploadsMessage = {
+  type: 'RETRY_UPLOADS'
+  data: RetryUploadsPayload
+}
+
 export type ClientMessage =
   | FetchImagesMessage
   | UploadMessage
   | SubscribeBatchMessage
   | FetchBatchesMessage
   | FetchBatchUploadsMessage
+  | RetryUploadsMessage
