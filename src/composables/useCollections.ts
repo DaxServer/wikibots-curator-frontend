@@ -43,13 +43,16 @@ export const useCollections = () => {
     send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input }))
   }
 
-  const loadBatches = (page: number, rows: number, userid?: string) => {
+  const loadBatches = (page: number, rows: number, userid?: string, filter?: string) => {
     const payload: FetchBatchesMessage['data'] = {
       page: page / rows + 1,
       limit: rows,
     }
     if (userid) {
       payload.userid = userid
+    }
+    if (filter) {
+      payload.filter = filter
     }
     send(
       JSON.stringify({

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-const store = useCollectionsStore()
+import { debounce } from 'ts-debounce'
+
 const authStore = useAuthStore()
+const store = useCollectionsStore()
+
 const { loadBatches } = useCollections()
 
 const selectedBatchId = ref<number | null>(null)
@@ -14,6 +17,8 @@ const filterOptions = ref([
   { label: 'All uploads', value: 'all' },
 ])
 const selectedFilter = ref(filterOptions.value[0])
+const filterText = ref('')
+const isSearching = ref(false)
 
 const columns = computed(() => {
   const cols = [
@@ -37,7 +42,40 @@ const loadData = async (event?: DataTablePageEvent) => {
   params.value = event || params.value
   const userid =
     selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
-  loadBatches(params.value.first, params.value.rows, userid)
+  loadBatches(params.value.first, params.value.rows, userid, filterText.value)
+}
+
+const doSearch = async () => {
+  params.value.first = 0
+  params.value.page = 1
+  isSearching.value = true
+  await loadData()
+  isSearching.value = false
+}
+
+const debouncedSearch = debounce(() => {
+  doSearch()
+}, 500)
+
+watch(filterText, () => {
+  if (filterText.value) {
+    isSearching.value = true
+  }
+  debouncedSearch()
+})
+
+const onEnter = () => {
+  // Cancel pending debounce if any
+  debouncedSearch.cancel()
+  doSearch()
+}
+
+const clearSearch = () => {
+  filterText.value = ''
+  // Clearing should trigger watch -> debouncedSearch.
+  // But UX usually expects immediate clear.
+  debouncedSearch.cancel()
+  doSearch()
 }
 
 onMounted(() => {
@@ -51,13 +89,36 @@ onMounted(() => {
     class="flex justify-between items-center mb-4 max-w-7xl mx-auto"
   >
     <div class="text-2xl font-bold">Past uploads</div>
-    <SelectButton
-      v-model="selectedFilter"
-      :options="filterOptions"
-      optionLabel="label"
-      :allowEmpty="false"
-      @change="loadData()"
-    />
+    <div class="flex items-center gap-4">
+      <FloatLabel variant="on">
+        <IconField>
+          <InputIcon class="pi pi-search" />
+          <InputText
+            id="search-batches"
+            v-model="filterText"
+            class="min-w-2xs"
+            @keydown.enter="onEnter"
+          />
+          <InputIcon
+            v-if="isSearching"
+            class="pi pi-spinner pi-spin"
+          />
+          <InputIcon
+            v-else-if="filterText"
+            class="pi pi-times cursor-pointer"
+            @click="clearSearch"
+          />
+        </IconField>
+        <label for="search-batches">Search ID or User</label>
+      </FloatLabel>
+      <SelectButton
+        v-model="selectedFilter"
+        :options="filterOptions"
+        optionLabel="label"
+        :allowEmpty="false"
+        @change="loadData()"
+      />
+    </div>
   </div>
   <SharedDataTable
     v-if="!selectedBatchId"
@@ -76,6 +137,21 @@ onMounted(() => {
       }),
     }"
   >
+    <template #header>
+      <FilterHeader
+        v-model:filter-text="filterText"
+        :filter-info="
+          !isSearching
+            ? `(${store.batchesTotal} ${store.batchesTotal === 1 ? 'result' : 'results'})`
+            : undefined
+        "
+        search-placeholder="Search ID or User"
+        search-id="search-batches"
+        :loading="isSearching"
+        @clear="clearSearch"
+        @search="onEnter"
+      />
+    </template>
     <template #body-cell="{ col, data }">
       <template v-if="col.field === 'created_at'">
         {{ new Date(data.created_at).toLocaleString() }}

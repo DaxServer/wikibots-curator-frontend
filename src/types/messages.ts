@@ -74,6 +74,7 @@ export type FetchBatchesPayload = {
   page: number
   limit: number
   userid?: string
+  filter?: string
 }
 
 export type FetchBatchesMessage = {

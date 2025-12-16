@@ -7,9 +7,10 @@ defineEmits<{
   back: []
 }>()
 
-const store = useCollectionsStore()
-const { loadBatchUploads, retryUploads } = useCollections()
 const authStore = useAuthStore()
+const store = useCollectionsStore()
+
+const { loadBatchUploads, retryUploads } = useCollections()
 
 const columns = [
   { field: 'id', header: 'ID' },
@@ -20,41 +21,7 @@ const columns = [
   { field: 'wikitext', header: 'Wikitext' },
 ]
 
-const selectValues = ref('all')
-const selectOptions = ref([
-  { label: 'All', value: 'all' },
-  { label: 'Uploaded', value: UPLOAD_STATUS.Completed },
-  { label: 'Duplicates', value: UPLOAD_STATUS.Duplicate },
-  { label: 'Failed', value: UPLOAD_STATUS.Failed },
-  { label: 'In progress', value: UPLOAD_STATUS.InProgress },
-  { label: 'Queued', value: UPLOAD_STATUS.Queued },
-])
-
-const filteredUploads = computed(() => {
-  if (selectValues.value === 'all') {
-    return store.batchUploads
-  }
-  return store.batchUploads.filter((upload) => upload.status === selectValues.value)
-})
-
-const statusTagSeverity = (status: UploadStatus) => {
-  switch (status) {
-    case UPLOAD_STATUS.InProgress:
-      return 'info'
-    case UPLOAD_STATUS.Queued:
-      return 'secondary'
-    case UPLOAD_STATUS.Failed:
-      return 'danger'
-    case UPLOAD_STATUS.Duplicate:
-      return 'contrast'
-    case UPLOAD_STATUS.Completed:
-      return 'success'
-    default:
-      return 'secondary'
-  }
-}
-
-const statCards = computed(() => [
+const statCards = computed((): BatchStatsCard[] => [
   {
     label: 'Total',
     count: props.batch.stats.total,
@@ -93,6 +60,49 @@ const statCards = computed(() => [
     value: UPLOAD_STATUS.Queued,
   },
 ])
+
+const searchText = ref('')
+const selectValues = ref<'all' | UploadStatus>('all')
+
+const filteredUploads = computed(() => {
+  let uploads = store.batchUploads
+
+  if (selectValues.value !== 'all') {
+    uploads = uploads.filter((upload) => upload.status === selectValues.value)
+  }
+
+  if (searchText.value) {
+    const lower = searchText.value.toLowerCase()
+    uploads = uploads.filter(
+      (u) =>
+        u.filename?.toLowerCase().includes(lower) ||
+        u.key?.toLowerCase().includes(lower) ||
+        String(u.id).includes(lower) ||
+        u.wikitext?.toLowerCase().includes(lower) ||
+        u.status.toLowerCase().includes(lower) ||
+        u.error?.message.toLowerCase().includes(lower),
+    )
+  }
+
+  return uploads
+})
+
+const statusTagSeverity = (status: UploadStatus) => {
+  switch (status) {
+    case UPLOAD_STATUS.InProgress:
+      return 'info'
+    case UPLOAD_STATUS.Queued:
+      return 'secondary'
+    case UPLOAD_STATUS.Failed:
+      return 'danger'
+    case UPLOAD_STATUS.Duplicate:
+      return 'contrast'
+    case UPLOAD_STATUS.Completed:
+      return 'success'
+    default:
+      return 'secondary'
+  }
+}
 
 onMounted(() => {
   loadBatchUploads(props.batch.id)
@@ -136,7 +146,7 @@ onMounted(() => {
         </template>
         <template #content>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-2">
-            <BatchStatCard
+            <BatchStatsCard
               v-for="stat in statCards"
               :key="stat.label"
               :label="stat.label"
@@ -149,16 +159,6 @@ onMounted(() => {
           </div>
         </template>
       </Card>
-
-      <div class="flex items-center gap-2">
-        <span class="font-bold">Showing</span>
-        <SelectButton
-          v-model="selectValues"
-          :options="selectOptions"
-          option-value="value"
-          option-label="label"
-        />
-      </div>
     </div>
 
     <SharedDataTable
@@ -167,6 +167,15 @@ onMounted(() => {
       :row-class="() => ({ 'align-top': true })"
       :rows-per-page-options="[10, 20, 50, 100]"
     >
+      <template #header>
+        <FilterHeader
+          v-model:filter-text="searchText"
+          :filter-info="`(${filteredUploads.length} of ${store.batchUploads.length} uploads)`"
+          search-placeholder="Search uploads..."
+          search-id="search-uploads"
+          @clear="searchText = ''"
+        />
+      </template>
       <template #body-cell="{ col, data }">
         <template v-if="col.field === 'key'">
           <a

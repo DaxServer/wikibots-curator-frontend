@@ -79,7 +79,8 @@ const generator = new PythonGenerator({
   presets: [CUSTOM_PYDANTIC_PRESET],
 })
 const inputPath = path.resolve(import.meta.dir, '../asyncapi.json')
-const outputDir = path.resolve(import.meta.dir, '../../backend/src/curator/asyncapi')
+const backendPath = path.resolve(import.meta.dir, '../../backend')
+const outputDir = path.resolve(backendPath, 'src/curator/asyncapi')
 
 async function generate() {
   const content = fs.readFileSync(inputPath, 'utf8')
@@ -154,4 +155,10 @@ async function generate() {
   console.log(`Generated Python models to ${outputDir}`)
 }
 
-generate().catch(console.error)
+await generate()
+Bun.spawnSync(['poetry', 'run', 'black', '.'], {
+  cwd: backendPath,
+})
+Bun.spawnSync(['poetry', 'run', 'isort', '.'], {
+  cwd: backendPath,
+})
