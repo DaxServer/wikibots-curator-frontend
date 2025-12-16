@@ -89,36 +89,13 @@ onMounted(() => {
     class="flex justify-between items-center mb-4 max-w-7xl mx-auto"
   >
     <div class="text-2xl font-bold">Past uploads</div>
-    <div class="flex items-center gap-4">
-      <FloatLabel variant="on">
-        <IconField>
-          <InputIcon class="pi pi-search" />
-          <InputText
-            id="search-batches"
-            v-model="filterText"
-            class="min-w-2xs"
-            @keydown.enter="onEnter"
-          />
-          <InputIcon
-            v-if="isSearching"
-            class="pi pi-spinner pi-spin"
-          />
-          <InputIcon
-            v-else-if="filterText"
-            class="pi pi-times cursor-pointer"
-            @click="clearSearch"
-          />
-        </IconField>
-        <label for="search-batches">Search ID or User</label>
-      </FloatLabel>
-      <SelectButton
-        v-model="selectedFilter"
-        :options="filterOptions"
-        optionLabel="label"
-        :allowEmpty="false"
-        @change="loadData()"
-      />
-    </div>
+    <SelectButton
+      v-model="selectedFilter"
+      :options="filterOptions"
+      optionLabel="label"
+      :allowEmpty="false"
+      @change="loadData()"
+    />
   </div>
   <SharedDataTable
     v-if="!selectedBatchId"
