@@ -50,6 +50,9 @@ defineEmits<{
         </slot>
       </template>
     </Column>
+    <template #header>
+      <slot name="header"></slot>
+    </template>
     <template #empty>
       <div class="text-center py-4">No data available</div>
     </template>

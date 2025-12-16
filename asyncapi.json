@@ -315,6 +315,11 @@
             "type": "string",
             "nullable": true,
             "description": "Optional user id to filter batches"
+          },
+          "filter": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional filter text for batches (id or username)"
           }
         }
       },

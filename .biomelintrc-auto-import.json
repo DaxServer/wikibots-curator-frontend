@@ -3,6 +3,7 @@
     "globals": [
       "AVAILABLE_IMAGE_FIELDS",
       "Batch",
+      "BatchStatsCard",
       "BatchUploadsListMessage",
       "BatchesListMessage",
       "ClientMessage",

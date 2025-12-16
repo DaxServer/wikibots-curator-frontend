@@ -18,7 +18,6 @@ declare global {
   const WikidataProperty: typeof import('./src/types/wikidata').WikidataProperty
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const applyTitleTemplate: typeof import('./src/utils/titleTemplate').applyTitleTemplate
-  const botsStore: typeof import('./src/stores/bots.store').default
   const computed: typeof import('vue').computed
   const createApp: typeof import('vue').createApp
   const createCopyrightLicenseClaim: typeof import('./src/composables/sdc').createCopyrightLicenseClaim
@@ -28,15 +27,12 @@ declare global {
   const createExternalIdStatement: typeof import('./src/composables/sdc').createExternalIdStatement
   const createHeightClaim: typeof import('./src/composables/sdc').createHeightClaim
   const createInceptionClaim: typeof import('./src/composables/sdc').createInceptionClaim
-  const createMapillaryIdClaim: typeof import('./src/composables/sdc').createMapillaryIdClaim
   const createPinia: typeof import('pinia').createPinia
-  const createPublishedInMapillaryClaim: typeof import('./src/composables/sdc').createPublishedInMapillaryClaim
   const createQuantitySnak: typeof import('./src/composables/sdc').createQuantitySnak
   const createQuantityStatement: typeof import('./src/composables/sdc').createQuantityStatement
   const createSomeValueSnak: typeof import('./src/composables/sdc').createSomeValueSnak
   const createSourceOfFileClaim: typeof import('./src/composables/sdc').createSourceOfFileClaim
   const createStatement: typeof import('./src/composables/sdc').createStatement
-  const createStatusFromJob: typeof import('./src/composables/useBotStatus').createStatusFromJob
   const createStringSnak: typeof import('./src/composables/sdc').createStringSnak
   const createTimeSnak: typeof import('./src/composables/sdc').createTimeSnak
   const createTimeStatement: typeof import('./src/composables/sdc').createTimeStatement
@@ -50,14 +46,12 @@ declare global {
   const defineComponent: typeof import('vue').defineComponent
   const defineStore: typeof import('pinia').defineStore
   const effectScope: typeof import('vue').effectScope
-  const formatDuration: typeof import('./src/composables/useFormatDuration').formatDuration
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const getNumericId: typeof import('./src/composables/sdc').getNumericId
   const h: typeof import('vue').h
-  const harborStore: typeof import('./src/stores/harbor.store').default
   const inject: typeof import('vue').inject
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
@@ -65,7 +59,6 @@ declare global {
   const isRef: typeof import('vue').isRef
   const isShallow: typeof import('vue').isShallow
   const isValidExtension: typeof import('./src/utils/titleTemplate').isValidExtension
-  const jobsStore: typeof import('./src/stores/jobs.store').default
   const mapActions: typeof import('pinia').mapActions
   const mapGetters: typeof import('pinia').mapGetters
   const mapState: typeof import('pinia').mapState
@@ -106,19 +99,12 @@ declare global {
   const unref: typeof import('vue').unref
   const useAttrs: typeof import('vue').useAttrs
   const useAuthStore: typeof import('./src/stores/auth.store').useAuthStore
-  const useBotStatus: typeof import('./src/composables/useBotStatus').default
-  const useBotsApi: typeof import('./src/composables/useBotsApi').default
-  const useBotsStore: typeof import('./src/stores/bots.store').useBotsStore
   const useCollections: typeof import('./src/composables/useCollections').useCollections
   const useCollectionsStore: typeof import('./src/stores/collections.store').useCollectionsStore
   const useCommons: typeof import('./src/composables/useCommons').useCommons
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
-  const useHarborApi: typeof import('./src/composables/useHarborApi').default
-  const useHarborStore: typeof import('./src/stores/harbor.store').useHarborStore
   const useId: typeof import('vue').useId
-  const useJobsApi: typeof import('./src/composables/useJobsApi').default
-  const useJobsStore: typeof import('./src/stores/jobs.store').useJobsStore
   const useModel: typeof import('vue').useModel
   const useSlots: typeof import('vue').useSlots
   const useSocket: typeof import('./src/composables/useSocket').useSocket
@@ -147,7 +133,7 @@ declare global {
   export type { DataViewPageEvent } from 'primevue/dataview'
   import('primevue/dataview')
   // @ts-ignore
-  export type { Handler, Layout, CollectionsApiResponse } from './src/types/collections'
+  export type { Handler, Layout, CollectionsApiResponse, BatchStatsCard } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
   export type { Creator, Location, Dates, ExistingPage, Image, Description, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
