@@ -168,40 +168,13 @@ onMounted(() => {
       :rows-per-page-options="[10, 20, 50, 100]"
     >
       <template #header>
-        <div
-          class="flex items-center"
-          :class="{
-            'justify-end': !searchText,
-            'justify-between': searchText,
-          }"
-        >
-          <div
-            v-if="searchText"
-            class="text-sm text-gray-600"
-          >
-            Filtering by:
-            <span class="font-semibold">"{{ searchText }}"</span>
-            <span class="ml-2">
-              ({{ filteredUploads.length }} of {{ store.batchUploads.length }} uploads)
-            </span>
-          </div>
-          <FloatLabel variant="on">
-            <IconField>
-              <InputIcon class="pi pi-search" />
-              <InputText
-                id="search-uploads"
-                v-model="searchText"
-                class="min-w-2xs"
-              />
-              <InputIcon
-                v-if="searchText"
-                class="pi pi-times cursor-pointer"
-                @click="searchText = ''"
-              />
-            </IconField>
-            <label for="search-uploads">Search uploads...</label>
-          </FloatLabel>
-        </div>
+        <FilterHeader
+          v-model:filter-text="searchText"
+          :filter-info="`(${filteredUploads.length} of ${store.batchUploads.length} uploads)`"
+          search-placeholder="Search uploads..."
+          search-id="search-uploads"
+          @clear="searchText = ''"
+        />
       </template>
       <template #body-cell="{ col, data }">
         <template v-if="col.field === 'key'">

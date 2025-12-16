@@ -138,16 +138,19 @@ onMounted(() => {
     }"
   >
     <template #header>
-      <div
-        v-if="filterText"
-        class="text-sm text-gray-600"
-      >
-        Filtering by:
-        <span class="font-semibold">"{{ filterText }}"</span>
-        <span class="ml-2">
-          ({{ store.batchesTotal }} {{ store.batchesTotal === 1 ? 'result' : 'results' }})
-        </span>
-      </div>
+      <FilterHeader
+        v-model:filter-text="filterText"
+        :filter-info="
+          !isSearching
+            ? `(${store.batchesTotal} ${store.batchesTotal === 1 ? 'result' : 'results'})`
+            : undefined
+        "
+        search-placeholder="Search ID or User"
+        search-id="search-batches"
+        :loading="isSearching"
+        @clear="clearSearch"
+        @search="onEnter"
+      />
     </template>
     <template #body-cell="{ col, data }">
       <template v-if="col.field === 'created_at'">
