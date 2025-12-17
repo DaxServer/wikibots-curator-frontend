@@ -150,6 +150,19 @@ export const useCollections = () => {
     send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH', data: batchId }))
   }
 
+  const subscribeBatchesList = (userid?: string, filter?: string) => {
+    send(
+      JSON.stringify({
+        type: 'SUBSCRIBE_BATCHES_LIST',
+        data: { userid, filter },
+      }),
+    )
+  }
+
+  const unsubscribeBatchesList = () => {
+    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCHES_LIST' }))
+  }
+
   const wikitext = (item: Item): string => {
     const meta = commons.applyMetaDefaults(item.meta, commons.buildTitle(item.image))
     return commons.buildWikitext({ ...item, meta: meta as Metadata })
@@ -239,5 +252,7 @@ export const useCollections = () => {
     retryUploads,
     sendSubscribeBatch,
     sendUnsubscribeBatch,
+    subscribeBatchesList,
+    unsubscribeBatchesList,
   }
 }

@@ -22,6 +22,12 @@
         "UnsubscribeBatch": {
           "$ref": "#/components/messages/UnsubscribeBatch"
         },
+        "SubscribeBatchesList": {
+          "$ref": "#/components/messages/SubscribeBatchesList"
+        },
+        "UnsubscribeBatchesList": {
+          "$ref": "#/components/messages/UnsubscribeBatchesList"
+        },
         "FetchBatches": {
           "$ref": "#/components/messages/FetchBatches"
         },
@@ -76,6 +82,12 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/UnsubscribeBatch"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/SubscribeBatchesList"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UnsubscribeBatchesList"
         },
         {
           "$ref": "#/channels/wsChannel/messages/FetchBatches"
@@ -149,6 +161,20 @@
         "title": "Unsubscribe from upload status updates for a batch",
         "payload": {
           "$ref": "#/components/schemas/UnsubscribeBatchPayload"
+        }
+      },
+      "SubscribeBatchesList": {
+        "name": "SUBSCRIBE_BATCHES_LIST",
+        "title": "Subscribe to updates for the batches list",
+        "payload": {
+          "$ref": "#/components/schemas/SubscribeBatchesListPayload"
+        }
+      },
+      "UnsubscribeBatchesList": {
+        "name": "UNSUBSCRIBE_BATCHES_LIST",
+        "title": "Unsubscribe from updates for the batches list",
+        "payload": {
+          "$ref": "#/components/schemas/UnsubscribeBatchesListPayload"
         }
       },
       "FetchBatches": {
@@ -309,6 +335,46 @@
           "data": {
             "type": "integer",
             "description": "Batch identifier"
+          }
+        }
+      },
+      "SubscribeBatchesListPayload": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "SUBSCRIBE_BATCHES_LIST"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SubscribeBatchesListData"
+          }
+        }
+      },
+      "SubscribeBatchesListData": {
+        "type": "object",
+        "properties": {
+          "userid": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional user id to filter batches"
+          },
+          "filter": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional filter text for batches"
+          }
+        }
+      },
+      "UnsubscribeBatchesListPayload": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "UNSUBSCRIBE_BATCHES_LIST"
           }
         }
       },
