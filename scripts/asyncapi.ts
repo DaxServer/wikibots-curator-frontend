@@ -10,7 +10,7 @@ import path from 'node:path'
 const CUSTOM_PYDANTIC_PRESET = {
   class: {
     ...PYTHON_PYDANTIC_PRESET.class,
-    // @ts-ignore
+    // @ts-expect-error
     property({ property, model, renderer }) {
       let type = property.property.type
       const propertyName = property.propertyName

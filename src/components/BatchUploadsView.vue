@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  batch: Batch
+  batch: BatchItem
 }>()
 
 defineEmits<{
@@ -22,11 +22,9 @@ const columns = [
   { field: 'wikitext', header: 'Wikitext' },
 ]
 
-const computedStats = computed(() => {
+const computedStats = computed((): BatchStats => {
   const uploads = store.batchUploads
-  if (uploads.length === 0) {
-    return props.batch.stats
-  }
+
   return {
     total: uploads.length,
     completed: uploads.filter((u) => u.status === UPLOAD_STATUS.Completed).length,
@@ -80,7 +78,7 @@ const statCards = computed((): BatchStatsCard[] => [
 const searchText = ref('')
 const selectValues = ref<'all' | UploadStatus>('all')
 
-const filteredUploads = computed(() => {
+const filteredUploads = computed((): BatchUploadItem[] => {
   let uploads = [...store.batchUploads]
 
   if (selectValues.value !== 'all') {
@@ -126,12 +124,6 @@ const hasPendingJobs = computed(() => {
 
 const isSubscribed = ref(false)
 
-const isProcessing = computed(() => {
-  // We can use store.isStatusChecking here if we want to show loading state
-  // or we can rely on the subscription logic
-  return hasPendingJobs.value
-})
-
 onMounted(() => {
   loadBatchUploads(props.batch.id)
   if (hasPendingJobs.value) {
@@ -174,7 +166,7 @@ onUnmounted(() => {
               </span>
             </div>
             <Tag
-              v-if="isProcessing"
+              v-if="hasPendingJobs"
               severity="info"
               value="Processing Updates..."
               icon="pi pi-spin pi-spinner"
