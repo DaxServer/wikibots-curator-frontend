@@ -10,7 +10,8 @@ defineEmits<{
 const authStore = useAuthStore()
 const store = useCollectionsStore()
 
-const { loadBatchUploads, retryUploads } = useCollections()
+const { loadBatchUploads, retryUploads, sendSubscribeBatch, sendUnsubscribeBatch } =
+  useCollections()
 
 const columns = [
   { field: 'id', header: 'ID' },
@@ -21,41 +22,56 @@ const columns = [
   { field: 'wikitext', header: 'Wikitext' },
 ]
 
+const computedStats = computed(() => {
+  const uploads = store.batchUploads
+  if (uploads.length === 0) {
+    return props.batch.stats
+  }
+  return {
+    total: uploads.length,
+    completed: uploads.filter((u) => u.status === UPLOAD_STATUS.Completed).length,
+    failed: uploads.filter((u) => u.status === UPLOAD_STATUS.Failed).length,
+    duplicate: uploads.filter((u) => u.status === UPLOAD_STATUS.Duplicate).length,
+    in_progress: uploads.filter((u) => u.status === UPLOAD_STATUS.InProgress).length,
+    queued: uploads.filter((u) => u.status === UPLOAD_STATUS.Queued).length,
+  }
+})
+
 const statCards = computed((): BatchStatsCard[] => [
   {
     label: 'Total',
-    count: props.batch.stats.total,
+    count: computedStats.value.total,
     color: 'gray' as const,
     value: 'all',
     alwaysActive: true,
   },
   {
     label: 'Uploaded',
-    count: props.batch.stats.completed,
+    count: computedStats.value.completed,
     color: 'green' as const,
     value: UPLOAD_STATUS.Completed,
   },
   {
     label: 'Failed',
-    count: props.batch.stats.failed,
+    count: computedStats.value.failed,
     color: 'red' as const,
     value: UPLOAD_STATUS.Failed,
   },
   {
     label: 'Duplicates',
-    count: props.batch.stats.duplicate,
+    count: computedStats.value.duplicate,
     color: 'fuchsia' as const,
     value: UPLOAD_STATUS.Duplicate,
   },
   {
     label: 'Processing',
-    count: props.batch.stats.in_progress,
+    count: computedStats.value.in_progress,
     color: 'blue' as const,
     value: UPLOAD_STATUS.InProgress,
   },
   {
     label: 'Queued',
-    count: props.batch.stats.queued,
+    count: computedStats.value.queued,
     color: 'gray' as const,
     value: UPLOAD_STATUS.Queued,
   },
@@ -65,7 +81,7 @@ const searchText = ref('')
 const selectValues = ref<'all' | UploadStatus>('all')
 
 const filteredUploads = computed(() => {
-  let uploads = store.batchUploads
+  let uploads = [...store.batchUploads]
 
   if (selectValues.value !== 'all') {
     uploads = uploads.filter((upload) => upload.status === selectValues.value)
@@ -104,8 +120,37 @@ const statusTagSeverity = (status: UploadStatus) => {
   }
 }
 
+const hasPendingJobs = computed(() => {
+  return computedStats.value.queued > 0 || computedStats.value.in_progress > 0
+})
+
+const isSubscribed = ref(false)
+
+const isProcessing = computed(() => {
+  // We can use store.isStatusChecking here if we want to show loading state
+  // or we can rely on the subscription logic
+  return hasPendingJobs.value
+})
+
 onMounted(() => {
   loadBatchUploads(props.batch.id)
+  if (hasPendingJobs.value) {
+    sendSubscribeBatch(props.batch.id)
+    isSubscribed.value = true
+  }
+})
+
+watch(hasPendingJobs, (isActive) => {
+  if (isActive && !isSubscribed.value) {
+    sendSubscribeBatch(props.batch.id)
+    isSubscribed.value = true
+  }
+})
+
+onUnmounted(() => {
+  if (isSubscribed.value) {
+    sendUnsubscribeBatch(props.batch.id)
+  }
 })
 </script>
 
@@ -128,8 +173,14 @@ onMounted(() => {
                 {{ new Date(batch.created_at).toLocaleString() }}
               </span>
             </div>
+            <Tag
+              v-if="isProcessing"
+              severity="info"
+              value="Processing Updates..."
+              icon="pi pi-spin pi-spinner"
+            />
             <Button
-              v-if="batch.stats.failed > 0 && authStore.userid === batch.userid"
+              v-else-if="computedStats.failed > 0 && authStore.userid === batch.userid"
               icon="pi pi-refresh"
               severity="danger"
               label="Retry Failed"

@@ -1,5 +1,6 @@
 import type { Image } from '@/types/image'
 import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
+import type { UploadRequest } from '@/types/ingest'
 import type {
   FetchBatchUploadsMessage,
   FetchBatchesMessage,
@@ -8,12 +9,13 @@ import type {
 } from '@/types/messages'
 import { watch } from 'vue'
 
-export const useCollections = () => {
+export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
   const commons = useCommons()
   const { data, send } = useSocket
 
   const sendSubscribeBatch = (batchId: number): void => {
+    if (store.isStatusChecking) return
     store.isStatusChecking = true
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId }))
   }
@@ -31,6 +33,117 @@ export const useCollections = () => {
       selected: false,
     },
   })
+
+  watch(data, (raw) => {
+    if (!raw) return
+    const msg = JSON.parse(raw as string) as ServerMessage
+
+    switch (msg.type) {
+      case 'UPLOADS_UPDATE': {
+        const newBatchUploads = [...store.batchUploads]
+        let batchUploadsChanged = false
+
+        for (const update of msg.data) {
+          // Update current session items if they exist
+          if (store.items[update.key]) {
+            store.updateItem(update.key, 'status', update.status)
+            if (update.status === UPLOAD_STATUS.Failed) {
+              store.updateItem(update.key, 'statusReason', update.error.message)
+              store.updateItem(update.key, 'errorInfo', update.error)
+            }
+            if (update.status === UPLOAD_STATUS.Completed) {
+              store.updateItem(update.key, 'successUrl', update.success)
+            }
+          }
+
+          // Update batch uploads list if present
+          const index = newBatchUploads.findIndex((u) => u.key === update.key)
+          if (index !== -1) {
+            batchUploadsChanged = true
+            const upload = { ...newBatchUploads[index] } as UploadRequest
+            upload.status = update.status
+            if (update.status === UPLOAD_STATUS.Failed) {
+              upload.error = update.error
+            }
+            if (update.status === UPLOAD_STATUS.Completed) {
+              upload.success = update.success
+            }
+            newBatchUploads[index] = upload
+          }
+        }
+
+        if (batchUploadsChanged) {
+          store.batchUploads = newBatchUploads
+        }
+
+        const allDone = store.selectedItems.every(
+          (i) =>
+            i.meta.status === UPLOAD_STATUS.Completed || i.meta.status === UPLOAD_STATUS.Failed,
+        )
+        if (allDone && store.selectedItems.length > 0) store.isStatusChecking = false
+        break
+      }
+      case 'UPLOADS_COMPLETE':
+        store.isStatusChecking = false
+        break
+      case 'COLLECTION_IMAGES': {
+        store.creator = msg.data.creator
+        const allItems: Record<string, Item> = {}
+        let index = 0
+        for (const [id, image] of Object.entries(msg.data.images)) {
+          const img = image as Image
+          img.dates.taken = new Date(img.dates.taken as unknown as string)
+          index += 1
+          const descriptionText = commons.buildDescription()
+          allItems[id] = createItem(img, id, index, descriptionText)
+        }
+        store.items = allItems
+        store.stepper = '2'
+        store.isLoading = false
+        break
+      }
+      case 'ERROR':
+        store.error = msg.data || 'Failed'
+        store.isLoading = false
+        break
+      case 'UPLOAD_CREATED': {
+        const items = msg.data
+        if (items.length > 0) {
+          store.batchId = items[0]!.batch_id
+          for (const r of items) {
+            store.updateItem(r.image_id, 'status', r.status as UploadStatus)
+          }
+          if (store.batchId) sendSubscribeBatch(store.batchId)
+        }
+        store.isLoading = false
+        break
+      }
+      case 'BATCHES_LIST':
+        store.batches = msg.data.items
+        store.batchesTotal = msg.data.total
+        break
+      case 'BATCH_UPLOADS_LIST':
+        store.batchUploads = msg.data
+        break
+    }
+  })
+}
+
+export const useCollections = () => {
+  const store = useCollectionsStore()
+  const commons = useCommons()
+  const { send } = useSocket
+
+  const sendSubscribeBatch = (batchId: number): void => {
+    if (store.isStatusChecking) return
+    store.isStatusChecking = true
+    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId }))
+  }
+
+  const sendUnsubscribeBatch = (batchId: number): void => {
+    store.isStatusChecking = false
+    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH', data: batchId }))
+  }
 
   const wikitext = (item: Item): string => {
     const meta = commons.applyMetaDefaults(item.meta, commons.buildTitle(item.image))
@@ -111,74 +224,6 @@ export const useCollections = () => {
     send(JSON.stringify({ type: 'UPLOAD', data: payload }))
   }
 
-  watch(data, (raw) => {
-    if (!raw) return
-    const msg = JSON.parse(raw as string) as ServerMessage
-
-    switch (msg.type) {
-      case 'UPLOADS_UPDATE': {
-        for (const update of msg.data) {
-          store.updateItem(update.key, 'status', update.status)
-          if (update.status === UPLOAD_STATUS.Failed) {
-            store.updateItem(update.key, 'statusReason', update.error.message)
-            store.updateItem(update.key, 'errorInfo', update.error)
-          }
-          if (update.status === UPLOAD_STATUS.Completed) {
-            store.updateItem(update.key, 'successUrl', update.success)
-          }
-        }
-        const allDone = store.selectedItems.every(
-          (i) =>
-            i.meta.status === UPLOAD_STATUS.Completed || i.meta.status === UPLOAD_STATUS.Failed,
-        )
-        if (allDone) store.isStatusChecking = false
-        break
-      }
-      case 'UPLOADS_COMPLETE':
-        store.isStatusChecking = false
-        break
-      case 'COLLECTION_IMAGES': {
-        store.creator = msg.data.creator
-        const allItems: Record<string, Item> = {}
-        let index = 0
-        for (const [id, image] of Object.entries(msg.data.images)) {
-          const img = image as Image
-          img.dates.taken = new Date(img.dates.taken as unknown as string)
-          index += 1
-          const descriptionText = commons.buildDescription()
-          allItems[id] = createItem(img, id, index, descriptionText)
-        }
-        store.items = allItems
-        store.stepper = '2'
-        store.isLoading = false
-        break
-      }
-      case 'ERROR':
-        store.error = msg.data || 'Failed'
-        store.isLoading = false
-        break
-      case 'UPLOAD_CREATED': {
-        const items = msg.data
-        if (items.length > 0) {
-          store.batchId = items[0]!.batch_id
-          for (const r of items) {
-            store.updateItem(r.image_id, 'status', r.status as UploadStatus)
-          }
-          if (store.batchId) sendSubscribeBatch(store.batchId)
-        }
-        store.isLoading = false
-        break
-      }
-      case 'BATCHES_LIST':
-        store.batches = msg.data.items
-        store.batchesTotal = msg.data.total
-        break
-      case 'BATCH_UPLOADS_LIST':
-        store.batchUploads = msg.data
-        break
-    }
-  })
-
   return {
     loadCollection,
     loadSDC,
@@ -187,5 +232,7 @@ export const useCollections = () => {
     loadBatches,
     loadBatchUploads,
     retryUploads,
+    sendSubscribeBatch,
+    sendUnsubscribeBatch,
   }
 }

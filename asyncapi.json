@@ -19,6 +19,9 @@
         "SubscribeBatch": {
           "$ref": "#/components/messages/SubscribeBatch"
         },
+        "UnsubscribeBatch": {
+          "$ref": "#/components/messages/UnsubscribeBatch"
+        },
         "FetchBatches": {
           "$ref": "#/components/messages/FetchBatches"
         },
@@ -70,6 +73,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/SubscribeBatch"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UnsubscribeBatch"
         },
         {
           "$ref": "#/channels/wsChannel/messages/FetchBatches"
@@ -136,6 +142,13 @@
         "title": "Subscribe to upload status updates for a batch",
         "payload": {
           "$ref": "#/components/schemas/SubscribeBatchPayload"
+        }
+      },
+      "UnsubscribeBatch": {
+        "name": "UNSUBSCRIBE_BATCH",
+        "title": "Unsubscribe from upload status updates for a batch",
+        "payload": {
+          "$ref": "#/components/schemas/UnsubscribeBatchPayload"
         }
       },
       "FetchBatches": {
@@ -276,6 +289,22 @@
         "properties": {
           "type": {
             "const": "SUBSCRIBE_BATCH"
+          },
+          "data": {
+            "type": "integer",
+            "description": "Batch identifier"
+          }
+        }
+      },
+      "UnsubscribeBatchPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "UNSUBSCRIBE_BATCH"
           },
           "data": {
             "type": "integer",

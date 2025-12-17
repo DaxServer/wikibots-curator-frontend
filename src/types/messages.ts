@@ -70,6 +70,11 @@ export type SubscribeBatchMessage = {
   data: number
 }
 
+export type UnsubscribeBatchMessage = {
+  type: 'UNSUBSCRIBE_BATCH'
+  data: number
+}
+
 export type FetchBatchesPayload = {
   page: number
   limit: number
@@ -104,6 +109,7 @@ export type ClientMessage =
   | FetchImagesMessage
   | UploadMessage
   | SubscribeBatchMessage
+  | UnsubscribeBatchMessage
   | FetchBatchesMessage
   | FetchBatchUploadsMessage
   | RetryUploadsMessage
