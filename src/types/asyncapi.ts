@@ -178,12 +178,12 @@ export interface BatchItem {
 }
 
 export interface BatchStats {
-  total?: number
-  queued?: number
-  in_progress?: number
-  completed?: number
-  failed?: number
-  duplicate?: number
+  total: number
+  queued: number
+  in_progress: number
+  completed: number
+  failed: number
+  duplicate: number
 }
 
 export interface BatchUploadsListPayload {

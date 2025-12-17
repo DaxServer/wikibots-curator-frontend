@@ -78,7 +78,9 @@ export const initCollectionsListeners = () => {
 
         const allDone = store.selectedItems.every(
           (i) =>
-            i.meta.status === UPLOAD_STATUS.Completed || i.meta.status === UPLOAD_STATUS.Failed,
+            i.meta.status === UPLOAD_STATUS.Completed ||
+            i.meta.status === UPLOAD_STATUS.Failed ||
+            i.meta.status === UPLOAD_STATUS.Duplicate,
         )
         if (allDone && store.selectedItems.length > 0) store.isStatusChecking = false
         break

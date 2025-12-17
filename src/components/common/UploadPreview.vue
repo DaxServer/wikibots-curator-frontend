@@ -11,6 +11,15 @@ onMounted(() => {
   })
   loadSDC()
 })
+
+const rowsPerPageOptions = computed(() => {
+  const total = store.selectedItems.length
+  const options = [10, 25, 50, 100]
+  if (total > 0 && !options.includes(total)) {
+    options.push(total)
+  }
+  return options.sort((a, b) => a - b)
+})
 </script>
 
 <template>
@@ -51,8 +60,12 @@ onMounted(() => {
 
   <DataTable
     :value="store.selectedItems"
-    :paginator="true"
+    paginator
+    paginator-position="both"
+    paginator-template="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
+    current-page-report-template="Page {currentPage} of {totalPages}"
     :rows="10"
+    :rowsPerPageOptions="rowsPerPageOptions"
     data-key="id"
   >
     <Column

@@ -707,6 +707,14 @@
       },
       "BatchStats": {
         "type": "object",
+        "required": [
+          "total",
+          "queued",
+          "in_progress",
+          "completed",
+          "failed",
+          "duplicate"
+        ],
         "properties": {
           "total": {
             "type": "integer",
