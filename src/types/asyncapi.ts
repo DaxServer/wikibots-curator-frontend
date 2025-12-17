@@ -45,6 +45,20 @@ export interface UnsubscribeBatchPayload {
   data: number
 }
 
+export interface SubscribeBatchesListPayload {
+  type: 'SUBSCRIBE_BATCHES_LIST'
+  data?: SubscribeBatchesListData
+}
+
+export interface SubscribeBatchesListData {
+  userid?: string
+  filter?: string
+}
+
+export interface UnsubscribeBatchesListPayload {
+  type: 'UNSUBSCRIBE_BATCHES_LIST'
+}
+
 export interface FetchBatchesPayload {
   type: 'FETCH_BATCHES'
   data: FetchBatchesData
@@ -241,6 +255,8 @@ export type ClientMessage =
   | UploadPayload
   | SubscribeBatchPayload
   | UnsubscribeBatchPayload
+  | SubscribeBatchesListPayload
+  | UnsubscribeBatchesListPayload
   | FetchBatchesPayload
   | FetchBatchUploadsPayload
   | RetryUploadsPayload

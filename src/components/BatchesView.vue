@@ -4,7 +4,7 @@ import { debounce } from 'ts-debounce'
 const authStore = useAuthStore()
 const store = useCollectionsStore()
 
-const { loadBatches } = useCollections()
+const { loadBatches, subscribeBatchesList, unsubscribeBatchesList } = useCollections()
 
 const selectedBatchId = ref<number | null>(null)
 
@@ -43,6 +43,12 @@ const loadData = async (event?: DataTablePageEvent) => {
   const userid =
     selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
   loadBatches(params.value.first, params.value.rows, userid, filterText.value)
+
+  if (params.value.first === 0) {
+    subscribeBatchesList(userid, filterText.value)
+  } else {
+    unsubscribeBatchesList()
+  }
 }
 
 const doSearch = async () => {
@@ -51,6 +57,13 @@ const doSearch = async () => {
   isSearching.value = true
   await loadData()
   isSearching.value = false
+}
+
+const onFilterChange = () => {
+  params.value.first = 0
+  params.value.page = 1
+  unsubscribeBatchesList()
+  loadData()
 }
 
 const debouncedSearch = debounce(() => {
@@ -62,6 +75,16 @@ watch(filterText, () => {
     isSearching.value = true
   }
   debouncedSearch()
+})
+
+watch(selectedBatchId, (newId) => {
+  if (newId) {
+    unsubscribeBatchesList()
+  } else if (params.value.first === 0) {
+    const userid =
+      selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
+    subscribeBatchesList(userid, filterText.value)
+  }
 })
 
 const onEnter = () => {
@@ -81,6 +104,10 @@ const clearSearch = () => {
 onMounted(() => {
   loadData()
 })
+
+onUnmounted(() => {
+  unsubscribeBatchesList()
+})
 </script>
 
 <template>
@@ -94,7 +121,7 @@ onMounted(() => {
       :options="filterOptions"
       optionLabel="label"
       :allowEmpty="false"
-      @change="loadData()"
+      @change="onFilterChange"
     />
   </div>
   <SharedDataTable
