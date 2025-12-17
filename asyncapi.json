@@ -420,7 +420,7 @@
           "images": {
             "type": "object",
             "additionalProperties": {
-              "$ref": "#/components/schemas/Image"
+              "$ref": "#/components/schemas/MediaImage"
             }
           },
           "creator": {
@@ -884,11 +884,12 @@
           }
         }
       },
-      "Location": {
+      "GeoLocation": {
         "type": "object",
         "required": [
           "latitude",
-          "longitude"
+          "longitude",
+          "compass_angle"
         ],
         "properties": {
           "latitude": {
@@ -905,23 +906,19 @@
           },
           "compass_angle": {
             "type": "number",
-            "format": "float",
-            "nullable": true
+            "format": "float"
           }
         }
       },
       "Dates": {
         "type": "object",
+        "required": [
+          "taken"
+        ],
         "properties": {
           "taken": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "published": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           }
         }
       },
@@ -937,7 +934,7 @@
           }
         }
       },
-      "Image": {
+      "MediaImage": {
         "type": "object",
         "required": [
           "id",
@@ -949,7 +946,9 @@
           "preview_url",
           "url",
           "width",
-          "height"
+          "height",
+          "existing",
+          "location"
         ],
         "properties": {
           "id": {
@@ -969,7 +968,7 @@
             "$ref": "#/components/schemas/Creator"
           },
           "location": {
-            "$ref": "#/components/schemas/Location"
+            "$ref": "#/components/schemas/GeoLocation"
           },
           "url_original": {
             "type": "string",

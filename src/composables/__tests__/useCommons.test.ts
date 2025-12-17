@@ -32,7 +32,6 @@ describe('useCommons', () => {
     index: 1,
     image: {
       id,
-      handler: 'mapillary',
       title: 'Original Title',
       description: 'Original Description',
       url: 'http://example.com/image.jpg',

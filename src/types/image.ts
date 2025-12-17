@@ -1,44 +1,10 @@
-export interface Creator {
-  id: string
-  username: string
-  profile_url: string
-}
+import type { MediaImage, StructuredError } from '@/types/asyncapi'
 
-export interface Location {
-  latitude: number
-  longitude: number
-  accuracy?: number
-  compass_angle: number
-}
-
-export interface Dates {
-  taken: Date
-}
-
-export interface ExistingPage {
-  url: string
-}
-
-export interface Image {
-  id: string
-  handler: Handler
-  title: string
+export interface Image extends Omit<MediaImage, 'dates' | 'description'> {
+  dates: {
+    taken: Date
+  }
   description: string
-  dates: Dates
-  creator: Creator
-  location: Location
-  url_original: string
-  thumbnail_url: string
-  preview_url: string
-  url: string
-  width: number
-  height: number
-  camera_make?: string
-  camera_model?: string
-  is_pano?: boolean
-  license?: string
-  tags?: string[]
-  existing: ExistingPage[]
 }
 
 export interface Description {
@@ -61,7 +27,7 @@ export interface Metadata {
 export type MetadataKey = keyof Metadata
 export type MetadataValue = Metadata[MetadataKey]
 
-export interface Item {
+export type Item = {
   image: Image
   meta: Metadata
   sdc: Statement[]
@@ -100,11 +66,3 @@ export type UploadStatusUpdate =
       success: string
       error?: never
     }
-
-export interface UploadIngestResponseItem {
-  id: number
-  status: UploadStatus
-  image_id: string
-  input: string
-  batch_id: number
-}

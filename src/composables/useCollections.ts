@@ -1,12 +1,12 @@
+import type {
+  BatchUploadItem,
+  FetchBatchUploadsPayload,
+  FetchBatchesPayload,
+  RetryUploadsPayload,
+  ServerMessage,
+} from '@/types/asyncapi'
 import type { Image } from '@/types/image'
 import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
-import type { UploadRequest } from '@/types/ingest'
-import type {
-  FetchBatchUploadsMessage,
-  FetchBatchesMessage,
-  RetryUploadsMessage,
-  ServerMessage,
-} from '@/types/messages'
 import { watch } from 'vue'
 
 export const initCollectionsListeners = () => {
@@ -48,7 +48,7 @@ export const initCollectionsListeners = () => {
           if (store.items[update.key]) {
             store.updateItem(update.key, 'status', update.status)
             if (update.status === UPLOAD_STATUS.Failed) {
-              store.updateItem(update.key, 'statusReason', update.error.message)
+              store.updateItem(update.key, 'statusReason', update.error?.message)
               store.updateItem(update.key, 'errorInfo', update.error)
             }
             if (update.status === UPLOAD_STATUS.Completed) {
@@ -60,7 +60,7 @@ export const initCollectionsListeners = () => {
           const index = newBatchUploads.findIndex((u) => u.key === update.key)
           if (index !== -1) {
             batchUploadsChanged = true
-            const upload = { ...newBatchUploads[index] } as UploadRequest
+            const upload = { ...newBatchUploads[index] } as BatchUploadItem
             upload.status = update.status
             if (update.status === UPLOAD_STATUS.Failed) {
               upload.error = update.error
@@ -91,8 +91,13 @@ export const initCollectionsListeners = () => {
         const allItems: Record<string, Item> = {}
         let index = 0
         for (const [id, image] of Object.entries(msg.data.images)) {
-          const img = image as Image
-          img.dates.taken = new Date(img.dates.taken as unknown as string)
+          const img: Image = {
+            ...image,
+            description: image.description ?? '',
+            dates: {
+              taken: new Date(image.dates.taken),
+            },
+          }
           index += 1
           const descriptionText = commons.buildDescription()
           allItems[id] = createItem(img, id, index, descriptionText)
@@ -157,7 +162,7 @@ export const useCollections = () => {
   }
 
   const loadBatches = (page: number, rows: number, userid?: string, filter?: string) => {
-    const payload: FetchBatchesMessage['data'] = {
+    const payload: FetchBatchesPayload['data'] = {
       page: page / rows + 1,
       limit: rows,
     }
@@ -171,7 +176,7 @@ export const useCollections = () => {
       JSON.stringify({
         type: 'FETCH_BATCHES',
         data: payload,
-      } as FetchBatchesMessage),
+      } as FetchBatchesPayload),
     )
   }
 
@@ -182,7 +187,7 @@ export const useCollections = () => {
         data: {
           batch_id: batchId,
         },
-      } as FetchBatchUploadsMessage),
+      } as FetchBatchUploadsPayload),
     )
   }
 
@@ -193,7 +198,7 @@ export const useCollections = () => {
         data: {
           batch_id: batchId,
         },
-      } as RetryUploadsMessage),
+      } as RetryUploadsPayload),
     )
   }
 
