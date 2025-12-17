@@ -10,7 +10,6 @@ import {
 describe('titleTemplate utils', () => {
   const createMockImage = (id: string): Image => ({
     id,
-    handler: 'mapillary',
     title: 'Original Title',
     description: 'Original Description',
     url: 'http://example.com/image.jpg',

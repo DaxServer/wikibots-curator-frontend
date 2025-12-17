@@ -1,10 +1,13 @@
+import type { BatchItem, BatchUploadItem, Creator } from '@/types/asyncapi'
+import type { Handler, Layout } from '@/types/collections'
+import type { Item, MetadataKey, MetadataValue } from '@/types/image'
 import { applyTitleTemplate } from '@/utils/titleTemplate'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 
 export const useCollectionsStore = defineStore('collections', () => {
   const handler = ref<Handler>('mapillary')
-  const input = ref<string>('')
+  const input = ref<string>('tulzukst7vufhdo1e4z60f')
   const creator = ref<Creator>({ id: '', username: '', profile_url: '' })
 
   const isLoading = ref(false)
@@ -28,9 +31,9 @@ export const useCollectionsStore = defineStore('collections', () => {
   const globalTitleTemplate = ref<string>('')
 
   // Batches state
-  const batches = shallowRef<Batch[]>([])
+  const batches = shallowRef<BatchItem[]>([])
   const batchesTotal = ref<number>(0)
-  const batchUploads = shallowRef<UploadRequest[]>([])
+  const batchUploads = shallowRef<BatchUploadItem[]>([])
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading

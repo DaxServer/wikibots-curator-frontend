@@ -134,17 +134,14 @@ declare global {
   export type { DataViewPageEvent } from 'primevue/dataview'
   import('primevue/dataview')
   // @ts-ignore
-  export type { Handler, Layout, CollectionsApiResponse, BatchStatsCard } from './src/types/collections'
+  export type { WsChannel, FetchImagesPayload, UploadPayload, UploadData, UploadItem, SubscribeBatchPayload, UnsubscribeBatchPayload, FetchBatchesPayload, FetchBatchesData, FetchBatchUploadsPayload, FetchBatchUploadsData, RetryUploadsPayload, RetryUploadsData, ErrorPayload, CollectionImagesPayload, CollectionImagesData, MediaImage, Dates, Creator, GeoLocation, ExistingPage, UploadCreatedPayload, UploadCreatedItem, BatchesListPayload, BatchesListData, BatchItem, BatchStats, BatchUploadsListPayload, BatchUploadItem, DuplicateError, ErrorLink, GenericError, SubscribedPayload, UploadsUpdatePayload, UploadUpdateItem, UploadsCompletePayload, ClientMessage, ServerMessage, StructuredError } from './src/types/asyncapi'
+  import('./src/types/asyncapi')
+  // @ts-ignore
+  export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
-  export type { Creator, Location, Dates, ExistingPage, Image, Description, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate, UploadIngestResponseItem } from './src/types/image'
+  export type { Image, Description, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
   import('./src/types/image')
-  // @ts-ignore
-  export type { ErrorLink, DuplicateError, GenericError, StructuredError, Batch, UploadRequest, LoadItemsOptions, PaginatedResponse, User } from './src/types/ingest'
-  import('./src/types/ingest')
-  // @ts-ignore
-  export type { UploadsUpdateMessage, UploadsCompleteMessage, CollectionImagesMessage, ErrorMessage, UploadCreatedMessage, SubscribedMessage, BatchesListMessage, BatchUploadsListMessage, ServerMessage, FetchImagesMessage, UploadMessagePayload, UploadMessage, SubscribeBatchMessage, UnsubscribeBatchMessage, FetchBatchesPayload, FetchBatchesMessage, FetchBatchUploadsPayload, FetchBatchUploadsMessage, RetryUploadsPayload, RetryUploadsMessage, ClientMessage } from './src/types/messages'
-  import('./src/types/messages')
   // @ts-ignore
   export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
   import('./src/types/wikidata')
