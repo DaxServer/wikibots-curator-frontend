@@ -3,6 +3,8 @@ const store = useCollectionsStore()
 const auth = useAuthStore()
 const { open } = useSocket
 
+initCollectionsListeners()
+
 const tab = ref<Handler>('mapillary')
 const pendingTab = ref<Handler | null>(null)
 const currentView = ref<'ingest' | 'batches' | 'admin'>('ingest')

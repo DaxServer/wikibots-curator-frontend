@@ -52,6 +52,7 @@ declare global {
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const getNumericId: typeof import('./src/composables/sdc').getNumericId
   const h: typeof import('vue').h
+  const initCollectionsListeners: typeof import('./src/composables/useCollections').initCollectionsListeners
   const inject: typeof import('vue').inject
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
@@ -142,7 +143,7 @@ declare global {
   export type { ErrorLink, DuplicateError, GenericError, StructuredError, Batch, UploadRequest, LoadItemsOptions, PaginatedResponse, User } from './src/types/ingest'
   import('./src/types/ingest')
   // @ts-ignore
-  export type { UploadsUpdateMessage, UploadsCompleteMessage, CollectionImagesMessage, ErrorMessage, UploadCreatedMessage, SubscribedMessage, BatchesListMessage, BatchUploadsListMessage, ServerMessage, FetchImagesMessage, UploadMessagePayload, UploadMessage, SubscribeBatchMessage, FetchBatchesPayload, FetchBatchesMessage, FetchBatchUploadsPayload, FetchBatchUploadsMessage, RetryUploadsPayload, RetryUploadsMessage, ClientMessage } from './src/types/messages'
+  export type { UploadsUpdateMessage, UploadsCompleteMessage, CollectionImagesMessage, ErrorMessage, UploadCreatedMessage, SubscribedMessage, BatchesListMessage, BatchUploadsListMessage, ServerMessage, FetchImagesMessage, UploadMessagePayload, UploadMessage, SubscribeBatchMessage, UnsubscribeBatchMessage, FetchBatchesPayload, FetchBatchesMessage, FetchBatchUploadsPayload, FetchBatchUploadsMessage, RetryUploadsPayload, RetryUploadsMessage, ClientMessage } from './src/types/messages'
   import('./src/types/messages')
   // @ts-ignore
   export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
@@ -200,6 +201,7 @@ declare module 'vue' {
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly getNumericId: UnwrapRef<typeof import('./src/composables/sdc')['getNumericId']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly initCollectionsListeners: UnwrapRef<typeof import('./src/composables/useCollections')['initCollectionsListeners']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>

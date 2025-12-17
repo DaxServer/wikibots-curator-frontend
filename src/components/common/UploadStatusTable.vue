@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 
-const { retryUploads } = useCollections()
+const { retryUploads, sendUnsubscribeBatch } = useCollections()
 
 const total = Math.max(1, store.selectedItems.length) // To avoid division by zero
 
@@ -60,6 +60,12 @@ onMounted(() => {
     top: 0,
     behavior: 'smooth',
   })
+})
+
+onUnmounted(() => {
+  if (store.batchId) {
+    sendUnsubscribeBatch(store.batchId)
+  }
 })
 </script>
 
