@@ -42,7 +42,6 @@ export interface SubscribeBatchPayload {
 
 export interface UnsubscribeBatchPayload {
   type: 'UNSUBSCRIBE_BATCH'
-  data: number
 }
 
 export interface SubscribeBatchesListPayload {
