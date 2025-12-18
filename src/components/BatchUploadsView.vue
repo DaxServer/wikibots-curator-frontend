@@ -130,7 +130,7 @@ onBeforeMount(() => {
 
 watch(batchId, (newId) => {
   if (isSubscribed.value) {
-    sendUnsubscribeBatch(batchId.value)
+    sendUnsubscribeBatch()
     isSubscribed.value = false
   }
   load(newId)
@@ -148,7 +148,7 @@ onUnmounted(() => {
   store.batchUploads = []
   store.currentBatchId = null
   if (isSubscribed.value) {
-    sendUnsubscribeBatch(batchId.value)
+    sendUnsubscribeBatch()
   }
 })
 </script>
