@@ -33,7 +33,11 @@ export const useCollectionsStore = defineStore('collections', () => {
   // Batches state
   const batches = shallowRef<BatchItem[]>([])
   const batchesTotal = ref<number>(0)
+  const batchesLoading = ref(false)
+  const batch = ref<BatchItem>()
   const batchUploads = shallowRef<BatchUploadItem[]>([])
+  const batchUploadsLoading = ref(false)
+  const currentBatchId = ref<number | null>(null)
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -137,7 +141,11 @@ export const useCollectionsStore = defineStore('collections', () => {
     creator.value = { id: '', username: '', profile_url: '' }
     batches.value = []
     batchesTotal.value = 0
+    batchesLoading.value = false
+    batch.value = undefined
     batchUploads.value = []
+    batchUploadsLoading.value = false
+    currentBatchId.value = null
   }
 
   const setHandler = (h: Handler) => {
@@ -201,7 +209,11 @@ export const useCollectionsStore = defineStore('collections', () => {
     itemsWithExistingTitlesCount,
     batches,
     batchesTotal,
+    batchesLoading,
+    batch,
     batchUploads,
+    batchUploadsLoading,
+    currentBatchId,
 
     setLoading,
     setGlobalDescription,

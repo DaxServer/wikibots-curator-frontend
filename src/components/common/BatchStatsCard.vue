@@ -3,11 +3,13 @@ const props = withDefaults(
   defineProps<{
     label: string
     count: number
+    skeleton?: boolean
     color?: 'gray' | 'green' | 'red' | 'fuchsia' | 'blue'
     alwaysActive?: boolean
     selected?: boolean
   }>(),
   {
+    skeleton: true,
     color: 'gray',
     alwaysActive: false,
     selected: false,
@@ -87,7 +89,7 @@ const colors = computed(() => {
       colors.bg,
       colors.border,
       isActive ? 'hover:cursor-pointer hover:shadow-md' : 'hover:cursor-default',
-      selected ? `ring-2 ${colors.ring}` : '',
+      !skeleton && selected ? `ring-2 ${colors.ring}` : '',
     ]"
     @click="isActive && $emit('click')"
   >
@@ -101,7 +103,10 @@ const colors = computed(() => {
       class="text-2xl font-bold mt-1"
       :class="colors.countColor"
     >
-      {{ count }}
+      <Skeleton v-if="skeleton" />
+      <template v-else>
+        {{ count }}
+      </template>
     </span>
   </div>
 </template>

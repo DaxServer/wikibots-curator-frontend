@@ -77,7 +77,7 @@ export interface FetchBatchUploadsPayload {
 }
 
 export interface FetchBatchUploadsData {
-  batch_id: number
+  batchid: number
 }
 
 export interface RetryUploadsPayload {
@@ -86,7 +86,7 @@ export interface RetryUploadsPayload {
 }
 
 export interface RetryUploadsData {
-  batch_id: number
+  batchid: number
 }
 
 export interface ErrorPayload {
@@ -156,7 +156,7 @@ export interface UploadCreatedItem {
   status: string
   image_id: string
   input: string
-  batch_id: number
+  batchid: number
 }
 
 export interface BatchesListPayload {
@@ -188,7 +188,12 @@ export interface BatchStats {
 
 export interface BatchUploadsListPayload {
   type: 'BATCH_UPLOADS_LIST'
-  data: BatchUploadItem[]
+  data: BatchUploadsListData
+}
+
+export interface BatchUploadsListData {
+  batch: BatchItem
+  uploads: BatchUploadItem[]
 }
 
 export interface BatchUploadItem {
@@ -238,6 +243,7 @@ export interface UploadsUpdatePayload {
 
 export interface UploadUpdateItem {
   id: number
+  batchid: number
   status: string
   key: string
   error?: DuplicateError | GenericError

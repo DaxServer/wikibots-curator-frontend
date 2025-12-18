@@ -14,10 +14,10 @@ export const initCollectionsListeners = () => {
   const commons = useCommons()
   const { data, send } = useSocket
 
-  const sendSubscribeBatch = (batchId: number): void => {
+  const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
-    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId }))
+    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatchPayload))
   }
 
   const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
@@ -44,6 +44,11 @@ export const initCollectionsListeners = () => {
         let batchUploadsChanged = false
 
         for (const update of msg.data) {
+          // Only process updates for the batch we are currently viewing or just uploaded
+          const batchId = Number(update.batchid)
+          if (batchId !== Number(store.currentBatchId) && batchId !== Number(store.batchId))
+            continue
+
           // Update current session items if they exist
           if (store.items[update.key]) {
             store.updateItem(update.key, 'status', update.status)
@@ -85,9 +90,13 @@ export const initCollectionsListeners = () => {
         if (allDone && store.selectedItems.length > 0) store.isStatusChecking = false
         break
       }
-      case 'UPLOADS_COMPLETE':
-        store.isStatusChecking = false
+      case 'UPLOADS_COMPLETE': {
+        const batchId = Number(msg.data)
+        if (batchId === Number(store.currentBatchId) || batchId === Number(store.batchId)) {
+          store.isStatusChecking = false
+        }
         break
+      }
       case 'COLLECTION_IMAGES': {
         store.creator = msg.data.creator
         const allItems: Record<string, Item> = {}
@@ -116,7 +125,7 @@ export const initCollectionsListeners = () => {
       case 'UPLOAD_CREATED': {
         const items = msg.data
         if (items.length > 0) {
-          store.batchId = items[0]!.batch_id
+          store.batchId = items[0]!.batchid
           for (const r of items) {
             store.updateItem(r.image_id, 'status', r.status as UploadStatus)
           }
@@ -128,9 +137,14 @@ export const initCollectionsListeners = () => {
       case 'BATCHES_LIST':
         store.batches = msg.data.items
         store.batchesTotal = msg.data.total
+        store.batchesLoading = false
         break
       case 'BATCH_UPLOADS_LIST':
-        store.batchUploads = msg.data
+        if (Number(msg.data.batch.id) === Number(store.currentBatchId)) {
+          store.batch = msg.data.batch
+          store.batchUploads = msg.data.uploads
+          store.batchUploadsLoading = false
+        }
         break
     }
   })
@@ -141,15 +155,15 @@ export const useCollections = () => {
   const commons = useCommons()
   const { send } = useSocket
 
-  const sendSubscribeBatch = (batchId: number): void => {
+  const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
-    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId }))
+    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatchPayload))
   }
 
-  const sendUnsubscribeBatch = (batchId: number): void => {
+  const sendUnsubscribeBatch = (batchId: number) => {
     store.isStatusChecking = false
-    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH', data: batchId }))
+    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH', data: batchId } as UnsubscribeBatchPayload))
   }
 
   const subscribeBatchesList = (userid?: string, filter?: string) => {
@@ -157,26 +171,27 @@ export const useCollections = () => {
       JSON.stringify({
         type: 'SUBSCRIBE_BATCHES_LIST',
         data: { userid, filter },
-      }),
+      } as SubscribeBatchesListPayload),
     )
   }
 
   const unsubscribeBatchesList = () => {
-    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCHES_LIST' }))
+    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCHES_LIST' } as UnsubscribeBatchesListPayload))
   }
 
-  const wikitext = (item: Item): string => {
+  const wikitext = (item: Item) => {
     const meta = commons.applyMetaDefaults(item.meta, commons.buildTitle(item.image))
     return commons.buildWikitext({ ...item, meta: meta as Metadata })
   }
 
-  const loadCollection = (): void => {
+  const loadCollection = () => {
     store.$reset()
     store.isLoading = true
-    send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input }))
+    send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input } as FetchImagesPayload))
   }
 
   const loadBatches = (page: number, rows: number, userid?: string, filter?: string) => {
+    store.batchesLoading = true
     const payload: FetchBatchesPayload['data'] = {
       page: page / rows + 1,
       limit: rows,
@@ -196,11 +211,13 @@ export const useCollections = () => {
   }
 
   const loadBatchUploads = (batchId: number) => {
+    store.batchUploadsLoading = true
+    store.currentBatchId = batchId
     send(
       JSON.stringify({
         type: 'FETCH_BATCH_UPLOADS',
         data: {
-          batch_id: batchId,
+          batchid: batchId,
         },
       } as FetchBatchUploadsPayload),
     )
@@ -211,19 +228,19 @@ export const useCollections = () => {
       JSON.stringify({
         type: 'RETRY_UPLOADS',
         data: {
-          batch_id: batchId,
+          batchid: batchId,
         },
       } as RetryUploadsPayload),
     )
   }
 
-  const loadSDC = (): void => {
+  const loadSDC = () => {
     for (const item of store.selectedItems) {
       store.items[item.id]!.sdc = commons.buildSDC(item)
     }
   }
 
-  const submitUpload = (): void => {
+  const submitUpload = () => {
     store.error = null
     if (store.selectedCount === 0) {
       store.error = 'Please select at least one image to upload'

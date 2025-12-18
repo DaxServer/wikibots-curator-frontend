@@ -19,6 +19,12 @@ export default defineConfig((): import('vite').UserConfig => {
         imports: [
           'vue',
           'pinia',
+          'vue-router',
+          '@vueuse/core',
+          {
+            from: '@vueuse/router',
+            imports: ['useRouteParams'],
+          },
           {
             from: 'primevue',
             imports: ['MeterItem'],

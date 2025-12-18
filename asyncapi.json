@@ -436,10 +436,10 @@
       "FetchBatchUploadsData": {
         "type": "object",
         "required": [
-          "batch_id"
+          "batchid"
         ],
         "properties": {
-          "batch_id": {
+          "batchid": {
             "type": "integer",
             "description": "Batch identifier"
           }
@@ -556,6 +556,21 @@
             "const": "BATCH_UPLOADS_LIST"
           },
           "data": {
+            "$ref": "#/components/schemas/BatchUploadsListData"
+          }
+        }
+      },
+      "BatchUploadsListData": {
+        "type": "object",
+        "required": [
+          "batch",
+          "uploads"
+        ],
+        "properties": {
+          "batch": {
+            "$ref": "#/components/schemas/BatchItem"
+          },
+          "uploads": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BatchUploadItem"
@@ -631,10 +646,10 @@
       "RetryUploadsData": {
         "type": "object",
         "required": [
-          "batch_id"
+          "batchid"
         ],
         "properties": {
-          "batch_id": {
+          "batchid": {
             "type": "integer",
             "description": "Batch identifier"
           }
@@ -685,7 +700,7 @@
           "status",
           "image_id",
           "input",
-          "batch_id"
+          "batchid"
         ],
         "properties": {
           "id": {
@@ -700,7 +715,7 @@
           "input": {
             "type": "string"
           },
-          "batch_id": {
+          "batchid": {
             "type": "integer"
           }
         }
@@ -849,12 +864,16 @@
         "type": "object",
         "required": [
           "id",
+          "batchid",
           "status",
           "key",
           "handler"
         ],
         "properties": {
           "id": {
+            "type": "integer"
+          },
+          "batchid": {
             "type": "integer"
           },
           "status": {
