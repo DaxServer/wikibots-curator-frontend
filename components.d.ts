@@ -28,7 +28,6 @@ declare module 'vue' {
     Column: typeof import('primevue/column')['default']
     DataTable: typeof import('primevue/datatable')['default']
     DataView: typeof import('primevue/dataview')['default']
-    Dialog: typeof import('primevue/dialog')['default']
     Divider: typeof import('primevue/divider')['default']
     EditItem: typeof import('./src/components/common/EditItem.vue')['default']
     ErrorDisplay: typeof import('./src/components/common/ErrorDisplay.vue')['default']

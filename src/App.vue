@@ -5,17 +5,9 @@ const { open } = useSocket
 
 initCollectionsListeners()
 
-const confirmOpen = ref<boolean>(false)
-const pendingRoute = ref<string | null>(null)
-
 onMounted(() => {
   open()
 })
-
-const router = useRouter()
-
-// We might want to keep some form of navigation confirmation if there's unsaved state
-// For now, let's just use router-view
 </script>
 
 <template>

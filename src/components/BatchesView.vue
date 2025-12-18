@@ -114,9 +114,7 @@ onUnmounted(() => {
     :loading="store.batchesLoading"
     lazy
     @page="loadData"
-    @row-click="
-      (e: DataTableCellEditCompleteEvent) => e.data.id && router.push(`/batches/${e.data.id}`)
-    "
+    @row-click="$event.data.id && router.push(`/batches/${$event.data.id}`)"
     :pt="{
       bodyRow: () => ({
         class: 'cursor-pointer',
