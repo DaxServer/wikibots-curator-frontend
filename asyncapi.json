@@ -325,16 +325,11 @@
       "UnsubscribeBatchPayload": {
         "type": "object",
         "required": [
-          "type",
-          "data"
+          "type"
         ],
         "properties": {
           "type": {
             "const": "UNSUBSCRIBE_BATCH"
-          },
-          "data": {
-            "type": "integer",
-            "description": "Batch identifier"
           }
         }
       },

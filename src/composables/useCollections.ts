@@ -161,9 +161,9 @@ export const useCollections = () => {
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatchPayload))
   }
 
-  const sendUnsubscribeBatch = (batchId: number) => {
+  const sendUnsubscribeBatch = () => {
     store.isStatusChecking = false
-    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH', data: batchId } as UnsubscribeBatchPayload))
+    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH' } as UnsubscribeBatchPayload))
   }
 
   const subscribeBatchesList = (userid?: string, filter?: string) => {
