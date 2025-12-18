@@ -1,11 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
-  batch: BatchItem
-}>()
-
-defineEmits<{
-  back: []
-}>()
+const batchId = useRouteParams<number>('id')
 
 const authStore = useAuthStore()
 const store = useCollectionsStore()
@@ -41,7 +35,7 @@ const statCards = computed((): BatchStatsCard[] => [
     count: computedStats.value.total,
     color: 'gray' as const,
     value: 'all',
-    alwaysActive: true,
+    alwaysActive: store.batch !== undefined,
   },
   {
     label: 'Uploaded',
@@ -124,24 +118,37 @@ const hasPendingJobs = computed(() => {
 
 const isSubscribed = ref(false)
 
-onMounted(() => {
-  loadBatchUploads(props.batch.id)
-  if (hasPendingJobs.value) {
-    sendSubscribeBatch(props.batch.id)
-    isSubscribed.value = true
+const load = (id: number) => {
+  store.batch = undefined
+  store.batchUploads = []
+  loadBatchUploads(id)
+}
+
+onBeforeMount(() => {
+  load(batchId.value)
+})
+
+watch(batchId, (newId) => {
+  if (isSubscribed.value) {
+    sendUnsubscribeBatch(batchId.value)
+    isSubscribed.value = false
   }
+  load(newId)
 })
 
 watch(hasPendingJobs, (isActive) => {
   if (isActive && !isSubscribed.value) {
-    sendSubscribeBatch(props.batch.id)
+    sendSubscribeBatch(batchId.value)
     isSubscribed.value = true
   }
 })
 
 onUnmounted(() => {
+  store.batch = undefined
+  store.batchUploads = []
+  store.currentBatchId = null
   if (isSubscribed.value) {
-    sendUnsubscribeBatch(props.batch.id)
+    sendUnsubscribeBatch(batchId.value)
   }
 })
 </script>
@@ -150,9 +157,10 @@ onUnmounted(() => {
   <div class="flex flex-col gap-4">
     <div class="flex flex-col items-start gap-4">
       <Button
+        as="router-link"
+        to="/batches"
         icon="pi pi-arrow-left"
         text
-        @click="$emit('back')"
         class="mr-2"
         label="Back to batches"
       />
@@ -160,31 +168,37 @@ onUnmounted(() => {
         <template #title>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <span>Batch #{{ batch.id }}</span>
+              <span>Batch #{{ batchId }}</span>
               <span class="text-sm font-normal text-gray-500">
-                {{ new Date(batch.created_at).toLocaleString() }}
+                <template v-if="store.batch">
+                  {{ new Date(store.batch.created_at).toLocaleString() }}
+                </template>
+                <Skeleton v-else />
               </span>
             </div>
-            <Tag
-              v-if="hasPendingJobs"
-              severity="info"
-              value="Processing Updates..."
-              icon="pi pi-spin pi-spinner"
-            />
-            <Button
-              v-else-if="computedStats.failed > 0 && authStore.userid === batch.userid"
-              icon="pi pi-refresh"
-              severity="danger"
-              label="Retry Failed"
-              size="small"
-              @click="retryUploads(batch.id)"
-            />
+            <template v-if="store.batch">
+              <Tag
+                v-if="hasPendingJobs"
+                severity="info"
+                value="Processing Updates..."
+                icon="pi pi-spin pi-spinner"
+              />
+              <Button
+                v-else-if="computedStats.failed > 0 && authStore.userid === store.batch.userid"
+                icon="pi pi-refresh"
+                severity="danger"
+                label="Retry Failed"
+                size="small"
+                @click="retryUploads(Number(batchId))"
+              />
+            </template>
           </div>
         </template>
         <template #subtitle>
           <div class="flex items-center gap-2 mt-1">
             <i class="pi pi-user text-sm"></i>
-            <span>{{ batch.username }}</span>
+            <span v-if="store.batch">{{ store.batch.username }}</span>
+            <Skeleton v-else />
           </div>
         </template>
         <template #content>
@@ -195,6 +209,7 @@ onUnmounted(() => {
               :label="stat.label"
               :count="stat.count"
               :color="stat.color"
+              :skeleton="store.batch === undefined"
               :always-active="stat.alwaysActive"
               :selected="selectValues === stat.value"
               @click="selectValues = stat.value"
@@ -205,6 +220,7 @@ onUnmounted(() => {
     </div>
 
     <SharedDataTable
+      :loading="store.batchUploadsLoading"
       :value="filteredUploads"
       :columns="columns"
       :row-class="() => ({ 'align-top': true })"

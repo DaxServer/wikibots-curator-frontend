@@ -7,10 +7,14 @@ withDefaults(
     rows?: number
     first?: number
     lazy?: boolean
+    loading?: boolean
+    loadingRows?: number
   }>(),
   {
     rows: 100,
     lazy: false,
+    loading: false,
+    loadingRows: 5,
   },
 )
 
@@ -22,7 +26,7 @@ defineEmits<{
 <template>
   <DataTable
     v-bind="$attrs"
-    :value="value"
+    :value="loading && (!value || value.length === 0) ? Array(loadingRows).fill({}) : value"
     paginator
     paginatorPosition="both"
     paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
@@ -41,7 +45,9 @@ defineEmits<{
       :header="col.header"
     >
       <template #body="slotProps">
+        <Skeleton v-if="loading && (!value || value.length === 0)" />
         <slot
+          v-else
           name="body-cell"
           :col="col"
           :data="slotProps.data"

@@ -5,63 +5,22 @@ const { open } = useSocket
 
 initCollectionsListeners()
 
-const tab = ref<Handler>('mapillary')
-const pendingTab = ref<Handler | null>(null)
-const currentView = ref<'ingest' | 'batches' | 'admin'>('ingest')
 const confirmOpen = ref<boolean>(false)
+const pendingRoute = ref<string | null>(null)
 
 onMounted(() => {
   open()
 })
 
-watch(currentView, () => {
-  store.error = ''
-})
+const router = useRouter()
 
-const switchProvider = (next: Handler) => {
-  store.$reset()
-  store.input = ''
-  store.setHandler(next)
-  tab.value = next
-}
-
-const onTabUpdate = (next: Handler) => {
-  store.error = ''
-  if (currentView.value !== 'ingest') {
-    currentView.value = 'ingest'
-  }
-
-  if (next === tab.value) return
-  if (store.stepper !== '1' && store.stepper !== '5') {
-    pendingTab.value = next
-    confirmOpen.value = true
-    return
-  }
-  switchProvider(next)
-}
-
-const confirmSwitch = () => {
-  if (pendingTab.value) {
-    switchProvider(pendingTab.value)
-  }
-  confirmOpen.value = false
-  pendingTab.value = null
-}
-
-const cancelSwitch = () => {
-  confirmOpen.value = false
-  pendingTab.value = null
-}
+// We might want to keep some form of navigation confirmation if there's unsaved state
+// For now, let's just use router-view
 </script>
 
 <template>
   <main>
-    <Header
-      :tab="tab"
-      @update:tab="onTabUpdate"
-      @open-history="currentView = 'batches'"
-      @open-admin="currentView = 'admin'"
-    />
+    <Header />
 
     <template v-if="auth.isAuthenticated">
       <div
@@ -75,11 +34,7 @@ const cancelSwitch = () => {
           {{ store.error }}
         </Message>
       </div>
-      <template v-if="currentView === 'ingest'">
-        <MapillaryCollections v-if="tab === 'mapillary'" />
-      </template>
-      <BatchesView v-else-if="currentView === 'batches'" />
-      <AdminView v-else-if="currentView === 'admin'" />
+      <router-view />
     </template>
 
     <div
@@ -96,30 +51,5 @@ const cancelSwitch = () => {
     </div>
 
     <Footer />
-
-    <Dialog
-      v-model:visible="confirmOpen"
-      modal
-      header="Switch provider?"
-    >
-      <Card>
-        <template #content>Switching provider will clear current progress.</template>
-        <template #footer>
-          <div class="flex justify-content-end gap-2">
-            <Button
-              type="button"
-              label="Cancel"
-              severity="secondary"
-              @click="cancelSwitch"
-            />
-            <Button
-              type="button"
-              label="Switch"
-              @click="confirmSwitch"
-            />
-          </div>
-        </template>
-      </Card>
-    </Dialog>
   </main>
 </template>

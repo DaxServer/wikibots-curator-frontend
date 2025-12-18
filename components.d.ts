@@ -50,6 +50,8 @@ declare module 'vue' {
     Message: typeof import('primevue/message')['default']
     MeterGroup: typeof import('primevue/metergroup')['default']
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     SearchInput: typeof import('./src/components/common/SearchInput.vue')['default']
     Select: typeof import('primevue/select')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']

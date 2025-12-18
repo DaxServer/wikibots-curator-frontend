@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { debounce } from 'ts-debounce'
-
 const authStore = useAuthStore()
 const store = useCollectionsStore()
+const router = useRouter()
 
 const { loadBatches, subscribeBatchesList, unsubscribeBatchesList } = useCollections()
-
-const selectedBatchId = ref<number | null>(null)
-
-const selectedBatch = computed(() => {
-  return store.batches.find((b) => b.id === selectedBatchId.value)
-})
 
 const filterOptions = ref([
   { label: 'My uploads', value: 'my' },
@@ -77,16 +70,6 @@ watch(filterText, () => {
   debouncedSearch()
 })
 
-watch(selectedBatchId, (newId) => {
-  if (newId) {
-    unsubscribeBatchesList()
-  } else if (params.value.first === 0) {
-    const userid =
-      selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
-    subscribeBatchesList(userid, filterText.value)
-  }
-})
-
 const onEnter = () => {
   // Cancel pending debounce if any
   debouncedSearch.cancel()
@@ -101,7 +84,7 @@ const clearSearch = () => {
   doSearch()
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   loadData()
 })
 
@@ -111,10 +94,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    v-if="!selectedBatchId"
-    class="flex justify-between items-center mb-4 max-w-7xl mx-auto"
-  >
+  <div class="flex justify-between items-center mb-4 max-w-7xl mx-auto">
     <div class="text-2xl font-bold">Past uploads</div>
     <SelectButton
       v-model="selectedFilter"
@@ -125,16 +105,18 @@ onUnmounted(() => {
     />
   </div>
   <SharedDataTable
-    v-if="!selectedBatchId"
     class="max-w-7xl mx-auto"
     :value="store.batches"
     :rows="params.rows"
     :totalRecords="store.batchesTotal"
     :first="params.first"
     :columns="columns"
+    :loading="store.batchesLoading"
     lazy
     @page="loadData"
-    @row-click="selectedBatchId = $event.data.id"
+    @row-click="
+      (e: DataTableCellEditCompleteEvent) => e.data.id && router.push(`/batches/${e.data.id}`)
+    "
     :pt="{
       bodyRow: () => ({
         class: 'cursor-pointer',
@@ -172,9 +154,4 @@ onUnmounted(() => {
       </template>
     </template>
   </SharedDataTable>
-  <BatchUploadsView
-    v-else-if="selectedBatch"
-    :batch="selectedBatch"
-    @back="selectedBatchId = null"
-  />
 </template>
