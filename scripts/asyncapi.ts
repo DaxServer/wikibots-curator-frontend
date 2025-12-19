@@ -176,10 +176,13 @@ const generateTypescriptCode = async () => {
     ...tsModels.map((m) => m.result),
   ].join('\n\n')
 
+  // Replace any with unknown
+  tsContent = tsContent.replace(/Record<string, any>/g, 'Record<string, unknown>')
+
   // Construct ClientMessage and ServerMessage unions
   // Client Messages (ReceiveClientMessages)
   const clientMessagesRefs = document.operations.ReceiveClientMessages.messages || []
-  const clientMessageTypes = clientMessagesRefs.map((m: any) => {
+  const clientMessageTypes = clientMessagesRefs.map((m: { $ref: string }) => {
     const name = m.$ref.split('/').pop()
     return `${name}Payload`
   })
@@ -187,7 +190,7 @@ const generateTypescriptCode = async () => {
 
   // Server Messages (SendServerMessages)
   const serverMessagesRefs = document.operations.SendServerMessages.messages || []
-  const serverMessageTypes = serverMessagesRefs.map((m: any) => {
+  const serverMessageTypes = serverMessagesRefs.map((m: { $ref: string }) => {
     const name = m.$ref.split('/').pop()
     return `${name}Payload`
   })
