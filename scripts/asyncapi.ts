@@ -141,6 +141,10 @@ const generatePythonCode = async () => {
     '',
     ...modelNames.map((name) => `from .${name} import ${name}`),
     '',
+    '__all__ = [',
+    ...modelNames.map((name) => `    "${name}",`),
+    ']',
+    '',
     // We don't need to rebuild explicitly if we use imports, but to be safe for recursive refs:
     '# Rebuild models to resolve forward references',
     'from pydantic import BaseModel',
@@ -221,6 +225,14 @@ generatePythonCode().then(() => {
     cwd: backendPath,
   })
   console.log('Formatted Python code with isort')
+  Bun.spawnSync(['poetry', 'run', 'ruff', 'check', '--fix'], {
+    cwd: backendPath,
+  })
+  console.log('Formatted Python code with ruff linter')
+  Bun.spawnSync(['poetry', 'run', 'ruff', 'format'], {
+    cwd: backendPath,
+  })
+  console.log('Formatted Python code with ruff formatter')
 })
 
 generateTypescriptCode().then(() => {
