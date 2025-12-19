@@ -35,10 +35,12 @@ declare global {
   const createExternalIdSnak: typeof import('./src/composables/sdc').createExternalIdSnak
   const createExternalIdStatement: typeof import('./src/composables/sdc').createExternalIdStatement
   const createGlobalState: typeof import('@vueuse/core').createGlobalState
+  const createGlobeCoordinateSnak: typeof import('./src/composables/sdc').createGlobeCoordinateSnak
   const createHeightClaim: typeof import('./src/composables/sdc').createHeightClaim
   const createInceptionClaim: typeof import('./src/composables/sdc').createInceptionClaim
   const createInjectionState: typeof import('@vueuse/core').createInjectionState
   const createPinia: typeof import('pinia').createPinia
+  const createPointOfViewClaim: typeof import('./src/composables/sdc').createPointOfViewClaim
   const createQuantitySnak: typeof import('./src/composables/sdc').createQuantitySnak
   const createQuantityStatement: typeof import('./src/composables/sdc').createQuantityStatement
   const createReactiveFn: typeof import('@vueuse/core').createReactiveFn
@@ -61,12 +63,14 @@ declare global {
   const debounce: typeof import('ts-debounce').debounce
   const debouncedRef: typeof import('@vueuse/core').debouncedRef
   const debouncedWatch: typeof import('@vueuse/core').debouncedWatch
+  const decimalToDMS: typeof import('./src/utils/geo').decimalToDMS
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
   const defineStore: typeof import('pinia').defineStore
   const eagerComputed: typeof import('@vueuse/core').eagerComputed
   const effectScope: typeof import('vue').effectScope
   const extendRef: typeof import('@vueuse/core').extendRef
+  const formatGlobeCoordinate: typeof import('./src/utils/geo').formatGlobeCoordinate
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
@@ -377,7 +381,7 @@ declare global {
   export type { Image, Description, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
-  export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, StringDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
+  export type { WikibaseEntityType, NumericId, PropertyId, ItemId, DataValueEntityId, DataValueMonolingualText, DataValueQuantity, DataValueTime, DataValueGlobeCoordinate, StringDataValue, GlobeCoordinateDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, GlobeCoordinateValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Rank, Statement } from './src/types/wikidata'
   import('./src/types/wikidata')
 }
 
@@ -415,10 +419,12 @@ declare module 'vue' {
     readonly createExternalIdSnak: UnwrapRef<typeof import('./src/composables/sdc')['createExternalIdSnak']>
     readonly createExternalIdStatement: UnwrapRef<typeof import('./src/composables/sdc')['createExternalIdStatement']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
+    readonly createGlobeCoordinateSnak: UnwrapRef<typeof import('./src/composables/sdc')['createGlobeCoordinateSnak']>
     readonly createHeightClaim: UnwrapRef<typeof import('./src/composables/sdc')['createHeightClaim']>
     readonly createInceptionClaim: UnwrapRef<typeof import('./src/composables/sdc')['createInceptionClaim']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
+    readonly createPointOfViewClaim: UnwrapRef<typeof import('./src/composables/sdc')['createPointOfViewClaim']>
     readonly createQuantitySnak: UnwrapRef<typeof import('./src/composables/sdc')['createQuantitySnak']>
     readonly createQuantityStatement: UnwrapRef<typeof import('./src/composables/sdc')['createQuantityStatement']>
     readonly createReactiveFn: UnwrapRef<typeof import('@vueuse/core')['createReactiveFn']>
@@ -441,6 +447,7 @@ declare module 'vue' {
     readonly debounce: UnwrapRef<typeof import('ts-debounce')['debounce']>
     readonly debouncedRef: UnwrapRef<typeof import('@vueuse/core')['debouncedRef']>
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
+    readonly decimalToDMS: UnwrapRef<typeof import('./src/utils/geo')['decimalToDMS']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>

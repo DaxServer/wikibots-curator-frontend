@@ -24,10 +24,13 @@ const { getEntityLabel } = useWikidata()
   <template v-else-if="value.type === 'time'">
     <span>{{ value.value.time.replace(/^\+0+/, '').split('T')[0] }}</span>
   </template>
-  <!-- <template v-else-if="value.type === 'globecoordinate'">
-    <span>{{ value.value.latitude }}, {{ value.value.longitude }}</span>
+  <template v-else-if="value.type === 'globecoordinate'">
+    <span>
+      {{ decimalToDMS(value.value.latitude, 'lat') }},
+      {{ decimalToDMS(value.value.longitude, 'lon') }}
+    </span>
   </template>
-  <template v-else-if="value.type === 'url'">
+  <!-- <template v-else-if="value.type === 'url'">
     <ExternalLink
       :href="value.value"
       class="text-blue text-decoration-none"
