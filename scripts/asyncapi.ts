@@ -141,6 +141,10 @@ const generatePythonCode = async () => {
     '',
     ...modelNames.map((name) => `from .${name} import ${name}`),
     '',
+    '__all__ = [',
+    ...modelNames.map((name) => `    "${name}",`),
+    ']',
+    '',
     // We don't need to rebuild explicitly if we use imports, but to be safe for recursive refs:
     '# Rebuild models to resolve forward references',
     'from pydantic import BaseModel',
@@ -176,10 +180,13 @@ const generateTypescriptCode = async () => {
     ...tsModels.map((m) => m.result),
   ].join('\n\n')
 
+  // Replace any with unknown
+  tsContent = tsContent.replace(/Record<string, any>/g, 'Record<string, unknown>')
+
   // Construct ClientMessage and ServerMessage unions
   // Client Messages (ReceiveClientMessages)
   const clientMessagesRefs = document.operations.ReceiveClientMessages.messages || []
-  const clientMessageTypes = clientMessagesRefs.map((m: any) => {
+  const clientMessageTypes = clientMessagesRefs.map((m: { $ref: string }) => {
     const name = m.$ref.split('/').pop()
     return `${name}Payload`
   })
@@ -187,7 +194,7 @@ const generateTypescriptCode = async () => {
 
   // Server Messages (SendServerMessages)
   const serverMessagesRefs = document.operations.SendServerMessages.messages || []
-  const serverMessageTypes = serverMessagesRefs.map((m: any) => {
+  const serverMessageTypes = serverMessagesRefs.map((m: { $ref: string }) => {
     const name = m.$ref.split('/').pop()
     return `${name}Payload`
   })
@@ -218,6 +225,14 @@ generatePythonCode().then(() => {
     cwd: backendPath,
   })
   console.log('Formatted Python code with isort')
+  Bun.spawnSync(['poetry', 'run', 'ruff', 'check', '--fix'], {
+    cwd: backendPath,
+  })
+  console.log('Formatted Python code with ruff linter')
+  Bun.spawnSync(['poetry', 'run', 'ruff', 'format'], {
+    cwd: backendPath,
+  })
+  console.log('Formatted Python code with ruff formatter')
 })
 
 generateTypescriptCode().then(() => {

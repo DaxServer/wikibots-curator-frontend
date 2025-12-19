@@ -32,7 +32,7 @@ export interface UploadItem {
   title: string
   wikitext: string
   labels?: Record<string, string>
-  sdc?: Record<string, any>[]
+  sdc?: Record<string, unknown>[]
 }
 
 export interface SubscribeBatchPayload {
