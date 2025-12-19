@@ -6,6 +6,7 @@ import {
   WikidataProperty,
   type EntityIdValueSnak,
   type ExternalIdValueSnak,
+  type GlobeCoordinateValueSnak,
   type ItemId,
   type NumericId,
   type PropertyId,
@@ -103,6 +104,27 @@ export const createQuantitySnak = (
   },
 })
 
+export const createGlobeCoordinateSnak = (
+  property: PropertyId,
+  latitude: number,
+  longitude: number,
+  precision = 1.0e-9,
+): GlobeCoordinateValueSnak => ({
+  snaktype: SnakType.Value,
+  property,
+  datatype: SnakDataType.GlobeCoordinate,
+  datavalue: {
+    value: {
+      latitude,
+      longitude,
+      altitude: null,
+      precision,
+      globe: 'http://www.wikidata.org/entity/Q2',
+    },
+    type: DataValueType.GlobeCoordinate,
+  },
+})
+
 export const createStatement = (
   mainsnak: Snak,
   qualifiers: Snak[] = [],
@@ -194,4 +216,15 @@ export const createWidthClaim = (width: number): Statement => {
 
 export const createHeightClaim = (height: number): Statement => {
   return createQuantityStatement(WikidataProperty.Height, height, WikidataEntity.Pixel)
+}
+
+export const createPointOfViewClaim = (location: GeoLocation): Statement => {
+  return createStatement(
+    createGlobeCoordinateSnak(
+      WikidataProperty.CoordinatesOfThePointOfView,
+      location.latitude,
+      location.longitude,
+    ),
+    [createQuantitySnak(WikidataProperty.Heading, location.compass_angle, WikidataEntity.Degree)],
+  )
 }

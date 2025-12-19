@@ -34,8 +34,17 @@ export type DataValueTime = {
   calendarmodel?: string
 }
 
+export type DataValueGlobeCoordinate = {
+  latitude: number
+  longitude: number
+  altitude: null | number
+  precision: number
+  globe: string
+}
+
 export const DataValueType = {
   ExternalId: 'external-id',
+  GlobeCoordinate: 'globecoordinate',
   Quantity: 'quantity',
   String: 'string',
   Time: 'time',
@@ -45,6 +54,11 @@ export const DataValueType = {
 export type StringDataValue = {
   type: typeof DataValueType.String
   value: string
+}
+
+export type GlobeCoordinateDataValue = {
+  type: typeof DataValueType.GlobeCoordinate
+  value: DataValueGlobeCoordinate
 }
 
 export type EntityIdDataValue = {
@@ -70,12 +84,14 @@ export type UrlDataValue = {
 export type DataValue =
   | StringDataValue
   | EntityIdDataValue
+  | GlobeCoordinateDataValue
   | QuantityDataValue
   | TimeDataValue
   | UrlDataValue
 
 export const SnakDataType = {
   ExternalId: 'external-id',
+  GlobeCoordinate: 'globe-coordinate',
   Quantity: 'quantity',
   String: 'string',
   Time: 'time',
@@ -94,6 +110,13 @@ export type StringValueSnak = {
   datavalue: StringDataValue
   property: PropertyId
   datatype: typeof SnakDataType.String
+}
+
+export type GlobeCoordinateValueSnak = {
+  snaktype: typeof SnakType.Value
+  datavalue: GlobeCoordinateDataValue
+  property: PropertyId
+  datatype: typeof SnakDataType.GlobeCoordinate
 }
 
 export type EntityIdValueSnak = {
@@ -135,6 +158,7 @@ export type ValueSnak =
   | StringValueSnak
   | EntityIdValueSnak
   | ExternalIdValueSnak
+  | GlobeCoordinateValueSnak
   | QuantityValueSnak
   | TimeValueSnak
   | UrlValueSnak
@@ -171,6 +195,7 @@ export type Statement = {
 export const WikidataEntity = {
   CCBYSA40: 'Q18199165',
   Copyrighted: 'Q50423863',
+  Degree: 'Q28390',
   FileAvailableOnInternet: 'Q74228490',
   Mapillary: 'Q17985544',
   MapillaryDatabase: 'Q26757498',
@@ -179,10 +204,12 @@ export const WikidataEntity = {
 
 export const WikidataProperty = {
   AuthorNameString: 'P2093',
+  CoordinatesOfThePointOfView: 'P1259',
   CopyrightLicense: 'P275',
   CopyrightStatus: 'P6216',
   Creator: 'P170',
   DescribedAtUrl: 'P973',
+  Heading: 'P7787',
   Height: 'P2048',
   Inception: 'P571',
   MapillaryPhotoID: 'P1947',

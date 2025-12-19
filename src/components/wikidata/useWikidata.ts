@@ -1,4 +1,5 @@
 const properties: Record<string, string> = {
+  P1259: 'coordinates of the point of view',
   P137: 'operator',
   P13988: 'Mapillary username',
   P1433: 'published in',
@@ -13,6 +14,7 @@ const properties: Record<string, string> = {
   P571: 'inception',
   P6216: 'copyright status',
   P7482: 'source of file',
+  P7787: 'heading',
   P973: 'described at url',
 }
 
@@ -20,6 +22,7 @@ const entities: Record<string, string> = {
   Q17985544: 'Mapillary',
   Q18199165: 'CC BY-SA 4.0',
   Q26757498: 'Mapillary database',
+  Q28390: 'degree',
   Q355198: 'pixel',
   Q50423863: 'copyrighted',
   Q74228490: 'file available on the internet',

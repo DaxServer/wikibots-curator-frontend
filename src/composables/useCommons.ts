@@ -6,6 +6,7 @@ import {
   createExternalIdStatement,
   createHeightClaim,
   createInceptionClaim,
+  createPointOfViewClaim,
   createSourceOfFileClaim,
   createWidthClaim,
   createWikibaseItemStatement,
@@ -188,6 +189,9 @@ ${categories}
 
     // Source of file
     claims.push(createSourceOfFileClaim(item.image.url))
+
+    // Coordinates of the point of view
+    claims.push(createPointOfViewClaim(item.image.location))
 
     // Check for license override
     const hasLicenseOverride = (item.meta.license?.trim() || store.globalLicense.trim()) !== ''
