@@ -4,10 +4,10 @@ defineProps<{ snak: Snak }>()
 
 <template>
   <div>
-    <template v-if="snak.snaktype === 'value' && snak.datavalue">
+    <template v-if="snak.snaktype === SnakType.Value && snak.datavalue">
       <ValueRenderer :value="snak.datavalue" />
     </template>
-    <template v-else-if="snak.snaktype === 'novalue'">
+    <template v-else-if="snak.snaktype === SnakType.NoValue">
       <Tag
         severity="warn"
         class="text-xs"
@@ -15,7 +15,7 @@ defineProps<{ snak: Snak }>()
         no value
       </Tag>
     </template>
-    <template v-else-if="snak.snaktype === 'somevalue'">
+    <template v-else-if="snak.snaktype === SnakType.SomeValue">
       <Tag
         severity="info"
         class="text-xs"

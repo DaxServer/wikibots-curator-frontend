@@ -1,17 +1,16 @@
+import { WikidataEntity, WikidataProperty } from '@/components/wikidata/useWikidata'
 import {
   DataValueType,
+  Rank,
   SnakDataType,
   SnakType,
-  WikidataEntity,
-  WikidataProperty,
+  WikibaseEntityType,
   type EntityIdValueSnak,
   type ExternalIdValueSnak,
   type GlobeCoordinateValueSnak,
   type ItemId,
-  type NumericId,
   type PropertyId,
   type QuantityValueSnak,
-  type Rank,
   type Snak,
   type SomeValueSnak,
   type Statement,
@@ -46,7 +45,7 @@ export const createWikibaseItemSnak = (
   property,
   datatype: SnakDataType.WikibaseItem,
   datavalue: {
-    value: { 'entity-type': 'item', 'numeric-id': getNumericId(itemId) },
+    value: { 'entity-type': WikibaseEntityType.Item, 'numeric-id': getNumericId(itemId) },
     type: DataValueType.WikibaseEntityId,
   },
 })
@@ -128,7 +127,7 @@ export const createGlobeCoordinateSnak = (
 export const createStatement = (
   mainsnak: Snak,
   qualifiers: Snak[] = [],
-  rank: Rank = 'normal',
+  rank: Rank = Rank.NORMAL,
 ): Statement => {
   const statement: Statement = {
     mainsnak,
@@ -179,7 +178,7 @@ export const createQuantityStatement = (
 // High-level domain-specific claim builders for Mapillary SDC
 // ============================================================================
 
-export const getNumericId = (entity: ItemId): NumericId => parseInt(entity.slice(1), 10)
+export const getNumericId = (entity: ItemId): number => parseInt(entity.slice(1), 10)
 
 export const createCreatorClaim = (username: string, snaks?: Snak[]): Statement => {
   return createStatement(createSomeValueSnak(WikidataProperty.Creator), [

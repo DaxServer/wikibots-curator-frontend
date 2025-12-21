@@ -2,20 +2,17 @@
 // References:
 // - Wikidata Data model overview: https://www.wikidata.org/wiki/Wikidata:Data_model
 
-export type WikibaseEntityType = 'item' | 'property'
+export const WikibaseEntityType = {
+  Item: 'item',
+  Property: 'property',
+} as const
 
-export type NumericId = number
-export type PropertyId = `P${NumericId}`
-export type ItemId = `Q${NumericId}`
+export type PropertyId = `P${number}`
+export type ItemId = `Q${number}`
 
 export type DataValueEntityId = {
-  'numeric-id': NumericId
-  'entity-type': WikibaseEntityType
-}
-
-export type DataValueMonolingualText = {
-  text: string
-  language: string
+  'numeric-id': number
+  'entity-type': typeof WikibaseEntityType.Item | typeof WikibaseEntityType.Property
 }
 
 export type DataValueQuantity = {
@@ -181,7 +178,11 @@ export type Reference = {
   hash?: string
 }
 
-export type Rank = 'preferred' | 'normal' | 'deprecated'
+export enum Rank {
+  DEPRECATED = 'deprecated',
+  NORMAL = 'normal',
+  PREFRRED = 'preferred',
+}
 
 export type Statement = {
   mainsnak: Snak
@@ -191,32 +192,3 @@ export type Statement = {
   references?: Reference[]
   type?: 'statement'
 }
-
-export const WikidataEntity = {
-  CCBYSA40: 'Q18199165',
-  Copyrighted: 'Q50423863',
-  Degree: 'Q28390',
-  FileAvailableOnInternet: 'Q74228490',
-  Mapillary: 'Q17985544',
-  MapillaryDatabase: 'Q26757498',
-  Pixel: 'Q355198',
-} as const
-
-export const WikidataProperty = {
-  AuthorNameString: 'P2093',
-  CoordinatesOfThePointOfView: 'P1259',
-  CopyrightLicense: 'P275',
-  CopyrightStatus: 'P6216',
-  Creator: 'P170',
-  DescribedAtUrl: 'P973',
-  Heading: 'P7787',
-  Height: 'P2048',
-  Inception: 'P571',
-  MapillaryPhotoID: 'P1947',
-  MapillaryUsername: 'P13988',
-  Operator: 'P137',
-  PublishedIn: 'P1433',
-  SourceOfFile: 'P7482',
-  Url: 'P2699',
-  Width: 'P2049',
-} as const
