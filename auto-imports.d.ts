@@ -373,13 +373,13 @@ declare global {
   export type { DataViewPageEvent } from 'primevue/dataview'
   import('primevue/dataview')
   // @ts-ignore
-  export type { WsChannel, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, GenericError, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, Subscribed, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, ClientMessage, ServerMessage, StructuredError } from './src/types/asyncapi'
+  export type { WsChannel, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, GenericError, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, Subscribed, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, ClientMessage, ServerMessage, StructuredError } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
   export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
-  export type { Image, Description, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
+  export type { Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
   export type { Rank, PropertyId, ItemId, DataValueEntityId, DataValueQuantity, DataValueTime, DataValueGlobeCoordinate, StringDataValue, GlobeCoordinateDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, GlobeCoordinateValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Statement } from './src/types/wikidata'
