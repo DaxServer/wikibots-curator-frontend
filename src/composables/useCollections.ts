@@ -1,10 +1,4 @@
-import type {
-  BatchUploadItem,
-  FetchBatchUploadsPayload,
-  FetchBatchesPayload,
-  RetryUploadsPayload,
-  ServerMessage,
-} from '@/types/asyncapi'
+import type { BatchUploadItem, SubscribeBatch } from '@/types/asyncapi'
 import type { Image } from '@/types/image'
 import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
 import { watch } from 'vue'
@@ -17,7 +11,7 @@ export const initCollectionsListeners = () => {
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
-    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatchPayload))
+    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
 
   const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
@@ -158,12 +152,12 @@ export const useCollections = () => {
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
-    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatchPayload))
+    send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
 
   const sendUnsubscribeBatch = () => {
     store.isStatusChecking = false
-    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH' } as UnsubscribeBatchPayload))
+    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCH' } as UnsubscribeBatch))
   }
 
   const subscribeBatchesList = (userid?: string, filter?: string) => {
@@ -171,12 +165,12 @@ export const useCollections = () => {
       JSON.stringify({
         type: 'SUBSCRIBE_BATCHES_LIST',
         data: { userid, filter },
-      } as SubscribeBatchesListPayload),
+      } as SubscribeBatchesList),
     )
   }
 
   const unsubscribeBatchesList = () => {
-    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCHES_LIST' } as UnsubscribeBatchesListPayload))
+    send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCHES_LIST' } as UnsubscribeBatchesList))
   }
 
   const wikitext = (item: Item) => {
@@ -187,12 +181,12 @@ export const useCollections = () => {
   const loadCollection = () => {
     store.$reset()
     store.isLoading = true
-    send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input } as FetchImagesPayload))
+    send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input } as FetchImages))
   }
 
   const loadBatches = (page: number, rows: number, userid?: string, filter?: string) => {
     store.batchesLoading = true
-    const payload: FetchBatchesPayload['data'] = {
+    const payload: FetchBatches['data'] = {
       page: page / rows + 1,
       limit: rows,
     }
@@ -206,7 +200,7 @@ export const useCollections = () => {
       JSON.stringify({
         type: 'FETCH_BATCHES',
         data: payload,
-      } as FetchBatchesPayload),
+      } as FetchBatches),
     )
   }
 
@@ -216,10 +210,8 @@ export const useCollections = () => {
     send(
       JSON.stringify({
         type: 'FETCH_BATCH_UPLOADS',
-        data: {
-          batchid: batchId,
-        },
-      } as FetchBatchUploadsPayload),
+        data: batchId,
+      } as FetchBatchUploads),
     )
   }
 
@@ -227,10 +219,8 @@ export const useCollections = () => {
     send(
       JSON.stringify({
         type: 'RETRY_UPLOADS',
-        data: {
-          batchid: batchId,
-        },
-      } as RetryUploadsPayload),
+        data: batchId,
+      } as RetryUploads),
     )
   }
 

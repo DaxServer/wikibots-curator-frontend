@@ -1,3 +1,4 @@
+import { WikidataEntity, WikidataProperty } from '@/components/wikidata/useWikidata'
 import {
   createCopyrightLicenseClaim,
   createCopyrightStatusClaim,
@@ -15,7 +16,7 @@ import {
   createWikibaseItemSnak,
   getNumericId,
 } from '@/composables/sdc'
-import { WikidataEntity, WikidataProperty } from '@/types/wikidata'
+import { DataValueType, Rank, SnakDataType, SnakType, WikibaseEntityType } from '@/types/wikidata'
 import { describe, expect, it } from 'bun:test'
 
 describe('SDC Builders', () => {
@@ -25,16 +26,16 @@ describe('SDC Builders', () => {
 
     expect(createStatement(createExternalIdSnak(property, value))).toEqual({
       mainsnak: {
-        snaktype: 'value',
+        snaktype: SnakType.Value,
         property,
-        datatype: 'external-id',
+        datatype: SnakDataType.ExternalId,
         datavalue: {
           value,
-          type: 'string',
+          type: DataValueType.String,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -44,19 +45,19 @@ describe('SDC Builders', () => {
 
     expect(createStatement(createWikibaseItemSnak(property, `Q${numericId}`))).toEqual({
       mainsnak: {
-        snaktype: 'value',
+        snaktype: SnakType.Value,
         property,
-        datatype: 'wikibase-item',
+        datatype: SnakDataType.WikibaseItem,
         datavalue: {
           value: {
-            'entity-type': 'item',
+            'entity-type': WikibaseEntityType.Item,
             'numeric-id': numericId,
           },
-          type: 'wikibase-entityid',
+          type: DataValueType.WikibaseEntityId,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -66,9 +67,9 @@ describe('SDC Builders', () => {
 
     expect(createStatement(createTimeSnak(property, new Date(dateValue)))).toEqual({
       mainsnak: {
-        snaktype: 'value',
+        snaktype: SnakType.Value,
         property,
-        datatype: 'time',
+        datatype: SnakDataType.Time,
         datavalue: {
           value: {
             time: `+0000000${dateValue}`,
@@ -78,11 +79,11 @@ describe('SDC Builders', () => {
             timezone: 0,
             calendarmodel: 'http://www.wikidata.org/entity/Q1985727',
           },
-          type: 'time',
+          type: DataValueType.Time,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -93,9 +94,9 @@ describe('SDC Builders', () => {
 
     expect(createStatement(createQuantitySnak(property, amount, unit))).toEqual({
       mainsnak: {
-        snaktype: 'value',
+        snaktype: SnakType.Value,
         property,
-        datatype: 'quantity',
+        datatype: SnakDataType.Quantity,
         datavalue: {
           value: {
             amount: `+${amount}`,
@@ -103,11 +104,11 @@ describe('SDC Builders', () => {
             lowerBound: null,
             unit: `http://www.wikidata.org/entity/${unit}`,
           },
-          type: 'quantity',
+          type: DataValueType.Quantity,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -116,12 +117,12 @@ describe('SDC Builders', () => {
     const value = 'testuser'
 
     expect(createStringSnak(property, value)).toEqual({
-      snaktype: 'value',
+      snaktype: SnakType.Value,
       property,
-      datatype: 'string',
+      datatype: SnakDataType.String,
       datavalue: {
         value,
-        type: 'string',
+        type: DataValueType.String,
       },
     })
   })
@@ -131,12 +132,12 @@ describe('SDC Builders', () => {
     const value = 'https://www.example.com/user/testuser'
 
     expect(createUrlSnak(property, value)).toEqual({
-      snaktype: 'value',
+      snaktype: SnakType.Value,
       property,
-      datatype: 'url',
+      datatype: SnakDataType.Url,
       datavalue: {
         value,
-        type: 'string',
+        type: DataValueType.String,
       },
     })
   })
@@ -151,35 +152,35 @@ describe('SDC Builders', () => {
     ).toEqual({
       mainsnak: {
         property: WikidataProperty.Creator,
-        snaktype: 'somevalue',
+        snaktype: SnakType.SomeValue,
       },
       qualifiers: {
         [WikidataProperty.AuthorNameString]: [
           {
-            snaktype: 'value',
+            snaktype: SnakType.Value,
             property: WikidataProperty.AuthorNameString,
-            datatype: 'string',
+            datatype: SnakDataType.String,
             datavalue: {
               value: username,
-              type: 'string',
+              type: DataValueType.String,
             },
           },
         ],
         [WikidataProperty.MapillaryUsername]: [
           {
-            snaktype: 'value',
+            snaktype: SnakType.Value,
             property: WikidataProperty.MapillaryUsername,
-            datatype: 'external-id',
+            datatype: SnakDataType.ExternalId,
             datavalue: {
               value: username,
-              type: 'string',
+              type: DataValueType.String,
             },
           },
         ],
       },
       'qualifiers-order': [WikidataProperty.AuthorNameString, WikidataProperty.MapillaryUsername],
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -189,8 +190,8 @@ describe('SDC Builders', () => {
     expect(createInceptionClaim(new Date(date))).toEqual({
       mainsnak: {
         property: WikidataProperty.Inception,
-        snaktype: 'value',
-        datatype: 'time',
+        snaktype: SnakType.Value,
+        datatype: SnakDataType.Time,
         datavalue: {
           value: {
             time: `+0000000${date}`,
@@ -200,11 +201,11 @@ describe('SDC Builders', () => {
             timezone: 0,
             calendarmodel: 'http://www.wikidata.org/entity/Q1985727',
           },
-          type: 'time',
+          type: DataValueType.Time,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -214,46 +215,46 @@ describe('SDC Builders', () => {
     expect(createSourceOfFileClaim(url)).toEqual({
       mainsnak: {
         property: WikidataProperty.SourceOfFile,
-        snaktype: 'value',
-        datatype: 'wikibase-item',
+        snaktype: SnakType.Value,
+        datatype: SnakDataType.WikibaseItem,
         datavalue: {
           value: {
-            'entity-type': 'item',
+            'entity-type': WikibaseEntityType.Item,
             'numeric-id': getNumericId(WikidataEntity.FileAvailableOnInternet),
           },
-          type: 'wikibase-entityid',
+          type: DataValueType.WikibaseEntityId,
         },
       },
       qualifiers: {
         [WikidataProperty.Operator]: [
           {
-            snaktype: 'value',
+            snaktype: SnakType.Value,
             property: WikidataProperty.Operator,
-            datatype: 'wikibase-item',
+            datatype: SnakDataType.WikibaseItem,
             datavalue: {
               value: {
-                'entity-type': 'item',
+                'entity-type': WikibaseEntityType.Item,
                 'numeric-id': getNumericId(WikidataEntity.Mapillary),
               },
-              type: 'wikibase-entityid',
+              type: DataValueType.WikibaseEntityId,
             },
           },
         ],
         [WikidataProperty.DescribedAtUrl]: [
           {
-            snaktype: 'value',
+            snaktype: SnakType.Value,
             property: WikidataProperty.DescribedAtUrl,
-            datatype: 'url',
+            datatype: SnakDataType.Url,
             datavalue: {
               value: url,
-              type: 'string',
+              type: DataValueType.String,
             },
           },
         ],
       },
       'qualifiers-order': [WikidataProperty.Operator, WikidataProperty.DescribedAtUrl],
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -261,18 +262,18 @@ describe('SDC Builders', () => {
     expect(createCopyrightStatusClaim()).toEqual({
       mainsnak: {
         property: WikidataProperty.CopyrightStatus,
-        snaktype: 'value',
-        datatype: 'wikibase-item',
+        snaktype: SnakType.Value,
+        datatype: SnakDataType.WikibaseItem,
         datavalue: {
           value: {
-            'entity-type': 'item',
+            'entity-type': WikibaseEntityType.Item,
             'numeric-id': getNumericId(WikidataEntity.Copyrighted),
           },
-          type: 'wikibase-entityid',
+          type: DataValueType.WikibaseEntityId,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -280,18 +281,18 @@ describe('SDC Builders', () => {
     expect(createCopyrightLicenseClaim()).toEqual({
       mainsnak: {
         property: WikidataProperty.CopyrightLicense,
-        snaktype: 'value',
-        datatype: 'wikibase-item',
+        snaktype: SnakType.Value,
+        datatype: SnakDataType.WikibaseItem,
         datavalue: {
           value: {
-            'entity-type': 'item',
+            'entity-type': WikibaseEntityType.Item,
             'numeric-id': getNumericId(WikidataEntity.CCBYSA40),
           },
-          type: 'wikibase-entityid',
+          type: DataValueType.WikibaseEntityId,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -301,8 +302,8 @@ describe('SDC Builders', () => {
     expect(createWidthClaim(width)).toEqual({
       mainsnak: {
         property: WikidataProperty.Width,
-        snaktype: 'value',
-        datatype: 'quantity',
+        snaktype: SnakType.Value,
+        datatype: SnakDataType.Quantity,
         datavalue: {
           value: {
             amount: `+${width}`,
@@ -310,11 +311,11 @@ describe('SDC Builders', () => {
             lowerBound: null,
             unit: `http://www.wikidata.org/entity/${WikidataEntity.Pixel}`,
           },
-          type: 'quantity',
+          type: DataValueType.Quantity,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 
@@ -324,8 +325,8 @@ describe('SDC Builders', () => {
     expect(createHeightClaim(height)).toEqual({
       mainsnak: {
         property: WikidataProperty.Height,
-        snaktype: 'value',
-        datatype: 'quantity',
+        snaktype: SnakType.Value,
+        datatype: SnakDataType.Quantity,
         datavalue: {
           value: {
             amount: `+${height}`,
@@ -333,11 +334,11 @@ describe('SDC Builders', () => {
             lowerBound: null,
             unit: `http://www.wikidata.org/entity/${WikidataEntity.Pixel}`,
           },
-          type: 'quantity',
+          type: DataValueType.Quantity,
         },
       },
       type: 'statement',
-      rank: 'normal',
+      rank: Rank.NORMAL,
     })
   })
 })

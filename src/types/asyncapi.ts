@@ -2,173 +2,95 @@
 // Do not edit manually
 
 export type WsChannel =
-  | ErrorPayload
-  | CollectionImagesPayload
-  | UploadCreatedPayload
-  | BatchesListPayload
-  | BatchUploadsListPayload
-  | SubscribedPayload
-  | UploadsUpdatePayload
-  | UploadsCompletePayload
+  | BatchesList
+  | BatchUploadsList
+  | CollectionImages
+  | Error
+  | Subscribed
+  | UploadCreated
+  | UploadsComplete
+  | UploadsUpdate
 
-export interface FetchImagesPayload {
-  type: 'FETCH_IMAGES'
-  data: string
+export type FetchBatches = {
+  data: FetchBatchesData
+  type: 'FETCH_BATCHES'
 }
 
-export interface UploadPayload {
+export type FetchBatchesData = {
+  page: number
+  limit: number
+  userid?: string
+  filter?: string
+}
+
+export type FetchBatchUploads = {
+  data: number
+  type: 'FETCH_BATCH_UPLOADS'
+}
+
+export type FetchImages = {
+  data: string
+  type: 'FETCH_IMAGES'
+}
+
+export type RetryUploads = {
+  data: number
+  type: 'RETRY_UPLOADS'
+}
+
+export type SubscribeBatch = {
+  data: number
+  type: 'SUBSCRIBE_BATCH'
+}
+
+export type SubscribeBatchesList = {
+  data: SubscribeBatchesListData
+  type: 'SUBSCRIBE_BATCHES_LIST'
+}
+
+export type SubscribeBatchesListData = {
+  filter?: string
+  userid?: string
+}
+
+export type UnsubscribeBatch = {
+  type: 'UNSUBSCRIBE_BATCH'
+}
+
+export type UnsubscribeBatchesList = {
+  type: 'UNSUBSCRIBE_BATCHES_LIST'
+}
+
+export type Upload = {
   type: 'UPLOAD'
   data: UploadData
 }
 
-export interface UploadData {
+export type UploadData = {
   items: UploadItem[]
   handler?: string
 }
 
-export interface UploadItem {
+export type UploadItem = {
   id: string
   input: string
   title: string
   wikitext: string
   labels?: Record<string, string>
-  sdc?: Record<string, unknown>[]
+  sdc?: string
 }
 
-export interface SubscribeBatchPayload {
-  type: 'SUBSCRIBE_BATCH'
-  data: number
-}
-
-export interface UnsubscribeBatchPayload {
-  type: 'UNSUBSCRIBE_BATCH'
-}
-
-export interface SubscribeBatchesListPayload {
-  type: 'SUBSCRIBE_BATCHES_LIST'
-  data?: SubscribeBatchesListData
-}
-
-export interface SubscribeBatchesListData {
-  userid?: string
-  filter?: string
-}
-
-export interface UnsubscribeBatchesListPayload {
-  type: 'UNSUBSCRIBE_BATCHES_LIST'
-}
-
-export interface FetchBatchesPayload {
-  type: 'FETCH_BATCHES'
-  data: FetchBatchesData
-}
-
-export interface FetchBatchesData {
-  page?: number
-  limit?: number
-  userid?: string
-  filter?: string
-}
-
-export interface FetchBatchUploadsPayload {
-  type: 'FETCH_BATCH_UPLOADS'
-  data: FetchBatchUploadsData
-}
-
-export interface FetchBatchUploadsData {
-  batchid: number
-}
-
-export interface RetryUploadsPayload {
-  type: 'RETRY_UPLOADS'
-  data: RetryUploadsData
-}
-
-export interface RetryUploadsData {
-  batchid: number
-}
-
-export interface ErrorPayload {
-  type: 'ERROR'
-  data: string
-}
-
-export interface CollectionImagesPayload {
-  type: 'COLLECTION_IMAGES'
-  data: CollectionImagesData
-}
-
-export interface CollectionImagesData {
-  images: Record<string, MediaImage>
-  creator: Creator
-}
-
-export interface MediaImage {
-  id: string
-  title: string
-  description?: string
-  dates: Dates
-  creator: Creator
-  location: GeoLocation
-  url_original: string
-  thumbnail_url: string
-  preview_url: string
-  url: string
-  width: number
-  height: number
-  camera_make?: string
-  camera_model?: string
-  is_pano?: boolean
-  license?: string
-  tags?: string[]
-  existing: ExistingPage[]
-}
-
-export interface Dates {
-  taken: string
-}
-
-export interface Creator {
-  id: string
-  username: string
-  profile_url: string
-}
-
-export interface GeoLocation {
-  latitude: number
-  longitude: number
-  accuracy?: number
-  compass_angle: number
-}
-
-export interface ExistingPage {
-  url: string
-}
-
-export interface UploadCreatedPayload {
-  type: 'UPLOAD_CREATED'
-  data: UploadCreatedItem[]
-}
-
-export interface UploadCreatedItem {
-  id: number
-  status: string
-  image_id: string
-  input: string
-  batchid: number
-}
-
-export interface BatchesListPayload {
-  type: 'BATCHES_LIST'
+export type BatchesList = {
   data: BatchesListData
+  type: 'BATCHES_LIST'
 }
 
-export interface BatchesListData {
+export type BatchesListData = {
   items: BatchItem[]
   total: number
 }
 
-export interface BatchItem {
+export type BatchItem = {
   id: number
   created_at: string
   username: string
@@ -176,26 +98,26 @@ export interface BatchItem {
   stats: BatchStats
 }
 
-export interface BatchStats {
-  total: number
-  queued: number
-  in_progress: number
+export type BatchStats = {
   completed: number
-  failed: number
   duplicate: number
+  failed: number
+  in_progress: number
+  queued: number
+  total: number
 }
 
-export interface BatchUploadsListPayload {
-  type: 'BATCH_UPLOADS_LIST'
+export type BatchUploadsList = {
   data: BatchUploadsListData
+  type: 'BATCH_UPLOADS_LIST'
 }
 
-export interface BatchUploadsListData {
+export type BatchUploadsListData = {
   batch: BatchItem
   uploads: BatchUploadItem[]
 }
 
-export interface BatchUploadItem {
+export type BatchUploadItem = {
   id: number
   status: string
   filename: string
@@ -214,33 +136,108 @@ export interface BatchUploadItem {
   image_id?: string
 }
 
-export interface DuplicateError {
-  type: 'duplicate'
-  message: string
+export type DuplicateError = {
   links: ErrorLink[]
+  message: string
+  type: 'duplicate'
 }
 
-export interface ErrorLink {
+export type ErrorLink = {
   title: string
   url: string
 }
 
-export interface GenericError {
-  type: 'error'
+export type GenericError = {
   message: string
+  type: 'error'
 }
 
-export interface SubscribedPayload {
-  type: 'SUBSCRIBED'
+export type CollectionImages = {
+  type: 'COLLECTION_IMAGES'
+  data: CollectionImagesData
+}
+
+export type CollectionImagesData = {
+  images: Record<string, MediaImage>
+  creator: Creator
+}
+
+export type MediaImage = {
+  camera_make?: string
+  camera_model?: string
+  creator: Creator
+  dates: Dates
+  description?: string
+  existing: ExistingPage[]
+  height: number
+  id: string
+  is_pano?: boolean
+  license?: string
+  location: GeoLocation
+  preview_url: string
+  tags?: string[]
+  thumbnail_url: string
+  title: string
+  url: string
+  url_original: string
+  width: number
+}
+
+export type Creator = {
+  id: string
+  username: string
+  profile_url: string
+}
+
+export type Dates = {
+  taken: string
+}
+
+export type ExistingPage = {
+  url: string
+}
+
+export type GeoLocation = {
+  accuracy?: number
+  compass_angle: number
+  latitude: number
+  longitude: number
+}
+
+export type Error = {
+  data: string
+  type: 'ERROR'
+}
+
+export type Subscribed = {
   data: number
+  type: 'SUBSCRIBED'
 }
 
-export interface UploadsUpdatePayload {
+export type UploadCreated = {
+  type: 'UPLOAD_CREATED'
+  data: UploadCreatedItem[]
+}
+
+export type UploadCreatedItem = {
+  id: number
+  status: string
+  image_id: string
+  input: string
+  batchid: number
+}
+
+export type UploadsComplete = {
+  data: number
+  type: 'UPLOADS_COMPLETE'
+}
+
+export type UploadsUpdate = {
   type: 'UPLOADS_UPDATE'
   data: UploadUpdateItem[]
 }
 
-export interface UploadUpdateItem {
+export type UploadUpdateItem = {
   id: number
   batchid: number
   status: string
@@ -250,30 +247,25 @@ export interface UploadUpdateItem {
   handler: string
 }
 
-export interface UploadsCompletePayload {
-  type: 'UPLOADS_COMPLETE'
-  data: number
-}
-
 export type ClientMessage =
-  | FetchImagesPayload
-  | UploadPayload
-  | SubscribeBatchPayload
-  | UnsubscribeBatchPayload
-  | SubscribeBatchesListPayload
-  | UnsubscribeBatchesListPayload
-  | FetchBatchesPayload
-  | FetchBatchUploadsPayload
-  | RetryUploadsPayload
+  | FetchBatches
+  | FetchBatchUploads
+  | FetchImages
+  | RetryUploads
+  | SubscribeBatch
+  | SubscribeBatchesList
+  | UnsubscribeBatch
+  | UnsubscribeBatchesList
+  | Upload
 
 export type ServerMessage =
-  | ErrorPayload
-  | CollectionImagesPayload
-  | UploadCreatedPayload
-  | BatchesListPayload
-  | BatchUploadsListPayload
-  | SubscribedPayload
-  | UploadsUpdatePayload
-  | UploadsCompletePayload
+  | BatchesList
+  | BatchUploadsList
+  | CollectionImages
+  | Error
+  | Subscribed
+  | UploadCreated
+  | UploadsComplete
+  | UploadsUpdate
 
 export type StructuredError = DuplicateError | GenericError

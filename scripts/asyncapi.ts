@@ -181,14 +181,14 @@ const generateTypescriptCode = async () => {
   ].join('\n\n')
 
   // Replace any with unknown
-  tsContent = tsContent.replace(/Record<string, any>/g, 'Record<string, unknown>')
+  // tsContent = tsContent.replace(/Record<string, any>/g, 'Record<string, unknown>')
 
   // Construct ClientMessage and ServerMessage unions
   // Client Messages (ReceiveClientMessages)
   const clientMessagesRefs = document.operations.ReceiveClientMessages.messages || []
   const clientMessageTypes = clientMessagesRefs.map((m: { $ref: string }) => {
     const name = m.$ref.split('/').pop()
-    return `${name}Payload`
+    return `${name}`
   })
   const clientMessageUnion = `export type ClientMessage = \n  | ${clientMessageTypes.join('\n  | ')}`
 
@@ -196,7 +196,7 @@ const generateTypescriptCode = async () => {
   const serverMessagesRefs = document.operations.SendServerMessages.messages || []
   const serverMessageTypes = serverMessagesRefs.map((m: { $ref: string }) => {
     const name = m.$ref.split('/').pop()
-    return `${name}Payload`
+    return `${name}`
   })
   const serverMessageUnion = `export type ServerMessage = \n  | ${serverMessageTypes.join('\n  | ')}`
 
@@ -205,9 +205,8 @@ const generateTypescriptCode = async () => {
 
   // Fix reserved keywords and add exports
   tsContent = tsContent
-    .replace(/^interface /gm, 'export interface ')
-    .replace(/^type /gm, 'export type ')
-    .replace(/^enum /gm, 'export enum ')
+    .replace(/^interface (\w+) {/gm, 'export type $1 = {')
+    .replace(/^type/gm, 'export type')
 
   const frontendPath = path.resolve(import.meta.dir, '../src/types')
   const tsOutputFile = path.resolve(frontendPath, 'asyncapi.ts')

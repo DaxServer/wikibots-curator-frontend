@@ -120,10 +120,7 @@ const rowsPerPageOptions = computed(() => {
           </div>
           <div>
             <div class="text-base font-bold">SDC</div>
-            <StatementsList
-              :key="data.id"
-              :statements="data.sdc"
-            />
+            <StatementsList :statements="data.sdc" />
           </div>
         </div>
       </template>

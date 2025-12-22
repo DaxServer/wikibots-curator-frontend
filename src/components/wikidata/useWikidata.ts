@@ -1,3 +1,32 @@
+export const WikidataEntity = {
+  CCBYSA40: 'Q18199165',
+  Copyrighted: 'Q50423863',
+  Degree: 'Q28390',
+  FileAvailableOnInternet: 'Q74228490',
+  Mapillary: 'Q17985544',
+  MapillaryDatabase: 'Q26757498',
+  Pixel: 'Q355198',
+} as const
+
+export const WikidataProperty = {
+  AuthorNameString: 'P2093',
+  CoordinatesOfThePointOfView: 'P1259',
+  CopyrightLicense: 'P275',
+  CopyrightStatus: 'P6216',
+  Creator: 'P170',
+  DescribedAtUrl: 'P973',
+  Heading: 'P7787',
+  Height: 'P2048',
+  Inception: 'P571',
+  MapillaryPhotoID: 'P1947',
+  MapillaryUsername: 'P13988',
+  Operator: 'P137',
+  PublishedIn: 'P1433',
+  SourceOfFile: 'P7482',
+  Url: 'P2699',
+  Width: 'P2049',
+} as const
+
 const properties: Record<string, string> = {
   P1259: 'coordinates of the point of view',
   P137: 'operator',

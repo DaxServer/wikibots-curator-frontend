@@ -1,3 +1,4 @@
+import { WikidataEntity, WikidataProperty } from '@/components/wikidata/useWikidata'
 import {
   createCopyrightLicenseClaim,
   createCopyrightStatusClaim,
@@ -13,7 +14,6 @@ import {
 } from '@/composables/sdc'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
-import { WikidataEntity, WikidataProperty } from '@/types/wikidata'
 import { isValidExtension } from '@/utils/titleTemplate'
 import { debounce } from 'ts-debounce'
 
