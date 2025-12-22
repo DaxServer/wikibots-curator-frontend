@@ -76,8 +76,13 @@ export type UploadItem = {
   input: string
   title: string
   wikitext: string
-  labels?: Record<string, string>
-  sdc?: string
+  labels?: Label
+  sdc?: any[]
+}
+
+export type Label = {
+  language: string
+  value: string
 }
 
 export type BatchesList = {
@@ -126,8 +131,8 @@ export type BatchUploadItem = {
   userid?: string
   key?: string
   handler?: string
-  sdc?: string
-  labels?: Record<string, string>
+  sdc?: any[]
+  labels?: Label
   result?: string
   error?: DuplicateError | GenericError
   success?: string

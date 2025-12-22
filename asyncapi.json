@@ -234,7 +234,8 @@
           "type": {
             "const": "BATCHES_LIST"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "BatchesListData": {
         "type": "object",
@@ -252,7 +253,8 @@
           "total": {
             "type": "integer"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "BatchItem": {
         "type": "object",
@@ -280,7 +282,8 @@
           "stats": {
             "$ref": "#/components/schemas/BatchStats"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "BatchStats": {
         "type": "object",
@@ -317,7 +320,8 @@
             "type": "integer",
             "default": 0
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CollectionImagesData": {
         "type": "object",
@@ -335,7 +339,8 @@
           "creator": {
             "$ref": "#/components/schemas/Creator"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "BatchUploadItem": {
         "type": "object",
@@ -371,13 +376,10 @@
             "type": "string"
           },
           "sdc": {
-            "type": "string"
+            "type": "array"
           },
           "labels": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
+            "$ref": "#/components/schemas/Label"
           },
           "result": {
             "type": "string"
@@ -399,7 +401,8 @@
           "image_id": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "BatchUploadsList": {
         "type": "object",
@@ -414,7 +417,8 @@
           "type": {
             "const": "BATCH_UPLOADS_LIST"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "BatchUploadsListData": {
         "type": "object",
@@ -432,7 +436,8 @@
               "$ref": "#/components/schemas/BatchUploadItem"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CollectionImages": {
         "type": "object",
@@ -447,7 +452,8 @@
           "data": {
             "$ref": "#/components/schemas/CollectionImagesData"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "Creator": {
         "type": "object",
@@ -467,7 +473,8 @@
             "type": "string",
             "format": "uri"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "Dates": {
         "type": "object",
@@ -479,7 +486,8 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "DuplicateError": {
         "type": "object",
@@ -501,7 +509,8 @@
           "type": {
             "const": "duplicate"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "Error": {
         "type": "object",
@@ -517,7 +526,8 @@
           "type": {
             "const": "ERROR"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "ErrorLink": {
         "type": "object",
@@ -533,7 +543,8 @@
             "type": "string",
             "format": "uri"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "ExistingPage": {
         "type": "object",
@@ -545,7 +556,8 @@
             "type": "string",
             "format": "uri"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "FetchBatches": {
         "type": "object",
@@ -560,7 +572,8 @@
           "type": {
             "const": "FETCH_BATCHES"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "FetchBatchesData": {
         "type": "object",
@@ -587,7 +600,8 @@
             "type": "string",
             "description": "Optional filter text for batches (id or username)"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "FetchBatchUploads": {
         "type": "object",
@@ -603,7 +617,8 @@
           "type": {
             "const": "FETCH_BATCH_UPLOADS"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "FetchImages": {
         "type": "object",
@@ -619,7 +634,8 @@
           "type": {
             "const": "FETCH_IMAGES"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "GenericError": {
         "type": "object",
@@ -634,7 +650,8 @@
           "type": {
             "const": "error"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "GeoLocation": {
         "type": "object",
@@ -659,7 +676,24 @@
             "type": "number",
             "format": "float"
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "Label": {
+        "type": "object",
+        "required": [
+          "language",
+          "value"
+        ],
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "MediaImage": {
         "type": "object",
@@ -742,7 +776,8 @@
           "width": {
             "type": "integer"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "RetryUploads": {
         "type": "object",
@@ -758,7 +793,8 @@
           "type": {
             "const": "RETRY_UPLOADS"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "StructuredError": {
         "oneOf": [
@@ -784,7 +820,8 @@
           "type": {
             "const": "SUBSCRIBE_BATCH"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "SubscribeBatchesList": {
         "type": "object",
@@ -799,7 +836,8 @@
           "type": {
             "const": "SUBSCRIBE_BATCHES_LIST"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "SubscribeBatchesListData": {
         "type": "object",
@@ -812,7 +850,8 @@
             "type": "string",
             "description": "User id to filter batches"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "Subscribed": {
         "type": "object",
@@ -828,7 +867,8 @@
           "type": {
             "const": "SUBSCRIBED"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UnsubscribeBatch": {
         "type": "object",
@@ -839,7 +879,8 @@
           "type": {
             "const": "UNSUBSCRIBE_BATCH"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UnsubscribeBatchesList": {
         "type": "object",
@@ -850,7 +891,8 @@
           "type": {
             "const": "UNSUBSCRIBE_BATCHES_LIST"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "Upload": {
         "type": "object",
@@ -865,7 +907,8 @@
           "data": {
             "$ref": "#/components/schemas/UploadData"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UploadCreatedItem": {
         "type": "object",
@@ -892,7 +935,8 @@
           "batchid": {
             "type": "integer"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UploadCreated": {
         "type": "object",
@@ -910,7 +954,8 @@
               "$ref": "#/components/schemas/UploadCreatedItem"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UploadsComplete": {
         "type": "object",
@@ -926,7 +971,8 @@
           "type": {
             "const": "UPLOADS_COMPLETE"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UploadData": {
         "type": "object",
@@ -943,7 +989,8 @@
           "handler": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UploadItem": {
         "type": "object",
@@ -967,15 +1014,13 @@
             "type": "string"
           },
           "labels": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
+            "$ref": "#/components/schemas/Label"
           },
           "sdc": {
-            "type": "string"
+            "type": "array"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UploadsUpdate": {
         "type": "object",
@@ -993,7 +1038,8 @@
               "$ref": "#/components/schemas/UploadUpdateItem"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "UploadUpdateItem": {
         "type": "object",
@@ -1026,7 +1072,8 @@
           "handler": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   }

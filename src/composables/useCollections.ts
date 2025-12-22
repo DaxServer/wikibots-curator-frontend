@@ -248,7 +248,7 @@ export const useCollections = () => {
         sdc: item.sdc,
       })),
     }
-    send(JSON.stringify({ type: 'UPLOAD', data: payload }))
+    send(JSON.stringify({ type: 'UPLOAD', data: payload } as Upload))
   }
 
   return {

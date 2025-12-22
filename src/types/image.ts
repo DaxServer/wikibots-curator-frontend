@@ -7,14 +7,9 @@ export interface Image extends Omit<MediaImage, 'dates' | 'description'> {
   description: string
 }
 
-export interface Description {
-  language: string
-  value: string
-}
-
 export interface Metadata {
   title?: string
-  description: Description
+  description: Label
   categories: string
   license?: string
   selected: boolean
