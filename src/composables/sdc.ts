@@ -1,65 +1,47 @@
 import { WikidataEntity, WikidataProperty } from '@/components/wikidata/useWikidata'
-import {
-  DataValueType,
-  Rank,
-  SnakDataType,
-  SnakType,
-  WikibaseEntityType,
-  type EntityIdValueSnak,
-  type ExternalIdValueSnak,
-  type GlobeCoordinateValueSnak,
-  type ItemId,
-  type PropertyId,
-  type QuantityValueSnak,
-  type Snak,
-  type SomeValueSnak,
-  type Statement,
-  type StringValueSnak,
-  type TimeValueSnak,
-  type UrlValueSnak,
-} from '@/types/wikidata'
+import { DataValueType, Rank, SnakDataType, SnakType, WikibaseEntityType } from '@/types/asyncapi'
 
 // ============================================================================
 // Low-level builders for creating snaks and statements
 // ============================================================================
 
 export const createStringSnak = (property: PropertyId, value: string): StringValueSnak => ({
-  snaktype: SnakType.Value,
+  snaktype: SnakType.VALUE,
   property,
-  datatype: SnakDataType.String,
-  datavalue: { value, type: DataValueType.String },
+  datatype: SnakDataType.STRING,
+  datavalue: { value, type: DataValueType.STRING },
 })
 
 export const createUrlSnak = (property: PropertyId, value: string): UrlValueSnak => ({
-  snaktype: SnakType.Value,
+  snaktype: SnakType.VALUE,
   property,
-  datatype: SnakDataType.Url,
-  datavalue: { value, type: DataValueType.String },
+  datatype: SnakDataType.URL,
+  datavalue: { value, type: DataValueType.STRING },
 })
 
 export const createWikibaseItemSnak = (
   property: PropertyId,
   itemId: ItemId,
 ): EntityIdValueSnak => ({
-  snaktype: SnakType.Value,
+  snaktype: SnakType.VALUE,
   property,
-  datatype: SnakDataType.WikibaseItem,
+  datatype: SnakDataType.WIKIBASE_ITEM,
   datavalue: {
-    value: { 'entity-type': WikibaseEntityType.Item, 'numeric-id': getNumericId(itemId) },
-    type: DataValueType.WikibaseEntityId,
+    value: { 'entity-type': WikibaseEntityType.ITEM, 'numeric-id': getNumericId(itemId) },
+    type: DataValueType.WIKIBASE_ENTITYID,
   },
 })
 
 export const createSomeValueSnak = (property: PropertyId): SomeValueSnak => ({
-  snaktype: SnakType.SomeValue,
+  snaktype: SnakType.SOMEVALUE,
   property,
 })
 
 export const createExternalIdSnak = (property: PropertyId, value: string): ExternalIdValueSnak => ({
-  snaktype: SnakType.Value,
+  snaktype: SnakType.VALUE,
   property,
-  datatype: SnakDataType.ExternalId,
-  datavalue: { value, type: DataValueType.String },
+  datatype: SnakDataType.EXTERNAL_ID,
+  datavalue: { value, type: DataValueType.STRING },
 })
 
 export const createTimeSnak = (property: PropertyId, date: Date): TimeValueSnak => {
@@ -67,9 +49,9 @@ export const createTimeSnak = (property: PropertyId, date: Date): TimeValueSnak 
   const time = `+0000000${dateString}T00:00:00Z`
 
   return {
-    snaktype: SnakType.Value,
+    snaktype: SnakType.VALUE,
     property,
-    datatype: SnakDataType.Time,
+    datatype: SnakDataType.TIME,
     datavalue: {
       value: {
         time,
@@ -79,7 +61,7 @@ export const createTimeSnak = (property: PropertyId, date: Date): TimeValueSnak 
         timezone: 0,
         calendarmodel: 'http://www.wikidata.org/entity/Q1985727',
       },
-      type: DataValueType.Time,
+      type: DataValueType.TIME,
     },
   }
 }
@@ -89,9 +71,9 @@ export const createQuantitySnak = (
   amount: number,
   unit: ItemId,
 ): QuantityValueSnak => ({
-  snaktype: SnakType.Value,
+  snaktype: SnakType.VALUE,
   property,
-  datatype: SnakDataType.Quantity,
+  datatype: SnakDataType.QUANTITY,
   datavalue: {
     value: {
       amount: `+${amount}`,
@@ -99,7 +81,7 @@ export const createQuantitySnak = (
       lowerBound: null,
       unit: `http://www.wikidata.org/entity/${unit}`,
     },
-    type: DataValueType.Quantity,
+    type: DataValueType.QUANTITY,
   },
 })
 
@@ -109,9 +91,9 @@ export const createGlobeCoordinateSnak = (
   longitude: number,
   precision = 1.0e-9,
 ): GlobeCoordinateValueSnak => ({
-  snaktype: SnakType.Value,
+  snaktype: SnakType.VALUE,
   property,
-  datatype: SnakDataType.GlobeCoordinate,
+  datatype: SnakDataType.GLOBE_COORDINATE,
   datavalue: {
     value: {
       latitude,
@@ -120,7 +102,7 @@ export const createGlobeCoordinateSnak = (
       precision,
       globe: 'http://www.wikidata.org/entity/Q2',
     },
-    type: DataValueType.GlobeCoordinate,
+    type: DataValueType.GLOBECOORDINATE,
   },
 })
 

@@ -5,7 +5,7 @@ const { getEntityLabel } = useWikidata()
 </script>
 
 <template>
-  <template v-if="value.type === DataValueType.WikibaseEntityId">
+  <template v-if="value.type === DataValueType.WIKIBASE_ENTITYID">
     <a
       :href="`https://www.wikidata.org/wiki/Q${value.value['numeric-id']}`"
       class="hover:underline"
@@ -18,13 +18,13 @@ const { getEntityLabel } = useWikidata()
   <!-- <template v-else-if="value.type === 'monolingualtext'">
     <span>{{ value.value.language }}: {{ value.value.text }}</span>
   </template> -->
-  <template v-else-if="value.type === DataValueType.Quantity">
+  <template v-else-if="value.type === DataValueType.QUANTITY">
     <span>{{ value.value.amount }} {{ getEntityLabel(value.value.unit.split('/').at(-1)!) }}</span>
   </template>
-  <template v-else-if="value.type === DataValueType.Time">
+  <template v-else-if="value.type === DataValueType.TIME">
     <span>{{ value.value.time.replace(/^\+0+/, '').split('T')[0] }}</span>
   </template>
-  <template v-else-if="value.type === DataValueType.GlobeCoordinate">
+  <template v-else-if="value.type === DataValueType.GLOBECOORDINATE">
     <span>
       {{ decimalToDMS(value.value.latitude, 'lat') }},
       {{ decimalToDMS(value.value.longitude, 'lon') }}
@@ -38,7 +38,7 @@ const { getEntityLabel } = useWikidata()
       {{ value.value }}
     </ExternalLink>
   </template> -->
-  <template v-else-if="value.type === DataValueType.String">
+  <template v-else-if="value.type === DataValueType.STRING">
     <span>{{ value.value }}</span>
   </template>
   <template v-else>

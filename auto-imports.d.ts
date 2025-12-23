@@ -7,15 +7,15 @@
 export {}
 declare global {
   const AVAILABLE_IMAGE_FIELDS: typeof import('./src/utils/titleTemplate').AVAILABLE_IMAGE_FIELDS
-  const DataValueType: typeof import('./src/types/wikidata').DataValueType
+  const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
   const Noir: typeof import('./src/assets/Noir').default
-  const Rank: typeof import('./src/types/wikidata').Rank
-  const SnakDataType: typeof import('./src/types/wikidata').SnakDataType
-  const SnakType: typeof import('./src/types/wikidata').SnakType
+  const Rank: typeof import('./src/types/asyncapi').Rank
+  const SnakDataType: typeof import('./src/types/asyncapi').SnakDataType
+  const SnakType: typeof import('./src/types/asyncapi').SnakType
   const UPLOAD_STATUS: typeof import('./src/types/image').UPLOAD_STATUS
   const VALID_EXTENSIONS: typeof import('./src/utils/titleTemplate').VALID_EXTENSIONS
-  const WikibaseEntityType: typeof import('./src/types/wikidata').WikibaseEntityType
+  const WikibaseEntityType: typeof import('./src/types/asyncapi').WikibaseEntityType
   const WikidataEntity: typeof import('./src/components/wikidata/useWikidata').WikidataEntity
   const WikidataProperty: typeof import('./src/components/wikidata/useWikidata').WikidataProperty
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
@@ -373,7 +373,7 @@ declare global {
   export type { DataViewPageEvent } from 'primevue/dataview'
   import('primevue/dataview')
   // @ts-ignore
-  export type { WsChannel, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, GenericError, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, Subscribed, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, ClientMessage, ServerMessage, StructuredError } from './src/types/asyncapi'
+  export type { WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, GenericError, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, Subscribed, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, DataValue, Snak, ValueSnak, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage, StructuredError } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
   export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
@@ -381,9 +381,6 @@ declare global {
   // @ts-ignore
   export type { Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
   import('./src/types/image')
-  // @ts-ignore
-  export type { Rank, PropertyId, ItemId, DataValueEntityId, DataValueQuantity, DataValueTime, DataValueGlobeCoordinate, StringDataValue, GlobeCoordinateDataValue, EntityIdDataValue, QuantityDataValue, TimeDataValue, UrlDataValue, DataValue, StringValueSnak, GlobeCoordinateValueSnak, EntityIdValueSnak, ExternalIdValueSnak, QuantityValueSnak, TimeValueSnak, UrlValueSnak, ValueSnak, SomeValueSnak, NoValueSnak, Snak, Reference, Statement } from './src/types/wikidata'
-  import('./src/types/wikidata')
 }
 
 // for vue template auto import
@@ -392,15 +389,15 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly AVAILABLE_IMAGE_FIELDS: UnwrapRef<typeof import('./src/utils/titleTemplate')['AVAILABLE_IMAGE_FIELDS']>
-    readonly DataValueType: UnwrapRef<typeof import('./src/types/wikidata')['DataValueType']>
+    readonly DataValueType: UnwrapRef<typeof import('./src/types/asyncapi')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Noir: UnwrapRef<typeof import('./src/assets/Noir')['default']>
-    readonly Rank: UnwrapRef<typeof import('./src/types/wikidata')['Rank']>
-    readonly SnakDataType: UnwrapRef<typeof import('./src/types/wikidata')['SnakDataType']>
-    readonly SnakType: UnwrapRef<typeof import('./src/types/wikidata')['SnakType']>
+    readonly Rank: UnwrapRef<typeof import('./src/types/asyncapi')['Rank']>
+    readonly SnakDataType: UnwrapRef<typeof import('./src/types/asyncapi')['SnakDataType']>
+    readonly SnakType: UnwrapRef<typeof import('./src/types/asyncapi')['SnakType']>
     readonly UPLOAD_STATUS: UnwrapRef<typeof import('./src/types/image')['UPLOAD_STATUS']>
     readonly VALID_EXTENSIONS: UnwrapRef<typeof import('./src/utils/titleTemplate')['VALID_EXTENSIONS']>
-    readonly WikibaseEntityType: UnwrapRef<typeof import('./src/types/wikidata')['WikibaseEntityType']>
+    readonly WikibaseEntityType: UnwrapRef<typeof import('./src/types/asyncapi')['WikibaseEntityType']>
     readonly WikidataEntity: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['WikidataEntity']>
     readonly WikidataProperty: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['WikidataProperty']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
