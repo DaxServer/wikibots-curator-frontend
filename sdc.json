@@ -14,7 +14,8 @@
           "items": {
             "$ref": "#/components/schemas/Snak"
           }
-        }
+        },
+        "default": {}
       },
       "DataValue": {
         "anyOf": [
@@ -352,7 +353,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "default": []
           },
           "hash": {
             "type": "string"
@@ -416,13 +418,15 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "default": []
           },
           "references": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Reference"
-            }
+            },
+            "default": []
           },
           "type": {
             "const": "statement"

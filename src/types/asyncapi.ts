@@ -67,12 +67,191 @@ export type UploadItem = {
   title: string
   wikitext: string
   labels?: Label
-  sdc?: any[]
+  sdc?: Statement[]
 }
 
 export type Label = {
   language: string
   value: string
+}
+
+export type Statement = {
+  mainsnak:
+    | NoValueSnak
+    | SomeValueSnak
+    | EntityIdValueSnak
+    | ExternalIdValueSnak
+    | GlobeCoordinateValueSnak
+    | QuantityValueSnak
+    | StringValueSnak
+    | TimeValueSnak
+    | UrlValueSnak
+  rank: Rank
+  qualifiers?: Record<
+    string,
+    (
+      | NoValueSnak
+      | SomeValueSnak
+      | EntityIdValueSnak
+      | ExternalIdValueSnak
+      | GlobeCoordinateValueSnak
+      | QuantityValueSnak
+      | StringValueSnak
+      | TimeValueSnak
+      | UrlValueSnak
+    )[]
+  >
+  'qualifiers-order'?: string[]
+  references?: Reference[]
+  type?: 'statement'
+}
+
+export type NoValueSnak = {
+  snaktype: 'novalue'
+  property: string
+}
+
+export type SomeValueSnak = {
+  snaktype: 'somevalue'
+  property: string
+}
+
+export type EntityIdValueSnak = {
+  snaktype: 'value'
+  property: string
+  datatype: 'wikibase-item'
+  datavalue: EntityIdDataValue
+}
+
+export type EntityIdDataValue = {
+  type: 'wikibase-entityid'
+  value: DataValueEntityId
+}
+
+export type DataValueEntityId = {
+  'entity-type': WikibaseEntityType
+  'numeric-id': number
+}
+
+export enum WikibaseEntityType {
+  ITEM = 'item',
+  PROPERTY = 'property',
+}
+
+export type ExternalIdValueSnak = {
+  snaktype: 'value'
+  property: string
+  datatype: 'external-id'
+  datavalue: StringDataValue
+}
+
+export type StringDataValue = {
+  type: 'string'
+  value: string
+}
+
+export type GlobeCoordinateValueSnak = {
+  snaktype: 'value'
+  property: string
+  datatype: 'globe-coordinate'
+  datavalue: GlobeCoordinateDataValue
+}
+
+export type GlobeCoordinateDataValue = {
+  type: 'globecoordinate'
+  value: DataValueGlobeCoordinate
+}
+
+export type DataValueGlobeCoordinate = {
+  latitude: number
+  longitude: number
+  altitude: number | null
+  precision: number
+  globe: string
+}
+
+export type QuantityValueSnak = {
+  snaktype: 'value'
+  property: string
+  datatype: 'quantity'
+  datavalue: QuantityDataValue
+}
+
+export type QuantityDataValue = {
+  type: 'quantity'
+  value: DataValueQuantity
+}
+
+export type DataValueQuantity = {
+  amount: string
+  unit: string
+  upperBound?: string | null
+  lowerBound?: string | null
+}
+
+export type StringValueSnak = {
+  snaktype: 'value'
+  property: string
+  datatype: 'string'
+  datavalue: StringDataValue
+}
+
+export type TimeValueSnak = {
+  snaktype: 'value'
+  property: string
+  datatype: 'time'
+  datavalue: TimeDataValue
+}
+
+export type TimeDataValue = {
+  type: 'time'
+  value: DataValueTime
+}
+
+export type DataValueTime = {
+  time: string
+  timezone?: number
+  before?: number
+  after?: number
+  precision?: number
+  calendarmodel?: string
+}
+
+export type UrlValueSnak = {
+  snaktype: 'value'
+  property: string
+  datatype: 'url'
+  datavalue: UrlDataValue
+}
+
+export type UrlDataValue = {
+  type: 'string'
+  value: string
+}
+
+export enum Rank {
+  DEPRECATED = 'deprecated',
+  NORMAL = 'normal',
+  PREFERRED = 'preferred',
+}
+
+export type Reference = {
+  snaks: Record<
+    string,
+    (
+      | NoValueSnak
+      | SomeValueSnak
+      | EntityIdValueSnak
+      | ExternalIdValueSnak
+      | GlobeCoordinateValueSnak
+      | QuantityValueSnak
+      | StringValueSnak
+      | TimeValueSnak
+      | UrlValueSnak
+    )[]
+  >
+  'snaks-order'?: string[]
+  hash?: string
 }
 
 export type BatchesList = {
@@ -121,7 +300,7 @@ export type BatchUploadItem = {
   userid?: string
   key?: string
   handler?: string
-  sdc?: any[]
+  sdc?: Statement[]
   labels?: Label
   result?: string
   error?: DuplicateError | GenericError
@@ -285,129 +464,6 @@ export type Claims = Record<
   )[]
 >
 
-export type NoValueSnak = {
-  snaktype: 'novalue'
-  property: string
-}
-
-export type SomeValueSnak = {
-  snaktype: 'somevalue'
-  property: string
-}
-
-export type EntityIdValueSnak = {
-  snaktype: 'value'
-  property: string
-  datatype: 'wikibase-item'
-  datavalue: EntityIdDataValue
-}
-
-export type EntityIdDataValue = {
-  type: 'wikibase-entityid'
-  value: DataValueEntityId
-}
-
-export type DataValueEntityId = {
-  'entity-type': WikibaseEntityType
-  'numeric-id': number
-}
-
-export enum WikibaseEntityType {
-  ITEM = 'item',
-  PROPERTY = 'property',
-}
-
-export type ExternalIdValueSnak = {
-  snaktype: 'value'
-  property: string
-  datatype: 'external-id'
-  datavalue: StringDataValue
-}
-
-export type StringDataValue = {
-  type: 'string'
-  value: string
-}
-
-export type GlobeCoordinateValueSnak = {
-  snaktype: 'value'
-  property: string
-  datatype: 'globe-coordinate'
-  datavalue: GlobeCoordinateDataValue
-}
-
-export type GlobeCoordinateDataValue = {
-  type: 'globecoordinate'
-  value: DataValueGlobeCoordinate
-}
-
-export type DataValueGlobeCoordinate = {
-  latitude: number
-  longitude: number
-  altitude: number | null
-  precision: number
-  globe: string
-}
-
-export type QuantityValueSnak = {
-  snaktype: 'value'
-  property: string
-  datatype: 'quantity'
-  datavalue: QuantityDataValue
-}
-
-export type QuantityDataValue = {
-  type: 'quantity'
-  value: DataValueQuantity
-}
-
-export type DataValueQuantity = {
-  amount: string
-  unit: string
-  upperBound?: string | null
-  lowerBound?: string | null
-}
-
-export type StringValueSnak = {
-  snaktype: 'value'
-  property: string
-  datatype: 'string'
-  datavalue: StringDataValue
-}
-
-export type TimeValueSnak = {
-  snaktype: 'value'
-  property: string
-  datatype: 'time'
-  datavalue: TimeDataValue
-}
-
-export type TimeDataValue = {
-  type: 'time'
-  value: DataValueTime
-}
-
-export type DataValueTime = {
-  time: string
-  timezone?: number
-  before?: number
-  after?: number
-  precision?: number
-  calendarmodel?: string
-}
-
-export type UrlValueSnak = {
-  snaktype: 'value'
-  property: string
-  datatype: 'url'
-  datavalue: UrlDataValue
-}
-
-export type UrlDataValue = {
-  type: 'string'
-  value: string
-}
-
 export enum DataValueType {
   EXTERNAL_ID = 'external-id',
   GLOBECOORDINATE = 'globecoordinate',
@@ -421,31 +477,6 @@ export type ItemId = `Q${number}`
 
 export type PropertyId = `P${number}`
 
-export enum Rank {
-  DEPRECATED = 'deprecated',
-  NORMAL = 'normal',
-  PREFERRED = 'preferred',
-}
-
-export type Reference = {
-  snaks: Record<
-    string,
-    (
-      | NoValueSnak
-      | SomeValueSnak
-      | EntityIdValueSnak
-      | ExternalIdValueSnak
-      | GlobeCoordinateValueSnak
-      | QuantityValueSnak
-      | StringValueSnak
-      | TimeValueSnak
-      | UrlValueSnak
-    )[]
-  >
-  'snaks-order'?: string[]
-  hash?: string
-}
-
 export enum SnakDataType {
   EXTERNAL_ID = 'external-id',
   GLOBE_COORDINATE = 'globe-coordinate',
@@ -454,37 +485,6 @@ export enum SnakDataType {
   TIME = 'time',
   URL = 'url',
   WIKIBASE_ITEM = 'wikibase-item',
-}
-
-export type Statement = {
-  mainsnak:
-    | NoValueSnak
-    | SomeValueSnak
-    | EntityIdValueSnak
-    | ExternalIdValueSnak
-    | GlobeCoordinateValueSnak
-    | QuantityValueSnak
-    | StringValueSnak
-    | TimeValueSnak
-    | UrlValueSnak
-  rank: Rank
-  qualifiers?: Record<
-    string,
-    (
-      | NoValueSnak
-      | SomeValueSnak
-      | EntityIdValueSnak
-      | ExternalIdValueSnak
-      | GlobeCoordinateValueSnak
-      | QuantityValueSnak
-      | StringValueSnak
-      | TimeValueSnak
-      | UrlValueSnak
-    )[]
-  >
-  'qualifiers-order'?: string[]
-  references?: Reference[]
-  type?: 'statement'
 }
 
 export enum SnakType {

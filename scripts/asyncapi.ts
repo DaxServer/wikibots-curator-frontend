@@ -1,4 +1,5 @@
 import {
+  ConstrainedArrayModel,
   ConstrainedDictionaryModel,
   PYTHON_PYDANTIC_PRESET,
   PythonGenerator,
@@ -11,13 +12,68 @@ import path from 'node:path'
 const CUSTOM_PYDANTIC_PRESET = {
   class: {
     ...PYTHON_PYDANTIC_PRESET.class,
+    additionalContent(context: any) {
+      const original = (PYTHON_PYDANTIC_PRESET.class as any).additionalContent?.(context) || ''
+      context.renderer.dependencyManager.addDependency(
+        'from pydantic import ConfigDict, field_validator',
+      )
+
+      const properties = context.model.properties || {}
+      const dictFields = []
+      const arrayFields = []
+
+      for (const [propName, prop] of Object.entries(properties)) {
+        const property = prop as any
+        const isOptional = !property.required || property.property.options.isNullable === true
+
+        // Match logic with property preset: collections are NOT marked Optional in python type
+        const isDictionary = property.property instanceof ConstrainedDictionaryModel
+        const isArray = property.property instanceof ConstrainedArrayModel
+
+        if (isOptional) {
+          if (isDictionary) dictFields.push(property.propertyName)
+          if (isArray) arrayFields.push(property.propertyName)
+        }
+      }
+
+      let validatorCode = ''
+      if (dictFields.length > 0) {
+        const fieldsStr = dictFields.map((f) => `"${f}"`).join(', ')
+        validatorCode += `
+@field_validator(${fieldsStr}, mode='before')
+@classmethod
+def parse_empty_dict(cls, v):
+    if v is None:
+        return {}
+    return v
+`
+      }
+      if (arrayFields.length > 0) {
+        const fieldsStr = arrayFields.map((f) => `"${f}"`).join(', ')
+        validatorCode += `
+@field_validator(${fieldsStr}, mode='before')
+@classmethod
+def parse_empty_list(cls, v):
+    if v is None:
+        return []
+    return v
+`
+      }
+
+      return `model_config = ConfigDict(populate_by_name=True)${validatorCode}\n\n${original}`
+    },
     // @ts-expect-error
     property({ property, model, renderer }) {
       let type = property.property.type
       const propertyName = property.propertyName
       const isOptional = !property.required || property.property.options.isNullable === true
 
-      if (isOptional) {
+      const isCollection =
+        property.property instanceof ConstrainedDictionaryModel ||
+        property.property instanceof ConstrainedArrayModel
+      const shouldBeOptional = isOptional && !isCollection
+
+      if (shouldBeOptional) {
         type = `Optional[${type}]`
       }
 
@@ -38,15 +94,9 @@ const CUSTOM_PYDANTIC_PRESET = {
       }
 
       // Fix: Check for default value in originalInput
-      const defaultValue = property.property.originalInput.default
-      if (defaultValue !== undefined) {
-        if (typeof defaultValue === 'string') {
-          decoratorArgs.push(`default='${defaultValue}'`)
-        } else {
-          decoratorArgs.push(`default=${defaultValue}`)
-        }
-      } else if (isOptional) {
-        decoratorArgs.push('default=None')
+      let defaultValue = property.property.originalInput.default
+      if (defaultValue === null) {
+        defaultValue = 'None'
       }
 
       if (property.property.options.const) {
@@ -56,6 +106,22 @@ const CUSTOM_PYDANTIC_PRESET = {
         }
         decoratorArgs.push(`default='${value}'`)
         decoratorArgs.push('frozen=True')
+      } else if (defaultValue !== undefined) {
+        if (typeof defaultValue === 'string' && defaultValue !== 'None') {
+          decoratorArgs.push(`default='${defaultValue}'`)
+        } else if (defaultValue === 'None') {
+          decoratorArgs.push(`default=None`)
+        } else {
+          decoratorArgs.push(`default=${JSON.stringify(defaultValue)}`)
+        }
+      } else if (isOptional) {
+        if (property.property instanceof ConstrainedDictionaryModel) {
+          decoratorArgs.push('default={}')
+        } else if (property.property instanceof ConstrainedArrayModel) {
+          decoratorArgs.push('default=[]')
+        } else {
+          decoratorArgs.push('default=None')
+        }
       }
 
       if (
@@ -71,6 +137,11 @@ const CUSTOM_PYDANTIC_PRESET = {
           property.property.serializationType !== 'unwrap')
       ) {
         decoratorArgs.push(`alias='''${property.unconstrainedPropertyName}'''`)
+      }
+      // Fix: Check for oneOf and add discriminator if present in schema
+      if (property.property.originalInput.oneOf && property.property.originalInput.discriminator) {
+        const discriminator = property.property.originalInput.discriminator.propertyName
+        decoratorArgs.push(`discriminator='${discriminator}'`)
       }
 
       return `${propertyName}: ${type} = Field(${decoratorArgs.join(', ')})`
@@ -88,6 +159,25 @@ const document = JSON.parse(content)
 
 const sdcContent = await Bun.file(sdcInputPath).text()
 const sdcDocument = JSON.parse(sdcContent)
+
+// Merge sdc schemas into document components for model generation
+document.components.schemas = {
+  ...document.components.schemas,
+  ...sdcDocument.components.schemas,
+}
+
+// Recursively replace sdc.json# references with local # references in the document object
+const replaceSdcRefs = (obj: any) => {
+  if (typeof obj !== 'object' || obj === null) return
+  for (const key in obj) {
+    if (key === '$ref' && typeof obj[key] === 'string' && obj[key].startsWith('sdc.json#')) {
+      obj[key] = obj[key].replace('sdc.json#', '#')
+    } else {
+      replaceSdcRefs(obj[key])
+    }
+  }
+}
+replaceSdcRefs(document)
 
 const getInferredType = async (pattern: string): Promise<string> => {
   const tempFile = path.resolve(
@@ -164,8 +254,8 @@ const generatePythonCode = async () => {
     // primitives, this validator receives the primitive value, causing an AttributeError
     // on .model_dump(). We catch this to allow Pydantic to handle the type mismatch naturally.
     code = code.replace(
-      /if not isinstance\(data, dict\):\s+data = data\.model_dump\(\)/g,
-      'if not isinstance(data, dict):\n            try:\n                data = data.model_dump()\n            except AttributeError:\n                return data',
+      /(\s+)if not isinstance\(data, dict\):\s+data = data\.model_dump\(\)/g,
+      '$1if not isinstance(data, dict):\n$1    try:\n$1        data = data.model_dump()\n$1    except AttributeError:\n$1        return data\n$1data = data.copy()',
     )
 
     // Fix double quoting issue for const fields
@@ -268,19 +358,23 @@ const generateTypescriptCode = async () => {
   ).filter((m) => m.modelName !== 'Sdc')
 
   const inferredTypes: Record<string, string> = {}
-  for (const m of sdcModels) {
+  for (const m of [...tsModels, ...sdcModels]) {
     if (m.model.originalInput.pattern) {
       const type = await getInferredType(m.model.originalInput.pattern)
       inferredTypes[m.modelName] = type
     }
   }
 
+  // Deduplicate models between main spec and SDC spec
+  const tsModelNames = new Set(tsModels.map((m) => m.modelName))
+  const filteredSdcModels = sdcModels.filter((m) => !tsModelNames.has(m.modelName))
+
   let tsContent = [
     `// Generated by @asyncapi/modelina
 // Do not edit manually`,
     '',
     ...tsModels.map((m) => m.result),
-    ...sdcModels.map((m) => m.result),
+    ...filteredSdcModels.map((m) => m.result),
   ].join('\n\n')
 
   // Construct ClientMessage and ServerMessage unions
@@ -325,11 +419,11 @@ generatePythonCode().then(() => {
   Bun.spawnSync(['poetry', 'run', 'ruff', 'format'], {
     cwd: backendPath,
   })
+  console.log('Formatted Python code with ruff formatter')
   Bun.spawnSync(['poetry', 'run', 'ruff', 'check', '--fix'], {
     cwd: backendPath,
   })
   console.log('Formatted Python code with ruff linter')
-  console.log('Formatted Python code with ruff formatter')
   Bun.spawnSync(['poetry', 'run', 'black', '.'], {
     cwd: backendPath,
   })
