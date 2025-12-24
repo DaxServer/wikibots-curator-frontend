@@ -51,11 +51,11 @@
         "Upload": {
           "$ref": "#/components/messages/Upload"
         },
-        "UploadCreated": {
-          "$ref": "#/components/messages/UploadCreated"
-        },
         "UploadsComplete": {
           "$ref": "#/components/messages/UploadsComplete"
+        },
+        "UploadCreated": {
+          "$ref": "#/components/messages/UploadCreated"
         },
         "UploadsUpdate": {
           "$ref": "#/components/messages/UploadsUpdate"
@@ -376,7 +376,10 @@
             "type": "string"
           },
           "sdc": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "$ref": "sdc.json#/components/schemas/Statement"
+            }
           },
           "labels": {
             "$ref": "#/components/schemas/Label"
@@ -910,6 +913,23 @@
         },
         "additionalProperties": false
       },
+      "UploadsComplete": {
+        "type": "object",
+        "required": [
+          "data",
+          "type"
+        ],
+        "properties": {
+          "data": {
+            "type": "integer",
+            "description": "Completed batch identifier"
+          },
+          "type": {
+            "const": "UPLOADS_COMPLETE"
+          }
+        },
+        "additionalProperties": false
+      },
       "UploadCreatedItem": {
         "type": "object",
         "required": [
@@ -957,23 +977,6 @@
         },
         "additionalProperties": false
       },
-      "UploadsComplete": {
-        "type": "object",
-        "required": [
-          "data",
-          "type"
-        ],
-        "properties": {
-          "data": {
-            "type": "integer",
-            "description": "Completed batch identifier"
-          },
-          "type": {
-            "const": "UPLOADS_COMPLETE"
-          }
-        },
-        "additionalProperties": false
-      },
       "UploadData": {
         "type": "object",
         "required": [
@@ -1017,7 +1020,10 @@
             "$ref": "#/components/schemas/Label"
           },
           "sdc": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "$ref": "sdc.json#/components/schemas/Statement"
+            }
           }
         },
         "additionalProperties": false
