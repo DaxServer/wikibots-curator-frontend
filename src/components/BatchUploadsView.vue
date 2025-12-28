@@ -14,6 +14,7 @@ const columns = [
   { field: 'error', header: 'Error' },
   { field: 'filename', header: 'Filename' },
   { field: 'wikitext', header: 'Wikitext' },
+  { field: 'sdc', header: 'SDC' },
 ]
 
 const computedStats = computed((): BatchStats => {
@@ -277,6 +278,9 @@ onUnmounted(() => {
         </template>
         <template v-else-if="col.field === 'wikitext'">
           <pre class="text-xs">{{ data[col.field] }}</pre>
+        </template>
+        <template v-else-if="col.field === 'sdc'">
+          <StatementsList :statements="data[col.field]" />
         </template>
         <template v-else>
           {{ data[col.field] }}
