@@ -323,6 +323,7 @@
         },
         "additionalProperties": false
       },
+      "ClientMessage": {},
       "CollectionImagesData": {
         "type": "object",
         "required": [
@@ -496,8 +497,7 @@
         "type": "object",
         "required": [
           "links",
-          "message",
-          "type"
+          "message"
         ],
         "properties": {
           "links": {
@@ -643,8 +643,7 @@
       "GenericError": {
         "type": "object",
         "required": [
-          "message",
-          "type"
+          "message"
         ],
         "properties": {
           "message": {
@@ -980,7 +979,8 @@
       "UploadData": {
         "type": "object",
         "required": [
-          "items"
+          "items",
+          "handler"
         ],
         "properties": {
           "items": {
@@ -990,7 +990,8 @@
             }
           },
           "handler": {
-            "type": "string"
+            "type": "string",
+            "default": "mapillary"
           }
         },
         "additionalProperties": false

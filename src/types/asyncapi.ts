@@ -58,7 +58,7 @@ export type Upload = {
 
 export type UploadData = {
   items: UploadItem[]
-  handler?: string
+  handler: string
 }
 
 export type UploadItem = {
@@ -313,7 +313,7 @@ export type BatchUploadItem = {
 export type DuplicateError = {
   links: ErrorLink[]
   message: string
-  type: 'duplicate'
+  type?: 'duplicate'
 }
 
 export type ErrorLink = {
@@ -323,7 +323,7 @@ export type ErrorLink = {
 
 export type GenericError = {
   message: string
-  type: 'error'
+  type?: 'error'
 }
 
 export type CollectionImages = {
