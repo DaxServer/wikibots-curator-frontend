@@ -4,6 +4,7 @@ defineProps<{ statements: Statement[] }>()
 
 <template>
   <DataTable
+    v-if="statements.length > 0"
     :value="statements"
     data-key="id"
     size="small"
@@ -31,4 +32,7 @@ defineProps<{ statements: Statement[] }>()
       </template>
     </Column>
   </DataTable>
+  <div v-else>
+    No&nbsp;SDC&nbsp;set
+  </div>
 </template>
