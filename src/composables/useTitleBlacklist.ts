@@ -172,16 +172,12 @@ export const useTitleBlacklist = () => {
         }
       }
 
-      try {
-        // 3. Handle Unicode properties and extended unicode escapes
-        // If regex contains \p{...}, \P{...}, or \u{...}, we need 'u' flag
-        const flags = /(\\[pP]\{|\\u\{)/.test(cleaned) ? 'iu' : 'i'
+      // 3. Handle Unicode properties and extended unicode escapes
+      // If regex contains \p{...}, \P{...}, or \u{...}, we need 'u' flag
+      const flags = /(\\[pP]\{|\\u\{)/.test(cleaned) ? 'iu' : 'i'
 
-        // Compile as case-insensitive by default (MediaWiki default behavior)
-        regexes.push(new RegExp(finalPattern, flags))
-      } catch (e) {
-        console.warn(`Failed to parse regex '${cleaned}':`, e)
-      }
+      // Compile as case-insensitive by default (MediaWiki default behavior)
+      regexes.push(new RegExp(finalPattern, flags))
     }
 
     regexBlacklist.value = regexes
