@@ -168,7 +168,7 @@ document.components.schemas = {
 }
 
 // Recursively replace sdc.json# references with local # references in the document object
-const replaceSdcRefs = (obj: any) => {
+const replaceSdcRefs = (obj: unknown) => {
   if (typeof obj !== 'object' || obj === null) return
   for (const key in obj) {
     if (key === '$ref' && typeof obj[key] === 'string' && obj[key].startsWith('sdc.json#')) {
@@ -179,60 +179,6 @@ const replaceSdcRefs = (obj: any) => {
   }
 }
 replaceSdcRefs(document)
-
-const getInferredType = async (pattern: string): Promise<string> => {
-  const tempFile = path.resolve(
-    import.meta.dir,
-    `temp_type_${Math.random().toString(36).slice(2)}.ts`,
-  )
-  // Simplify pattern for type inference to avoid "excessively deep" errors
-  const simplifiedPattern = pattern.replace(/\[1-9\]/g, '\\d').replace(/\[0-9\]/g, '\\d')
-
-  // Escape backslashes for the TS file string literal
-  const escapedPattern = simplifiedPattern.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-  const content = `import { regex } from 'arkregex'; const r = regex('${escapedPattern}'); type T = typeof r; const x: never = {} as T;`
-  await Bun.write(tempFile, content)
-
-  try {
-    // We use bun x tsc and expect it to fail with the type information in the error message
-    const { stdout, stderr } = Bun.spawnSync([
-      'bun',
-      'x',
-      'tsc',
-      tempFile,
-      '--noEmit',
-      '--esModuleInterop',
-      '--skipLibCheck',
-      '--target',
-      'esnext',
-      '--moduleResolution',
-      'bundler',
-      '--module',
-      'esnext',
-    ])
-
-    // Bun.spawnSync doesn't throw on non-zero exit code by default,
-    // it returns a result object with the status and outputs.
-    // The tsc command will exit with code 1 due to the type mismatch (T as never).
-    const output = stdout.toString() + stderr.toString()
-
-    // Look for the Regex type in the error message. It usually looks like:
-    // Type 'Regex<"P${number}${number}", {}>' is not assignable to type 'never'.
-    const match = output.match(/Regex<["'`](.*?)["'`],/)
-    if (match) {
-      return `\`${match[1]}\``
-    }
-    return 'string'
-  } catch (_) {
-    // Fallback if spawnSync itself fails (unlikely)
-    return 'string'
-  } finally {
-    const file = Bun.file(tempFile)
-    if (await file.exists()) {
-      await fs.promises.unlink(tempFile)
-    }
-  }
-}
 
 const generatePythonCode = async () => {
   const pythonGenerator = new PythonGenerator({ presets: [CUSTOM_PYDANTIC_PRESET] })
@@ -310,6 +256,89 @@ const generatePythonCode = async () => {
   console.log(`Generated Python models to ${backendOutputDir}`)
 }
 
+const getInferredType = async (pattern: string): Promise<string> => {
+  const tempFile = path.resolve(
+    import.meta.dir,
+    `temp_type_${Math.random().toString(36).slice(2)}.ts`,
+  )
+  // Simplify pattern for type inference to avoid "excessively deep" errors
+  const simplifiedPattern = pattern.replace(/\[1-9\]/g, '\\d').replace(/\[0-9\]/g, '\\d')
+
+  // Escape backslashes for the TS file string literal
+  const escapedPattern = simplifiedPattern.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+  const content = `import { regex } from 'arkregex'; const r = regex('${escapedPattern}'); type T = typeof r; const x: never = {} as T;`
+  await Bun.write(tempFile, content)
+
+  try {
+    // We use bun x tsc and expect it to fail with the type information in the error message
+    const { stdout, stderr } = Bun.spawnSync([
+      'bun',
+      'x',
+      'tsc',
+      tempFile,
+      '--noEmit',
+      '--esModuleInterop',
+      '--skipLibCheck',
+      '--target',
+      'esnext',
+      '--moduleResolution',
+      'bundler',
+      '--module',
+      'esnext',
+    ])
+
+    // Bun.spawnSync doesn't throw on non-zero exit code by default,
+    // it returns a result object with the status and outputs.
+    // The tsc command will exit with code 1 due to the type mismatch (T as never).
+    const output = stdout.toString() + stderr.toString()
+
+    // Look for the Regex type in the error message. It usually looks like:
+    // Type 'Regex<"P${number}${number}", {}>' is not assignable to type 'never'.
+    const match = output.match(/Regex<["'`](.*?)["'`],/)
+    if (match) {
+      return `\`${match[1]}\``
+    }
+    return 'string'
+  } catch (_) {
+    // Fallback if spawnSync itself fails (unlikely)
+    return 'string'
+  } finally {
+    const file = Bun.file(tempFile)
+    if (await file.exists()) {
+      await fs.promises.unlink(tempFile)
+    }
+  }
+}
+
+// Generate union types dynamically from all operations in the AsyncAPI document
+const generateOperationUnionTypes = (): string[] => {
+  const unionTypes: string[] = []
+
+  // Process each operation to generate union types
+  for (const [operationName, operation] of Object.entries(document.operations)) {
+    if (!operation || !operation.messages || !Array.isArray(operation.messages)) {
+      continue
+    }
+
+    const messageRefs = operation.messages
+    const messageTypes = messageRefs
+      .map((m: { $ref: string }) => {
+        const name = m.$ref.split('/').pop()
+        return name
+      })
+      .filter(Boolean) // Remove any undefined/null values
+
+    if (messageTypes.length === 0) {
+      continue
+    }
+
+    const unionType = `type ${operationName} = ${messageTypes.join(' | ')}`
+    unionTypes.push(unionType)
+  }
+
+  return unionTypes
+}
+
 const generateTypescriptCode = async () => {
   const tsGenerator = new TypeScriptGenerator({
     modelType: 'interface',
@@ -332,7 +361,37 @@ const generateTypescriptCode = async () => {
     },
   })
 
-  const tsModels = (await tsGenerator.generate(document)).filter((m) => m.modelName !== 'WsChannel')
+  // Process main document with all schemas included
+  const documentWithAllSchemas = {
+    ...document,
+    channels: {
+      ...document.channels,
+      // Add a channel for all standalone schemas in components
+      schemas: {
+        address: 'schemas',
+        messages: Object.fromEntries(
+          Object.keys(document.components.schemas || {}).map((name) => [
+            name,
+            { payload: { $ref: `#/components/schemas/${name}` } },
+          ]),
+        ),
+      },
+    },
+    operations: {
+      ...document.operations,
+      // Add an operation for the schemas channel
+      allSchemas: {
+        action: 'send',
+        channel: {
+          $ref: '#/channels/schemas',
+        },
+      },
+    },
+  }
+
+  const tsModels = (await tsGenerator.generate(documentWithAllSchemas)).filter(
+    (m) => m.modelName !== 'WsChannel' && m.modelName !== 'Schemas',
+  )
   const sdcModels = (
     await tsGenerator.generate({
       ...sdcDocument,
@@ -378,25 +437,13 @@ const generateTypescriptCode = async () => {
     ...filteredSdcModels.map((m) => m.result),
   ].join('\n\n')
 
-  // Construct ClientMessage and ServerMessage unions
-  // Client Messages (ReceiveClientMessages)
-  const clientMessagesRefs = document.operations.ReceiveClientMessages.messages || []
-  const clientMessageTypes = clientMessagesRefs.map((m: { $ref: string }) => {
-    const name = m.$ref.split('/').pop()
-    return `${name}`
-  })
-  const clientMessageUnion = `export type ClientMessage = \n  | ${clientMessageTypes.join('\n  | ')}`
+  // Generate operation union types (schemas are already generated by Modelina)
+  const operationUnionTypes = generateOperationUnionTypes()
 
-  // Server Messages (SendServerMessages)
-  const serverMessagesRefs = document.operations.SendServerMessages.messages || []
-  const serverMessageTypes = serverMessagesRefs.map((m: { $ref: string }) => {
-    const name = m.$ref.split('/').pop()
-    return `${name}`
-  })
-  const serverMessageUnion = `export type ServerMessage = \n  | ${serverMessageTypes.join('\n  | ')}`
-
-  tsContent += `\n\n${clientMessageUnion}\n\n${serverMessageUnion}\n`
-  tsContent += `\nexport type StructuredError = DuplicateError | GenericError\n`
+  // Add operation union types to the content
+  if (operationUnionTypes.length > 0) {
+    tsContent += `\n\n${operationUnionTypes.join('\n\n')}\n`
+  }
 
   // Fix reserved keywords and add exports
   tsContent = tsContent

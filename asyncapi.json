@@ -64,7 +64,7 @@
     }
   },
   "operations": {
-    "ReceiveClientMessages": {
+    "ClientMessage": {
       "action": "receive",
       "channel": {
         "$ref": "#/channels/wsChannel"
@@ -99,7 +99,7 @@
         }
       ]
     },
-    "SendServerMessages": {
+    "ServerMessage": {
       "action": "send",
       "channel": {
         "$ref": "#/channels/wsChannel"
@@ -323,7 +323,6 @@
         },
         "additionalProperties": false
       },
-      "ClientMessage": {},
       "CollectionImagesData": {
         "type": "object",
         "required": [
@@ -805,6 +804,9 @@
           },
           {
             "$ref": "#/components/schemas/GenericError"
+          },
+          {
+            "$ref": "#/components/schemas/TitleBlacklistedError"
           }
         ]
       },
@@ -868,6 +870,21 @@
           },
           "type": {
             "const": "SUBSCRIBED"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TitleBlacklistedError": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "const": "title_blacklisted"
           }
         },
         "additionalProperties": false
