@@ -19,6 +19,7 @@ declare global {
   const WikidataEntity: typeof import('./src/components/wikidata/useWikidata').WikidataEntity
   const WikidataProperty: typeof import('./src/components/wikidata/useWikidata').WikidataProperty
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
+  const api: typeof import('./src/composables/useTitleBlacklist').api
   const applyTitleTemplate: typeof import('./src/utils/titleTemplate').applyTitleTemplate
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
@@ -319,6 +320,7 @@ declare global {
   const useTimeoutPoll: typeof import('@vueuse/core').useTimeoutPoll
   const useTimestamp: typeof import('@vueuse/core').useTimestamp
   const useTitle: typeof import('@vueuse/core').useTitle
+  const useTitleBlacklist: typeof import('./src/composables/useTitleBlacklist').useTitleBlacklist
   const useTitleTemplate: typeof import('./src/composables/useTitleTemplate').useTitleTemplate
   const useToNumber: typeof import('@vueuse/core').useToNumber
   const useToString: typeof import('@vueuse/core').useToString
@@ -373,6 +375,9 @@ declare global {
   export type { DataViewPageEvent } from 'primevue/dataview'
   import('primevue/dataview')
   // @ts-ignore
+  export type { MediaWikiApiResponse } from './src/composables/useTitleBlacklist'
+  import('./src/composables/useTitleBlacklist')
+  // @ts-ignore
   export type { WikibaseEntityType, Rank, DataValueType, SnakDataType, SnakType, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, Statement, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, Reference, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, GenericError, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, Subscribed, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, DataValue, Snak, ValueSnak, Claims, ItemId, PropertyId, ClientMessage, ServerMessage, StructuredError } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
@@ -401,6 +406,7 @@ declare module 'vue' {
     readonly WikidataEntity: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['WikidataEntity']>
     readonly WikidataProperty: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['WikidataProperty']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
+    readonly api: UnwrapRef<typeof import('./src/composables/useTitleBlacklist')['api']>
     readonly applyTitleTemplate: UnwrapRef<typeof import('./src/utils/titleTemplate')['applyTitleTemplate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
@@ -701,6 +707,7 @@ declare module 'vue' {
     readonly useTimeoutPoll: UnwrapRef<typeof import('@vueuse/core')['useTimeoutPoll']>
     readonly useTimestamp: UnwrapRef<typeof import('@vueuse/core')['useTimestamp']>
     readonly useTitle: UnwrapRef<typeof import('@vueuse/core')['useTitle']>
+    readonly useTitleBlacklist: UnwrapRef<typeof import('./src/composables/useTitleBlacklist')['useTitleBlacklist']>
     readonly useTitleTemplate: UnwrapRef<typeof import('./src/composables/useTitleTemplate')['useTitleTemplate']>
     readonly useToNumber: UnwrapRef<typeof import('@vueuse/core')['useToNumber']>
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>

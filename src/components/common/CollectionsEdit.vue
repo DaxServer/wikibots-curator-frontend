@@ -131,7 +131,9 @@ const disablePreview = computed(() => {
             :class="{
               'border-green-600': item.meta.titleStatus === 'available',
               'border-red-500':
-                item.meta.titleStatus === 'taken' || item.meta.titleStatus === 'invalid',
+                item.meta.titleStatus === 'taken' ||
+                item.meta.titleStatus === 'invalid' ||
+                item.meta.titleStatus === 'blacklisted',
               'border-gray-200': item.meta.titleStatus === undefined,
               'border-yellow-500':
                 item.meta.titleStatus === 'unknown' ||
