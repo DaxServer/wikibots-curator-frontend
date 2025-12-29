@@ -26,6 +26,13 @@ defineProps<{ error: StructuredError }>()
       </div>
     </template>
 
+    <template v-else-if="error.type === 'title_blacklisted'">
+      <div class="text-orange-600">
+        <span class="font-semibold">Title Blacklisted:</span>
+        {{ error.message }}
+      </div>
+    </template>
+
     <div
       v-else
       class="text-red-500"

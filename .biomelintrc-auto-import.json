@@ -95,6 +95,7 @@
       "Subscribed",
       "TimeDataValue",
       "TimeValueSnak",
+      "TitleBlacklistedError",
       "TitleStatus",
       "UPLOAD_STATUS",
       "UnsubscribeBatch",

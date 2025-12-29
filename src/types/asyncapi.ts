@@ -303,7 +303,7 @@ export type BatchUploadItem = {
   sdc?: Statement[]
   labels?: Label
   result?: string
-  error?: DuplicateError | GenericError
+  error?: DuplicateError | GenericError | TitleBlacklistedError
   success?: string
   created_at?: string
   updated_at?: string
@@ -324,6 +324,11 @@ export type ErrorLink = {
 export type GenericError = {
   message: string
   type?: 'error'
+}
+
+export type TitleBlacklistedError = {
+  message: string
+  type?: 'title_blacklisted'
 }
 
 export type CollectionImages = {
@@ -416,7 +421,7 @@ export type UploadUpdateItem = {
   batchid: number
   status: string
   key: string
-  error?: DuplicateError | GenericError
+  error?: DuplicateError | GenericError | TitleBlacklistedError
   success?: string
   handler: string
 }
@@ -514,4 +519,4 @@ export type ServerMessage =
   | UploadsComplete
   | UploadsUpdate
 
-export type StructuredError = DuplicateError | GenericError
+export type StructuredError = DuplicateError | GenericError | TitleBlacklistedError
