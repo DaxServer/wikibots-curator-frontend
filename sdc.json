@@ -18,7 +18,7 @@
         "default": {}
       },
       "DataValue": {
-        "anyOf": [
+        "oneOf": [
           { "$ref": "#/components/schemas/EntityIdDataValue" },
           { "$ref": "#/components/schemas/GlobeCoordinateDataValue" },
           { "$ref": "#/components/schemas/QuantityDataValue" },
@@ -362,7 +362,7 @@
         }
       },
       "Snak": {
-        "anyOf": [
+        "oneOf": [
           { "$ref": "#/components/schemas/NoValueSnak" },
           { "$ref": "#/components/schemas/SomeValueSnak" },
           { "$ref": "#/components/schemas/ValueSnak" }
@@ -563,7 +563,7 @@
         }
       },
       "ValueSnak": {
-        "anyOf": [
+        "oneOf": [
           { "$ref": "#/components/schemas/EntityIdValueSnak" },
           { "$ref": "#/components/schemas/ExternalIdValueSnak" },
           { "$ref": "#/components/schemas/GlobeCoordinateValueSnak" },
