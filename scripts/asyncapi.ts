@@ -3,17 +3,19 @@ import {
   ConstrainedDictionaryModel,
   PYTHON_PYDANTIC_PRESET,
   PythonGenerator,
+  type PythonOptions,
+  type PythonPreset,
   TypeScriptGenerator,
   typeScriptDefaultEnumKeyConstraints,
 } from '@asyncapi/modelina'
 import fs from 'node:fs'
 import path from 'node:path'
 
-const CUSTOM_PYDANTIC_PRESET = {
+const CUSTOM_PYDANTIC_PRESET: PythonPreset<PythonOptions> = {
   class: {
     ...PYTHON_PYDANTIC_PRESET.class,
-    additionalContent(context: any) {
-      const original = (PYTHON_PYDANTIC_PRESET.class as any).additionalContent?.(context) || ''
+    additionalContent(context) {
+      const original = PYTHON_PYDANTIC_PRESET.class!.additionalContent?.(context) || ''
       context.renderer.dependencyManager.addDependency(
         'from pydantic import ConfigDict, field_validator',
       )
@@ -22,8 +24,7 @@ const CUSTOM_PYDANTIC_PRESET = {
       const dictFields = []
       const arrayFields = []
 
-      for (const [propName, prop] of Object.entries(properties)) {
-        const property = prop as any
+      for (const [_, property] of Object.entries(properties)) {
         const isOptional = !property.required || property.property.options.isNullable === true
 
         // Match logic with property preset: collections are NOT marked Optional in python type
@@ -62,7 +63,6 @@ def parse_empty_list(cls, v):
 
       return `model_config = ConfigDict(populate_by_name=True)${validatorCode}\n\n${original}`
     },
-    // @ts-expect-error
     property({ property, model, renderer }) {
       let type = property.property.type
       const propertyName = property.propertyName
@@ -138,6 +138,7 @@ def parse_empty_list(cls, v):
       ) {
         decoratorArgs.push(`alias='''${property.unconstrainedPropertyName}'''`)
       }
+
       // Fix: Check for oneOf and add discriminator if present in schema
       if (property.property.originalInput.oneOf && property.property.originalInput.discriminator) {
         const discriminator = property.property.originalInput.discriminator.propertyName

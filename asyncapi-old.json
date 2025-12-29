@@ -1,0 +1,1755 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Curator WebSocket API",
+    "version": "1.1.0"
+  },
+  "defaultContentType": "application/json",
+  "channels": {
+    "wsChannel": {
+      "address": "/ws",
+      "description": "WebSocket endpoint used for Curator realtime messaging",
+      "messages": {
+        "FetchImages": {
+          "$ref": "#/components/messages/FetchImages"
+        },
+        "Upload": {
+          "$ref": "#/components/messages/Upload"
+        },
+        "SubscribeBatch": {
+          "$ref": "#/components/messages/SubscribeBatch"
+        },
+        "UnsubscribeBatch": {
+          "$ref": "#/components/messages/UnsubscribeBatch"
+        },
+        "SubscribeBatchesList": {
+          "$ref": "#/components/messages/SubscribeBatchesList"
+        },
+        "UnsubscribeBatchesList": {
+          "$ref": "#/components/messages/UnsubscribeBatchesList"
+        },
+        "FetchBatches": {
+          "$ref": "#/components/messages/FetchBatches"
+        },
+        "FetchBatchUploads": {
+          "$ref": "#/components/messages/FetchBatchUploads"
+        },
+        "Error": {
+          "$ref": "#/components/messages/Error"
+        },
+        "CollectionImages": {
+          "$ref": "#/components/messages/CollectionImages"
+        },
+        "UploadCreated": {
+          "$ref": "#/components/messages/UploadCreated"
+        },
+        "BatchesList": {
+          "$ref": "#/components/messages/BatchesList"
+        },
+        "BatchUploadsList": {
+          "$ref": "#/components/messages/BatchUploadsList"
+        },
+        "Subscribed": {
+          "$ref": "#/components/messages/Subscribed"
+        },
+        "UploadsUpdate": {
+          "$ref": "#/components/messages/UploadsUpdate"
+        },
+        "UploadsComplete": {
+          "$ref": "#/components/messages/UploadsComplete"
+        },
+        "RetryUploads": {
+          "$ref": "#/components/messages/RetryUploads"
+        }
+      }
+    }
+  },
+  "operations": {
+    "ReceiveClientMessages": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/wsChannel"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/wsChannel/messages/FetchImages"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/Upload"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/SubscribeBatch"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UnsubscribeBatch"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/SubscribeBatchesList"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UnsubscribeBatchesList"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/FetchBatches"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/FetchBatchUploads"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/RetryUploads"
+        }
+      ]
+    },
+    "SendServerMessages": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/wsChannel"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/wsChannel/messages/Error"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/CollectionImages"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UploadCreated"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/BatchesList"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/BatchUploadsList"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/Subscribed"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UploadsUpdate"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UploadsComplete"
+        }
+      ]
+    }
+  },
+  "components": {
+    "messages": {
+      "FetchImages": {
+        "name": "FETCH_IMAGES",
+        "title": "Fetch images for a collection",
+        "payload": {
+          "$ref": "#/components/schemas/FetchImagesPayload"
+        }
+      },
+      "Upload": {
+        "name": "UPLOAD",
+        "title": "Queue one or more uploads in a batch",
+        "payload": {
+          "$ref": "#/components/schemas/UploadPayload"
+        }
+      },
+      "SubscribeBatch": {
+        "name": "SUBSCRIBE_BATCH",
+        "title": "Subscribe to upload status updates for a batch",
+        "payload": {
+          "$ref": "#/components/schemas/SubscribeBatchPayload"
+        }
+      },
+      "UnsubscribeBatch": {
+        "name": "UNSUBSCRIBE_BATCH",
+        "title": "Unsubscribe from upload status updates for a batch",
+        "payload": {
+          "$ref": "#/components/schemas/UnsubscribeBatchPayload"
+        }
+      },
+      "SubscribeBatchesList": {
+        "name": "SUBSCRIBE_BATCHES_LIST",
+        "title": "Subscribe to updates for the batches list",
+        "payload": {
+          "$ref": "#/components/schemas/SubscribeBatchesListPayload"
+        }
+      },
+      "UnsubscribeBatchesList": {
+        "name": "UNSUBSCRIBE_BATCHES_LIST",
+        "title": "Unsubscribe from updates for the batches list",
+        "payload": {
+          "$ref": "#/components/schemas/UnsubscribeBatchesListPayload"
+        }
+      },
+      "FetchBatches": {
+        "name": "FETCH_BATCHES",
+        "title": "Fetch paginated list of batches",
+        "payload": {
+          "$ref": "#/components/schemas/FetchBatchesPayload"
+        }
+      },
+      "FetchBatchUploads": {
+        "name": "FETCH_BATCH_UPLOADS",
+        "title": "Fetch uploads belonging to a batch",
+        "payload": {
+          "$ref": "#/components/schemas/FetchBatchUploadsPayload"
+        }
+      },
+      "Error": {
+        "name": "ERROR",
+        "title": "Error message",
+        "payload": {
+          "$ref": "#/components/schemas/ErrorPayload"
+        }
+      },
+      "CollectionImages": {
+        "name": "COLLECTION_IMAGES",
+        "title": "Collection images and creator metadata",
+        "payload": {
+          "$ref": "#/components/schemas/CollectionImagesPayload"
+        }
+      },
+      "UploadCreated": {
+        "name": "UPLOAD_CREATED",
+        "title": "Upload batch items created",
+        "payload": {
+          "$ref": "#/components/schemas/UploadCreatedPayload"
+        }
+      },
+      "BatchesList": {
+        "name": "BATCHES_LIST",
+        "title": "Paginated list of batches",
+        "payload": {
+          "$ref": "#/components/schemas/BatchesListPayload"
+        }
+      },
+      "BatchUploadsList": {
+        "name": "BATCH_UPLOADS_LIST",
+        "title": "List of uploads for a batch",
+        "payload": {
+          "$ref": "#/components/schemas/BatchUploadsListPayload"
+        }
+      },
+      "Subscribed": {
+        "name": "SUBSCRIBED",
+        "title": "Confirmation of batch subscription",
+        "payload": {
+          "$ref": "#/components/schemas/SubscribedPayload"
+        }
+      },
+      "UploadsUpdate": {
+        "name": "UPLOADS_UPDATE",
+        "title": "Periodic upload status update for a batch",
+        "payload": {
+          "$ref": "#/components/schemas/UploadsUpdatePayload"
+        }
+      },
+      "UploadsComplete": {
+        "name": "UPLOADS_COMPLETE",
+        "title": "Notification that a batch has completed processing",
+        "payload": {
+          "$ref": "#/components/schemas/UploadsCompletePayload"
+        }
+      },
+      "RetryUploads": {
+        "name": "RETRY_UPLOADS",
+        "title": "Retry failed uploads for a batch",
+        "payload": {
+          "$ref": "#/components/schemas/RetryUploadsPayload"
+        }
+      }
+    },
+    "schemas": {
+      "FetchImagesPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "FETCH_IMAGES"
+          },
+          "data": {
+            "type": "string",
+            "description": "Collection identifier or input string"
+          }
+        }
+      },
+      "UploadPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "UPLOAD"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UploadData"
+          }
+        }
+      },
+      "UploadData": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadItem"
+            }
+          },
+          "handler": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional handler identifier (for example, mapillary)"
+          }
+        }
+      },
+      "SubscribeBatchPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "SUBSCRIBE_BATCH"
+          },
+          "data": {
+            "type": "integer",
+            "description": "Batch identifier"
+          }
+        }
+      },
+      "UnsubscribeBatchPayload": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "UNSUBSCRIBE_BATCH"
+          }
+        }
+      },
+      "SubscribeBatchesListPayload": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "SUBSCRIBE_BATCHES_LIST"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SubscribeBatchesListData"
+          }
+        }
+      },
+      "SubscribeBatchesListData": {
+        "type": "object",
+        "properties": {
+          "userid": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional user id to filter batches"
+          },
+          "filter": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional filter text for batches"
+          }
+        }
+      },
+      "UnsubscribeBatchesListPayload": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "UNSUBSCRIBE_BATCHES_LIST"
+          }
+        }
+      },
+      "FetchBatchesPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "FETCH_BATCHES"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FetchBatchesData"
+          }
+        }
+      },
+      "FetchBatchesData": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "limit": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1
+          },
+          "userid": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional user id to filter batches"
+          },
+          "filter": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional filter text for batches (id or username)"
+          }
+        }
+      },
+      "FetchBatchUploadsPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "FETCH_BATCH_UPLOADS"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FetchBatchUploadsData"
+          }
+        }
+      },
+      "FetchBatchUploadsData": {
+        "type": "object",
+        "required": [
+          "batchid"
+        ],
+        "properties": {
+          "batchid": {
+            "type": "integer",
+            "description": "Batch identifier"
+          }
+        }
+      },
+      "ErrorPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "ERROR"
+          },
+          "data": {
+            "type": "string",
+            "description": "Human-readable error message"
+          }
+        }
+      },
+      "CollectionImagesPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "COLLECTION_IMAGES"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CollectionImagesData"
+          }
+        }
+      },
+      "CollectionImagesData": {
+        "type": "object",
+        "required": [
+          "images",
+          "creator"
+        ],
+        "properties": {
+          "images": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MediaImage"
+            }
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Creator"
+          }
+        }
+      },
+      "UploadCreatedPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "UPLOAD_CREATED"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadCreatedItem"
+            }
+          }
+        }
+      },
+      "BatchesListPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "BATCHES_LIST"
+          },
+          "data": {
+            "$ref": "#/components/schemas/BatchesListData"
+          }
+        }
+      },
+      "BatchesListData": {
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BatchItem"
+            }
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "BatchUploadsListPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "BATCH_UPLOADS_LIST"
+          },
+          "data": {
+            "$ref": "#/components/schemas/BatchUploadsListData"
+          }
+        }
+      },
+      "BatchUploadsListData": {
+        "type": "object",
+        "required": [
+          "batch",
+          "uploads"
+        ],
+        "properties": {
+          "batch": {
+            "$ref": "#/components/schemas/BatchItem"
+          },
+          "uploads": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BatchUploadItem"
+            }
+          }
+        }
+      },
+      "SubscribedPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "SUBSCRIBED"
+          },
+          "data": {
+            "type": "integer",
+            "description": "Subscribed batch identifier"
+          }
+        }
+      },
+      "UploadsUpdatePayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "UPLOADS_UPDATE"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadUpdateItem"
+            }
+          }
+        }
+      },
+      "UploadsCompletePayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "UPLOADS_COMPLETE"
+          },
+          "data": {
+            "type": "integer",
+            "description": "Completed batch identifier"
+          }
+        }
+      },
+      "RetryUploadsPayload": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "RETRY_UPLOADS"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RetryUploadsData"
+          }
+        }
+      },
+      "RetryUploadsData": {
+        "type": "object",
+        "required": [
+          "batchid"
+        ],
+        "properties": {
+          "batchid": {
+            "type": "integer",
+            "description": "Batch identifier"
+          }
+        }
+      },
+      "UploadItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "input",
+          "title",
+          "wikitext"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "input": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "wikitext": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sdc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Statement"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "UploadCreatedItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "image_id",
+          "input",
+          "batchid"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "image_id": {
+            "type": "string"
+          },
+          "input": {
+            "type": "string"
+          },
+          "batchid": {
+            "type": "integer"
+          }
+        }
+      },
+      "BatchStats": {
+        "type": "object",
+        "required": [
+          "total",
+          "queued",
+          "in_progress",
+          "completed",
+          "failed",
+          "duplicate"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "default": 0
+          },
+          "queued": {
+            "type": "integer",
+            "default": 0
+          },
+          "in_progress": {
+            "type": "integer",
+            "default": 0
+          },
+          "completed": {
+            "type": "integer",
+            "default": 0
+          },
+          "failed": {
+            "type": "integer",
+            "default": 0
+          },
+          "duplicate": {
+            "type": "integer",
+            "default": 0
+          }
+        }
+      },
+      "BatchItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "username",
+          "userid",
+          "stats"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "username": {
+            "type": "string"
+          },
+          "userid": {
+            "type": "string"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/BatchStats"
+          }
+        }
+      },
+      "BatchUploadItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "filename",
+          "wikitext"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "wikitext": {
+            "type": "string"
+          },
+          "batchid": {
+            "type": "integer",
+            "nullable": true
+          },
+          "userid": {
+            "type": "string",
+            "nullable": true
+          },
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "handler": {
+            "type": "string",
+            "nullable": true
+          },
+          "sdc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Statement"
+            },
+            "nullable": true
+          },
+          "labels": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "result": {
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/StructuredError"
+          },
+          "success": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "image_id": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UploadUpdateItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "batchid",
+          "status",
+          "key",
+          "handler"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "batchid": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "error": {
+            "$ref": "#/components/schemas/StructuredError"
+          },
+          "success": {
+            "type": "string",
+            "nullable": true
+          },
+          "handler": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorLink": {
+        "type": "object",
+        "required": [
+          "title",
+          "url"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "DuplicateError": {
+        "type": "object",
+        "required": [
+          "type",
+          "message",
+          "links"
+        ],
+        "properties": {
+          "type": {
+            "const": "duplicate"
+          },
+          "message": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorLink"
+            }
+          }
+        }
+      },
+      "GenericError": {
+        "type": "object",
+        "required": [
+          "type",
+          "message"
+        ],
+        "properties": {
+          "type": {
+            "const": "error"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "StructuredError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DuplicateError"
+          },
+          {
+            "$ref": "#/components/schemas/GenericError"
+          }
+        ]
+      },
+      "Creator": {
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "profile_url"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "profile_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "GeoLocation": {
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "compass_angle"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "float"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float"
+          },
+          "accuracy": {
+            "type": "integer",
+            "nullable": true
+          },
+          "compass_angle": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "Dates": {
+        "type": "object",
+        "required": [
+          "taken"
+        ],
+        "properties": {
+          "taken": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ExistingPage": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "MediaImage": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "dates",
+          "creator",
+          "url_original",
+          "thumbnail_url",
+          "preview_url",
+          "url",
+          "width",
+          "height",
+          "existing",
+          "location"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "dates": {
+            "$ref": "#/components/schemas/Dates"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Creator"
+          },
+          "location": {
+            "$ref": "#/components/schemas/GeoLocation"
+          },
+          "url_original": {
+            "type": "string",
+            "format": "uri"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "preview_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "camera_make": {
+            "type": "string",
+            "nullable": true
+          },
+          "camera_model": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_pano": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "license": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "existing": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExistingPage"
+            }
+          }
+        }
+      },
+      "Statement": {
+        "type": "object",
+        "required": [
+          "mainsnak",
+          "rank"
+        ],
+        "properties": {
+          "mainsnak": {
+            "$ref": "#/components/schemas/Snak"
+          },
+          "rank": {
+            "$ref": "#/components/schemas/Rank"
+          },
+          "qualifiers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Snak"
+              }
+            }
+          },
+          "qualifiers-order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reference"
+            }
+          },
+          "type": {
+            "const": "statement"
+          }
+        }
+      },
+      "Rank": {
+        "type": "string",
+        "enum": [
+          "preferred",
+          "normal",
+          "deprecated"
+        ],
+        "x-enum-varnames": [
+          "PREFERRED",
+          "NORMAL",
+          "DEPRECATED"
+        ],
+        "x-ts-type": "Rank"
+      },
+      "WikibaseEntityType": {
+        "type": "string",
+        "enum": [
+          "item",
+          "property"
+        ],
+        "x-enum-varnames": [
+          "ITEM",
+          "PROPERTY"
+        ],
+        "x-ts-type": "WikibaseEntityType"
+      },
+      "SnakType": {
+        "type": "string",
+        "enum": [
+          "value",
+          "somevalue",
+          "novalue"
+        ],
+        "x-enum-varnames": [
+          "VALUE",
+          "SOMEVALUE",
+          "NOVALUE"
+        ],
+        "x-ts-type": "typeof SnakType"
+      },
+      "SnakDataType": {
+        "type": "string",
+        "enum": [
+          "string",
+          "wikibase-item",
+          "wikibase-property",
+          "external-id",
+          "commonsMedia",
+          "globe-coordinate",
+          "quantity",
+          "time",
+          "url",
+          "monolingualtext",
+          "math",
+          "geo-shape",
+          "tabular-data"
+        ],
+        "x-enum-varnames": [
+          "STRING",
+          "WIKIBASE_ITEM",
+          "WIKIBASE_PROPERTY",
+          "EXTERNAL_ID",
+          "COMMONS_MEDIA",
+          "GLOBE_COORDINATE",
+          "QUANTITY",
+          "TIME",
+          "URL",
+          "MONOLINGUAL_TEXT",
+          "MATH",
+          "GEO_SHAPE",
+          "TABULAR_DATA"
+        ],
+        "x-ts-type": "typeof SnakDataType"
+      },
+      "DataValueType": {
+        "type": "string",
+        "enum": [
+          "string",
+          "wikibase-entityid",
+          "globecoordinate",
+          "quantity",
+          "time",
+          "monolingualtext"
+        ],
+        "x-enum-varnames": [
+          "STRING",
+          "WIKIBASE_ENTITYID",
+          "GLOBE_COORDINATE",
+          "QUANTITY",
+          "TIME",
+          "MONOLINGUAL_TEXT"
+        ],
+        "x-ts-type": "typeof DataValueType"
+      },
+      "Reference": {
+        "type": "object",
+        "required": [
+          "snaks"
+        ],
+        "properties": {
+          "snaks": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Snak"
+              }
+            }
+          },
+          "snaks-order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          }
+        }
+      },
+      "Snak": {
+        "title": "Snak",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/SomeValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/NoValueSnak"
+          }
+        ]
+      },
+      "SomeValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "somevalue",
+            "x-ts-type": "typeof SnakType.SOMEVALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          }
+        }
+      },
+      "NoValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "novalue",
+            "x-ts-type": "typeof SnakType.NOVALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          }
+        }
+      },
+      "ValueSnak": {
+        "title": "ValueSnak",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StringValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/EntityIdValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/ExternalIdValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/GlobeCoordinateValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/QuantityValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/TimeValueSnak"
+          },
+          {
+            "$ref": "#/components/schemas/UrlValueSnak"
+          }
+        ]
+      },
+      "StringValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property",
+          "datatype",
+          "datavalue"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "value",
+            "x-ts-type": "typeof SnakType.VALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          },
+          "datatype": {
+            "const": "string",
+            "x-ts-type": "typeof SnakDataType.STRING"
+          },
+          "datavalue": {
+            "$ref": "#/components/schemas/StringDataValue"
+          }
+        }
+      },
+      "GlobeCoordinateValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property",
+          "datatype",
+          "datavalue"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "value",
+            "x-ts-type": "typeof SnakType.VALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          },
+          "datatype": {
+            "const": "globe-coordinate",
+            "x-ts-type": "typeof SnakDataType.GLOBE_COORDINATE"
+          },
+          "datavalue": {
+            "$ref": "#/components/schemas/GlobeCoordinateDataValue"
+          }
+        }
+      },
+      "EntityIdValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property",
+          "datatype",
+          "datavalue"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "value",
+            "x-ts-type": "typeof SnakType.VALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          },
+          "datatype": {
+            "const": "wikibase-item",
+            "x-ts-type": "typeof SnakDataType.WIKIBASE_ITEM"
+          },
+          "datavalue": {
+            "$ref": "#/components/schemas/EntityIdDataValue"
+          }
+        }
+      },
+      "ExternalIdValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property",
+          "datatype",
+          "datavalue"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "value",
+            "x-ts-type": "typeof SnakType.VALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          },
+          "datatype": {
+            "const": "external-id",
+            "x-ts-type": "typeof SnakDataType.EXTERNAL_ID"
+          },
+          "datavalue": {
+            "$ref": "#/components/schemas/StringDataValue"
+          }
+        }
+      },
+      "QuantityValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property",
+          "datatype",
+          "datavalue"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "value",
+            "x-ts-type": "typeof SnakType.VALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          },
+          "datatype": {
+            "const": "quantity",
+            "x-ts-type": "typeof SnakDataType.QUANTITY"
+          },
+          "datavalue": {
+            "$ref": "#/components/schemas/QuantityDataValue"
+          }
+        }
+      },
+      "TimeValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property",
+          "datatype",
+          "datavalue"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "value",
+            "x-ts-type": "typeof SnakType.VALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          },
+          "datatype": {
+            "const": "time",
+            "x-ts-type": "typeof SnakDataType.TIME"
+          },
+          "datavalue": {
+            "$ref": "#/components/schemas/TimeDataValue"
+          }
+        }
+      },
+      "UrlValueSnak": {
+        "type": "object",
+        "required": [
+          "snaktype",
+          "property",
+          "datatype",
+          "datavalue"
+        ],
+        "properties": {
+          "snaktype": {
+            "const": "value",
+            "x-ts-type": "typeof SnakType.VALUE"
+          },
+          "property": {
+            "$ref": "#/components/schemas/PropertyId"
+          },
+          "datatype": {
+            "const": "url",
+            "x-ts-type": "typeof SnakDataType.URL"
+          },
+          "datavalue": {
+            "$ref": "#/components/schemas/UrlDataValue"
+          }
+        }
+      },
+      "DataValue": {
+        "title": "DataValue",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StringDataValue"
+          },
+          {
+            "$ref": "#/components/schemas/EntityIdDataValue"
+          },
+          {
+            "$ref": "#/components/schemas/GlobeCoordinateDataValue"
+          },
+          {
+            "$ref": "#/components/schemas/QuantityDataValue"
+          },
+          {
+            "$ref": "#/components/schemas/TimeDataValue"
+          },
+          {
+            "$ref": "#/components/schemas/UrlDataValue"
+          }
+        ]
+      },
+      "StringDataValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "const": "string",
+            "x-ts-type": "typeof DataValueType.STRING"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "UrlDataValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "const": "string",
+            "x-ts-type": "typeof DataValueType.STRING"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "DataValueEntityId": {
+        "type": "object",
+        "required": [
+          "entity-type",
+          "numeric-id"
+        ],
+        "properties": {
+          "entity-type": {
+            "$ref": "#/components/schemas/WikibaseEntityType"
+          },
+          "numeric-id": {
+            "type": "integer"
+          }
+        },
+        "x-ts-type": "DataValueEntityId"
+      },
+      "EntityIdDataValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "const": "wikibase-entityid",
+            "x-ts-type": "typeof DataValueType.WIKIBASE_ENTITYID"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DataValueEntityId"
+          }
+        }
+      },
+      "DataValueGlobeCoordinate": {
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "precision",
+          "altitude",
+          "globe"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "altitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "precision": {
+            "type": "number"
+          },
+          "globe": {
+            "type": "string"
+          }
+        }
+      },
+      "GlobeCoordinateDataValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "const": "globecoordinate",
+            "x-ts-type": "typeof DataValueType.GLOBE_COORDINATE"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DataValueGlobeCoordinate"
+          }
+        }
+      },
+      "DataValueQuantity": {
+        "type": "object",
+        "required": [
+          "amount",
+          "unit"
+        ],
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "upperBound": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lowerBound": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "QuantityDataValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "const": "quantity",
+            "x-ts-type": "typeof DataValueType.QUANTITY"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DataValueQuantity"
+          }
+        }
+      },
+      "DataValueTime": {
+        "type": "object",
+        "required": [
+          "time"
+        ],
+        "properties": {
+          "time": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "integer"
+          },
+          "before": {
+            "type": "integer"
+          },
+          "after": {
+            "type": "integer"
+          },
+          "precision": {
+            "type": "integer"
+          },
+          "calendarmodel": {
+            "type": "string"
+          }
+        }
+      },
+      "TimeDataValue": {
+        "type": "object",
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "const": "time",
+            "x-ts-type": "typeof DataValueType.TIME"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DataValueTime"
+          }
+        }
+      },
+      "PropertyId": {
+        "title": "PropertyId",
+        "type": "string",
+        "pattern": "^P[1-9]\\d*$",
+        "description": "Wikidata property identifier",
+        "x-ts-type": "PropertyId"
+      },
+      "ItemId": {
+        "title": "ItemId",
+        "type": "string",
+        "pattern": "^Q[1-9]\\d*$",
+        "description": "Wikidata item identifier",
+        "x-ts-type": "`Q${number}`"
+      }
+    }
+  }
+}

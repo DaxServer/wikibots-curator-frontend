@@ -30,7 +30,7 @@ export type Item = {
   id: string
 }
 
-export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown' | 'invalid'
+export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown' | 'invalid' | 'blacklisted'
 
 export const UPLOAD_STATUS = {
   Queued: 'queued',

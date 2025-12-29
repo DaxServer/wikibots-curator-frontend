@@ -32,7 +32,5 @@ defineProps<{ statements: Statement[] }>()
       </template>
     </Column>
   </DataTable>
-  <div v-else>
-    No&nbsp;SDC&nbsp;set
-  </div>
+  <div v-else>No&nbsp;SDC&nbsp;set</div>
 </template>

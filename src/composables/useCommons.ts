@@ -12,6 +12,7 @@ import {
   createWidthClaim,
   createWikibaseItemStatement,
 } from '@/composables/sdc'
+import { useTitleBlacklist } from '@/composables/useTitleBlacklist'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
 import { isValidExtension } from '@/utils/titleTemplate'
@@ -19,6 +20,7 @@ import { debounce } from 'ts-debounce'
 
 export const useCommons = () => {
   const store = useCollectionsStore()
+  const { isBlacklisted } = useTitleBlacklist()
 
   const applyMetaDefaults = (meta: Metadata, title: string): Metadata => ({
     ...meta,
@@ -76,6 +78,10 @@ ${categories}
           store.updateItem(item.id, 'titleStatus', 'invalid')
           continue
         }
+        if (isBlacklisted(item.title)) {
+          store.updateItem(item.id, 'titleStatus', 'blacklisted')
+          continue
+        }
 
         store.updateItem(item.id, 'titleStatus', 'checking')
         if (!debouncedCheckTitleMap.has(item.id)) {
@@ -93,6 +99,8 @@ ${categories}
     for (const item of items) {
       if (!isValidExtension(item.title)) {
         store.updateItem(item.id, 'titleStatus', 'invalid')
+      } else if (isBlacklisted(item.title)) {
+        store.updateItem(item.id, 'titleStatus', 'blacklisted')
       } else {
         store.updateItem(item.id, 'titleStatus', 'checking')
         validItems.push(item)

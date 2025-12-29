@@ -35,7 +35,11 @@ const onTitleChange = (id: string, title: string) => {
         <IconField>
           <InputText
             :modelValue="effectiveTitle"
-            :invalid="item.meta.titleStatus === 'taken' || item.meta.titleStatus === 'invalid'"
+            :invalid="
+              item.meta.titleStatus === 'taken' ||
+              item.meta.titleStatus === 'invalid' ||
+              item.meta.titleStatus === 'blacklisted'
+            "
             @update:modelValue="(v) => onTitleChange(item.id, v ?? '')"
             fluid
           />
@@ -45,7 +49,9 @@ const onTitleChange = (id: string, title: string) => {
               'text-inherit! pi-spin pi-spinner': item.meta.titleStatus === 'checking',
               'text-green-600! pi-check-circle': item.meta.titleStatus === 'available',
               'text-red-500! pi-times-circle':
-                item.meta.titleStatus === 'taken' || item.meta.titleStatus === 'invalid',
+                item.meta.titleStatus === 'taken' ||
+                item.meta.titleStatus === 'invalid' ||
+                item.meta.titleStatus === 'blacklisted',
               'text-yellow-500! pi-exclamation-triangle': item.meta.titleStatus === 'unknown',
             }"
           />
@@ -109,6 +115,23 @@ const onTitleChange = (id: string, title: string) => {
           }"
         >
           Extension is not valid. Valid extensions are: {{ VALID_EXTENSIONS.join(', ') }}
+        </Message>
+        <Message
+          v-else-if="item.meta.titleStatus === 'blacklisted'"
+          severity="error"
+          variant="simple"
+          size="small"
+          icon="pi pi-times-circle"
+          class="pl-3"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
+        >
+          Title is blacklisted and cannot be used
         </Message>
         <Message
           v-else-if="item.meta.titleStatus === 'unknown'"
