@@ -41,12 +41,12 @@ describe('useTitleBlacklist', () => {
 
   it('should blacklist titles exceeding 255 byte limit', () => {
     // Create a string that's 256 bytes when UTF-8 encoded
-    const longTitle = 'A' + '€'.repeat(127) // € is 3 bytes in UTF-8, so 1 + 127*3 = 382 bytes
+    const longTitle = `A${'€'.repeat(127)}` // € is 3 bytes in UTF-8, so 1 + 127*3 = 382 bytes
     expect(isBlacklisted(longTitle)).toBe(true)
   })
 
   it('should not blacklist titles within 255 byte limit', () => {
-    const validTitle = 'A' + '€'.repeat(84) // € is 3 bytes in UTF-8, so 1 + 84*3 = 253 bytes
+    const validTitle = `A${'€'.repeat(84)}` // € is 3 bytes in UTF-8, so 1 + 84*3 = 253 bytes
     expect(isBlacklisted(validTitle)).toBe(false)
   })
 

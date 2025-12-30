@@ -21,7 +21,7 @@ describe('useTitleTemplate', () => {
       height: 100,
       dates: { taken: new Date('2023-01-01T00:00:00Z') },
       location: { latitude: 0, longitude: 0, compass_angle: 0 },
-      creator: { id: 'user', username: 'user', profile_url: '' },
+      creator: { id: 'user', username: 'User', profile_url: '' },
       is_pano: false,
       existing: [],
     },
@@ -114,7 +114,7 @@ describe('useTitleTemplate', () => {
       // Check if fetch was called with the correct title in the body
       const calls = mockFetch.mock.calls as unknown as [RequestInfo, RequestInit?][]
       const body = calls[0]![1]!.body!.toString()
-      expect(body).toContain('titles=File%3Auser')
+      expect(body).toContain('titles=File%3AUser.jpg')
     })
 
     it('does not verify titles if item already has a title', async () => {
