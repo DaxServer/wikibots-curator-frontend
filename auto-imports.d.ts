@@ -375,9 +375,6 @@ declare global {
   export type { DataViewPageEvent } from 'primevue/dataview'
   import('primevue/dataview')
   // @ts-ignore
-  export type { MediaWikiApiResponse } from './src/composables/useTitleBlacklist'
-  import('./src/composables/useTitleBlacklist')
-  // @ts-ignore
   export type { WikibaseEntityType, Rank, DataValueType, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, Statement, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, Reference, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, GenericError, TitleBlacklistedError, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, Subscribed, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, Claims, ItemId, PropertyId, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
@@ -406,7 +403,6 @@ declare module 'vue' {
     readonly WikidataEntity: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['WikidataEntity']>
     readonly WikidataProperty: UnwrapRef<typeof import('./src/components/wikidata/useWikidata')['WikidataProperty']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
-    readonly api: UnwrapRef<typeof import('./src/composables/useTitleBlacklist')['api']>
     readonly applyTitleTemplate: UnwrapRef<typeof import('./src/utils/titleTemplate')['applyTitleTemplate']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>

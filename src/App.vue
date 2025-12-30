@@ -2,13 +2,11 @@
 const store = useCollectionsStore()
 const auth = useAuthStore()
 const { open } = useSocket
-const { fetchBlacklists } = useTitleBlacklist()
 
 initCollectionsListeners()
 
 onMounted(() => {
   open()
-  fetchBlacklists()
 })
 </script>
 
