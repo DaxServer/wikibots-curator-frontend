@@ -3,7 +3,7 @@ const authStore = useAuthStore()
 const store = useCollectionsStore()
 const router = useRouter()
 
-const { loadBatches, subscribeBatchesList, unsubscribeBatchesList } = useCollections()
+const { loadBatches, unsubscribeBatchesList } = useCollections()
 
 const filterOptions = ref([
   { label: 'My uploads', value: 'my' },
@@ -36,12 +36,6 @@ const loadData = async (event?: DataTablePageEvent) => {
   const userid =
     selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
   loadBatches(params.value.first, params.value.rows, userid, filterText.value)
-
-  if (params.value.first === 0) {
-    subscribeBatchesList(userid, filterText.value)
-  } else {
-    unsubscribeBatchesList()
-  }
 }
 
 const doSearch = async () => {
@@ -55,7 +49,6 @@ const doSearch = async () => {
 const onFilterChange = () => {
   params.value.first = 0
   params.value.page = 1
-  unsubscribeBatchesList()
   loadData()
 }
 

@@ -225,11 +225,15 @@
         "type": "object",
         "required": [
           "data",
+          "partial",
           "type"
         ],
         "properties": {
           "data": {
             "$ref": "#/components/schemas/BatchesListData"
+          },
+          "partial": {
+            "type": "boolean"
           },
           "type": {
             "const": "BATCHES_LIST"

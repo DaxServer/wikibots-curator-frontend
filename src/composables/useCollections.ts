@@ -129,7 +129,23 @@ export const initCollectionsListeners = () => {
         break
       }
       case 'BATCHES_LIST':
-        store.batches = msg.data.items
+        if (msg.partial) {
+          // Partial update: update existing items instead of full replace
+          const existingBatches = [...store.batches]
+          const updatedBatchIds = new Set(msg.data.items.map((item) => item.id))
+
+          // Remove existing items that are being updated
+          const filteredBatches = existingBatches.filter((batch) => !updatedBatchIds.has(batch.id))
+
+          // Add updated items
+          const newBatches = [...filteredBatches, ...msg.data.items]
+
+          // Sort by id to maintain consistent order
+          store.batches = newBatches.sort((a, b) => b.id - a.id)
+        } else {
+          // Full replace
+          store.batches = msg.data.items
+        }
         store.batchesTotal = msg.data.total
         store.batchesLoading = false
         break
