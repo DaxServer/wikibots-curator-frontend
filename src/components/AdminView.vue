@@ -51,6 +51,7 @@ const loadLazyData = async (event?: { page: number; first: number; rows: number 
 }
 
 const onTableChange = () => {
+  items.value = []
   lazyParams.value.first = 0
   lazyParams.value.page = 1
   loadLazyData()

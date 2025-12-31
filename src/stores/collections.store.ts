@@ -38,6 +38,17 @@ export const useCollectionsStore = defineStore('collections', () => {
   const batchUploads = shallowRef<BatchUploadItem[]>([])
   const batchUploadsLoading = ref(false)
   const currentBatchId = ref<number | null>(null)
+  const batchesFilter = ref([
+    { label: 'My uploads', value: 'my' },
+    { label: 'All uploads', value: 'all' },
+  ])
+  const batchesSelectedFilter = ref(batchesFilter.value[0])
+  const batchesFilterText = ref('')
+  const batchesParams = ref({
+    first: 0,
+    rows: 100,
+    page: 1,
+  })
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -148,6 +159,19 @@ export const useCollectionsStore = defineStore('collections', () => {
     currentBatchId.value = null
   }
 
+  const resetBatches = () => {
+    batches.value = []
+    batchesTotal.value = 0
+    batchesLoading.value = false
+    batchesSelectedFilter.value = batchesFilter.value[0]
+    batchesFilterText.value = ''
+    batchesParams.value = {
+      first: 0,
+      rows: 100,
+      page: 1,
+    }
+  }
+
   const setHandler = (h: Handler) => {
     handler.value = h
   }
@@ -217,6 +241,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     batchUploads,
     batchUploadsLoading,
     currentBatchId,
+    batchesFilter,
+    batchesSelectedFilter,
+    batchesFilterText,
+    batchesParams,
 
     setLoading,
     setGlobalDescription,
@@ -237,6 +265,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     setItemsPerPage,
     setHandler,
     setInput,
+    resetBatches,
     $reset,
   }
 })
