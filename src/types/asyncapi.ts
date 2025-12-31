@@ -286,6 +286,7 @@ export type Reference = {
 
 export type BatchesList = {
   data: BatchesListData
+  partial: boolean
   type: 'BATCHES_LIST'
 }
 
