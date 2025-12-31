@@ -27,24 +27,35 @@ const onPage = (event: DataTablePageEvent) => {
   refreshBatches()
 }
 
-const onSearch = () => {
+const doSearch = () => {
   store.batchesParams.first = 0
   store.batchesParams.page = 1
   refreshBatches()
 }
 
 const onFilterChange = () => {
-  onSearch()
+  doSearch()
 }
 
-const debouncedSearch = debounce(onSearch, 500)
+const debouncedSearch = debounce(doSearch, 500)
 
 watch(
   () => store.batchesFilterText,
   (text) => {
-    isSearching.value = !!text
-    if (text !== '') {
+    isSearching.value = (text !== '')
+    if (text === '') {
+      doSearch()
+    } else {
       debouncedSearch()
+    }
+  },
+)
+
+watch(
+  () => store.batchesLoading,
+  (loading) => {
+    if (!loading) {
+      isSearching.value = false
     }
   },
 )
@@ -52,7 +63,6 @@ watch(
 const clearSearch = () => {
   store.batchesFilterText = ''
   debouncedSearch.cancel()
-  onSearch()
 }
 
 onBeforeMount(() => {
@@ -104,9 +114,9 @@ onUnmounted(() => {
         "
         search-placeholder="Search ID or User"
         search-id="search-batches"
-        :loading="store.batchesFilterText !== '' && store.batchesLoading"
+        :loading="isSearching"
         @clear="clearSearch"
-        @search="onSearch"
+        @search="doSearch"
       />
     </template>
     <template #body-cell="{ col, data }">
