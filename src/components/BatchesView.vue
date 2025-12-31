@@ -43,13 +43,16 @@ watch(
   () => store.batchesFilterText,
   (text) => {
     isSearching.value = !!text
-    debouncedSearch()
+    if (text !== '') {
+      debouncedSearch()
+    }
   },
 )
 
 const clearSearch = () => {
   store.batchesFilterText = ''
   debouncedSearch.cancel()
+  onSearch()
 }
 
 onBeforeMount(() => {
