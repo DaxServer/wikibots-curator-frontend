@@ -202,26 +202,33 @@ export const useCollections = () => {
 
   const loadBatches = (page: number, rows: number, userid?: string, filter?: string) => {
     store.batchesLoading = true
+    store.batches = []
+    store.batchesTotal = 0
     const payload: FetchBatches['data'] = {
       page: page / rows + 1,
       limit: rows,
+      userid,
+      filter,
     }
-    if (userid) {
-      payload.userid = userid
-    }
-    if (filter) {
-      payload.filter = filter
-    }
-    send(
-      JSON.stringify({
-        type: 'FETCH_BATCHES',
-        data: payload,
-      } as FetchBatches),
+    send(JSON.stringify({ type: 'FETCH_BATCHES', data: payload } as FetchBatches))
+  }
+
+  const refreshBatches = () => {
+    const authStore = useAuthStore()
+    const userid =
+      store.batchesSelectedFilter?.value === 'my' && authStore.userid ? authStore.userid : undefined
+    loadBatches(
+      store.batchesParams.first,
+      store.batchesParams.rows,
+      userid,
+      store.batchesFilterText,
     )
   }
 
   const loadBatchUploads = (batchId: number) => {
     store.batchUploadsLoading = true
+    store.batch = undefined
+    store.batchUploads = []
     store.currentBatchId = batchId
     send(
       JSON.stringify({
@@ -273,6 +280,7 @@ export const useCollections = () => {
     wikitext,
     submitUpload,
     loadBatches,
+    refreshBatches,
     loadBatchUploads,
     retryUploads,
     sendSubscribeBatch,

@@ -1,16 +1,9 @@
 <script setup lang="ts">
-const authStore = useAuthStore()
 const store = useCollectionsStore()
 const router = useRouter()
 
-const { loadBatches, unsubscribeBatchesList } = useCollections()
+const { refreshBatches, unsubscribeBatchesList } = useCollections()
 
-const filterOptions = ref([
-  { label: 'My uploads', value: 'my' },
-  { label: 'All uploads', value: 'all' },
-])
-const selectedFilter = ref(filterOptions.value[0])
-const filterText = ref('')
 const isSearching = ref(false)
 
 const columns = computed(() => {
@@ -19,69 +12,53 @@ const columns = computed(() => {
     { field: 'uploads', header: 'Uploads' },
     { field: 'created_at', header: 'Created At' },
   ]
-  if (selectedFilter.value?.value === 'all') {
+  if (store.batchesSelectedFilter?.value === 'all') {
     cols.splice(1, 0, { field: 'username', header: 'Username' })
   }
   return cols
 })
 
-const params = ref({
-  first: 0,
-  rows: 100,
-  page: 1,
-})
-
-const loadData = async (event?: DataTablePageEvent) => {
-  params.value = event || params.value
-  const userid =
-    selectedFilter.value?.value === 'my' && authStore.userid ? authStore.userid : undefined
-  loadBatches(params.value.first, params.value.rows, userid, filterText.value)
+const onPage = (event: DataTablePageEvent) => {
+  store.batchesParams = {
+    first: event.first,
+    rows: event.rows,
+    page: event.page + 1,
+  }
+  refreshBatches()
 }
 
-const doSearch = async () => {
-  params.value.first = 0
-  params.value.page = 1
-  isSearching.value = true
-  await loadData()
-  isSearching.value = false
+const onSearch = () => {
+  store.batchesParams.first = 0
+  store.batchesParams.page = 1
+  refreshBatches()
 }
 
 const onFilterChange = () => {
-  params.value.first = 0
-  params.value.page = 1
-  loadData()
+  onSearch()
 }
 
-const debouncedSearch = debounce(() => {
-  doSearch()
-}, 500)
+const debouncedSearch = debounce(onSearch, 500)
 
-watch(filterText, () => {
-  if (filterText.value) {
-    isSearching.value = true
-  }
-  debouncedSearch()
-})
-
-const onEnter = () => {
-  // Cancel pending debounce if any
-  debouncedSearch.cancel()
-  doSearch()
-}
+watch(
+  () => store.batchesFilterText,
+  (text) => {
+    isSearching.value = !!text
+    debouncedSearch()
+  },
+)
 
 const clearSearch = () => {
-  filterText.value = ''
-  // Clearing should trigger watch -> debouncedSearch.
-  // But UX usually expects immediate clear.
+  store.batchesFilterText = ''
   debouncedSearch.cancel()
-  doSearch()
+  onSearch()
 }
 
 onBeforeMount(() => {
-  loadData()
+  refreshBatches()
 })
 
 onUnmounted(() => {
+  store.resetBatches()
   unsubscribeBatchesList()
 })
 </script>
@@ -90,8 +67,8 @@ onUnmounted(() => {
   <div class="flex justify-between items-center mb-4 max-w-7xl mx-auto">
     <div class="text-2xl font-bold">Past uploads</div>
     <SelectButton
-      v-model="selectedFilter"
-      :options="filterOptions"
+      v-model="store.batchesSelectedFilter"
+      :options="store.batchesFilter"
       optionLabel="label"
       :allowEmpty="false"
       @change="onFilterChange"
@@ -100,13 +77,13 @@ onUnmounted(() => {
   <SharedDataTable
     class="max-w-7xl mx-auto"
     :value="store.batches"
-    :rows="params.rows"
+    :rows="store.batchesParams.rows"
     :totalRecords="store.batchesTotal"
-    :first="params.first"
+    :first="store.batchesParams.first"
     :columns="columns"
     :loading="store.batchesLoading"
     lazy
-    @page="loadData"
+    @page="onPage"
     @row-click="$event.data.id && router.push(`/batches/${$event.data.id}`)"
     :pt="{
       bodyRow: () => ({
@@ -116,7 +93,7 @@ onUnmounted(() => {
   >
     <template #header>
       <FilterHeader
-        v-model:filter-text="filterText"
+        v-model:filter-text="store.batchesFilterText"
         :filter-info="
           !isSearching
             ? `(${store.batchesTotal} ${store.batchesTotal === 1 ? 'result' : 'results'})`
@@ -126,7 +103,7 @@ onUnmounted(() => {
         search-id="search-batches"
         :loading="isSearching"
         @clear="clearSearch"
-        @search="onEnter"
+        @search="onSearch"
       />
     </template>
     <template #body-cell="{ col, data }">
