@@ -43,7 +43,9 @@ watch(
   () => store.batchesFilterText,
   (text) => {
     isSearching.value = !!text
-    debouncedSearch()
+    if (text !== '') {
+      debouncedSearch()
+    }
   },
 )
 
@@ -82,6 +84,7 @@ onUnmounted(() => {
     :first="store.batchesParams.first"
     :columns="columns"
     :loading="store.batchesLoading"
+    :always-show-paginator="true"
     lazy
     @page="onPage"
     @row-click="$event.data.id && router.push(`/batches/${$event.data.id}`)"
@@ -101,7 +104,7 @@ onUnmounted(() => {
         "
         search-placeholder="Search ID or User"
         search-id="search-batches"
-        :loading="isSearching"
+        :loading="store.batchesFilterText !== '' && store.batchesLoading"
         @clear="clearSearch"
         @search="onSearch"
       />
