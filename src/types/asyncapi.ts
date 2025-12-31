@@ -288,6 +288,7 @@ export type BatchesList = {
   data: BatchesListData
   partial: boolean
   type: 'BATCHES_LIST'
+  nonce: string
 }
 
 export type BatchesListData = {
@@ -315,6 +316,7 @@ export type BatchStats = {
 export type BatchUploadsList = {
   data: BatchUploadsListData
   type: 'BATCH_UPLOADS_LIST'
+  nonce: string
 }
 
 export type BatchUploadsListData = {
@@ -365,6 +367,7 @@ export type TitleBlacklistedError = {
 export type CollectionImages = {
   type: 'COLLECTION_IMAGES'
   data: CollectionImagesData
+  nonce: string
 }
 
 export type CollectionImagesData = {
@@ -417,16 +420,19 @@ export type GeoLocation = {
 export type Error = {
   data: string
   type: 'ERROR'
+  nonce: string
 }
 
 export type Subscribed = {
   data: number
   type: 'SUBSCRIBED'
+  nonce: string
 }
 
 export type UploadCreated = {
   type: 'UPLOAD_CREATED'
   data: UploadCreatedItem[]
+  nonce: string
 }
 
 export type UploadCreatedItem = {
@@ -440,11 +446,13 @@ export type UploadCreatedItem = {
 export type UploadsComplete = {
   data: number
   type: 'UPLOADS_COMPLETE'
+  nonce: string
 }
 
 export type UploadsUpdate = {
   type: 'UPLOADS_UPDATE'
   data: UploadUpdateItem[]
+  nonce: string
 }
 
 export type UploadUpdateItem = {

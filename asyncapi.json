@@ -226,7 +226,8 @@
         "required": [
           "data",
           "partial",
-          "type"
+          "type",
+          "nonce"
         ],
         "properties": {
           "data": {
@@ -237,6 +238,10 @@
           },
           "type": {
             "const": "BATCHES_LIST"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -415,7 +420,8 @@
         "type": "object",
         "required": [
           "data",
-          "type"
+          "type",
+          "nonce"
         ],
         "properties": {
           "data": {
@@ -423,6 +429,10 @@
           },
           "type": {
             "const": "BATCH_UPLOADS_LIST"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -450,7 +460,8 @@
         "type": "object",
         "required": [
           "type",
-          "data"
+          "data",
+          "nonce"
         ],
         "properties": {
           "type": {
@@ -458,6 +469,10 @@
           },
           "data": {
             "$ref": "#/components/schemas/CollectionImagesData"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -522,7 +537,8 @@
         "type": "object",
         "required": [
           "data",
-          "type"
+          "type",
+          "nonce"
         ],
         "properties": {
           "data": {
@@ -531,6 +547,10 @@
           },
           "type": {
             "const": "ERROR"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -865,7 +885,8 @@
         "type": "object",
         "required": [
           "data",
-          "type"
+          "type",
+          "nonce"
         ],
         "properties": {
           "data": {
@@ -874,6 +895,10 @@
           },
           "type": {
             "const": "SUBSCRIBED"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -937,7 +962,8 @@
         "type": "object",
         "required": [
           "data",
-          "type"
+          "type",
+          "nonce"
         ],
         "properties": {
           "data": {
@@ -946,6 +972,10 @@
           },
           "type": {
             "const": "UPLOADS_COMPLETE"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -982,7 +1012,8 @@
         "type": "object",
         "required": [
           "type",
-          "data"
+          "data",
+          "nonce"
         ],
         "properties": {
           "type": {
@@ -993,6 +1024,10 @@
             "items": {
               "$ref": "#/components/schemas/UploadCreatedItem"
             }
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -1054,7 +1089,8 @@
         "type": "object",
         "required": [
           "type",
-          "data"
+          "data",
+          "nonce"
         ],
         "properties": {
           "type": {
@@ -1065,6 +1101,10 @@
             "items": {
               "$ref": "#/components/schemas/UploadUpdateItem"
             }
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false

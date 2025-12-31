@@ -9,12 +9,14 @@ withDefaults(
     lazy?: boolean
     loading?: boolean
     loadingRows?: number
+    alwaysShowPaginator?: boolean
   }>(),
   {
     rows: 100,
     lazy: false,
     loading: false,
     loadingRows: 5,
+    alwaysShowPaginator: false,
   },
 )
 
@@ -31,7 +33,7 @@ defineEmits<{
     paginatorPosition="both"
     paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
     current-page-report-template="Page {currentPage} of {totalPages}"
-    :alwaysShowPaginator="false"
+    :alwaysShowPaginator="alwaysShowPaginator"
     :rows="rows"
     :totalRecords="totalRecords"
     :first="first"
