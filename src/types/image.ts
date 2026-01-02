@@ -1,4 +1,4 @@
-import type { MediaImage, StructuredError } from '@/types/asyncapi'
+import type { MediaImage, Statement, StructuredError } from '@/types/asyncapi'
 
 export interface Image extends Omit<MediaImage, 'dates' | 'description'> {
   dates: {
@@ -28,6 +28,7 @@ export type Item = {
   sdc: Statement[]
   index: number
   id: string
+  isSkeleton?: boolean
 }
 
 export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown' | 'invalid' | 'blacklisted'

@@ -42,7 +42,7 @@ const debouncedSearch = debounce(doSearch, 500)
 watch(
   () => store.batchesFilterText,
   (text) => {
-    isSearching.value = (text !== '')
+    isSearching.value = text !== ''
     if (text === '') {
       doSearch()
     } else {

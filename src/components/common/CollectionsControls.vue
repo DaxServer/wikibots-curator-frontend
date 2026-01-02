@@ -45,23 +45,31 @@ const menuItems = computed(() => [
         Click on images to select
       </Message>
 
-      <SelectButton
-        v-model="store.viewMode"
-        :options="[
-          { label: 'List', value: 'list', icon: 'pi pi-list' },
-          { label: 'Grid', value: 'grid', icon: 'pi pi-th-large' },
-        ]"
-        :allowEmpty="false"
-        option-label="label"
-        option-value="value"
-        data-key="value"
-        @update:model-value="store.viewMode = $event"
+      <span
+        v-tooltip.bottom="
+          store.isBatchLoading ? 'Controls disabled while images are being retrieved' : ''
+        "
+        class="inline-block"
       >
-        <template #option="{ option }">
-          <i :class="option.icon" />
-          <span>{{ option.label }}</span>
-        </template>
-      </SelectButton>
+        <SelectButton
+          v-model="store.viewMode"
+          :options="[
+            { label: 'List', value: 'list', icon: 'pi pi-list' },
+            { label: 'Grid', value: 'grid', icon: 'pi pi-th-large' },
+          ]"
+          :allowEmpty="false"
+          :disabled="store.isBatchLoading"
+          option-label="label"
+          option-value="value"
+          data-key="value"
+          @update:model-value="store.viewMode = $event"
+        >
+          <template #option="{ option }">
+            <i :class="option.icon" />
+            <span>{{ option.label }}</span>
+          </template>
+        </SelectButton>
+      </span>
     </div>
     <div class="flex items-center gap-4">
       <span class="text-base">
@@ -73,20 +81,35 @@ const menuItems = computed(() => [
         :model="menuItems"
         :popup="true"
       ></Menu>
-      <Button
-        severity="secondary"
-        outlined
-        @click="menu.toggle($event)"
+      <span
+        class="inline-block"
+        v-tooltip.bottom="
+          store.isBatchLoading ? 'Controls disabled while images are being retrieved' : ''
+        "
       >
-        Select
-        <i class="pi pi-chevron-down ml-2"></i>
-      </Button>
-      <Button
-        severity="primary"
-        :disabled="store.selectedCount === 0"
-        @click="store.stepper = '3'"
-        :label="store.selectedCount === 0 ? 'Select items' : 'Start editing'"
-      />
+        <Button
+          severity="secondary"
+          outlined
+          @click="menu.toggle($event)"
+          :disabled="store.isBatchLoading"
+        >
+          Select
+          <i class="pi pi-chevron-down ml-2"></i>
+        </Button>
+      </span>
+      <span
+        class="inline-block"
+        v-tooltip.bottom="
+          store.isBatchLoading ? 'Controls disabled while images are being retrieved' : ''
+        "
+      >
+        <Button
+          severity="primary"
+          :disabled="store.selectedCount === 0 || store.isBatchLoading"
+          @click="store.stepper = '3'"
+          :label="store.selectedCount === 0 ? 'Select items' : 'Start editing'"
+        />
+      </span>
     </div>
   </div>
 </template>
