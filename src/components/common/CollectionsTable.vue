@@ -35,14 +35,25 @@ const { loadCollection } = useCollections()
               v-model="store.input"
               :placeholder="placeholder"
             />
-            <Button
-              color="primary"
-              type="submit"
-              :loading="store.isLoading"
-              :disabled="!store.input.trim() || store.isLoading"
-              :label="store.isLoading ? 'Loading...' : 'Load sequence'"
-              class="w-fit"
-            />
+            <div class="flex items-center gap-4">
+              <Button
+                color="primary"
+                type="submit"
+                :loading="store.isLoading"
+                :disabled="!store.input.trim() || store.isLoading"
+                :label="store.isLoading ? 'Loading...' : 'Load sequence'"
+                class="w-fit"
+              />
+              <Message
+                v-if="store.isBatchLoading && store.batchLoadingStatus"
+                severity="info"
+                icon="pi pi-spin pi-spinner"
+                :closable="false"
+                class="!m-0"
+              >
+                {{ store.batchLoadingStatus }}
+              </Message>
+            </div>
           </Form>
 
           <div class="text-center py-48 text-gray-500">

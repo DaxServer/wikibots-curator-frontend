@@ -3,6 +3,48 @@ import type { Image } from '@/types/image'
 import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
 import { watch } from 'vue'
 
+const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
+  id,
+  index,
+  image,
+  sdc: [],
+  meta: {
+    title: undefined,
+    description: { language: 'en', value: descriptionText },
+    categories: '',
+    license: '',
+    selected: false,
+  },
+})
+
+const createSkeletonItem = (id: string, index: number): Item => ({
+  id,
+  index,
+  image: {
+    id,
+    creator: { id: '', username: '', profile_url: '' },
+    dates: { taken: new Date() },
+    existing: [],
+    height: 0,
+    width: 0,
+    preview_url: '',
+    thumbnail_url: '',
+    title: '',
+    url: '',
+    url_original: '',
+    location: { latitude: 0, longitude: 0, compass_angle: 0 },
+    description: '',
+  },
+  sdc: [],
+  meta: {
+    description: { language: 'en', value: '' },
+    categories: '',
+    license: '',
+    selected: false,
+  },
+  isSkeleton: true,
+})
+
 export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
   const commons = useCommons()
@@ -13,20 +55,6 @@ export const initCollectionsListeners = () => {
     store.isStatusChecking = true
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
-
-  const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
-    id,
-    index,
-    image,
-    sdc: [],
-    meta: {
-      title: undefined,
-      description: { language: 'en', value: descriptionText },
-      categories: '',
-      license: '',
-      selected: false,
-    },
-  })
 
   watch(data, (raw) => {
     if (!raw) return
@@ -156,6 +184,60 @@ export const initCollectionsListeners = () => {
           store.batchUploadsLoading = false
         }
         break
+      case 'TRY_BATCH_RETRIEVAL':
+        store.isBatchLoading = true
+        store.batchLoadingStatus = msg.data
+        break
+      case 'COLLECTION_IMAGE_IDS': {
+        const ids = msg.data
+        store.totalImageIds = ids
+        store.stepper = '2'
+        store.isLoading = false
+
+        const skeletonItems: Record<string, Item> = {}
+        ids.forEach((id, index) => {
+          skeletonItems[id] = createSkeletonItem(id, index + 1)
+        })
+        store.items = skeletonItems
+        break
+      }
+      case 'PARTIAL_COLLECTION_IMAGES': {
+        const images = msg.data.images
+        const newItems = { ...store.items }
+
+        images.forEach((image) => {
+          const img: Image = {
+            ...image,
+            description: image.description ?? '',
+            dates: {
+              taken: new Date(image.dates.taken),
+            },
+          }
+
+          const skeletonItem = newItems[image.id]
+          if (!skeletonItem) {
+            store.error = `Received partial image data for an unknown ID: ${image.id}`
+            return
+          }
+
+          const index = skeletonItem.index
+          const descriptionText = commons.buildDescription()
+          newItems[image.id] = createItem(img, image.id, index, descriptionText)
+        })
+
+        // Fill in creator from first item if not already set
+        if (!store.creator.id && images.length > 0) {
+          store.creator = images[0]!.creator
+        }
+
+        store.items = newItems
+        const loadedCount = Object.values(newItems).filter((i) => !i.isSkeleton).length
+        if (loadedCount >= store.totalImageIds.length) {
+          store.isBatchLoading = false
+          store.batchLoadingStatus = null
+        }
+        break
+      }
     }
   })
 }

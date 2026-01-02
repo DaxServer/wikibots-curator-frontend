@@ -48,6 +48,7 @@ declare module 'vue' {
     Menu: typeof import('primevue/menu')['default']
     Message: typeof import('primevue/message')['default']
     MeterGroup: typeof import('primevue/metergroup')['default']
+    ProgressBar: typeof import('primevue/progressbar')['default']
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

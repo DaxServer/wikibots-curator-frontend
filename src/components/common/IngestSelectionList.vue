@@ -58,23 +58,45 @@ const onSelectCurrentPage = () => {
     </template>
 
     <template #grid="slotProps">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <Card
           v-for="item in slotProps.items"
           :key="item.id"
           :class="getRowClass(item)"
         >
           <template #content>
-            <Image
-              :src="item.image.thumbnail_url"
-              :alt="`${altPrefix} ${item.id}`"
-              class="cursor-pointer w-full"
-              @click.stop="onToggleSelect(item)"
-            />
-            <slot
-              name="metadata"
-              :item="item"
-            />
+            <template v-if="item.isSkeleton">
+              <Skeleton
+                width="100%"
+                height="200px"
+              />
+              <div class="flex flex-col gap-2 mt-4">
+                <Skeleton
+                  width="80%"
+                  height="1rem"
+                />
+                <Skeleton
+                  width="60%"
+                  height="1rem"
+                />
+                <Skeleton
+                  width="40%"
+                  height="1rem"
+                />
+              </div>
+            </template>
+            <template v-else>
+              <Image
+                :src="item.image.thumbnail_url"
+                :alt="`${altPrefix} ${item.id}`"
+                class="cursor-pointer w-full"
+                @click.stop="onToggleSelect(item)"
+              />
+              <slot
+                name="metadata"
+                :item="item"
+              />
+            </template>
           </template>
         </Card>
       </div>
@@ -88,16 +110,38 @@ const onSelectCurrentPage = () => {
           class="flex justify-between p-4"
           :class="getRowClass(item)"
         >
-          <slot
-            name="metadata"
-            :item="item"
-          />
-          <Image
-            :src="item.image.preview_url"
-            :alt="`${altPrefix} ${item.id}`"
-            class="cursor-pointer max-w-3xl"
-            @click.stop="onToggleSelect(item)"
-          />
+          <template v-if="item.isSkeleton">
+            <div class="flex flex-col gap-2 w-full">
+              <Skeleton
+                width="30%"
+                height="1.5rem"
+              />
+              <Skeleton
+                width="20%"
+                height="1rem"
+              />
+              <Skeleton
+                width="40%"
+                height="1rem"
+              />
+            </div>
+            <Skeleton
+              width="200px"
+              height="150px"
+            />
+          </template>
+          <template v-else>
+            <slot
+              name="metadata"
+              :item="item"
+            />
+            <Image
+              :src="item.image.preview_url"
+              :alt="`${altPrefix} ${item.id}`"
+              class="cursor-pointer max-w-3xl"
+              @click.stop="onToggleSelect(item)"
+            />
+          </template>
         </div>
       </div>
     </template>

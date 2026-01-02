@@ -364,6 +364,12 @@ export type TitleBlacklistedError = {
   type?: 'title_blacklisted'
 }
 
+export type CollectionImageIds = {
+  type: 'COLLECTION_IMAGE_IDS'
+  data: string[]
+  nonce: string
+}
+
 export type CollectionImages = {
   type: 'COLLECTION_IMAGES'
   data: CollectionImagesData
@@ -423,9 +429,26 @@ export type Error = {
   nonce: string
 }
 
+export type PartialCollectionImages = {
+  type: 'PARTIAL_COLLECTION_IMAGES'
+  data: PartialCollectionImagesData
+  nonce: string
+}
+
+export type PartialCollectionImagesData = {
+  images: MediaImage[]
+  collection: string
+}
+
 export type Subscribed = {
   data: number
   type: 'SUBSCRIBED'
+  nonce: string
+}
+
+export type TryBatchRetrieval = {
+  type: 'TRY_BATCH_RETRIEVAL'
+  data: string
   nonce: string
 }
 
@@ -523,9 +546,12 @@ export type ClientMessage =
 export type ServerMessage =
   | BatchesList
   | BatchUploadsList
+  | CollectionImageIds
   | CollectionImages
   | Error
+  | PartialCollectionImages
   | Subscribed
+  | TryBatchRetrieval
   | UploadCreated
   | UploadsComplete
   | UploadsUpdate

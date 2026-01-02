@@ -15,6 +15,9 @@
         "BatchUploadsList": {
           "$ref": "#/components/messages/BatchUploadsList"
         },
+        "CollectionImageIds": {
+          "$ref": "#/components/messages/CollectionImageIds"
+        },
         "CollectionImages": {
           "$ref": "#/components/messages/CollectionImages"
         },
@@ -30,6 +33,9 @@
         "FetchImages": {
           "$ref": "#/components/messages/FetchImages"
         },
+        "PartialCollectionImages": {
+          "$ref": "#/components/messages/PartialCollectionImages"
+        },
         "RetryUploads": {
           "$ref": "#/components/messages/RetryUploads"
         },
@@ -41,6 +47,9 @@
         },
         "Subscribed": {
           "$ref": "#/components/messages/Subscribed"
+        },
+        "TryBatchRetrieval": {
+          "$ref": "#/components/messages/TryBatchRetrieval"
         },
         "UnsubscribeBatch": {
           "$ref": "#/components/messages/UnsubscribeBatch"
@@ -112,13 +121,22 @@
           "$ref": "#/channels/wsChannel/messages/BatchUploadsList"
         },
         {
+          "$ref": "#/channels/wsChannel/messages/CollectionImageIds"
+        },
+        {
           "$ref": "#/channels/wsChannel/messages/CollectionImages"
         },
         {
           "$ref": "#/channels/wsChannel/messages/Error"
         },
         {
+          "$ref": "#/channels/wsChannel/messages/PartialCollectionImages"
+        },
+        {
           "$ref": "#/channels/wsChannel/messages/Subscribed"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/TryBatchRetrieval"
         },
         {
           "$ref": "#/channels/wsChannel/messages/UploadCreated"
@@ -142,6 +160,11 @@
       "BatchUploadsList": {
         "payload": {
           "$ref": "#/components/schemas/BatchUploadsList"
+        }
+      },
+      "CollectionImageIds": {
+        "payload": {
+          "$ref": "#/components/schemas/CollectionImageIds"
         }
       },
       "CollectionImages": {
@@ -169,6 +192,11 @@
           "$ref": "#/components/schemas/FetchImages"
         }
       },
+      "PartialCollectionImages": {
+        "payload": {
+          "$ref": "#/components/schemas/PartialCollectionImages"
+        }
+      },
       "RetryUploads": {
         "payload": {
           "$ref": "#/components/schemas/RetryUploads"
@@ -187,6 +215,11 @@
       "Subscribed": {
         "payload": {
           "$ref": "#/components/schemas/Subscribed"
+        }
+      },
+      "TryBatchRetrieval": {
+        "payload": {
+          "$ref": "#/components/schemas/TryBatchRetrieval"
         }
       },
       "UnsubscribeBatch": {
@@ -452,6 +485,30 @@
             "items": {
               "$ref": "#/components/schemas/BatchUploadItem"
             }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CollectionImageIds": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "COLLECTION_IMAGE_IDS"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
@@ -804,6 +861,46 @@
         },
         "additionalProperties": false
       },
+      "PartialCollectionImages": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "PARTIAL_COLLECTION_IMAGES"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PartialCollectionImagesData"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PartialCollectionImagesData": {
+        "type": "object",
+        "required": [
+          "images",
+          "collection"
+        ],
+        "properties": {
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MediaImage"
+            }
+          },
+          "collection": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "RetryUploads": {
         "type": "object",
         "required": [
@@ -914,6 +1011,27 @@
           },
           "type": {
             "const": "title_blacklisted"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TryBatchRetrieval": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "TRY_BATCH_RETRIEVAL"
+          },
+          "data": {
+            "type": "string"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false

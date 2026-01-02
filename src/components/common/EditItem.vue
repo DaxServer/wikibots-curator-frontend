@@ -235,13 +235,13 @@ const onTitleChange = (id: string, title: string) => {
             >
               View on {{ store.handler.charAt(0).toUpperCase() + store.handler.slice(1) }}
             </ExternalLink>
-            <Chip
+            <Tag
               v-if="item.image.is_pano"
               severity="info"
               class="self-start"
             >
               Panorama
-            </Chip>
+            </Tag>
           </div>
         </div>
         <div

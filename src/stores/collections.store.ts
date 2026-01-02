@@ -16,6 +16,9 @@ export const useCollectionsStore = defineStore('collections', () => {
   const isStatusChecking = ref<boolean>(false)
   const batchId = ref<number | null>(null)
   const stepper = ref('1')
+  const isBatchLoading = ref(false)
+  const batchLoadingStatus = ref<string | null>(null)
+  const totalImageIds = ref<string[]>([])
 
   const showSelectedOnly = ref<boolean>(true)
   const viewMode = ref<Layout>('list')
@@ -157,6 +160,9 @@ export const useCollectionsStore = defineStore('collections', () => {
     batchUploads.value = []
     batchUploadsLoading.value = false
     currentBatchId.value = null
+    isBatchLoading.value = false
+    batchLoadingStatus.value = null
+    totalImageIds.value = []
   }
 
   const resetBatches = () => {
@@ -206,6 +212,11 @@ export const useCollectionsStore = defineStore('collections', () => {
   const itemsWithExistingTitlesCount = computed(
     () => selectedItems.value.filter((i) => i.image.existing.length > 0).length,
   )
+  const loadedCount = computed(() => Object.values(items.value).filter((i) => !i.isSkeleton).length)
+  const batchProgress = computed(() => {
+    if (totalImageIds.value.length === 0) return 0
+    return Math.round((loadedCount.value / totalImageIds.value.length) * 100)
+  })
 
   return {
     handler,
@@ -245,6 +256,11 @@ export const useCollectionsStore = defineStore('collections', () => {
     batchesSelectedFilter,
     batchesFilterText,
     batchesParams,
+    isBatchLoading,
+    batchLoadingStatus,
+    totalImageIds,
+    batchProgress,
+    loadedCount,
 
     setLoading,
     setGlobalDescription,
