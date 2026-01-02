@@ -6,7 +6,7 @@ const store = useCollectionsStore()
 
 const { loadBatchUploads, retryUploads, sendSubscribeBatch, sendUnsubscribeBatch } =
   useCollections()
-const { getStatusColor, getStatusSeverity } = useUploadStatus()
+const { getStatusColor, getStatusSeverity, getStatusStyle } = useUploadStatus()
 
 const columns = [
   { field: 'id', header: 'ID' },
@@ -229,11 +229,7 @@ onUnmounted(() => {
         <template v-else-if="col.field === 'status'">
           <Tag
             :severity="getStatusSeverity(data.status)"
-            :style="
-              data.status === UPLOAD_STATUS.Duplicate
-                ? { backgroundColor: 'var(--p-fuchsia-50)', color: 'var(--p-fuchsia-800)' }
-                : {}
-            "
+            :style="getStatusStyle(data.status)"
           >
             {{ data.status }}
           </Tag>
