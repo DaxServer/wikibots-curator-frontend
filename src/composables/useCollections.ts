@@ -3,6 +3,48 @@ import type { Image } from '@/types/image'
 import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
 import { watch } from 'vue'
 
+const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
+  id,
+  index,
+  image,
+  sdc: [],
+  meta: {
+    title: undefined,
+    description: { language: 'en', value: descriptionText },
+    categories: '',
+    license: '',
+    selected: false,
+  },
+})
+
+const createSkeletonItem = (id: string, index: number): Item => ({
+  id,
+  index,
+  image: {
+    id,
+    creator: { id: '', username: '', profile_url: '' },
+    dates: { taken: new Date() },
+    existing: [],
+    height: 0,
+    width: 0,
+    preview_url: '',
+    thumbnail_url: '',
+    title: '',
+    url: '',
+    url_original: '',
+    location: { latitude: 0, longitude: 0, compass_angle: 0 },
+    description: '',
+  },
+  sdc: [],
+  meta: {
+    description: { language: 'en', value: '' },
+    categories: '',
+    license: '',
+    selected: false,
+  },
+  isSkeleton: true,
+})
+
 export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
   const commons = useCommons()
@@ -13,48 +55,6 @@ export const initCollectionsListeners = () => {
     store.isStatusChecking = true
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
-
-  const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
-    id,
-    index,
-    image,
-    sdc: [],
-    meta: {
-      title: undefined,
-      description: { language: 'en', value: descriptionText },
-      categories: '',
-      license: '',
-      selected: false,
-    },
-  })
-
-  const createSkeletonItem = (id: string, index: number): Item => ({
-    id,
-    index,
-    image: {
-      id,
-      creator: { id: '', username: '', profile_url: '' },
-      dates: { taken: new Date() },
-      existing: [],
-      height: 0,
-      width: 0,
-      preview_url: '',
-      thumbnail_url: '',
-      title: '',
-      url: '',
-      url_original: '',
-      location: { latitude: 0, longitude: 0, compass_angle: 0 },
-      description: '',
-    },
-    sdc: [],
-    meta: {
-      description: { language: 'en', value: '' },
-      categories: '',
-      license: '',
-      selected: false,
-    },
-    isSkeleton: true,
-  })
 
   watch(data, (raw) => {
     if (!raw) return
@@ -213,7 +213,14 @@ export const initCollectionsListeners = () => {
               taken: new Date(image.dates.taken),
             },
           }
-          const index = newItems[image.id]?.index || Object.keys(newItems).length + 1
+
+          const skeletonItem = newItems[image.id]
+          if (!skeletonItem) {
+            store.error = `Received partial image data for an unknown ID: ${image.id}`
+            return
+          }
+
+          const index = skeletonItem.index
           const descriptionText = commons.buildDescription()
           newItems[image.id] = createItem(img, image.id, index, descriptionText)
         })
