@@ -1,35 +1,41 @@
 <script setup lang="ts">
 defineProps<{
-  stats: Batch['stats']
+  stats: BatchStats
 }>()
+
+const { getStatusSeverity, getStatusStyle } = useUploadStatus()
 </script>
 
 <template>
   <div class="flex items-center gap-1">
     <Tag
       v-if="stats.completed > 0"
-      severity="success"
+      :severity="getStatusSeverity(UPLOAD_STATUS.Completed)"
+      :style="getStatusStyle(UPLOAD_STATUS.Completed)"
       :value="`${stats.completed} uploaded`"
     />
     <Tag
       v-if="stats.duplicate > 0"
-      severity="contrast"
+      :severity="getStatusSeverity(UPLOAD_STATUS.Duplicate)"
       :value="`${stats.duplicate} duplicate${stats.duplicate > 1 ? 's' : ''}`"
-      :style="{ backgroundColor: 'var(--p-fuchsia-50)', color: 'var(--p-fuchsia-800)' }"
+      :style="getStatusStyle(UPLOAD_STATUS.Duplicate)"
     />
     <Tag
       v-if="stats.failed > 0"
-      severity="danger"
+      :severity="getStatusSeverity(UPLOAD_STATUS.Failed)"
+      :style="getStatusStyle(UPLOAD_STATUS.Failed)"
       :value="`${stats.failed} failed`"
     />
     <Tag
       v-if="stats.in_progress > 0"
-      severity="info"
+      :severity="getStatusSeverity(UPLOAD_STATUS.InProgress)"
+      :style="getStatusStyle(UPLOAD_STATUS.InProgress)"
       :value="`${stats.in_progress} in progress`"
     />
     <Tag
       v-if="stats.queued > 0"
-      severity="secondary"
+      :severity="getStatusSeverity(UPLOAD_STATUS.Queued)"
+      :style="getStatusStyle(UPLOAD_STATUS.Queued)"
       :value="`${stats.queued} queued`"
     />
   </div>

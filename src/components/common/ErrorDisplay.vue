@@ -12,15 +12,12 @@ defineProps<{ error: StructuredError }>()
             v-for="(link, idx) in error.links"
             :key="idx"
           >
-            <a
+            <ExternalLink
               :href="decodeURIComponent(link.url)"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-primary hover:underline"
+              class="text-primary"
             >
               {{ link.title }}
-              <i class="pi pi-external-link text-xs!"></i>
-            </a>
+            </ExternalLink>
           </li>
         </ul>
       </div>

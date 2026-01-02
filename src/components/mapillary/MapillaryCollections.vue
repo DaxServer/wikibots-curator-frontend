@@ -33,38 +33,23 @@ onMounted(() => {
           value="Panorama"
           class="align-self-start"
         />
-        <Button
-          as="a"
+        <ExternalLink
+          as="button"
           :href="item.image.url_original"
           class="w-fit pl-0!"
-          variant="link"
-          label="View image"
-          target="_blank"
-          icon="pi pi-external-link"
-          iconPos="right"
-          rel="noopener noreferrer"
-        />
-        <Button
-          as="a"
-          class="w-fit pl-0!"
-          variant="link"
-          label="View on Mapillary"
+        >
+          View image
+        </ExternalLink>
+        <ExternalLink
+          as="button"
           :href="item.image.url"
-          target="_blank"
-          icon="pi pi-external-link"
-          iconPos="right"
-          rel="noopener noreferrer"
-        />
-        <Message
+          class="w-fit pl-0!"
+        >
+          View on Mapillary
+        </ExternalLink>
+        <SimpleMessage
           v-if="item.image.existing.length"
           severity="warn"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           <strong>Existing files:</strong>
           <div
@@ -72,17 +57,11 @@ onMounted(() => {
             :key="page.url"
           >
             *
-            <a
-              :href="page.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hover:underline"
-            >
+            <ExternalLink :href="page.url">
               {{ page.url.split('/').pop() }}
-              <i class="pi pi-external-link"></i>
-            </a>
+            </ExternalLink>
           </div>
-        </Message>
+        </SimpleMessage>
       </div>
     </template>
   </CollectionsTable>

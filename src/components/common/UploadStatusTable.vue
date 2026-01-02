@@ -64,7 +64,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (store.batchId) {
-    sendUnsubscribeBatch(store.batchId)
+    sendUnsubscribeBatch()
   }
 })
 </script>
@@ -120,15 +120,12 @@ onUnmounted(() => {
           completed
           <span v-if="data.meta.successUrl">
             —
-            <a
+            <ExternalLink
               :href="data.meta.successUrl"
-              class="text-primary hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
+              class="text-primary"
             >
               Open
-              <i class="pi pi-external-link text-xs!"></i>
-            </a>
+            </ExternalLink>
           </span>
         </span>
         <span v-else>{{ data.meta.status ?? UPLOAD_STATUS.Queued }}</span>

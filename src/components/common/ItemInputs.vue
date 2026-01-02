@@ -80,22 +80,13 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
           />
           <label for="description_input">Description</label>
         </FloatLabel>
-        <Message
+        <SimpleMessage
           v-if="showFallbackMessages && isFallbackDescription"
           :severity="isFallbackDescription ? 'warn' : 'secondary'"
-          variant="simple"
-          size="small"
           class="pl-3"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           Using fallback description: {{ store.globalDescription }}
-        </Message>
+        </SimpleMessage>
       </div>
     </div>
 
@@ -113,28 +104,16 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
 
     <!-- Category info message with slot for custom styling -->
     <slot name="category-message">
-      <Message
+      <SimpleMessage
         :severity="isFallbackCategories ? 'warn' : 'secondary'"
-        variant="simple"
-        size="small"
         class="-mt-3 pl-3"
-        :pt="{
-          transition: {
-            name: 'none',
-            enterActiveClass: 'none',
-            leaveActiveClass: 'none',
-          },
-        }"
       >
-        <a
+        <ExternalLink
           href="https://commons.wikimedia.org/wiki/Category:Images_from_Mapillary_uploaded_with_Curator"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:underline hover:text-primary"
+          class="hover:text-primary"
         >
           [[Category:Images from Mapillary uploaded with Curator]]
-          <i class="pi pi-external-link text-xs!"></i>
-        </a>
+        </ExternalLink>
         will be added
         <span
           v-if="isFallbackCategories"
@@ -142,7 +121,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         >
           Using fallback categories
         </span>
-      </Message>
+      </SimpleMessage>
     </slot>
 
     <div>
@@ -157,32 +136,21 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         />
         <label for="license_input">License template override</label>
       </FloatLabel>
-      <Message
+      <SimpleMessage
         severity="secondary"
-        variant="simple"
-        size="small"
         icon="pi pi-exclamation-triangle"
         class="pl-3"
       >
         SDC copyright license and copyright status will not be generated. Example:
         {{ licenseTemplate }}
-      </Message>
-      <Message
+      </SimpleMessage>
+      <SimpleMessage
         v-if="showFallbackMessages && isFallbackLicense"
         :severity="isFallbackLicense ? 'warn' : 'secondary'"
-        variant="simple"
-        size="small"
         class="mt-1 pl-3"
-        :pt="{
-          transition: {
-            name: 'none',
-            enterActiveClass: 'none',
-            leaveActiveClass: 'none',
-          },
-        }"
       >
         Using fallback license template
-      </Message>
+      </SimpleMessage>
     </div>
   </div>
 </template>

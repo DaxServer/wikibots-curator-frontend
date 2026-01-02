@@ -67,21 +67,13 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex flex-col gap-2">
-          <Message
+          <SimpleMessage
             class="w-fit"
             severity="info"
             icon="pi pi-info-circle"
-            size="small"
-            :pt="{
-              transition: {
-                name: 'none',
-                enterActiveClass: 'none',
-                leaveActiveClass: 'none',
-              },
-            }"
           >
             Available variables (drag to add)
-          </Message>
+          </SimpleMessage>
           <div class="flex flex-col gap-4">
             <div
               v-for="(fields, group) in AVAILABLE_IMAGE_FIELDS"

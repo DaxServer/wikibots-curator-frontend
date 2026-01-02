@@ -56,117 +56,60 @@ const onTitleChange = (id: string, title: string) => {
             }"
           />
         </IconField>
-        <Message
+        <SimpleMessage
           v-if="item.meta.titleStatus === 'checking'"
           severity="info"
-          variant="simple"
-          size="small"
           icon="pi pi-spinner pi-spin"
           class="pl-3"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           Checking title availability...
-        </Message>
-        <Message
+        </SimpleMessage>
+        <SimpleMessage
           v-else-if="item.meta.titleStatus === 'taken'"
           severity="error"
-          variant="simple"
-          size="small"
           icon="pi pi-times-circle"
           class="pl-3"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           Title is not possible.
-          <a
+          <ExternalLink
             :href="`https://commons.wikimedia.org/wiki/File:${encodeURIComponent(effectiveTitle)}`"
-            class="text-primary hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
+            class="text-primary"
           >
             Check existing file
-            <i class="pi pi-external-link text-xs!"></i>
-          </a>
-        </Message>
-        <Message
+          </ExternalLink>
+        </SimpleMessage>
+        <SimpleMessage
           v-else-if="item.meta.titleStatus === 'invalid'"
           severity="error"
-          variant="simple"
-          size="small"
           icon="pi pi-times-circle"
           class="pl-3"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           Extension is not valid. Valid extensions are: {{ VALID_EXTENSIONS.join(', ') }}
-        </Message>
-        <Message
+        </SimpleMessage>
+        <SimpleMessage
           v-else-if="item.meta.titleStatus === 'blacklisted'"
           severity="error"
-          variant="simple"
-          size="small"
           icon="pi pi-times-circle"
           class="pl-3"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           Title is blacklisted and cannot be used
-        </Message>
-        <Message
+        </SimpleMessage>
+        <SimpleMessage
           v-else-if="item.meta.titleStatus === 'unknown'"
           severity="warn"
-          variant="simple"
-          size="small"
           icon="pi pi-exclamation-triangle"
           class="pl-3"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           Unable to verify title availability
-        </Message>
-        <Message
+        </SimpleMessage>
+        <SimpleMessage
           v-else-if="item.meta.titleStatus === 'available'"
           severity="success"
-          variant="simple"
-          size="small"
           icon="pi pi-check-circle"
           class="pl-3"
-          :pt="{
-            transition: {
-              name: 'none',
-              enterActiveClass: 'none',
-              leaveActiveClass: 'none',
-            },
-          }"
         >
           Title is available
-        </Message>
+        </SimpleMessage>
       </div>
     </div>
 
