@@ -15,26 +15,14 @@ const sourceLinks = [
         v-for="(link, index) in sourceLinks"
         :key="index"
       >
-        <a
-          :href="link.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:underline"
-        >
+        <ExternalLink :href="link.url">
           {{ link.text }}
-        </a>
+        </ExternalLink>
         &nbsp;&bull;&nbsp;
       </template>
       <i class="pi pi-share-alt text-sm!"></i>
       &nbsp;
-      <a
-        href="https://opensource.org/license/mit"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hover:underline"
-      >
-        MIT licensed
-      </a>
+      <ExternalLink href="https://opensource.org/license/mit">MIT licensed</ExternalLink>
     </div>
     <div class="flex items-center gap-1">
       <img
@@ -43,14 +31,9 @@ const sourceLinks = [
         class="w-4 h-4"
       />
       &nbsp;
-      <a
-        href="https://phabricator.wikimedia.org/project/board/8377/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hover:underline"
-      >
+      <ExternalLink href="https://phabricator.wikimedia.org/project/board/8377/">
         phabricator
-      </a>
+      </ExternalLink>
     </div>
     <div class="flex items-center gap-1">
       <img
@@ -59,14 +42,11 @@ const sourceLinks = [
         class="w-4 h-4"
       />
       &nbsp;
-      <a
+      <ExternalLink
         href="https://grafana.wmcloud.org/d/TJuKfnt4z/tool-dashboard?orgId=1&var-namespace=tool-curator&var-cluster=P8433460076D33992&from=now-1h&to=now&timezone=utc"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hover:underline"
       >
         grafana
-      </a>
+      </ExternalLink>
     </div>
   </div>
 </template>

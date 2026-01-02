@@ -39,19 +39,15 @@ const store = useCollectionsStore()
             <span class="text-sm text-gray-500">Creator</span>
             <div>
               <template v-if="store.creator.id">
-                <a
+                <ExternalLink
                   :href="store.creator.profile_url"
                   class="hover:underline"
                 >
                   {{ store.creator.username }}
-                  <i class="pi pi-external-link text-xs" />
-                </a>
+                </ExternalLink>
               </template>
               <template v-else>
-                <Skeleton
-                  width="100px"
-                  height="1.5rem"
-                />
+                <Skeleton />
               </template>
             </div>
           </div>

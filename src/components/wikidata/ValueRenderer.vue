@@ -6,14 +6,12 @@ const { getEntityLabel } = useWikidata()
 
 <template>
   <template v-if="value.type === DataValueType.WIKIBASE_ENTITYID">
-    <a
+    <ExternalLink
       :href="`https://www.wikidata.org/wiki/Q${value.value['numeric-id']}`"
-      class="hover:underline"
-      target="_blank"
-      rel="noopener noreferrer"
+      :show-icon="false"
     >
       {{ getEntityLabel(`Q${value.value['numeric-id']}`) }} (Q{{ value.value['numeric-id'] }})
-    </a>
+    </ExternalLink>
   </template>
   <!-- <template v-else-if="value.type === 'monolingualtext'">
     <span>{{ value.value.language }}: {{ value.value.text }}</span>

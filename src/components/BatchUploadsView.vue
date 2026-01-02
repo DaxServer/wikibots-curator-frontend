@@ -6,6 +6,7 @@ const store = useCollectionsStore()
 
 const { loadBatchUploads, retryUploads, sendSubscribeBatch, sendUnsubscribeBatch } =
   useCollections()
+const { getStatusColor, getStatusSeverity } = useUploadStatus()
 
 const columns = [
   { field: 'id', header: 'ID' },
@@ -34,38 +35,38 @@ const statCards = computed((): BatchStatsCard[] => [
   {
     label: 'Total',
     count: computedStats.value.total,
-    color: 'gray' as const,
+    color: getStatusColor('all'),
     value: 'all',
     alwaysActive: store.batch !== undefined,
   },
   {
     label: 'Uploaded',
     count: computedStats.value.completed,
-    color: 'green' as const,
+    color: getStatusColor(UPLOAD_STATUS.Completed),
     value: UPLOAD_STATUS.Completed,
   },
   {
     label: 'Failed',
     count: computedStats.value.failed,
-    color: 'red' as const,
+    color: getStatusColor(UPLOAD_STATUS.Failed),
     value: UPLOAD_STATUS.Failed,
   },
   {
     label: 'Duplicates',
     count: computedStats.value.duplicate,
-    color: 'fuchsia' as const,
+    color: getStatusColor(UPLOAD_STATUS.Duplicate),
     value: UPLOAD_STATUS.Duplicate,
   },
   {
     label: 'Processing',
     count: computedStats.value.in_progress,
-    color: 'blue' as const,
+    color: getStatusColor(UPLOAD_STATUS.InProgress),
     value: UPLOAD_STATUS.InProgress,
   },
   {
     label: 'Queued',
     count: computedStats.value.queued,
-    color: 'gray' as const,
+    color: getStatusColor(UPLOAD_STATUS.Queued),
     value: UPLOAD_STATUS.Queued,
   },
 ])
@@ -95,23 +96,6 @@ const filteredUploads = computed((): BatchUploadItem[] => {
 
   return uploads
 })
-
-const statusTagSeverity = (status: UploadStatus) => {
-  switch (status) {
-    case UPLOAD_STATUS.InProgress:
-      return 'info'
-    case UPLOAD_STATUS.Queued:
-      return 'secondary'
-    case UPLOAD_STATUS.Failed:
-      return 'danger'
-    case UPLOAD_STATUS.Duplicate:
-      return 'contrast'
-    case UPLOAD_STATUS.Completed:
-      return 'success'
-    default:
-      return 'secondary'
-  }
-}
 
 const hasPendingJobs = computed(() => {
   return computedStats.value.queued > 0 || computedStats.value.in_progress > 0
@@ -238,19 +222,13 @@ onUnmounted(() => {
       </template>
       <template #body-cell="{ col, data }">
         <template v-if="col.field === 'key'">
-          <a
-            :href="`https://www.mapillary.com/app/?pKey=${data.key}&focus=photo`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:underline"
-          >
+          <ExternalLink :href="`https://www.mapillary.com/app/?pKey=${data.key}&focus=photo`">
             {{ data.key }}&nbsp;
-            <i class="pi pi-external-link text-sm!"></i>
-          </a>
+          </ExternalLink>
         </template>
         <template v-else-if="col.field === 'status'">
           <Tag
-            :severity="statusTagSeverity(data.status)"
+            :severity="getStatusSeverity(data.status)"
             :style="
               data.status === UPLOAD_STATUS.Duplicate
                 ? { backgroundColor: 'var(--p-fuchsia-50)', color: 'var(--p-fuchsia-800)' }
@@ -267,14 +245,12 @@ onUnmounted(() => {
           />
         </template>
         <template v-else-if="col.field === 'filename' && data.status === UPLOAD_STATUS.Completed">
-          <a
+          <ExternalLink
             :href="decodeURIComponent(data.success)"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-green-600 hover:underline"
+            class="text-green-600"
           >
             {{ data.filename }}
-          </a>
+          </ExternalLink>
         </template>
         <template v-else-if="col.field === 'wikitext'">
           <pre class="text-xs">{{ data[col.field] }}</pre>

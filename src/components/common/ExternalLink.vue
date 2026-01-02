@@ -11,7 +11,7 @@ const props = withDefaults(
   {
     newTab: true,
     as: 'link',
-    showIcon: false,
+    showIcon: true,
     iconSize: 12,
   },
 )

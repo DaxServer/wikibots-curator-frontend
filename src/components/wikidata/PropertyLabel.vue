@@ -5,12 +5,10 @@ const { getPropertyLabel } = useWikidata()
 </script>
 
 <template>
-  <a
+  <ExternalLink
     :href="`https://www.wikidata.org/wiki/Property:${property}`"
-    class="hover:underline"
-    target="_blank"
-    rel="noopener noreferrer"
+    :show-icon="false"
   >
     {{ getPropertyLabel(property) }} ({{ property }})
-  </a>
+  </ExternalLink>
 </template>
