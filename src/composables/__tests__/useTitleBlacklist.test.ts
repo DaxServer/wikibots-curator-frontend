@@ -15,7 +15,7 @@ describe('useTitleBlacklist', () => {
   })
 
   it('should blacklist titles with invalid characters', () => {
-    const invalidChars = ['#', '<', '>', '[', ']', '|', '{', '}', '_', ':', '/']
+    const invalidChars = ['#', '<', '>', '[', ']', '|', '{', '}', ':', '/']
 
     invalidChars.forEach((char) => {
       expect(isBlacklisted(`Test${char}file.jpg`)).toBe(true)

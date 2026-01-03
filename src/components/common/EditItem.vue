@@ -200,7 +200,7 @@ const onTitleChange = (id: string, title: string) => {
               *
               <ExternalLink
                 :href="page.url"
-                class="text-info"
+                class="text-info hover:underline"
                 show-icon
               >
                 {{ page.url }}

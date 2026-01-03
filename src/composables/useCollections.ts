@@ -1,6 +1,23 @@
-import type { BatchUploadItem, SubscribeBatch } from '@/types/asyncapi'
+import { useCommons } from '@/composables/useCommons'
+import { useSocket } from '@/composables/useSocket'
+import { useAuthStore } from '@/stores/auth.store'
+import { useCollectionsStore } from '@/stores/collections.store'
+import type {
+  BatchUploadItem,
+  CreateBatch,
+  FetchBatches,
+  FetchBatchUploads,
+  FetchImages,
+  RetryUploads,
+  ServerMessage,
+  SubscribeBatch,
+  SubscribeBatchesList,
+  UnsubscribeBatch,
+  UnsubscribeBatchesList,
+  UploadSlice,
+} from '@/types/asyncapi'
 import type { Image } from '@/types/image'
-import { type Item, type Metadata, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
+import { type Item, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
 import { watch } from 'vue'
 
 const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
@@ -47,7 +64,7 @@ const createSkeletonItem = (id: string, index: number): Item => ({
 
 export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
-  const commons = useCommons()
+  const { buildDescription, wikitext } = useCommons()
   const { data, send } = useSocket
 
   const sendSubscribeBatch = (batchId: number) => {
@@ -132,7 +149,7 @@ export const initCollectionsListeners = () => {
             },
           }
           index += 1
-          const descriptionText = commons.buildDescription()
+          const descriptionText = buildDescription()
           allItems[id] = createItem(img, id, index, descriptionText)
         }
         store.items = allItems
@@ -221,7 +238,7 @@ export const initCollectionsListeners = () => {
           }
 
           const index = skeletonItem.index
-          const descriptionText = commons.buildDescription()
+          const descriptionText = buildDescription()
           newItems[image.id] = createItem(img, image.id, index, descriptionText)
         })
 
@@ -238,13 +255,58 @@ export const initCollectionsListeners = () => {
         }
         break
       }
+      case 'BATCH_CREATED': {
+        const batchId = msg.data
+        store.batchId = batchId
+        store.uploadSliceIndex = 0
+        sendNextSlice()
+        break
+      }
+      case 'UPLOAD_SLICE_ACK': {
+        const sliceId = msg.data
+        if (sliceId === store.uploadSliceIndex) {
+          store.uploadSliceIndex += 1
+          sendNextSlice()
+        }
+        break
+      }
     }
   })
+
+  const sendNextSlice = () => {
+    if (!store.batchId) return
+
+    const totalItems = store.selectedItems.length
+    const start = store.uploadSliceIndex * 10
+
+    if (start >= totalItems) {
+      store.isLoading = false
+      return
+    }
+
+    const end = Math.min(start + 10, totalItems)
+    const sliceItems = store.selectedItems.slice(start, end).map((item) => ({
+      id: item.id,
+      input: store.input,
+      title: item.meta.title,
+      wikitext: wikitext(item),
+      labels: item.meta.description,
+      sdc: item.sdc,
+    }))
+
+    const payload = {
+      batchid: store.batchId,
+      sliceid: store.uploadSliceIndex,
+      handler: store.handler,
+      items: sliceItems,
+    }
+    send(JSON.stringify({ type: 'UPLOAD_SLICE', data: payload } as UploadSlice))
+  }
 }
 
 export const useCollections = () => {
   const store = useCollectionsStore()
-  const commons = useCommons()
+  const { buildSDC } = useCommons()
   const { send } = useSocket
 
   const sendSubscribeBatch = (batchId: number) => {
@@ -269,11 +331,6 @@ export const useCollections = () => {
 
   const unsubscribeBatchesList = () => {
     send(JSON.stringify({ type: 'UNSUBSCRIBE_BATCHES_LIST' } as UnsubscribeBatchesList))
-  }
-
-  const wikitext = (item: Item) => {
-    const meta = commons.applyMetaDefaults(item.meta, commons.buildTitle(item.image))
-    return commons.buildWikitext({ ...item, meta: meta as Metadata })
   }
 
   const loadCollection = () => {
@@ -331,7 +388,7 @@ export const useCollections = () => {
 
   const loadSDC = () => {
     for (const item of store.selectedItems) {
-      store.items[item.id]!.sdc = commons.buildSDC(item)
+      store.items[item.id]!.sdc = buildSDC(item)
     }
   }
 
@@ -342,24 +399,13 @@ export const useCollections = () => {
       return
     }
     store.stepper = '5'
-    const payload = {
-      handler: store.handler,
-      items: store.selectedItems.map((item) => ({
-        id: item.id,
-        input: store.input,
-        title: item.meta.title,
-        wikitext: wikitext(item),
-        labels: item.meta.description,
-        sdc: item.sdc,
-      })),
-    }
-    send(JSON.stringify({ type: 'UPLOAD', data: payload } as Upload))
+    store.isLoading = true
+    send(JSON.stringify({ type: 'CREATE_BATCH' } as CreateBatch))
   }
 
   return {
     loadCollection,
     loadSDC,
-    wikitext,
     submitUpload,
     loadBatches,
     refreshBatches,

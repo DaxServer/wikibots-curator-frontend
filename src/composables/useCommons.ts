@@ -66,6 +66,11 @@ ${categories}
     return info
   }
 
+  const wikitext = (item: Item) => {
+    const meta = applyMetaDefaults(item.meta, buildTitle(item.image))
+    return buildWikitext({ ...item, meta: meta as Metadata })
+  }
+
   const debouncedCheckTitleMap = new Map<string, ReturnType<typeof debounce>>()
 
   const verifyTitles = async (
@@ -223,11 +228,12 @@ ${categories}
 
   return {
     applyMetaDefaults,
-    verifyTitles,
-    sourceLink,
-    buildTitle,
     buildDescription,
-    buildWikitext,
+    buildTitle,
     buildSDC,
+    buildWikitext,
+    sourceLink,
+    verifyTitles,
+    wikitext,
   }
 }

@@ -128,7 +128,7 @@ onUnmounted(() => {
             </ExternalLink>
           </span>
         </span>
-        <span v-else>{{ data.meta.status ?? UPLOAD_STATUS.Queued }}</span>
+        <span v-else>{{ data.meta.status ?? UPLOAD_STATUS.Creating }}</span>
       </template>
     </Column>
   </DataTable>
