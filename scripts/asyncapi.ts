@@ -11,6 +11,14 @@ import {
 import fs from 'node:fs'
 import path from 'node:path'
 
+const renderPythonLiteral = (value: unknown): string => {
+  if (typeof value === 'string') {
+    const escaped = value.replaceAll('\\', '\\\\').replaceAll("'", "\\'")
+    return `'${escaped}'`
+  }
+  return JSON.stringify(value)
+}
+
 const CUSTOM_PYDANTIC_PRESET: PythonPreset<PythonOptions> = {
   class: {
     ...PYTHON_PYDANTIC_PRESET.class,
@@ -79,7 +87,7 @@ def parse_empty_list(cls, v):
 
       if (property.property.options.const) {
         renderer.dependencyManager.addDependency('from typing import Literal')
-        type = `Literal['${property.property.options.const.originalInput}']`
+        type = `Literal[${renderPythonLiteral(property.property.options.const.originalInput)}]`
       }
 
       type = renderer.renderPropertyType({
@@ -100,11 +108,9 @@ def parse_empty_list(cls, v):
       }
 
       if (property.property.options.const) {
-        let value = property.property.options.const.value
-        if (model.options.discriminator?.discriminator === property.unconstrainedPropertyName) {
-          value = property.property.options.const.originalInput
-        }
-        decoratorArgs.push(`default='${value}'`)
+        decoratorArgs.push(
+          `default=${renderPythonLiteral(property.property.options.const.originalInput)}`,
+        )
         decoratorArgs.push('frozen=True')
       } else if (defaultValue !== undefined) {
         if (typeof defaultValue === 'string' && defaultValue !== 'None') {
