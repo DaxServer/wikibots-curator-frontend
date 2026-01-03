@@ -15,14 +15,22 @@ const sourceLinks = [
         v-for="(link, index) in sourceLinks"
         :key="index"
       >
-        <ExternalLink :href="link.url">
+        <ExternalLink
+          :href="link.url"
+          :show-icon="false"
+        >
           {{ link.text }}
         </ExternalLink>
         &nbsp;&bull;&nbsp;
       </template>
       <i class="pi pi-share-alt text-sm!"></i>
       &nbsp;
-      <ExternalLink href="https://opensource.org/license/mit">MIT licensed</ExternalLink>
+      <ExternalLink
+        href="https://opensource.org/license/mit"
+        :show-icon="false"
+      >
+        MIT licensed
+      </ExternalLink>
     </div>
     <div class="flex items-center gap-1">
       <img
@@ -31,7 +39,10 @@ const sourceLinks = [
         class="w-4 h-4"
       />
       &nbsp;
-      <ExternalLink href="https://phabricator.wikimedia.org/project/board/8377/">
+      <ExternalLink
+        href="https://phabricator.wikimedia.org/project/board/8377/"
+        :show-icon="false"
+      >
         phabricator
       </ExternalLink>
     </div>
@@ -44,6 +55,7 @@ const sourceLinks = [
       &nbsp;
       <ExternalLink
         href="https://grafana.wmcloud.org/d/TJuKfnt4z/tool-dashboard?orgId=1&var-namespace=tool-curator&var-cluster=P8433460076D33992&from=now-1h&to=now&timezone=utc"
+        :show-icon="false"
       >
         grafana
       </ExternalLink>
