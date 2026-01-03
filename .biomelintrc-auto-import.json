@@ -2,6 +2,7 @@
   "javascript": {
     "globals": [
       "AVAILABLE_IMAGE_FIELDS",
+      "BatchCreated",
       "BatchItem",
       "BatchStats",
       "BatchStatsCard",
@@ -20,6 +21,7 @@
       "Component",
       "ComponentPublicInstance",
       "ComputedRef",
+      "CreateBatch",
       "Creator",
       "DataTableCellEditCompleteEvent",
       "DataTablePageEvent",
@@ -110,6 +112,9 @@
       "UploadCreatedItem",
       "UploadData",
       "UploadItem",
+      "UploadSlice",
+      "UploadSliceAck",
+      "UploadSliceData",
       "UploadStatus",
       "UploadStatusUpdate",
       "UploadUpdateItem",

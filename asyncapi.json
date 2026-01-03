@@ -9,6 +9,9 @@
       "address": "/ws",
       "description": "WebSocket endpoint used for Curator realtime messaging",
       "messages": {
+        "BatchCreated": {
+          "$ref": "#/components/messages/BatchCreated"
+        },
         "BatchesList": {
           "$ref": "#/components/messages/BatchesList"
         },
@@ -20,6 +23,9 @@
         },
         "CollectionImages": {
           "$ref": "#/components/messages/CollectionImages"
+        },
+        "CreateBatch": {
+          "$ref": "#/components/messages/CreateBatch"
         },
         "Error": {
           "$ref": "#/components/messages/Error"
@@ -60,6 +66,12 @@
         "Upload": {
           "$ref": "#/components/messages/Upload"
         },
+        "UploadSlice": {
+          "$ref": "#/components/messages/UploadSlice"
+        },
+        "UploadSliceAck": {
+          "$ref": "#/components/messages/UploadSliceAck"
+        },
         "UploadsComplete": {
           "$ref": "#/components/messages/UploadsComplete"
         },
@@ -79,6 +91,9 @@
         "$ref": "#/channels/wsChannel"
       },
       "messages": [
+        {
+          "$ref": "#/channels/wsChannel/messages/CreateBatch"
+        },
         {
           "$ref": "#/channels/wsChannel/messages/FetchBatches"
         },
@@ -105,6 +120,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/Upload"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UploadSlice"
         }
       ]
     },
@@ -114,6 +132,9 @@
         "$ref": "#/channels/wsChannel"
       },
       "messages": [
+        {
+          "$ref": "#/channels/wsChannel/messages/BatchCreated"
+        },
         {
           "$ref": "#/channels/wsChannel/messages/BatchesList"
         },
@@ -146,12 +167,20 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/UploadsUpdate"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/UploadSliceAck"
         }
       ]
     }
   },
   "components": {
     "messages": {
+      "BatchCreated": {
+        "payload": {
+          "$ref": "#/components/schemas/BatchCreated"
+        }
+      },
       "BatchesList": {
         "payload": {
           "$ref": "#/components/schemas/BatchesList"
@@ -170,6 +199,11 @@
       "CollectionImages": {
         "payload": {
           "$ref": "#/components/schemas/CollectionImages"
+        }
+      },
+      "CreateBatch": {
+        "payload": {
+          "$ref": "#/components/schemas/CreateBatch"
         }
       },
       "Error": {
@@ -251,9 +285,41 @@
         "payload": {
           "$ref": "#/components/schemas/UploadsUpdate"
         }
+      },
+      "UploadSlice": {
+        "payload": {
+          "$ref": "#/components/schemas/UploadSlice"
+        }
+      },
+      "UploadSliceAck": {
+        "payload": {
+          "$ref": "#/components/schemas/UploadSliceAck"
+        }
       }
     },
     "schemas": {
+      "BatchCreated": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "BATCH_CREATED"
+          },
+          "data": {
+            "type": "integer",
+            "description": "Created batch identifier"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
       "BatchesList": {
         "type": "object",
         "required": [
@@ -361,25 +427,6 @@
           "total": {
             "type": "integer",
             "default": 0
-          }
-        },
-        "additionalProperties": false
-      },
-      "CollectionImagesData": {
-        "type": "object",
-        "required": [
-          "images",
-          "creator"
-        ],
-        "properties": {
-          "images": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/MediaImage"
-            }
-          },
-          "creator": {
-            "$ref": "#/components/schemas/Creator"
           }
         },
         "additionalProperties": false
@@ -530,6 +577,37 @@
           "nonce": {
             "type": "string",
             "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CollectionImagesData": {
+        "type": "object",
+        "required": [
+          "images",
+          "creator"
+        ],
+        "properties": {
+          "images": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MediaImage"
+            }
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Creator"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateBatch": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "CREATE_BATCH"
           }
         },
         "additionalProperties": false
@@ -1257,6 +1335,72 @@
           },
           "handler": {
             "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadSlice": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "UPLOAD_SLICE"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UploadSliceData"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadSliceData": {
+        "type": "object",
+        "required": [
+          "batchid",
+          "sliceid",
+          "items",
+          "handler"
+        ],
+        "properties": {
+          "batchid": {
+            "type": "integer"
+          },
+          "sliceid": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadItem"
+            }
+          },
+          "handler": {
+            "type": "string",
+            "default": "mapillary"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadSliceAck": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "UPLOAD_SLICE_ACK"
+          },
+          "data": {
+            "type": "integer",
+            "description": "Acknowledged slice identifier"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false

@@ -61,7 +61,6 @@ declare module 'vue' {
     Skeleton: typeof import('primevue/skeleton')['default']
     StatementItem: typeof import('./src/components/wikidata/StatementItem.vue')['default']
     StatementsList: typeof import('./src/components/wikidata/StatementsList.vue')['default']
-    StatusTag: typeof import('./src/components/common/StatusTag.vue')['default']
     Step: typeof import('primevue/step')['default']
     StepList: typeof import('primevue/steplist')['default']
     StepPanel: typeof import('primevue/steppanel')['default']

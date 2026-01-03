@@ -48,11 +48,11 @@ export const useTitleBlacklist = () => {
     }
 
     // 8. Titles containing invalid characters
-    // # < > [ ] | { } _ : /
+    // # < > [ ] | { } : /
     // non-printable ASCII characters 0–31
     // the "delete" character 127
     // biome-ignore lint/suspicious/noControlCharactersInRegex: Intentionally checking for control characters
-    if (/[#<>[\]|{}_:/]/.test(title) || /[\x00-\x1F\x7F]/.test(title)) {
+    if (/[#<>[\]|{}:/]/.test(title) || /[\x00-\x1F\x7F]/.test(title)) {
       return true
     }
 

@@ -31,6 +31,10 @@ export type ValueSnak =
   | TimeValueSnak
   | UrlValueSnak
 
+export type CreateBatch = {
+  type: 'CREATE_BATCH'
+}
+
 export type FetchBatches = {
   data: FetchBatchesData
   type: 'FETCH_BATCHES'
@@ -284,6 +288,24 @@ export type Reference = {
   hash?: string
 }
 
+export type UploadSlice = {
+  type: 'UPLOAD_SLICE'
+  data: UploadSliceData
+}
+
+export type UploadSliceData = {
+  batchid: number
+  sliceid: number
+  items: UploadItem[]
+  handler: string
+}
+
+export type BatchCreated = {
+  type: 'BATCH_CREATED'
+  data: number
+  nonce: string
+}
+
 export type BatchesList = {
   data: BatchesListData
   partial: boolean
@@ -488,6 +510,12 @@ export type UploadUpdateItem = {
   handler: string
 }
 
+export type UploadSliceAck = {
+  type: 'UPLOAD_SLICE_ACK'
+  data: number
+  nonce: string
+}
+
 export type Claims = Record<
   string,
   (
@@ -533,6 +561,7 @@ export enum SnakType {
 }
 
 export type ClientMessage =
+  | CreateBatch
   | FetchBatches
   | FetchBatchUploads
   | FetchImages
@@ -542,8 +571,10 @@ export type ClientMessage =
   | UnsubscribeBatch
   | UnsubscribeBatchesList
   | Upload
+  | UploadSlice
 
 export type ServerMessage =
+  | BatchCreated
   | BatchesList
   | BatchUploadsList
   | CollectionImageIds
@@ -555,3 +586,4 @@ export type ServerMessage =
   | UploadCreated
   | UploadsComplete
   | UploadsUpdate
+  | UploadSliceAck

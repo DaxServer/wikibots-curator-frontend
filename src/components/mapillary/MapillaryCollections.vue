@@ -47,9 +47,16 @@ onMounted(() => {
         >
           View on Mapillary
         </ExternalLink>
-        <SimpleMessage
+        <Message
           v-if="item.image.existing.length"
           severity="warn"
+          :pt="{
+            transition: {
+              name: 'none',
+              enterActiveClass: 'none',
+              leaveActiveClass: 'none',
+            },
+          }"
         >
           <strong>Existing files:</strong>
           <div
@@ -57,11 +64,14 @@ onMounted(() => {
             :key="page.url"
           >
             *
-            <ExternalLink :href="page.url">
+            <ExternalLink
+              :href="page.url"
+              class="hover:underline"
+            >
               {{ page.url.split('/').pop() }}
             </ExternalLink>
           </div>
-        </SimpleMessage>
+        </Message>
       </div>
     </template>
   </CollectionsTable>

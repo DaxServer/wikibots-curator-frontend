@@ -2,7 +2,8 @@
 defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
-const { wikitext, submitUpload, loadSDC } = useCollections()
+const { submitUpload, loadSDC } = useCollections()
+const { wikitext } = useCommons()
 
 onMounted(() => {
   window.scroll({
