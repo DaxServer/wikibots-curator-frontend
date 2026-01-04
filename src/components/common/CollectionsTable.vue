@@ -8,13 +8,21 @@ defineProps<{
 
 const store = useCollectionsStore()
 const { loadCollection } = useCollections()
+const { cancelTitleVerification } = useCommons()
+
+const onStepperUpdate = (next: string) => {
+  if (store.stepper === '3' && next === '4') {
+    cancelTitleVerification()
+  }
+  store.stepper = next
+}
 </script>
 
 <template>
   <div class="max-w-7xl mx-auto flex flex-col gap-4">
     <Stepper
       :value="store.stepper"
-      @update:value="store.stepper = $event"
+      @update:value="onStepperUpdate"
     >
       <StepList>
         <Step value="1">Retrieve</Step>

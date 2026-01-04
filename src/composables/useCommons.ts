@@ -18,6 +18,20 @@ import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
 import { isValidExtension } from '@/utils/titleTemplate'
 import { debounce } from 'ts-debounce'
 
+let titleVerificationAbortController: AbortController | null = null
+
+const debouncedCheckTitleMap = new Map<string, ReturnType<typeof debounce>>()
+
+const getTitleVerificationAbortController = (): AbortController => {
+  if (
+    titleVerificationAbortController === null ||
+    titleVerificationAbortController.signal.aborted
+  ) {
+    titleVerificationAbortController = new AbortController()
+  }
+  return titleVerificationAbortController
+}
+
 export const useCommons = () => {
   const store = useCollectionsStore()
   const { isBlacklisted } = useTitleBlacklist()
@@ -71,8 +85,6 @@ ${categories}
     return buildWikitext({ ...item, meta: meta as Metadata })
   }
 
-  const debouncedCheckTitleMap = new Map<string, ReturnType<typeof debounce>>()
-
   const verifyTitles = async (
     items: { id: string; title: string }[],
     options: { debounce?: boolean } = {},
@@ -120,9 +132,12 @@ ${categories}
   const checkFileTitleAvailability = async (
     items: { id: string; title: string }[],
   ): Promise<void> => {
+    const signal = getTitleVerificationAbortController().signal
     const chunkSize = 50
 
     for (let i = 0; i < items.length; i += chunkSize) {
+      if (signal.aborted) return
+
       const chunk = items.slice(i, i + chunkSize)
       const fileTitles = chunk.map((item) => `File:${item.title}`)
       const params = new URLSearchParams()
@@ -133,13 +148,25 @@ ${categories}
       params.set('origin', '*')
       params.set('formatversion', '2')
 
-      const res = await fetch('https://commons.wikimedia.org/w/api.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString(),
-      })
+      let res: Response | null = null
+      try {
+        res = await fetch('https://commons.wikimedia.org/w/api.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: params.toString(),
+          signal,
+        })
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === 'AbortError') {
+          console.log('Title verification aborted')
+          return
+        }
+        continue
+      }
+
+      if (signal.aborted) return
       if (!res || !res.ok) continue
       const data = (await res.json()) as {
         query?: {
@@ -150,6 +177,8 @@ ${categories}
       const pages = Object.values(data.query?.pages || {})
 
       for (const item of chunk) {
+        if (signal.aborted) return
+
         const page = pages.find((p) => p.title === `File:${item.title}`)
         let status: TitleStatus = 'unknown'
 
@@ -162,6 +191,22 @@ ${categories}
         }
 
         store.updateItem(item.id, 'titleStatus', status)
+      }
+    }
+  }
+
+  const cancelTitleVerification = (): void => {
+    titleVerificationAbortController?.abort()
+    titleVerificationAbortController = null
+
+    for (const debounced of debouncedCheckTitleMap.values()) {
+      debounced.cancel()
+    }
+    debouncedCheckTitleMap.clear()
+
+    for (const item of Object.values(store.items)) {
+      if (item.meta.titleStatus === 'checking') {
+        store.updateItem(item.id, 'titleStatus', 'unknown')
       }
     }
   }
@@ -233,6 +278,7 @@ ${categories}
     buildSDC,
     buildWikitext,
     sourceLink,
+    cancelTitleVerification,
     verifyTitles,
     wikitext,
   }
