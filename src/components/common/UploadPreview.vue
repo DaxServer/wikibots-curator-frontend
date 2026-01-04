@@ -2,7 +2,7 @@
 defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
-const { submitUpload, loadSDC } = useCollections()
+const { submitUpload } = useCollections()
 const { wikitext } = useCommons()
 
 onMounted(() => {
@@ -10,7 +10,6 @@ onMounted(() => {
     top: 0,
     behavior: 'smooth',
   })
-  loadSDC()
 })
 
 const rowsPerPageOptions = computed(() => {
@@ -121,7 +120,11 @@ const rowsPerPageOptions = computed(() => {
           </div>
           <div>
             <div class="text-base font-bold">SDC</div>
-            <StatementsList :statements="data.sdc" />
+            <StatementsList
+              :id="data.id"
+              :image="data.image"
+              :license="data.meta.license"
+            />
           </div>
         </div>
       </template>

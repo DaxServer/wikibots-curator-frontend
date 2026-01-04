@@ -159,10 +159,7 @@ ${categories}
           signal,
         })
       } catch (e: unknown) {
-        if (e instanceof Error && e.name === 'AbortError') {
-          console.log('Title verification aborted')
-          return
-        }
+        if (e instanceof Error && e.name === 'AbortError') return
         continue
       }
 
@@ -224,18 +221,18 @@ ${categories}
     return 'Photo from Mapillary'
   }
 
-  const buildSDC = (item: Item): Statement[] => {
+  const buildSDC = (id: string, image: Image, license?: string): Statement[] => {
     const claims: Statement[] = []
 
     // Creator
     claims.push(
-      createCreatorClaim(item.image.creator.username, [
-        createExternalIdSnak(WikidataProperty.MapillaryUsername, item.image.creator.username),
+      createCreatorClaim(image.creator.username, [
+        createExternalIdSnak(WikidataProperty.MapillaryUsername, image.creator.username),
       ]),
     )
 
     // Mapillary ID
-    claims.push(createExternalIdStatement(WikidataProperty.MapillaryPhotoID, item.image.id))
+    claims.push(createExternalIdStatement(WikidataProperty.MapillaryPhotoID, id))
 
     // Published in
     claims.push(
@@ -243,16 +240,16 @@ ${categories}
     )
 
     // Inception
-    claims.push(createInceptionClaim(item.image.dates.taken))
+    claims.push(createInceptionClaim(image.dates.taken))
 
     // Source of file
-    claims.push(createSourceOfFileClaim(item.image.url))
+    claims.push(createSourceOfFileClaim(image.url))
 
     // Coordinates of the point of view
-    claims.push(createPointOfViewClaim(item.image.location))
+    claims.push(createPointOfViewClaim(image.location))
 
     // Check for license override
-    const hasLicenseOverride = (item.meta.license?.trim() || store.globalLicense.trim()) !== ''
+    const hasLicenseOverride = (license?.trim() || store.globalLicense.trim()) !== ''
 
     if (!hasLicenseOverride) {
       // Copyright status
@@ -263,10 +260,10 @@ ${categories}
     }
 
     // Width
-    claims.push(createWidthClaim(item.image.width))
+    claims.push(createWidthClaim(image.width))
 
     // Height
-    claims.push(createHeightClaim(item.image.height))
+    claims.push(createHeightClaim(image.height))
 
     return claims
   }

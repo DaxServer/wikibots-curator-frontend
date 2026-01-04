@@ -68,13 +68,12 @@ describe('useCommons', () => {
       categories: '',
       titleStatus: 'unknown',
     },
-    sdc: [],
   })
 
   it('immediate verifyTitles updates status to checking then available', async () => {
     const store = useCollectionsStore()
     const item = createMockItem('1', 'Test Title')
-    store.items = { '1': item }
+    store.replaceItems({ '1': item })
 
     const { verifyTitles } = useCommons()
 
@@ -103,7 +102,7 @@ describe('useCommons', () => {
   it('immediate verifyTitles updates status to checking then taken', async () => {
     const store = useCollectionsStore()
     const item = createMockItem('1', 'Taken Title.jpeg')
-    store.items = { '1': item }
+    store.replaceItems({ '1': item })
 
     const { verifyTitles } = useCommons()
 
@@ -131,7 +130,7 @@ describe('useCommons', () => {
   it('debounce verifyTitles waits before calling API', async () => {
     const store = useCollectionsStore()
     const item = createMockItem('1', 'Debounce Title')
-    store.items = { '1': item }
+    store.replaceItems({ '1': item })
 
     const { verifyTitles } = useCommons()
 
@@ -173,7 +172,7 @@ describe('useCommons', () => {
   it('cancelTitleVerification prevents debounced checks from calling API', async () => {
     const store = useCollectionsStore()
     const item = createMockItem('1', 'Debounce Title')
-    store.items = { '1': item }
+    store.replaceItems({ '1': item })
 
     const { verifyTitles, cancelTitleVerification } = useCommons()
 
@@ -303,7 +302,7 @@ describe('useCommons', () => {
         const { buildSDC } = useCommons()
         const item = createMockItem('1')
 
-        const claims = buildSDC(item)
+        const claims = buildSDC(item.id, item.image, item.meta.license)
 
         const hasCopyrightStatus = claims.some(
           (c) => c.mainsnak.property === 'P6216', // Copyright status
@@ -323,7 +322,7 @@ describe('useCommons', () => {
         const { buildSDC } = useCommons()
         const item = createMockItem('1')
 
-        const claims = buildSDC(item)
+        const claims = buildSDC(item.id, item.image, item.meta.license)
 
         const hasCopyrightStatus = claims.some((c) => c.mainsnak.property === 'P6216')
         const hasCopyrightLicense = claims.some((c) => c.mainsnak.property === 'P275')
@@ -337,7 +336,7 @@ describe('useCommons', () => {
         const item = createMockItem('1')
         item.meta.license = '{{cc-by-3.0}}'
 
-        const claims = buildSDC(item)
+        const claims = buildSDC(item.id, item.image, item.meta.license)
 
         const hasCopyrightStatus = claims.some((c) => c.mainsnak.property === 'P6216')
         const hasCopyrightLicense = claims.some((c) => c.mainsnak.property === 'P275')
@@ -351,7 +350,7 @@ describe('useCommons', () => {
         const item = createMockItem('1')
         item.meta.license = '  ' // Empty but with whitespace
 
-        const claims = buildSDC(item)
+        const claims = buildSDC(item.id, item.image, item.meta.license)
 
         const hasCopyrightStatus = claims.some((c) => c.mainsnak.property === 'P6216')
         const hasCopyrightLicense = claims.some((c) => c.mainsnak.property === 'P275')

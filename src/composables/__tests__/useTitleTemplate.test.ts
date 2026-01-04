@@ -32,7 +32,6 @@ describe('useTitleTemplate', () => {
       categories: '',
       titleStatus: 'unknown',
     },
-    sdc: [],
   })
 
   beforeAll(() => {
@@ -92,7 +91,7 @@ describe('useTitleTemplate', () => {
     it('verifies titles when template is applied', async () => {
       const store = useCollectionsStore()
       const item = createMockItem('1')
-      store.items = { '1': item }
+      store.replaceItems({ '1': item })
       store.input = 'seq123'
       const { template, applyTemplate } = useTitleTemplate()
 
@@ -121,7 +120,7 @@ describe('useTitleTemplate', () => {
       const store = useCollectionsStore()
       const item = createMockItem('1')
       item.meta.title = 'Existing Title'
-      store.items = { '1': item }
+      store.replaceItems({ '1': item })
       const { template, applyTemplate } = useTitleTemplate()
 
       template.value = '{{mapillary.user.username}}.jpg'
@@ -220,7 +219,7 @@ describe('useTitleTemplate', () => {
       const item1 = createMockItem('1')
       const item2 = createMockItem('2')
       item2.index = 2
-      store.items = { '1': item1, '2': item2 }
+      store.replaceItems({ '1': item1, '2': item2 })
       // Only select item 1
       item1.meta.selected = true
       item2.meta.selected = false
@@ -251,7 +250,7 @@ describe('useTitleTemplate', () => {
         item.meta.selected = true
         items[String(i)] = item
       }
-      store.items = items
+      store.replaceItems(items)
 
       const { previewItems } = useTitleTemplate()
       expect(previewItems.value).toHaveLength(3)
