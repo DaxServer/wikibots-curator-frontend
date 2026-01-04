@@ -1,5 +1,17 @@
 <script setup lang="ts">
-defineProps<{ statements: Statement[] }>()
+const props = defineProps<{
+  id: string
+  image: Image
+  license?: string
+}>()
+
+const { buildSDC } = useCommons()
+
+const statements = shallowRef<Statement[]>([])
+
+onMounted(() => {
+  statements.value = buildSDC(props.id, props.image, props.license)
+})
 </script>
 
 <template>
@@ -32,5 +44,8 @@ defineProps<{ statements: Statement[] }>()
       </template>
     </Column>
   </DataTable>
-  <div v-else>No&nbsp;SDC&nbsp;set</div>
+  <Skeleton
+    height="calc(var(--spacing) * 10)"
+    v-else
+  ></Skeleton>
 </template>

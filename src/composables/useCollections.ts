@@ -18,13 +18,12 @@ import type {
 } from '@/types/asyncapi'
 import type { Image } from '@/types/image'
 import { type Item, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
-import { watch } from 'vue'
+import { markRaw, watch } from 'vue'
 
 const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
   id,
   index,
-  image,
-  sdc: [],
+  image: markRaw(image),
   meta: {
     title: undefined,
     description: { language: 'en', value: descriptionText },
@@ -37,7 +36,7 @@ const createItem = (image: Image, id: string, index: number, descriptionText: st
 const createSkeletonItem = (id: string, index: number): Item => ({
   id,
   index,
-  image: {
+  image: markRaw({
     id,
     creator: { id: '', username: '', profile_url: '' },
     dates: { taken: new Date() },
@@ -51,8 +50,7 @@ const createSkeletonItem = (id: string, index: number): Item => ({
     url_original: '',
     location: { latitude: 0, longitude: 0, compass_angle: 0 },
     description: '',
-  },
-  sdc: [],
+  }),
   meta: {
     description: { language: 'en', value: '' },
     categories: '',
@@ -90,7 +88,7 @@ export const initCollectionsListeners = () => {
 
           // Update current session items if they exist
           if (store.items[update.key]) {
-            store.updateItem(update.key, 'status', update.status)
+            store.updateItem(update.key, 'status', update.status as UploadStatus)
             if (update.status === UPLOAD_STATUS.Failed) {
               store.updateItem(update.key, 'statusReason', update.error?.message)
               store.updateItem(update.key, 'errorInfo', update.error)
@@ -152,7 +150,7 @@ export const initCollectionsListeners = () => {
           const descriptionText = buildDescription()
           allItems[id] = createItem(img, id, index, descriptionText)
         }
-        store.items = allItems
+        store.replaceItems(allItems)
         store.stepper = '2'
         store.isLoading = false
         break
@@ -215,14 +213,12 @@ export const initCollectionsListeners = () => {
         ids.forEach((id, index) => {
           skeletonItems[id] = createSkeletonItem(id, index + 1)
         })
-        store.items = skeletonItems
+        store.replaceItems(skeletonItems)
         break
       }
       case 'PARTIAL_COLLECTION_IMAGES': {
         const images = msg.data.images
-        const newItems = { ...store.items }
-
-        images.forEach((image) => {
+        for (const image of images) {
           const img: Image = {
             ...image,
             description: image.description ?? '',
@@ -231,25 +227,23 @@ export const initCollectionsListeners = () => {
             },
           }
 
-          const skeletonItem = newItems[image.id]
+          const skeletonItem = store.items[image.id]
           if (!skeletonItem) {
             store.error = `Received partial image data for an unknown ID: ${image.id}`
-            return
+            continue
           }
 
           const index = skeletonItem.index
           const descriptionText = buildDescription()
-          newItems[image.id] = createItem(img, image.id, index, descriptionText)
-        })
+          store.items[image.id] = createItem(img, image.id, index, descriptionText)
+        }
 
         // Fill in creator from first item if not already set
         if (!store.creator.id && images.length > 0) {
           store.creator = images[0]!.creator
         }
 
-        store.items = newItems
-        const loadedCount = Object.values(newItems).filter((i) => !i.isSkeleton).length
-        if (loadedCount >= store.totalImageIds.length) {
+        if (store.loadedCount >= store.totalImageIds.length) {
           store.isBatchLoading = false
           store.batchLoadingStatus = null
         }
@@ -306,7 +300,6 @@ export const initCollectionsListeners = () => {
 
 export const useCollections = () => {
   const store = useCollectionsStore()
-  const { buildSDC } = useCommons()
   const { send } = useSocket
 
   const sendSubscribeBatch = (batchId: number) => {
@@ -386,12 +379,6 @@ export const useCollections = () => {
     )
   }
 
-  const loadSDC = () => {
-    for (const item of store.selectedItems) {
-      store.items[item.id]!.sdc = buildSDC(item)
-    }
-  }
-
   const submitUpload = () => {
     store.error = null
     if (store.selectedCount === 0) {
@@ -405,7 +392,6 @@ export const useCollections = () => {
 
   return {
     loadCollection,
-    loadSDC,
     submitUpload,
     loadBatches,
     refreshBatches,
