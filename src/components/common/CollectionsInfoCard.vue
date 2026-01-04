@@ -7,6 +7,11 @@ defineProps<{
 }>()
 
 const store = useCollectionsStore()
+
+const batchProgress = computed(() => {
+  if (store.totalImageIds.length === 0) return 0
+  return Math.round((store.loadedCount / store.totalImageIds.length) * 100)
+})
 </script>
 
 <template>
@@ -23,7 +28,7 @@ const store = useCollectionsStore()
               {{ store.loadedCount }} / {{ store.totalImageIds.length }} images
             </span>
           </div>
-          <ProgressBar :value="store.batchProgress">
+          <ProgressBar :value="batchProgress">
             {{ store.loadedCount }} / {{ store.totalImageIds.length }}
           </ProgressBar>
         </div>

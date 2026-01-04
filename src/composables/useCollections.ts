@@ -31,6 +31,7 @@ const createItem = (image: Image, id: string, index: number, descriptionText: st
     license: '',
     selected: false,
   },
+  isSkeleton: false,
 })
 
 const createSkeletonItem = (id: string, index: number): Item => ({
@@ -62,7 +63,7 @@ const createSkeletonItem = (id: string, index: number): Item => ({
 
 export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
-  const { buildDescription, wikitext } = useCommons()
+  const { buildDescription, getEffectiveTitle, wikitext } = useCommons()
   const { data, send } = useSocket
 
   const sendSubscribeBatch = (batchId: number) => {
@@ -275,6 +276,7 @@ export const initCollectionsListeners = () => {
 
     if (start >= totalItems) {
       store.isLoading = false
+      sendSubscribeBatch(store.batchId)
       return
     }
 
@@ -282,19 +284,23 @@ export const initCollectionsListeners = () => {
     const sliceItems = store.selectedItems.slice(start, end).map((item) => ({
       id: item.id,
       input: store.input,
-      title: item.meta.title,
+      title: getEffectiveTitle(item),
       wikitext: wikitext(item),
       labels: item.meta.description,
       copyright_override: (item.meta.license?.trim() || store.globalLicense.trim()) !== '',
     }))
 
-    const payload = {
-      batchid: store.batchId,
-      sliceid: store.uploadSliceIndex,
-      handler: store.handler,
-      items: sliceItems,
-    }
-    send(JSON.stringify({ type: 'UPLOAD_SLICE', data: payload } as UploadSlice))
+    send(
+      JSON.stringify({
+        type: 'UPLOAD_SLICE',
+        data: {
+          batchid: store.batchId,
+          sliceid: store.uploadSliceIndex,
+          handler: store.handler,
+          items: sliceItems,
+        },
+      } as UploadSlice),
+    )
   }
 }
 
@@ -336,13 +342,17 @@ export const useCollections = () => {
     store.batchesLoading = true
     store.batches = []
     store.batchesTotal = 0
-    const payload: FetchBatches['data'] = {
-      page: page / rows + 1,
-      limit: rows,
-      userid,
-      filter,
-    }
-    send(JSON.stringify({ type: 'FETCH_BATCHES', data: payload } as FetchBatches))
+    send(
+      JSON.stringify({
+        type: 'FETCH_BATCHES',
+        data: {
+          page: page / rows + 1,
+          limit: rows,
+          userid,
+          filter,
+        },
+      } as FetchBatches),
+    )
   }
 
   const refreshBatches = () => {

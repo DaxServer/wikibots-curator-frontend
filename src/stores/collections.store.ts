@@ -1,7 +1,6 @@
 import type { BatchItem, BatchUploadItem, Creator } from '@/types/asyncapi'
 import type { Handler, Layout } from '@/types/collections'
 import type { Item, Metadata, MetadataKey } from '@/types/image'
-import { applyTitleTemplate } from '@/utils/titleTemplate'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, shallowRef } from 'vue'
 
@@ -54,21 +53,30 @@ export const useCollectionsStore = defineStore('collections', () => {
     page: 1,
   })
 
+  const itemsArray = computed(() => Object.values(items))
+  const totalImages = computed(() => itemsArray.value.length)
+  const selectedItems = computed(() => itemsArray.value.filter((i) => i.meta.selected))
+  const selectedCount = computed(() => selectedItems.value.length)
+  const itemsWithErrorsCount = computed(
+    () =>
+      selectedItems.value.filter(
+        (i) => i.meta.titleStatus === 'taken' || i.meta.titleStatus === 'blacklisted',
+      ).length,
+  )
+  const itemsWithExistingTitlesCount = computed(
+    () => selectedItems.value.filter((i) => i.image.existing.length > 0).length,
+  )
+
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
   }
 
   const clearItems = () => {
-    for (const id in items) {
-      delete items[id]
-    }
+    Object.assign(items, {})
   }
 
   const replaceItems = (nextItems: Record<string, Item>) => {
-    clearItems()
-    for (const id in nextItems) {
-      items[id] = nextItems[id] as Item
-    }
+    Object.assign(items, nextItems)
   }
 
   const updateItem = <K extends MetadataKey>(id: string, key: K, value: Metadata[K]) => {
@@ -85,25 +93,23 @@ export const useCollectionsStore = defineStore('collections', () => {
   }
 
   const selectAll = () => {
-    for (const id in items) {
-      const item = items[id] as Item
+    for (const item of itemsArray.value) {
       item.meta.selected = true
     }
   }
 
   const deselectAll = () => {
-    for (const id in items) {
-      const item = items[id] as Item
+    for (const item of itemsArray.value) {
       item.meta.selected = false
     }
   }
 
   const selectPage = (start: number, rows: number) => {
     const end = start + rows
-    const pageItems = Object.values(items).slice(start, end)
-    pageItems.forEach((item) => {
+    const pageItems = itemsArray.value.slice(start, end)
+    for (const item of pageItems) {
       item.meta.selected = true
-    })
+    }
   }
 
   const setGlobalDescription = (value: string) => {
@@ -150,6 +156,16 @@ export const useCollectionsStore = defineStore('collections', () => {
     itemsPerPage.value = n
   }
 
+  const setHandler = (h: Handler) => {
+    handler.value = h
+  }
+
+  const setInput = (v: string) => {
+    input.value = v
+  }
+
+  const loadedCount = computed(() => itemsArray.value.filter((i) => !i.isSkeleton).length)
+
   const $reset = () => {
     clearItems()
     error.value = null
@@ -195,53 +211,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
-  const setHandler = (h: Handler) => {
-    handler.value = h
-  }
-
-  const setInput = (v: string) => {
-    input.value = v
-  }
-
-  const totalImages = computed(() => Object.keys(items).length)
-  const selectedItems = computed(() =>
-    Object.values(items)
-      .filter((i) => i.meta.selected)
-      .map((i) => {
-        if (i.meta.title) return i
-        return {
-          ...i,
-          meta: {
-            ...i.meta,
-            title: applyTitleTemplate(globalTitleTemplate.value, i.image, input.value),
-          },
-        }
-      }),
-  )
-  const selectedItemsKeys = computed(() => selectedItems.value.map((i) => i.id))
-  const selectedCount = computed(() => selectedItems.value.length)
-  const itemsWithErrorsCount = computed(
-    () =>
-      selectedItems.value.filter(
-        (i) => i.meta.titleStatus === 'taken' || i.meta.titleStatus === 'blacklisted',
-      ).length,
-  )
-  const itemsWithExistingTitlesCount = computed(
-    () => selectedItems.value.filter((i) => i.image.existing.length > 0).length,
-  )
-  const loadedCount = computed(() => {
-    let count = 0
-    for (const id in items) {
-      const item = items[id] as Item
-      if (!item.isSkeleton) count += 1
-    }
-    return count
-  })
-  const batchProgress = computed(() => {
-    if (totalImageIds.value.length === 0) return 0
-    return Math.round((loadedCount.value / totalImageIds.value.length) * 100)
-  })
-
   return {
     handler,
     input,
@@ -263,10 +232,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalCategories,
     globalLicense,
     globalTitleTemplate,
+    itemsArray,
     totalImages,
     selectedCount,
     selectedItems,
-    selectedItemsKeys,
     itemsWithErrorsCount,
     itemsWithExistingTitlesCount,
     batches,
@@ -283,7 +252,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     isBatchLoading,
     batchLoadingStatus,
     totalImageIds,
-    batchProgress,
     loadedCount,
     uploadSliceIndex,
 

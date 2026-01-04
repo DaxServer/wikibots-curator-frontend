@@ -3,7 +3,7 @@ defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
 const { submitUpload } = useCollections()
-const { wikitext } = useCommons()
+const { getEffectiveTitle, wikitext } = useCommons()
 
 onMounted(() => {
   window.scroll({
@@ -91,7 +91,7 @@ const rowsPerPageOptions = computed(() => {
     >
       <template #body="{ data }">
         <div class="flex flex-col gap-3">
-          <div class="text-base font-bold">File:{{ data.meta.title }}</div>
+          <div class="text-base font-bold">File:{{ getEffectiveTitle(data) }}</div>
           <pre
             class="text-xs bg-gray-100 p-2 rounded"
             style="font-family: monospace"

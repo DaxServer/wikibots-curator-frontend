@@ -68,6 +68,7 @@ describe('useCommons', () => {
       categories: '',
       titleStatus: 'unknown',
     },
+    isSkeleton: false,
   })
 
   it('immediate verifyTitles updates status to checking then available', async () => {

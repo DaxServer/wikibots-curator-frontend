@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 
+const { getEffectiveTitle } = useCommons()
 const { retryUploads, sendUnsubscribeBatch } = useCollections()
 
 const total = Math.max(1, store.selectedItems.length) // To avoid division by zero
@@ -101,7 +102,7 @@ onUnmounted(() => {
       field="title"
       header="Title"
     >
-      <template #body="{ data }">File:{{ data.meta.title }}</template>
+      <template #body="{ data }">File:{{ getEffectiveTitle(data) }}</template>
     </Column>
 
     <Column

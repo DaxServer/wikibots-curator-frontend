@@ -32,6 +32,7 @@ describe('useTitleTemplate', () => {
       categories: '',
       titleStatus: 'unknown',
     },
+    isSkeleton: false,
   })
 
   beforeAll(() => {
@@ -219,10 +220,9 @@ describe('useTitleTemplate', () => {
       const item1 = createMockItem('1')
       const item2 = createMockItem('2')
       item2.index = 2
-      store.replaceItems({ '1': item1, '2': item2 })
-      // Only select item 1
-      item1.meta.selected = true
       item2.meta.selected = false
+      store.replaceItems({ '1': item1, '2': item2 })
+      store.updateItem('1', 'selected', true)
 
       // The store getter selectedItems filters by selected=true
       // But since store is mocked via Pinia, we rely on how useCollectionsStore works.

@@ -2,21 +2,46 @@
 const props = defineProps<{ item: Item; altPrefix: string }>()
 
 const store = useCollectionsStore()
-const { verifyTitles } = useCommons()
+const { getEffectiveTitle, verifyTitles } = useCommons()
 
-const computedTitle = computed(() =>
-  applyTitleTemplate(store.globalTitleTemplate, props.item.image, store.input),
-)
-const effectiveTitle = computed(() => props.item.meta.title ?? computedTitle.value)
+const effectiveTitle = computed(() => getEffectiveTitle(props.item))
 
-const onTitleChange = (id: string, title: string) => {
+const isTitleFocused = ref(false)
+const titleDraft = ref('')
+
+const displayedTitle = computed(() => {
+  if (isTitleFocused.value) return titleDraft.value
+  return effectiveTitle.value
+})
+
+const onTitleChange = (title?: string) => {
+  store.updateItem(props.item.id, 'title', title || '')
   if (!title) {
-    store.updateItem(id, 'title', undefined)
-    verifyTitles([{ id, title: computedTitle.value }], { debounce: true })
+    store.updateItem(props.item.id, 'titleStatus', 'invalid')
   } else {
-    store.updateItem(id, 'title', title)
-    verifyTitles([{ id, title }], { debounce: true })
+    verifyTitles([{ id: props.item.id, title }], { debounce: true })
   }
+}
+
+const onTitleInput = (title?: string) => {
+  titleDraft.value = title ?? ''
+  onTitleChange(title)
+}
+
+const onTitleFocus = () => {
+  isTitleFocused.value = true
+  titleDraft.value = effectiveTitle.value
+}
+
+const onTitleBlur = () => {
+  isTitleFocused.value = false
+
+  if (titleDraft.value.trim()) return
+
+  const titleToVerify = effectiveTitle.value.trim()
+  if (!titleToVerify) return
+
+  verifyTitles([{ id: props.item.id, title: titleToVerify }], { debounce: true })
 }
 </script>
 
@@ -34,13 +59,15 @@ const onTitleChange = (id: string, title: string) => {
       <div class="flex-1 flex flex-col gap-1">
         <IconField>
           <InputText
-            :modelValue="effectiveTitle"
+            :modelValue="displayedTitle"
             :invalid="
               item.meta.titleStatus === 'taken' ||
               item.meta.titleStatus === 'invalid' ||
               item.meta.titleStatus === 'blacklisted'
             "
-            @update:modelValue="(v) => onTitleChange(item.id, v ?? '')"
+            @update:modelValue="onTitleInput($event)"
+            @focus="onTitleFocus"
+            @blur="onTitleBlur"
             fluid
           />
           <InputIcon
