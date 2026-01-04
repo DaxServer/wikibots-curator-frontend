@@ -34,7 +34,7 @@ const onSelectCurrentPage = () => {
 
 <template>
   <DataView
-    :value="Object.values(store.items)"
+    :value="store.itemsArray"
     data-key="id"
     :layout="store.viewMode"
     paginator

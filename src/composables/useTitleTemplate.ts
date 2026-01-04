@@ -22,7 +22,10 @@ export const useTitleTemplate = () => {
     const itemsToVerify: { id: string; title: string }[] = []
     store.selectedItems.forEach((item) => {
       if (!store.items[item.id]?.meta.title) {
-        itemsToVerify.push({ id: item.id, title: item.meta.title || '' })
+        itemsToVerify.push({
+          id: item.id,
+          title: applyTitleTemplate(internalTemplate.value, item.image, store.input),
+        })
       }
     })
 

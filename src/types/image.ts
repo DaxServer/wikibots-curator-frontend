@@ -27,7 +27,7 @@ export type Item = {
   meta: Metadata
   index: number
   id: string
-  isSkeleton?: boolean
+  isSkeleton: boolean
 }
 
 export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown' | 'invalid' | 'blacklisted'

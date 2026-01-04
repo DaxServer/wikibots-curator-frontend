@@ -80,27 +80,33 @@ const onStepperUpdate = (next: string) => {
       :id-label="idLabel"
     />
 
-    <IngestSelectionList
-      v-if="store.stepper === '2'"
-      :alt-prefix="altPrefix"
-    >
-      <template #metadata="{ item }">
-        <slot
-          name="metadata"
-          :item="item"
-        ></slot>
-      </template>
-    </IngestSelectionList>
+    <KeepAlive>
+      <IngestSelectionList
+        v-if="store.stepper === '2'"
+        :alt-prefix="altPrefix"
+      >
+        <template #metadata="{ item }">
+          <slot
+            name="metadata"
+            :item="item"
+          ></slot>
+        </template>
+      </IngestSelectionList>
+    </KeepAlive>
 
-    <CollectionsEdit
-      v-if="store.stepper === '3'"
-      :alt-prefix="altPrefix"
-    />
+    <KeepAlive>
+      <CollectionsEdit
+        v-if="store.stepper === '3'"
+        :alt-prefix="altPrefix"
+      />
+    </KeepAlive>
 
-    <UploadPreview
-      v-if="store.stepper === '4'"
-      :alt-prefix="altPrefix"
-    />
+    <KeepAlive>
+      <UploadPreview
+        v-if="store.stepper === '4'"
+        :alt-prefix="altPrefix"
+      />
+    </KeepAlive>
 
     <UploadStatusTable
       v-if="store.stepper === '5'"

@@ -15,7 +15,7 @@ import {
 import { useTitleBlacklist } from '@/composables/useTitleBlacklist'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
-import { isValidExtension } from '@/utils/titleTemplate'
+import { applyTitleTemplate, isValidExtension } from '@/utils/titleTemplate'
 import { debounce } from 'ts-debounce'
 
 let titleVerificationAbortController: AbortController | null = null
@@ -36,15 +36,19 @@ export const useCommons = () => {
   const store = useCollectionsStore()
   const { isBlacklisted } = useTitleBlacklist()
 
-  const applyMetaDefaults = (meta: Metadata, title: string): Metadata => ({
-    ...meta,
-    title: title || meta.title,
-    description: {
-      language: meta.description.language.trim() || store.globalLanguage.trim(),
-      value: meta.description.value.trim() || store.globalDescription.trim(),
-    },
-    categories: meta.categories || store.globalCategories,
-  })
+  const applyMetaDefaults = (meta: Metadata, fallbackTitle: string): Metadata => {
+    const title = meta.title?.trim() || fallbackTitle
+
+    return {
+      ...meta,
+      title,
+      description: {
+        language: meta.description.language.trim() || store.globalLanguage.trim(),
+        value: meta.description.value.trim() || store.globalDescription.trim(),
+      },
+      categories: meta.categories || store.globalCategories,
+    }
+  }
 
   const buildWikitext = (item: Item): string => {
     const date = `${item.image.dates.taken.toISOString().split('.')[0]}Z`
@@ -81,7 +85,7 @@ ${categories}
   }
 
   const wikitext = (item: Item) => {
-    const meta = applyMetaDefaults(item.meta, buildTitle(item.image))
+    const meta = applyMetaDefaults(item.meta, getTemplateTitle(item.image))
     return buildWikitext({ ...item, meta: meta as Metadata })
   }
 
@@ -217,6 +221,23 @@ ${categories}
     return `Photo from Mapillary ${date} (${image.id}).jpg`
   }
 
+  const getTemplateTitle = (image: Image): string => {
+    const template = store.globalTitleTemplate.trim()
+    if (!template) return buildTitle(image)
+
+    const computed = applyTitleTemplate(template, image, store.input).trim()
+    if (!computed) return buildTitle(image)
+
+    return computed
+  }
+
+  const getEffectiveTitle = (item: Item): string => {
+    const explicit = item.meta.title?.trim()
+    if (explicit) return explicit
+
+    return getTemplateTitle(item.image)
+  }
+
   const buildDescription = (): string => {
     return 'Photo from Mapillary'
   }
@@ -274,6 +295,8 @@ ${categories}
     buildTitle,
     buildSDC,
     buildWikitext,
+    getEffectiveTitle,
+    getTemplateTitle,
     sourceLink,
     cancelTitleVerification,
     verifyTitles,
