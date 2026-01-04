@@ -292,6 +292,7 @@ export const initCollectionsListeners = () => {
       wikitext: wikitext(item),
       labels: item.meta.description,
       sdc: item.sdc,
+      copyright_override: (item.meta.license?.trim() || store.globalLicense.trim()) !== '',
     }))
 
     const payload = {

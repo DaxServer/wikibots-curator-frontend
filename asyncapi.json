@@ -1324,6 +1324,10 @@
           "labels": {
             "$ref": "#/components/schemas/Label"
           },
+          "copyright_override": {
+            "type": "boolean",
+            "default": false
+          },
           "sdc": {
             "type": "array",
             "items": {
