@@ -8,9 +8,24 @@ let pendingDebounceExecutors: ((...args: unknown[]) => void)[] = []
 mock.module('ts-debounce', () => {
   return {
     debounce: (fn: (...args: unknown[]) => void) => {
-      return (...args: unknown[]) => {
-        pendingDebounceExecutors.push(() => fn(...args))
+      let cancelled = false
+      let callId = 0
+
+      const debounced = (...args: unknown[]) => {
+        callId += 1
+        const currentCallId = callId
+        pendingDebounceExecutors.push(() => {
+          if (cancelled) return
+          if (currentCallId !== callId) return
+          return fn(...args)
+        })
       }
+
+      debounced.cancel = () => {
+        cancelled = true
+      }
+
+      return debounced
     },
   }
 })
@@ -153,6 +168,80 @@ describe('useCommons', () => {
 
     expect(mockFetch).toHaveBeenCalled()
     expect(store.items['1']!.meta.titleStatus).toBe('available')
+  })
+
+  it('cancelTitleVerification prevents debounced checks from calling API', async () => {
+    const store = useCollectionsStore()
+    const item = createMockItem('1', 'Debounce Title')
+    store.items = { '1': item }
+
+    const { verifyTitles, cancelTitleVerification } = useCommons()
+
+    const mockFetch = mock(() =>
+      Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            query: {
+              pages: {
+                '123': { missing: true, title: 'File:Debounce Title.jpeg' },
+              },
+            },
+          }),
+      }),
+    )
+    global.fetch = mockFetch as unknown as typeof fetch
+
+    verifyTitles([{ id: '1', title: 'Debounce Title.jpeg' }], { debounce: true })
+    cancelTitleVerification()
+
+    expect(store.items['1']!.meta.titleStatus).toBe('unknown')
+
+    expect(pendingDebounceExecutors.length).toBe(1)
+    for (const exec of pendingDebounceExecutors) {
+      await exec()
+    }
+    pendingDebounceExecutors = []
+
+    expect(mockFetch).not.toHaveBeenCalled()
+    expect(store.items['1']!.meta.titleStatus).toBe('unknown')
+  })
+
+  it('cancelTitleVerification stops bulk checks after first 50-title chunk', async () => {
+    const store = useCollectionsStore()
+
+    const itemsToVerify: { id: string; title: string }[] = []
+    const pages: Record<string, { missing?: boolean; title: string; revisions?: unknown[] }> = {}
+
+    for (let i = 0; i < 51; i += 1) {
+      const id = String(i + 1)
+      const title = `Title ${id}.jpeg`
+
+      store.items[id] = createMockItem(id, title)
+      itemsToVerify.push({ id, title })
+
+      if (i < 50) {
+        pages[id] = { missing: true, title: `File:${title}` }
+      }
+    }
+
+    const { verifyTitles, cancelTitleVerification } = useCommons()
+
+    const mockFetch = mock(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => {
+          cancelTitleVerification()
+          return Promise.resolve({ query: { pages } })
+        },
+      }),
+    )
+    global.fetch = mockFetch as unknown as typeof fetch
+
+    await verifyTitles(itemsToVerify)
+
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(store.items['51']!.meta.titleStatus).toBe('unknown')
   })
 
   describe('buildWikitext', () => {

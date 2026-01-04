@@ -2,6 +2,7 @@
 defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
+const { cancelTitleVerification } = useCommons()
 
 const showErrorsOnly = ref(false)
 
@@ -19,6 +20,11 @@ const disablePreview = computed(() => {
   }
   return false
 })
+
+const onPreviewEdits = () => {
+  cancelTitleVerification()
+  store.stepper = '4'
+}
 </script>
 
 <template>
@@ -91,7 +97,7 @@ const disablePreview = computed(() => {
           label="Preview edits"
           :severity="disablePreview ? 'secondary' : 'primary'"
           :disabled="disablePreview"
-          @click="store.stepper = '4'"
+          @click="onPreviewEdits"
         />
       </div>
     </div>
