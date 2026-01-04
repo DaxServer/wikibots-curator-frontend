@@ -15,7 +15,7 @@ const columns = [
   { field: 'error', header: 'Error' },
   { field: 'filename', header: 'Filename' },
   { field: 'wikitext', header: 'Wikitext' },
-  { field: 'sdc', header: 'SDC' },
+  // { field: 'sdc', header: 'SDC' },
 ]
 
 const computedStats = computed((): BatchStats => {

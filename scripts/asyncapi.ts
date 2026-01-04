@@ -214,6 +214,10 @@ const generatePythonCode = async () => {
     // Fix double quoting issue for const fields
     code = code.replace(/default=''(.*?)''/g, "default='$1'")
 
+    code = code.replace(/\bdefault=(true|false)\b/g, (_match, value) => {
+      return `default=${value === 'true' ? 'True' : 'False'}`
+    })
+
     const imports = new Set(model.dependencies || [])
 
     // Find model dependencies

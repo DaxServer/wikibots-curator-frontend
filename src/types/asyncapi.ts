@@ -101,6 +101,7 @@ export type UploadItem = {
   title: string
   wikitext: string
   labels?: Label
+  copyright_override?: boolean
   sdc?: Statement[]
   sdc_v2?: SdcV2
 }
