@@ -188,7 +188,34 @@ replaceSdcRefs(document)
 
 const generatePythonCode = async () => {
   const pythonGenerator = new PythonGenerator({ presets: [CUSTOM_PYDANTIC_PRESET] })
-  const models = await pythonGenerator.generate(document)
+  const documentWithAllSchemas = {
+    ...document,
+    channels: {
+      ...document.channels,
+      schemas: {
+        address: 'schemas',
+        messages: Object.fromEntries(
+          Object.keys(document.components.schemas || {}).map((name) => [
+            name,
+            { payload: { $ref: `#/components/schemas/${name}` } },
+          ]),
+        ),
+      },
+    },
+    operations: {
+      ...document.operations,
+      allSchemas: {
+        action: 'send',
+        channel: {
+          $ref: '#/channels/schemas',
+        },
+      },
+    },
+  }
+
+  const models = (await pythonGenerator.generate(documentWithAllSchemas)).filter(
+    (m) => m.modelName !== 'WsChannel' && m.modelName !== 'Schemas',
+  )
   const modelNames = models.map((m) => m.modelName).filter((name) => name && name.trim() !== '')
   const backendOutputDir = path.resolve(backendPath, 'src/curator/asyncapi')
 

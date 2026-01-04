@@ -464,12 +464,6 @@
           "handler": {
             "type": "string"
           },
-          "sdc": {
-            "type": "array",
-            "items": {
-              "$ref": "sdc.json#/components/schemas/Statement"
-            }
-          },
           "labels": {
             "$ref": "#/components/schemas/Label"
           },
@@ -1275,12 +1269,6 @@
           "copyright_override": {
             "type": "boolean",
             "default": false
-          },
-          "sdc": {
-            "type": "array",
-            "items": {
-              "$ref": "sdc.json#/components/schemas/Statement"
-            }
           }
         },
         "additionalProperties": false
