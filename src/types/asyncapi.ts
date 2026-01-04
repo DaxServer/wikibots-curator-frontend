@@ -103,7 +103,6 @@ export type UploadItem = {
   labels?: Label
   copyright_override?: boolean
   sdc?: Statement[]
-  sdc_v2?: SdcV2
 }
 
 export type Label = {
@@ -290,26 +289,6 @@ export type Reference = {
   hash?: string
 }
 
-export type SdcV2 = {
-  type: 'mapillary'
-  version: number
-  creator_username: string
-  mapillary_image_id: string
-  taken_at: string
-  source_url: string
-  location: GeoLocation
-  width: number
-  height: number
-  include_default_copyright: boolean
-}
-
-export type GeoLocation = {
-  accuracy?: number
-  compass_angle: number
-  latitude: number
-  longitude: number
-}
-
 export type UploadSlice = {
   type: 'UPLOAD_SLICE'
   data: UploadSliceData
@@ -378,7 +357,6 @@ export type BatchUploadItem = {
   key?: string
   handler?: string
   sdc?: Statement[]
-  sdc_v2?: SdcV2
   labels?: Label
   result?: string
   error?: DuplicateError | GenericError | TitleBlacklistedError
@@ -459,6 +437,13 @@ export type Dates = {
 
 export type ExistingPage = {
   url: string
+}
+
+export type GeoLocation = {
+  accuracy?: number
+  compass_angle: number
+  latitude: number
+  longitude: number
 }
 
 export type Error = {

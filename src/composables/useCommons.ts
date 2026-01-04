@@ -179,57 +179,6 @@ ${categories}
     return 'Photo from Mapillary'
   }
 
-  const buildSdcV2 = (item: Item): SdcV2 => {
-    const hasLicenseOverride = (item.meta.license?.trim() || store.globalLicense.trim()) !== ''
-
-    return {
-      type: 'mapillary',
-      version: 1,
-      creator_username: item.image.creator.username,
-      mapillary_image_id: item.image.id,
-      taken_at: item.image.dates.taken.toISOString(),
-      source_url: item.image.url,
-      location: item.image.location,
-      width: item.image.width,
-      height: item.image.height,
-      include_default_copyright: !hasLicenseOverride,
-    }
-  }
-
-  const buildStatementsFromSdcV2 = (sdcV2: SdcV2): Statement[] => {
-    const claims: Statement[] = []
-
-    claims.push(
-      createCreatorClaim(sdcV2.creator_username, [
-        createExternalIdSnak(WikidataProperty.MapillaryUsername, sdcV2.creator_username),
-      ]),
-    )
-
-    claims.push(
-      createExternalIdStatement(WikidataProperty.MapillaryPhotoID, sdcV2.mapillary_image_id),
-    )
-
-    claims.push(
-      createWikibaseItemStatement(WikidataProperty.PublishedIn, WikidataEntity.MapillaryDatabase),
-    )
-
-    claims.push(createInceptionClaim(new Date(sdcV2.taken_at)))
-
-    claims.push(createSourceOfFileClaim(sdcV2.source_url))
-
-    claims.push(createPointOfViewClaim(sdcV2.location))
-
-    if (sdcV2.include_default_copyright) {
-      claims.push(createCopyrightStatusClaim())
-      claims.push(createCopyrightLicenseClaim())
-    }
-
-    claims.push(createWidthClaim(sdcV2.width))
-    claims.push(createHeightClaim(sdcV2.height))
-
-    return claims
-  }
-
   const buildSDC = (item: Item): Statement[] => {
     const claims: Statement[] = []
 
@@ -280,8 +229,6 @@ ${categories}
   return {
     applyMetaDefaults,
     buildDescription,
-    buildSdcV2,
-    buildStatementsFromSdcV2,
     buildTitle,
     buildSDC,
     buildWikitext,

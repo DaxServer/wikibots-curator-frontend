@@ -470,9 +470,6 @@
               "$ref": "sdc.json#/components/schemas/Statement"
             }
           },
-          "sdc_v2": {
-            "$ref": "#/components/schemas/SdcV2"
-          },
           "labels": {
             "$ref": "#/components/schemas/Label"
           },
@@ -854,55 +851,6 @@
           },
           "value": {
             "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "SdcV2": {
-        "type": "object",
-        "required": [
-          "type",
-          "version",
-          "creator_username",
-          "mapillary_image_id",
-          "taken_at",
-          "source_url",
-          "location",
-          "width",
-          "height",
-          "include_default_copyright"
-        ],
-        "properties": {
-          "type": {
-            "const": "mapillary"
-          },
-          "version": {
-            "const": 1
-          },
-          "creator_username": {
-            "type": "string"
-          },
-          "mapillary_image_id": {
-            "type": "string"
-          },
-          "taken_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "source_url": {
-            "type": "string"
-          },
-          "location": {
-            "$ref": "#/components/schemas/GeoLocation"
-          },
-          "width": {
-            "type": "integer"
-          },
-          "height": {
-            "type": "integer"
-          },
-          "include_default_copyright": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1333,9 +1281,6 @@
             "items": {
               "$ref": "sdc.json#/components/schemas/Statement"
             }
-          },
-          "sdc_v2": {
-            "$ref": "#/components/schemas/SdcV2"
           }
         },
         "additionalProperties": false

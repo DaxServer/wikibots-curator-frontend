@@ -271,48 +271,5 @@ describe('useCommons', () => {
         expect(hasCopyrightLicense).toBe(true)
       })
     })
-
-    describe('buildSdcV2', () => {
-      it('should build compact SDC v2 with expected fields', () => {
-        const { buildSdcV2 } = useCommons()
-        const item = createMockItem('1')
-
-        expect(buildSdcV2(item)).toEqual({
-          type: 'mapillary',
-          version: 1,
-          creator_username: 'user',
-          mapillary_image_id: '1',
-          taken_at: new Date('2023-01-01T00:00:00Z').toISOString(),
-          source_url: 'http://example.com/image.jpg',
-          location: { latitude: 0, longitude: 0, compass_angle: 0 },
-          width: 100,
-          height: 100,
-          include_default_copyright: true,
-        })
-      })
-
-      it('should disable default copyright when license override is present', () => {
-        const store = useCollectionsStore()
-        store.globalLicense = '{{cc-zero}}'
-
-        const { buildSdcV2 } = useCommons()
-        const item = createMockItem('1')
-
-        expect(buildSdcV2(item).include_default_copyright).toBe(false)
-      })
-    })
-
-    describe('buildStatementsFromSdcV2', () => {
-      it('should match buildSDC output for the same item', () => {
-        const { buildSDC, buildSdcV2, buildStatementsFromSdcV2 } = useCommons()
-        const item = createMockItem('1')
-
-        const legacyStatements = buildSDC(item)
-        const compact = buildSdcV2(item)
-        const reconstructed = buildStatementsFromSdcV2(compact)
-
-        expect(reconstructed).toEqual(legacyStatements)
-      })
-    })
   })
 })
