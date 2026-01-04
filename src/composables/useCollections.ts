@@ -291,7 +291,6 @@ export const initCollectionsListeners = () => {
       title: item.meta.title,
       wikitext: wikitext(item),
       labels: item.meta.description,
-      sdc: item.sdc,
       copyright_override: (item.meta.license?.trim() || store.globalLicense.trim()) !== '',
     }))
 
