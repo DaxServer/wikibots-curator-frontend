@@ -72,10 +72,13 @@ export const useCollectionsStore = defineStore('collections', () => {
   }
 
   const clearItems = () => {
-    Object.assign(items, {})
+    for (const id in items) {
+      delete items[id]
+    }
   }
 
   const replaceItems = (nextItems: Record<string, Item>) => {
+    clearItems()
     Object.assign(items, nextItems)
   }
 
