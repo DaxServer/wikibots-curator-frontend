@@ -26,7 +26,11 @@ onMounted(() => {
           {{ store.error }}
         </Message>
       </div>
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <KeepAlive :include="['BatchesView']">
+          <component :is="Component" />
+        </KeepAlive>
+      </router-view>
     </template>
 
     <div
