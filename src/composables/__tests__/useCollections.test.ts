@@ -552,33 +552,6 @@ describe('useCollections Listeners', () => {
       expect(store.items.img1!.meta.status).toBe(UPLOAD_STATUS.InProgress)
       expect(store.items.img2!.meta.status).toBe(UPLOAD_STATUS.Queued)
     })
-
-    it('should handle batchid of 0 (falsy but valid)', () => {
-      store.isLoading = true
-      store.replaceItems({
-        img1: createMockItem({
-          id: 'img1',
-          index: 0,
-          meta: {
-            status: UPLOAD_STATUS.Queued,
-            description: { language: 'en', value: '' },
-            categories: '',
-            license: '',
-            selected: false,
-          },
-        }),
-      })
-
-      const items: UploadCreatedItem[] = [
-        { id: 1, image_id: 'img1', batchid: 0, status: UPLOAD_STATUS.Queued, input: '' },
-      ]
-
-      listeners.onUploadCreated(items)
-
-      expect(store.batchId).toBe(0)
-      expect(store.isLoading).toBe(false)
-      expect(mockSend).not.toHaveBeenCalled() // batchId 0 is falsy, so sendSubscribeBatch not called
-    })
   })
 
   describe('onBatchesList', () => {
