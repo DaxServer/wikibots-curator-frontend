@@ -33,7 +33,6 @@ export type Item = {
 export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown' | 'invalid' | 'blacklisted'
 
 export const UPLOAD_STATUS = {
-  Creating: 'creating',
   Queued: 'queued',
   InProgress: 'in_progress',
   Completed: 'completed',

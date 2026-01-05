@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { MessageProps } from 'primevue/message'
-
 withDefaults(
   defineProps<{
     severity?: MessageProps['severity']

@@ -389,6 +389,11 @@ export const useCollections = () => {
     )
   }
 
+  const startUploadProcess = () => {
+    store.isLoading = true
+    send(JSON.stringify({ type: 'CREATE_BATCH' } as CreateBatch))
+  }
+
   const submitUpload = () => {
     store.error = null
     if (store.selectedCount === 0) {
@@ -396,13 +401,12 @@ export const useCollections = () => {
       return
     }
     store.stepper = '5'
-    store.isLoading = true
-    send(JSON.stringify({ type: 'CREATE_BATCH' } as CreateBatch))
   }
 
   return {
     loadCollection,
     submitUpload,
+    startUploadProcess,
     loadBatches,
     refreshBatches,
     loadBatchUploads,

@@ -64,6 +64,7 @@
       "MaybeRef",
       "MaybeRefOrGetter",
       "MediaImage",
+      "MessageProps",
       "Metadata",
       "MetadataKey",
       "MetadataValue",

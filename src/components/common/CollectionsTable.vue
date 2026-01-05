@@ -73,7 +73,7 @@ const onStepperUpdate = (next: string) => {
     </Stepper>
 
     <CollectionsInfoCard
-      v-if="store.stepper !== '1' && store.stepper !== '5'"
+      v-if="store.stepper !== '1'"
       :input="store.input"
       :selected-count="store.selectedCount"
       :total-images="store.totalImages"
@@ -108,10 +108,12 @@ const onStepperUpdate = (next: string) => {
       />
     </KeepAlive>
 
-    <UploadStatusTable
-      v-if="store.stepper === '5'"
-      :items="store.selectedItems"
-    />
+    <KeepAlive>
+      <UploadStatusTable
+        v-if="store.stepper === '5'"
+        :items="store.selectedItems"
+      />
+    </KeepAlive>
 
     <!-- <div
         v-if="store.totalImages === 0 && !store.isLoading"
