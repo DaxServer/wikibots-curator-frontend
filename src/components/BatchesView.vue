@@ -6,6 +6,10 @@ const { refreshBatches, unsubscribeBatchesList } = useCollections()
 
 const isSearching = ref(false)
 
+onActivated(() => {
+  refreshBatches()
+})
+
 const columns = computed(() => {
   const cols = [
     { field: 'id', header: 'Batch ID' },
@@ -66,11 +70,14 @@ const clearSearch = () => {
 }
 
 onBeforeMount(() => {
-  refreshBatches()
+  // Only load batches if not already loaded (first visit)
+  if (store.batches.length === 0) {
+    refreshBatches()
+  }
 })
 
 onUnmounted(() => {
-  store.resetBatches()
+  // Clean up WebSocket subscriptions when component is destroyed
   unsubscribeBatchesList()
 })
 </script>
