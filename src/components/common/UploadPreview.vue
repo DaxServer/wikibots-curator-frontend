@@ -47,6 +47,13 @@ const rowsPerPageOptions = computed(() => {
   <Message
     severity="info"
     icon="pi pi-info-circle"
+    :pt="{
+      transition: {
+        name: 'none',
+        enterActiveClass: 'none',
+        leaveActiveClass: 'none',
+      },
+    }"
   >
     The
     <span

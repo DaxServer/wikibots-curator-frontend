@@ -31,6 +31,11 @@ export default defineConfig((): import('vite').UserConfig => {
             type: true,
           },
           {
+            from: 'primevue/message',
+            imports: ['MessageProps'],
+            type: true,
+          },
+          {
             from: 'primevue/datatable',
             imports: ['DataTableCellEditCompleteEvent', 'DataTablePageEvent'],
             type: true,
