@@ -441,6 +441,21 @@ export const useCollections = () => {
     )
   }
 
+  const adminRetryBatch = async (batchId: number) => {
+    try {
+      const response = await fetch(`/api/admin/batches/${batchId}/retry`, {
+        method: 'POST',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to retry batch')
+      }
+      // Reload batch uploads
+      loadBatchUploads(batchId)
+    } catch (e) {
+      store.error = (e as Error).message
+    }
+  }
+
   const startUploadProcess = () => {
     store.isLoading = true
     send(JSON.stringify({ type: 'CREATE_BATCH' } as CreateBatch))
@@ -463,6 +478,7 @@ export const useCollections = () => {
     refreshBatches,
     loadBatchUploads,
     retryUploads,
+    adminRetryBatch,
     sendSubscribeBatch,
     sendUnsubscribeBatch,
     subscribeBatchesList,

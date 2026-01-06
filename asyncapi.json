@@ -476,6 +476,9 @@
           "success": {
             "type": "string"
           },
+          "last_edited_by": {
+            "type": "string"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time"
