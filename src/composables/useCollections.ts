@@ -453,6 +453,8 @@ export const useCollections = () => {
       loadBatchUploads(batchId)
     } catch (e) {
       store.error = (e as Error).message
+    } finally {
+      sendSubscribeBatch(batchId)
     }
   }
 
