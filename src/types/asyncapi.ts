@@ -180,6 +180,7 @@ export type BatchUploadItem = {
   result?: string
   error?: DuplicateError | GenericError | TitleBlacklistedError
   success?: string
+  last_edited_by?: string
   created_at?: string
   updated_at?: string
   image_id?: string

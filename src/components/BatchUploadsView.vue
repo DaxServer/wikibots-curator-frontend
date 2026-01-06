@@ -4,8 +4,13 @@ const batchId = useRouteParams<number>('id')
 const authStore = useAuthStore()
 const store = useCollectionsStore()
 
-const { loadBatchUploads, retryUploads, sendSubscribeBatch, sendUnsubscribeBatch } =
-  useCollections()
+const {
+  loadBatchUploads,
+  retryUploads,
+  adminRetryBatch,
+  sendSubscribeBatch,
+  sendUnsubscribeBatch,
+} = useCollections()
 const { getStatusColor, getStatusSeverity, getStatusStyle } = useUploadStatus()
 
 const columns = [
@@ -100,6 +105,14 @@ const hasPendingJobs = computed(() => {
   return computedStats.value.queued > 0 || computedStats.value.in_progress > 0
 })
 
+const lastEditedBy = computed(() => {
+  const users = new Set(
+    store.batchUploads.map((u) => u.last_edited_by).filter((u): u is string => !!u),
+  )
+  if (users.size === 0) return null
+  return Array.from(users).join(', ')
+})
+
 const isSubscribed = ref(false)
 
 const load = (id: number) => {
@@ -175,6 +188,15 @@ onUnmounted(() => {
                 size="small"
                 @click="retryUploads(Number(batchId))"
               />
+              <Button
+                v-if="authStore.user === 'DaxServer'"
+                icon="pi pi-refresh"
+                severity="warning"
+                label="Admin Retry"
+                size="small"
+                class="ml-2"
+                @click="adminRetryBatch(Number(batchId))"
+              />
             </template>
           </div>
         </template>
@@ -183,6 +205,23 @@ onUnmounted(() => {
             <i class="pi pi-user text-sm"></i>
             <span v-if="store.batch">{{ store.batch.username }}</span>
             <Skeleton v-else />
+            <Message
+              v-if="lastEditedBy"
+              icon="pi pi-user-edit"
+              severity="warn"
+              v-tooltip.top="
+                'The edits will be made from this user account. See history of files on Commons.'
+              "
+              :pt="{
+                transition: {
+                  name: 'none',
+                  enterActiveClass: 'none',
+                  leaveActiveClass: 'none',
+                },
+              }"
+            >
+              Retry triggered by: {{ lastEditedBy }}
+            </Message>
           </div>
         </template>
         <template #content>
