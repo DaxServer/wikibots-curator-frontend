@@ -69,13 +69,6 @@ const clearSearch = () => {
   debouncedSearch.cancel()
 }
 
-onBeforeMount(() => {
-  // Only load batches if not already loaded (first visit)
-  if (store.batches.length === 0) {
-    refreshBatches()
-  }
-})
-
 onUnmounted(() => {
   // Clean up WebSocket subscriptions when component is destroyed
   unsubscribeBatchesList()
