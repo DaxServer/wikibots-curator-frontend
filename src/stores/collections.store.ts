@@ -11,6 +11,10 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const isLoading = ref(false)
   const error = ref<string | null>(null)
+
+  const clearError = () => {
+    error.value = null
+  }
   const items = reactive<Record<string, Item>>({})
   const isStatusChecking = ref<boolean>(false)
   const batchId = ref<number | null>(null)
@@ -65,6 +69,9 @@ export const useCollectionsStore = defineStore('collections', () => {
   )
   const itemsWithExistingTitlesCount = computed(
     () => selectedItems.value.filter((i) => i.image.existing.length > 0).length,
+  )
+  const anyItemsWithExistingFiles = computed(() =>
+    itemsArray.value.some((i) => i.image.existing.length > 0),
   )
 
   const setLoading = (loading: boolean) => {
@@ -241,6 +248,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     selectedItems,
     itemsWithErrorsCount,
     itemsWithExistingTitlesCount,
+    anyItemsWithExistingFiles,
     batches,
     batchesTotal,
     batchesLoading,
@@ -258,6 +266,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     loadedCount,
     uploadSliceIndex,
 
+    clearError,
     setLoading,
     setGlobalDescription,
     setGlobalLanguage,

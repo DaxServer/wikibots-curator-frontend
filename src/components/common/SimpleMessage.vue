@@ -1,24 +1,12 @@
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    severity?: MessageProps['severity']
-    variant?: MessageProps['variant']
-    size?: MessageProps['size']
-    icon?: string
-  }>(),
-  {
-    variant: 'simple',
-    size: 'small',
-  },
-)
+interface _Props extends /* @vue-ignore */ MessageProps {}
+
+defineProps<_Props>()
 </script>
 
 <template>
   <Message
-    :severity="severity"
-    :variant="variant"
-    :size="size"
-    :icon="icon"
+    v-bind="$props"
     :pt="{
       transition: {
         name: 'none',

@@ -44,16 +44,11 @@ const rowsPerPageOptions = computed(() => {
     </template>
   </Card>
 
-  <Message
+  <SdcWarningMessage v-if="store.itemsWithExistingTitlesCount > 0" />
+
+  <SimpleMessage
     severity="info"
     icon="pi pi-info-circle"
-    :pt="{
-      transition: {
-        name: 'none',
-        enterActiveClass: 'none',
-        leaveActiveClass: 'none',
-      },
-    }"
   >
     The
     <span
@@ -63,7 +58,7 @@ const rowsPerPageOptions = computed(() => {
       {{ Information }}
     </span>
     template will be populated from SDC
-  </Message>
+  </SimpleMessage>
 
   <DataTable
     :value="store.selectedItems"

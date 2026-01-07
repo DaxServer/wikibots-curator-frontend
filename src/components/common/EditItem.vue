@@ -86,6 +86,8 @@ const onTitleBlur = () => {
         <SimpleMessage
           v-if="item.meta.titleStatus === 'checking'"
           severity="info"
+          variant="simple"
+          size="small"
           icon="pi pi-spinner pi-spin"
           class="pl-3"
         >
@@ -94,6 +96,8 @@ const onTitleBlur = () => {
         <SimpleMessage
           v-else-if="item.meta.titleStatus === 'taken'"
           severity="error"
+          variant="simple"
+          size="small"
           icon="pi pi-times-circle"
           class="pl-3"
         >
@@ -108,6 +112,8 @@ const onTitleBlur = () => {
         <SimpleMessage
           v-else-if="item.meta.titleStatus === 'invalid'"
           severity="error"
+          variant="simple"
+          size="small"
           icon="pi pi-times-circle"
           class="pl-3"
         >
@@ -116,6 +122,8 @@ const onTitleBlur = () => {
         <SimpleMessage
           v-else-if="item.meta.titleStatus === 'blacklisted'"
           severity="error"
+          variant="simple"
+          size="small"
           icon="pi pi-times-circle"
           class="pl-3"
         >
@@ -124,6 +132,8 @@ const onTitleBlur = () => {
         <SimpleMessage
           v-else-if="item.meta.titleStatus === 'unknown'"
           severity="warn"
+          variant="simple"
+          size="small"
           icon="pi pi-exclamation-triangle"
           class="pl-3"
         >
@@ -132,6 +142,8 @@ const onTitleBlur = () => {
         <SimpleMessage
           v-else-if="item.meta.titleStatus === 'available'"
           severity="success"
+          variant="simple"
+          size="small"
           icon="pi pi-check-circle"
           class="pl-3"
         >

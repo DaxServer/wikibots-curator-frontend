@@ -70,6 +70,8 @@ onMounted(async () => {
           <SimpleMessage
             class="w-fit"
             severity="info"
+            variant="simple"
+            size="small"
             icon="pi pi-info-circle"
           >
             Available variables (drag to add)

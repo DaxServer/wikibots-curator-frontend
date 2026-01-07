@@ -30,20 +30,13 @@ const menuItems = computed(() => [
 <template>
   <div class="flex justify-between items-center mt-4 mb-4 gap-4">
     <div class="flex items-center gap-4 w-auto flex-grow-0 flex-shrink-0">
-      <Message
+      <SimpleMessage
         severity="info"
         :closable="false"
         icon="pi pi-info-circle"
-        :pt="{
-          transition: {
-            name: 'none',
-            enterActiveClass: 'none',
-            leaveActiveClass: 'none',
-          },
-        }"
       >
         Click on images to select
-      </Message>
+      </SimpleMessage>
 
       <span
         v-tooltip.bottom="

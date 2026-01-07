@@ -50,6 +50,8 @@ const onPreviewEdits = () => {
               <div class="inline-flex flex-none">
                 <SimpleMessage
                   severity="info"
+                  variant="simple"
+                  size="small"
                   icon="pi pi-info-circle"
                 >
                   Will be applied to all selected images
@@ -61,6 +63,8 @@ const onPreviewEdits = () => {
         </ItemInputs>
       </template>
     </Card>
+
+    <SdcWarningMessage v-if="store.itemsWithExistingTitlesCount > 0" />
 
     <div class="flex justify-between items-center">
       <Message

@@ -83,6 +83,8 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         <SimpleMessage
           v-if="showFallbackMessages && isFallbackDescription"
           :severity="isFallbackDescription ? 'warn' : 'secondary'"
+          variant="simple"
+          size="small"
           class="pl-3"
         >
           Using fallback description: {{ store.globalDescription }}
@@ -106,6 +108,8 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
     <slot name="category-message">
       <SimpleMessage
         :severity="isFallbackCategories ? 'warn' : 'secondary'"
+        variant="simple"
+        size="small"
         class="-mt-3 pl-3"
       >
         <ExternalLink
@@ -138,6 +142,8 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
       </FloatLabel>
       <SimpleMessage
         severity="secondary"
+        variant="simple"
+        size="small"
         icon="pi pi-exclamation-triangle"
         class="pl-3"
       >
@@ -147,6 +153,8 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
       <SimpleMessage
         v-if="showFallbackMessages && isFallbackLicense"
         :severity="isFallbackLicense ? 'warn' : 'secondary'"
+        variant="simple"
+        size="small"
         class="mt-1 pl-3"
       >
         Using fallback license template
