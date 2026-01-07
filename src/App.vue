@@ -22,6 +22,8 @@ onMounted(() => {
         <Message
           severity="error"
           icon="pi pi-exclamation-triangle"
+          :closable="true"
+          @close="store.clearError"
         >
           {{ store.error }}
         </Message>

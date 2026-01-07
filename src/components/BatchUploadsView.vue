@@ -206,23 +206,16 @@ onUnmounted(() => {
             <i class="pi pi-user text-sm"></i>
             <span v-if="store.batch">{{ store.batch.username }}</span>
             <Skeleton v-else />
-            <Message
+            <SimpleMessage
               v-if="lastEditedBy"
               icon="pi pi-user-edit"
               severity="warn"
               v-tooltip.top="
                 'The edits will be made from this user account. See history of files on Commons.'
               "
-              :pt="{
-                transition: {
-                  name: 'none',
-                  enterActiveClass: 'none',
-                  leaveActiveClass: 'none',
-                },
-              }"
             >
               Retry triggered by: {{ lastEditedBy }}
-            </Message>
+            </SimpleMessage>
           </div>
         </template>
         <template #content>

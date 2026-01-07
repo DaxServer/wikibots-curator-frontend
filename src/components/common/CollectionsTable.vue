@@ -80,6 +80,8 @@ const onStepperUpdate = (next: string) => {
       :id-label="idLabel"
     />
 
+    <SdcWarningMessage v-if="store.stepper === '2' && store.anyItemsWithExistingFiles" />
+
     <KeepAlive>
       <IngestSelectionList
         v-if="store.stepper === '2'"

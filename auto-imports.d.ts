@@ -10,6 +10,7 @@ declare global {
   const COLOR_VARIANTS: typeof import('./src/composables/useUploadStatus').COLOR_VARIANTS
   const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
+  const MessageProps: typeof import('primevue/message').MessageProps
   const Noir: typeof import('./src/assets/Noir').default
   const Rank: typeof import('./src/types/asyncapi').Rank
   const SnakDataType: typeof import('./src/types/asyncapi').SnakDataType
