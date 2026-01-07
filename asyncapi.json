@@ -665,6 +665,50 @@
         },
         "additionalProperties": false
       },
+      "DuplicatedSdcNotUpdatedError": {
+        "type": "object",
+        "required": [
+          "links",
+          "message"
+        ],
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorLink"
+            }
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "const": "duplicated_sdc_not_updated"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DuplicatedSdcUpdatedError": {
+        "type": "object",
+        "required": [
+          "links",
+          "message"
+        ],
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorLink"
+            }
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "const": "duplicated_sdc_updated"
+          }
+        },
+        "additionalProperties": false
+      },
       "Error": {
         "type": "object",
         "required": [
@@ -997,6 +1041,12 @@
         "oneOf": [
           {
             "$ref": "#/components/schemas/DuplicateError"
+          },
+          {
+            "$ref": "#/components/schemas/DuplicatedSdcNotUpdatedError"
+          },
+          {
+            "$ref": "#/components/schemas/DuplicatedSdcUpdatedError"
           },
           {
             "$ref": "#/components/schemas/GenericError"

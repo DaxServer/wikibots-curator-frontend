@@ -11,7 +11,8 @@ const {
   sendSubscribeBatch,
   sendUnsubscribeBatch,
 } = useCollections()
-const { getStatusColor, getStatusSeverity, getStatusStyle } = useUploadStatus()
+const { isDuplicateStatus, getStatusLabel, getStatusColor, getStatusSeverity, getStatusStyle } =
+  useUploadStatus()
 
 const columns = [
   { field: 'id', header: 'ID' },
@@ -29,7 +30,7 @@ const computedStats = computed((): BatchStats => {
     total: uploads.length,
     completed: uploads.filter((u) => u.status === UPLOAD_STATUS.Completed).length,
     failed: uploads.filter((u) => u.status === UPLOAD_STATUS.Failed).length,
-    duplicate: uploads.filter((u) => u.status === UPLOAD_STATUS.Duplicate).length,
+    duplicate: uploads.filter((u) => isDuplicateStatus(u.status as UploadStatus)).length,
     in_progress: uploads.filter((u) => u.status === UPLOAD_STATUS.InProgress).length,
     queued: uploads.filter((u) => u.status === UPLOAD_STATUS.Queued).length,
   }
@@ -269,7 +270,7 @@ onUnmounted(() => {
             :severity="getStatusSeverity(data.status)"
             :style="getStatusStyle(data.status)"
           >
-            {{ data.status }}
+            {{ getStatusLabel(data.status) }}
           </Tag>
         </template>
         <template v-else-if="col.field === 'error'">

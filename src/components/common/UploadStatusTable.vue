@@ -2,6 +2,7 @@
 const store = useCollectionsStore()
 
 const { getEffectiveTitle } = useCommons()
+const { isDuplicateStatus, getStatusLabel, getStatusSeverity, getStatusStyle } = useUploadStatus()
 const { retryUploads, sendUnsubscribeBatch, startUploadProcess } = useCollections()
 
 type SkeletonRow = {
@@ -22,8 +23,8 @@ const meters = computed<MeterItem[]>(() => {
   const failed = store.selectedItems.filter(
     (item) => item.meta.status === UPLOAD_STATUS.Failed,
   ).length
-  const duplicate = store.selectedItems.filter(
-    (item) => item.meta.status === UPLOAD_STATUS.Duplicate,
+  const duplicate = store.selectedItems.filter((item) =>
+    isDuplicateStatus(item.meta.status as UploadStatus),
   ).length
   const queued = store.selectedItems.filter(
     (item) => item.meta.status === UPLOAD_STATUS.Queued,
@@ -43,7 +44,7 @@ const getRowClass = (data: SkeletonRow | Item) => {
   const status = (data as Item)?.meta?.status
   if (status === UPLOAD_STATUS.Completed) return 'bg-green-100'
   if (status === UPLOAD_STATUS.Failed) return 'bg-red-100'
-  if (status === UPLOAD_STATUS.Duplicate) return 'bg-fuchsia-50'
+  if (isDuplicateStatus(status as UploadStatus)) return 'bg-fuchsia-50'
   if (status === UPLOAD_STATUS.InProgress) return 'bg-blue-100'
   return ''
 }
@@ -130,7 +131,23 @@ onUnmounted(() => {
     >
       <template #body="{ data }">
         <Skeleton v-if="showSkeleton" />
-        <template v-else>File:{{ getEffectiveTitle(data) }}</template>
+        <template v-else>
+          <ExternalLink
+            v-if="data.meta.status === UPLOAD_STATUS.Completed && data.meta.successUrl"
+            :href="data.meta.successUrl"
+            class="text-green-600"
+          >
+            File:{{ getEffectiveTitle(data) }}
+          </ExternalLink>
+          <ExternalLink
+            v-else-if="isDuplicateStatus(data.meta.status) && data.meta.errorInfo?.links?.length"
+            :href="data.meta.errorInfo.links[0].url"
+            class="text-fuchsia-600 hover:underline"
+          >
+            File:{{ getEffectiveTitle(data) }}
+          </ExternalLink>
+          <span v-else>File:{{ getEffectiveTitle(data) }}</span>
+        </template>
       </template>
     </Column>
 
@@ -140,26 +157,28 @@ onUnmounted(() => {
     >
       <template #body="{ data }">
         <Skeleton v-if="showSkeleton" />
+        <span v-else-if="!data.meta.status">
+          <Tag severity="secondary">Creating</Tag>
+        </span>
         <span v-else-if="data.meta.status === UPLOAD_STATUS.Failed">
           <ErrorDisplay
             v-if="data.meta.errorInfo"
             :error="data.meta.errorInfo"
           />
-          <span v-else>failed: {{ data.meta.statusReason }}</span>
+          <Tag
+            v-else
+            severity="danger"
+          >
+            {{ getStatusLabel(data.meta.status) }}: {{ data.meta.statusReason }}
+          </Tag>
         </span>
-        <span v-else-if="data.meta.status === UPLOAD_STATUS.Completed">
-          completed
-          <span v-if="data.meta.successUrl">
-            —
-            <ExternalLink
-              :href="data.meta.successUrl"
-              class="text-primary"
-            >
-              Open
-            </ExternalLink>
-          </span>
-        </span>
-        <span v-else>{{ data.meta.status ?? 'creating' }}</span>
+        <Tag
+          v-else
+          :severity="getStatusSeverity(data.meta.status)"
+          :style="getStatusStyle(data.meta.status)"
+        >
+          {{ getStatusLabel(data.meta.status) }}
+        </Tag>
       </template>
     </Column>
   </DataTable>
