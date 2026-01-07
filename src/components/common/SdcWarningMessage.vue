@@ -6,7 +6,7 @@
     icon="pi pi-exclamation-triangle"
   >
     Existing files will
-    <u>not</u>
+    <span class="hover:underline">not</span>
     be overwritten and SDC will be updated where possible
   </SimpleMessage>
 </template>

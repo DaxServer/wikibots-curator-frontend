@@ -6,7 +6,7 @@ defineProps<_Props>()
 
 <template>
   <Message
-    v-bind="$attrs"
+    v-bind="$props"
     :pt="{
       transition: {
         name: 'none',
