@@ -1,5 +1,6 @@
 import { useCommons } from '@/composables/useCommons'
 import { useSocket } from '@/composables/useSocket'
+import { useUploadStatus } from '@/composables/useUploadStatus'
 import { useAuthStore } from '@/stores/auth.store'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type {
@@ -20,7 +21,7 @@ import type {
   UploadUpdateItem,
 } from '@/types/asyncapi'
 import type { Image } from '@/types/image'
-import { type Item, UPLOAD_STATUS, type UploadStatus } from '@/types/image'
+import { UPLOAD_STATUS, type UploadStatus } from '@/types/image'
 import { markRaw, watch } from 'vue'
 
 const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
@@ -67,6 +68,7 @@ const createSkeletonItem = (id: string, index: number): Item => ({
 export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
   const { buildDescription, getEffectiveTitle, wikitext } = useCommons()
+  const { isDuplicateStatus } = useUploadStatus()
   const { data, send } = useSocket
 
   const sendSubscribeBatch = (batchId: number) => {
@@ -87,7 +89,10 @@ export const initCollectionsListeners = () => {
       // Update current session items if they exist
       if (store.items[update.key]) {
         store.updateItem(update.key, 'status', update.status as UploadStatus)
-        if (update.status === UPLOAD_STATUS.Failed) {
+        if (
+          update.status === UPLOAD_STATUS.Failed ||
+          isDuplicateStatus(update.status as UploadStatus)
+        ) {
           store.updateItem(update.key, 'statusReason', update.error?.message)
           store.updateItem(update.key, 'errorInfo', update.error)
         }
@@ -102,7 +107,10 @@ export const initCollectionsListeners = () => {
         batchUploadsChanged = true
         const upload = { ...newBatchUploads[index] } as BatchUploadItem
         upload.status = update.status
-        if (update.status === UPLOAD_STATUS.Failed) {
+        if (
+          update.status === UPLOAD_STATUS.Failed ||
+          isDuplicateStatus(update.status as UploadStatus)
+        ) {
           upload.error = update.error
         }
         if (update.status === UPLOAD_STATUS.Completed) {
@@ -116,12 +124,14 @@ export const initCollectionsListeners = () => {
       store.batchUploads = newBatchUploads
     }
 
-    const allDone = store.selectedItems.every(
-      (i) =>
-        i.meta.status === UPLOAD_STATUS.Completed ||
-        i.meta.status === UPLOAD_STATUS.Failed ||
-        i.meta.status === UPLOAD_STATUS.Duplicate,
-    )
+    const allDone = store.selectedItems.every((i) => {
+      const status = i.meta.status
+      return (
+        status === UPLOAD_STATUS.Completed ||
+        status === UPLOAD_STATUS.Failed ||
+        (status && isDuplicateStatus(status))
+      )
+    })
     if (allDone && store.selectedItems.length > 0) store.isStatusChecking = false
   }
 

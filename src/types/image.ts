@@ -38,6 +38,8 @@ export const UPLOAD_STATUS = {
   Completed: 'completed',
   Failed: 'failed',
   Duplicate: 'duplicate',
+  DuplicatedSdcUpdated: 'duplicated_sdc_updated',
+  DuplicatedSdcNotUpdated: 'duplicated_sdc_not_updated',
 } as const
 
 export type UploadStatus = (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS]
@@ -51,7 +53,11 @@ export type UploadStatusUpdate =
     }
   | {
       key: string
-      status: typeof UPLOAD_STATUS.Failed | typeof UPLOAD_STATUS.Duplicate
+      status:
+        | typeof UPLOAD_STATUS.Failed
+        | typeof UPLOAD_STATUS.Duplicate
+        | typeof UPLOAD_STATUS.DuplicatedSdcUpdated
+        | typeof UPLOAD_STATUS.DuplicatedSdcNotUpdated
       error: StructuredError
       success?: never
     }

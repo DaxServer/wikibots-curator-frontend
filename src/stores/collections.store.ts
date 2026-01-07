@@ -6,7 +6,7 @@ import { computed, reactive, ref, shallowRef } from 'vue'
 
 export const useCollectionsStore = defineStore('collections', () => {
   const handler = ref<Handler>('mapillary')
-  const input = ref<string>('')
+  const input = ref<string>('tulzukst7vufhdo1e4z60f')
   const creator = ref<Creator>({ id: '', username: '', profile_url: '' })
 
   const isLoading = ref(false)

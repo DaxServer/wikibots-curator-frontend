@@ -4,7 +4,13 @@ defineProps<{ error: StructuredError }>()
 
 <template>
   <div class="text-sm">
-    <template v-if="error.type === 'duplicate'">
+    <template
+      v-if="
+        error.type === 'duplicate' ||
+        error.type === 'duplicated_sdc_updated' ||
+        error.type === 'duplicated_sdc_not_updated'
+      "
+    >
       <div v-if="error.links.length > 0">
         <span class="font-semibold text-fuchsia-800">Duplicates:</span>
         <ul class="list-disc list-inside">
@@ -20,6 +26,18 @@ defineProps<{ error: StructuredError }>()
             </ExternalLink>
           </li>
         </ul>
+      </div>
+      <div
+        v-if="error.type === 'duplicated_sdc_updated'"
+        class="text-xs text-gray-500 mt-1"
+      >
+        SDC merged and updated
+      </div>
+      <div
+        v-if="error.type === 'duplicated_sdc_not_updated'"
+        class="text-xs text-gray-500 mt-1"
+      >
+        SDC already up to date
       </div>
     </template>
 

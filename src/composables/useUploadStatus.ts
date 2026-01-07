@@ -50,49 +50,54 @@ export const COLOR_VARIANTS = {
 
 export type ColorVariant = keyof typeof COLOR_VARIANTS
 
+const DUPLICATE_STATUSES: ReadonlySet<UploadStatus> = new Set([
+  UPLOAD_STATUS.Duplicate,
+  UPLOAD_STATUS.DuplicatedSdcUpdated,
+  UPLOAD_STATUS.DuplicatedSdcNotUpdated,
+] as const)
+
+const STATUS_LABELS: Record<UploadStatus, string> = {
+  [UPLOAD_STATUS.Queued]: 'Queued',
+  [UPLOAD_STATUS.InProgress]: 'Processing',
+  [UPLOAD_STATUS.Completed]: 'Completed',
+  [UPLOAD_STATUS.Failed]: 'Failed',
+  [UPLOAD_STATUS.Duplicate]: 'Duplicate (no changes)',
+  [UPLOAD_STATUS.DuplicatedSdcUpdated]: 'Duplicate (SDC updated)',
+  [UPLOAD_STATUS.DuplicatedSdcNotUpdated]: 'Duplicate (no changes to SDC)',
+} as const
+
 export const useUploadStatus = () => {
+  const isDuplicateStatus = (status: UploadStatus): boolean => DUPLICATE_STATUSES.has(status)
+  const getStatusLabel = (status: UploadStatus): string => STATUS_LABELS[status]
+
   const getStatusColor = (status: UploadStatus | 'all'): ColorVariant => {
-    switch (status) {
-      case UPLOAD_STATUS.Completed:
-        return 'green'
-      case UPLOAD_STATUS.Failed:
-        return 'red'
-      case UPLOAD_STATUS.Duplicate:
-        return 'fuchsia'
-      case UPLOAD_STATUS.InProgress:
-        return 'blue'
-      case UPLOAD_STATUS.Queued:
-        return 'gray'
-      default:
-        return 'gray'
-    }
+    if (status === 'all') return 'gray'
+    if (status === UPLOAD_STATUS.Completed) return 'green'
+    if (status === UPLOAD_STATUS.Failed) return 'red'
+    if (isDuplicateStatus(status)) return 'fuchsia'
+    if (status === UPLOAD_STATUS.InProgress) return 'blue'
+    return 'gray'
   }
 
   const getStatusSeverity = (status: UploadStatus) => {
-    switch (status) {
-      case UPLOAD_STATUS.InProgress:
-        return 'info'
-      case UPLOAD_STATUS.Queued:
-        return 'secondary'
-      case UPLOAD_STATUS.Failed:
-        return 'danger'
-      case UPLOAD_STATUS.Duplicate:
-        return 'contrast'
-      case UPLOAD_STATUS.Completed:
-        return 'success'
-      default:
-        return 'secondary'
-    }
+    if (status === UPLOAD_STATUS.InProgress) return 'info'
+    if (status === UPLOAD_STATUS.Queued) return 'secondary'
+    if (status === UPLOAD_STATUS.Failed) return 'danger'
+    if (isDuplicateStatus(status)) return 'contrast'
+    if (status === UPLOAD_STATUS.Completed) return 'success'
+    return 'secondary'
   }
 
   const getStatusStyle = (status: UploadStatus) => {
-    if (status === UPLOAD_STATUS.Duplicate) {
+    if (isDuplicateStatus(status)) {
       return { backgroundColor: 'var(--p-fuchsia-50)', color: 'var(--p-fuchsia-800)' }
     }
     return {}
   }
 
   return {
+    isDuplicateStatus,
+    getStatusLabel,
     getStatusColor,
     getStatusSeverity,
     getStatusStyle,

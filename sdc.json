@@ -197,6 +197,10 @@
           },
           "datavalue": {
             "$ref": "#/components/schemas/EntityIdDataValue"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -221,6 +225,10 @@
           },
           "datavalue": {
             "$ref": "#/components/schemas/StringDataValue"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -261,6 +269,10 @@
           },
           "datavalue": {
             "$ref": "#/components/schemas/GlobeCoordinateDataValue"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -282,6 +294,10 @@
           },
           "property": {
             "$ref": "#/components/schemas/PropertyId"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -327,6 +343,10 @@
           },
           "datavalue": {
             "$ref": "#/components/schemas/QuantityDataValue"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -394,6 +414,10 @@
           },
           "property": {
             "$ref": "#/components/schemas/PropertyId"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -430,6 +454,10 @@
           },
           "type": {
             "const": "statement"
+          },
+          "id": {
+            "type": "string",
+            "description": "Statement identifier from Wikimedia Commons"
           }
         }
       },
@@ -479,6 +507,10 @@
           },
           "datavalue": {
             "$ref": "#/components/schemas/StringDataValue"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -519,6 +551,10 @@
           },
           "datavalue": {
             "$ref": "#/components/schemas/TimeDataValue"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
@@ -559,6 +595,10 @@
           },
           "datavalue": {
             "$ref": "#/components/schemas/UrlDataValue"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hash of the snak for Wikimedia Commons identification"
           }
         }
       },
