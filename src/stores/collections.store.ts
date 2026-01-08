@@ -23,6 +23,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const batchLoadingStatus = ref<string | null>(null)
   const totalImageIds = ref<string[]>([])
   const uploadSliceIndex = ref(0)
+  const isCreatingBatch = ref<boolean>(false)
 
   const showSelectedOnly = ref<boolean>(true)
   const viewMode = ref<Layout>('list')
@@ -206,6 +207,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     batchLoadingStatus.value = null
     totalImageIds.value = []
     uploadSliceIndex.value = 0
+    isCreatingBatch.value = false
   }
 
   const resetBatches = () => {
@@ -265,6 +267,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     totalImageIds,
     loadedCount,
     uploadSliceIndex,
+    isCreatingBatch,
 
     clearError,
     setLoading,

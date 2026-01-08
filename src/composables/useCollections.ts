@@ -74,6 +74,7 @@ export const initCollectionsListeners = () => {
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
+    store.isCreatingBatch = false
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
 
@@ -261,6 +262,7 @@ export const initCollectionsListeners = () => {
   const onBatchCreated = (batchId: number) => {
     store.batchId = batchId
     store.uploadSliceIndex = 0
+    store.isCreatingBatch = true
     sendNextSlice()
   }
 
@@ -323,6 +325,7 @@ export const initCollectionsListeners = () => {
 
     if (start >= totalItems) {
       store.isLoading = false
+      store.isCreatingBatch = false
       sendSubscribeBatch(store.batchId)
       return
     }
@@ -373,6 +376,7 @@ export const useCollections = () => {
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
+    store.isCreatingBatch = false
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
 
