@@ -360,8 +360,14 @@ export type UploadUpdateItem = {
 
 export type UploadSliceAck = {
   type: 'UPLOAD_SLICE_ACK'
-  data: number
+  data: UploadSliceAckItem[]
+  sliceid: number
   nonce: string
+}
+
+export type UploadSliceAckItem = {
+  id: string
+  status: string
 }
 
 export type Claims = Record<

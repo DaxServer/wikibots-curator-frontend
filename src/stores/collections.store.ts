@@ -23,9 +23,8 @@ export const useCollectionsStore = defineStore('collections', () => {
   const batchLoadingStatus = ref<string | null>(null)
   const totalImageIds = ref<string[]>([])
   const uploadSliceIndex = ref(0)
-  const isCreatingBatch = ref<boolean>(false)
-
-  const showSelectedOnly = ref<boolean>(true)
+  const isBatchCreated = ref(false)
+  const showSelectedOnly = ref(true)
   const viewMode = ref<Layout>('list')
   const gridPage = ref<number>(1)
   const gridItemsPerPage = ref<number>(24)
@@ -207,7 +206,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     batchLoadingStatus.value = null
     totalImageIds.value = []
     uploadSliceIndex.value = 0
-    isCreatingBatch.value = false
+    isBatchCreated.value = false
   }
 
   const resetBatches = () => {
@@ -267,7 +266,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     totalImageIds,
     loadedCount,
     uploadSliceIndex,
-    isCreatingBatch,
+    isBatchCreated,
 
     clearError,
     setLoading,

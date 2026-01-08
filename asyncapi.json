@@ -1433,6 +1433,7 @@
         "required": [
           "type",
           "data",
+          "sliceid",
           "nonce"
         ],
         "properties": {
@@ -1440,12 +1441,34 @@
             "const": "UPLOAD_SLICE_ACK"
           },
           "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadSliceAckItem"
+            }
+          },
+          "sliceid": {
             "type": "integer",
             "description": "Acknowledged slice identifier"
           },
           "nonce": {
             "type": "string",
             "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadSliceAckItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
           }
         },
         "additionalProperties": false

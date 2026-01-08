@@ -10,12 +10,7 @@ import { type Image, type Item, UPLOAD_STATUS } from '@/types/image'
 import { type Mock, beforeAll, beforeEach, describe, expect, it, mock } from 'bun:test'
 import { ref } from 'vue'
 
-// Mock dependencies
-
-// Mock global location
-if (typeof location === 'undefined') {
-  global.location = { origin: 'http://localhost' } as Location
-}
+import { UPLOAD_SLICE_SIZE } from '../useCollections'
 
 // Mock useSocket
 export const mockSocketData = ref<string | null>(null)
@@ -1101,9 +1096,9 @@ describe('useCollections Listeners', () => {
       expect(store.batchId).toBe(0)
     })
 
-    it('should handle exactly 10 selected items (one full slice)', () => {
+    it(`should handle exactly ${UPLOAD_SLICE_SIZE} selected items (one full slice)`, () => {
       const newItems: Record<string, Item> = {}
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < UPLOAD_SLICE_SIZE; i++) {
         const id = `img${i}`
         newItems[id] = createMockItem({
           id,
@@ -1122,6 +1117,7 @@ describe('useCollections Listeners', () => {
 
       expect(store.batchId).toBe(100)
       expect(store.uploadSliceIndex).toBe(0)
+      expect(store.isBatchCreated).toBe(false) // Not created yet, need to wait for ACK
 
       expect(mockSend).toHaveBeenCalled()
       const calls = (mockSend as Mock<(data: string) => void>).mock.calls
@@ -1133,12 +1129,16 @@ describe('useCollections Listeners', () => {
           sliceid: 0,
         },
       })
-      expect(sentMsg.data.items).toHaveLength(10)
+      expect(sentMsg.data.items).toHaveLength(UPLOAD_SLICE_SIZE)
+
+      // After ACK, isBatchCreated should be true
+      listeners.onUploadSliceAck(0, [])
+      expect(store.isBatchCreated).toBe(true)
     })
 
-    it('should handle exactly 20 selected items (two full slices)', () => {
+    it(`should handle exactly ${UPLOAD_SLICE_SIZE * 2} selected items (two full slices)`, () => {
       const newItems: Record<string, Item> = {}
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < UPLOAD_SLICE_SIZE * 2; i++) {
         const id = `img${i}`
         newItems[id] = createMockItem({
           id,
@@ -1159,7 +1159,7 @@ describe('useCollections Listeners', () => {
       const calls = (mockSend as Mock<(data: string) => void>).mock.calls
       const arg = calls[0]![0]
       const sentMsg = JSON.parse(arg)
-      expect(sentMsg.data.items).toHaveLength(10)
+      expect(sentMsg.data.items).toHaveLength(UPLOAD_SLICE_SIZE)
     })
   })
 
@@ -1169,7 +1169,7 @@ describe('useCollections Listeners', () => {
       store.uploadSliceIndex = 0
 
       const newItems: Record<string, Item> = {}
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < UPLOAD_SLICE_SIZE + 5; i++) {
         const id = `img${i}`
         newItems[id] = createMockItem({
           id,
@@ -1184,7 +1184,7 @@ describe('useCollections Listeners', () => {
       }
       store.replaceItems(newItems)
 
-      listeners.onUploadSliceAck(0)
+      listeners.onUploadSliceAck(0, [])
 
       expect(store.uploadSliceIndex).toBe(1)
       expect(mockSend).toHaveBeenCalled()
@@ -1204,20 +1204,57 @@ describe('useCollections Listeners', () => {
       store.batchId = 100
       store.uploadSliceIndex = 1
 
-      listeners.onUploadSliceAck(0)
+      listeners.onUploadSliceAck(0, [])
 
       expect(store.uploadSliceIndex).toBe(1)
       expect(mockSend).not.toHaveBeenCalled()
     })
 
-    it('should send slice payload with batchid, handler, and up to 10 items', () => {
+    it('should update item statuses from ACK response', () => {
+      store.batchId = 100
+      store.uploadSliceIndex = 0
+
+      const newItems: Record<string, Item> = {}
+      for (let i = 0; i < 5; i++) {
+        const id = `img${i}`
+        newItems[id] = createMockItem({
+          id,
+          meta: {
+            selected: true,
+            license: '',
+            description: { value: '', language: 'en' },
+            categories: '',
+            status: UPLOAD_STATUS.Queued,
+          },
+          image: createMockImage({ id }),
+        })
+      }
+      store.replaceItems(newItems)
+
+      const ackItems = [
+        { id: 'img0', status: UPLOAD_STATUS.Queued },
+        { id: 'img1', status: UPLOAD_STATUS.Queued },
+        { id: 'img2', status: UPLOAD_STATUS.InProgress },
+      ]
+
+      listeners.onUploadSliceAck(0, ackItems)
+
+      expect(store.uploadSliceIndex).toBe(1)
+      expect(store.items.img0!.meta.status).toBe(UPLOAD_STATUS.Queued)
+      expect(store.items.img1!.meta.status).toBe(UPLOAD_STATUS.Queued)
+      expect(store.items.img2!.meta.status).toBe(UPLOAD_STATUS.InProgress)
+      expect(store.items.img3!.meta.status).toBe(UPLOAD_STATUS.Queued) // Unchanged
+      expect(store.items.img4!.meta.status).toBe(UPLOAD_STATUS.Queued) // Unchanged
+    })
+
+    it('should send slice payload with batchid, handler, and up to UPLOAD_SLICE_SIZE items', () => {
       store.batchId = 100
       store.uploadSliceIndex = 0
       store.input = 'input'
       store.globalLicense = ''
 
       const newItems: Record<string, Item> = {}
-      for (let i = 0; i < 25; i++) {
+      for (let i = 0; i < UPLOAD_SLICE_SIZE * 2 + 5; i++) {
         const id = `img${i}`
         newItems[id] = createMockItem({
           id,
@@ -1232,7 +1269,7 @@ describe('useCollections Listeners', () => {
       }
       store.replaceItems(newItems)
 
-      listeners.onUploadSliceAck(0)
+      listeners.onUploadSliceAck(0, [])
 
       expect(mockSend).toHaveBeenCalled()
       const calls = (mockSend as Mock<(data: string) => void>).mock.calls
@@ -1241,7 +1278,7 @@ describe('useCollections Listeners', () => {
       const sentMsg = JSON.parse(arg)
       expect(sentMsg.data.batchid).toBe(100)
       expect(sentMsg.data.handler).toBe('mapillary')
-      expect(sentMsg.data.items).toHaveLength(10)
+      expect(sentMsg.data.items).toHaveLength(UPLOAD_SLICE_SIZE)
       expect(sentMsg.data.items[0]).toMatchObject({
         input: 'input',
         labels: { value: 'd', language: 'en' },
@@ -1255,7 +1292,7 @@ describe('useCollections Listeners', () => {
       store.batchId = 100
       store.uploadSliceIndex = 0
 
-      listeners.onUploadSliceAck(undefined as unknown as number)
+      listeners.onUploadSliceAck(undefined as unknown as number, [])
 
       expect(store.uploadSliceIndex).toBe(0)
       expect(mockSend).not.toHaveBeenCalled()
@@ -1265,7 +1302,7 @@ describe('useCollections Listeners', () => {
       store.batchId = 100
       store.uploadSliceIndex = 0
 
-      listeners.onUploadSliceAck(null as unknown as number)
+      listeners.onUploadSliceAck(null as unknown as number, [])
 
       expect(store.uploadSliceIndex).toBe(0)
       expect(mockSend).not.toHaveBeenCalled()
@@ -1275,7 +1312,7 @@ describe('useCollections Listeners', () => {
       store.batchId = 100
       store.uploadSliceIndex = 0
 
-      listeners.onUploadSliceAck(NaN)
+      listeners.onUploadSliceAck(NaN, [])
 
       expect(store.uploadSliceIndex).toBe(0)
       expect(mockSend).not.toHaveBeenCalled()
@@ -1285,7 +1322,7 @@ describe('useCollections Listeners', () => {
       store.batchId = 100
       store.uploadSliceIndex = 0
 
-      listeners.onUploadSliceAck(-1)
+      listeners.onUploadSliceAck(-1, [])
 
       expect(store.uploadSliceIndex).toBe(0)
       expect(mockSend).not.toHaveBeenCalled()
@@ -1295,7 +1332,7 @@ describe('useCollections Listeners', () => {
       store.batchId = null
       store.uploadSliceIndex = 0
 
-      listeners.onUploadSliceAck(0)
+      listeners.onUploadSliceAck(0, [])
 
       expect(store.uploadSliceIndex).toBe(1) // Index gets incremented even when batchId is null
       expect(mockSend).not.toHaveBeenCalled()
@@ -1305,7 +1342,7 @@ describe('useCollections Listeners', () => {
       store.batchId = 100
       store.uploadSliceIndex = -1
 
-      listeners.onUploadSliceAck(0)
+      listeners.onUploadSliceAck(0, [])
 
       expect(store.uploadSliceIndex).toBe(-1)
       expect(mockSend).not.toHaveBeenCalled()
@@ -1317,7 +1354,7 @@ describe('useCollections Listeners', () => {
       store.isLoading = true
 
       const newItems: Record<string, Item> = {}
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < UPLOAD_SLICE_SIZE + 5; i++) {
         const id = `img${i}`
         newItems[id] = createMockItem({
           id,
@@ -1332,16 +1369,18 @@ describe('useCollections Listeners', () => {
       }
       store.replaceItems(newItems)
 
-      listeners.onUploadSliceAck(1)
+      listeners.onUploadSliceAck(1, [])
 
       expect(store.uploadSliceIndex).toBe(2)
+      expect(store.isBatchCreated).toBe(true)
       expect(mockSend).toHaveBeenCalled()
       const calls = (mockSend as Mock<(data: string) => void>).mock.calls
       expect(calls.length).toBeGreaterThan(0)
       const arg = calls[calls.length - 1]![0]
       const sentMsg = JSON.parse(arg)
 
-      // With 15 items, slice index 2 means start at 20, which is >= 15, so it should complete
+      // With UPLOAD_SLICE_SIZE + 5 items, slice index 2 means start at UPLOAD_SLICE_SIZE * 2,
+      // which is >= UPLOAD_SLICE_SIZE + 5, so it should complete
       if (sentMsg.type === 'UPLOAD_SLICE') {
         expect(sentMsg.data.items).toHaveLength(0) // Empty slice, should trigger subscription
       }
@@ -1354,7 +1393,7 @@ describe('useCollections Listeners', () => {
       store.globalLicense = ''
 
       const newItems: Record<string, Item> = {}
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < UPLOAD_SLICE_SIZE + 5; i++) {
         const id = `img${i}`
         newItems[id] = createMockItem({
           id,
@@ -1369,7 +1408,7 @@ describe('useCollections Listeners', () => {
       }
       store.replaceItems(newItems)
 
-      listeners.onUploadSliceAck(0)
+      listeners.onUploadSliceAck(0, [])
 
       expect(mockSend).toHaveBeenCalled()
       const calls = (mockSend as Mock<(data: string) => void>).mock.calls
@@ -1391,7 +1430,7 @@ describe('useCollections Listeners', () => {
       store.globalLicense = 'CC-BY-4.0'
 
       const newItems: Record<string, Item> = {}
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < UPLOAD_SLICE_SIZE + 5; i++) {
         const id = `img${i}`
         newItems[id] = createMockItem({
           id,
@@ -1406,7 +1445,7 @@ describe('useCollections Listeners', () => {
       }
       store.replaceItems(newItems)
 
-      listeners.onUploadSliceAck(0)
+      listeners.onUploadSliceAck(0, [])
 
       expect(mockSend).toHaveBeenCalled()
       const calls = (mockSend as Mock<(data: string) => void>).mock.calls

@@ -4,7 +4,8 @@ const toWs = (): string => {
   if (import.meta.env.DEV) {
     return `ws://localhost:8000/ws`
   }
-  return `${location.origin.replace('http', 'ws')}/ws`
+  const origin = typeof location !== 'undefined' ? location.origin : 'http://localhost'
+  return `${origin.replace('http', 'ws')}/ws`
 }
 
 export const useSocket = useWebSocket(toWs(), {
