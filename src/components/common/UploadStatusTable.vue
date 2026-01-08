@@ -11,25 +11,23 @@ type SkeletonRow = {
 }
 
 const showSkeleton = ref(true)
-const total = Math.max(1, store.selectedItems.length) // To avoid division by zero
+const total = computed(() => Math.max(1, store.selectedItems.length)) // To avoid division by zero
 
-// Creation phase detection
-const isCreationPhase = computed(() => store.isCreatingBatch)
+const creationProgress = computed<MeterItem[]>(() => {
+  const uploadRequested = store.selectedItems.filter(
+    (item) => item.meta.status !== undefined,
+  ).length
 
-// Creation progress calculation
-const creationProgress = computed(() => {
-  const totalItems = store.selectedItems.length
-  const itemsCreated = Math.min(store.uploadSliceIndex * 10, totalItems)
-  const percentage = totalItems > 0 ? (itemsCreated / totalItems) * 100 : 0
-
-  return {
-    current: itemsCreated,
-    total: totalItems,
-    percentage,
-  }
+  return [
+    {
+      label: 'Queued',
+      value: (uploadRequested * 100) / total.value,
+      color: 'var(--p-surface-500)',
+    },
+  ]
 })
 
-const meters = computed<MeterItem[]>(() => {
+const uploadProgress = computed<MeterItem[]>(() => {
   const successful = store.selectedItems.filter(
     (item) => item.meta.status === UPLOAD_STATUS.Completed,
   ).length
@@ -47,11 +45,11 @@ const meters = computed<MeterItem[]>(() => {
   ).length
 
   return [
-    { label: 'Successful', value: (successful * 100) / total, color: 'var(--p-green-500)' },
-    { label: 'Duplicate', value: (duplicate * 100) / total, color: 'var(--p-fuchsia-800)' },
-    { label: 'Failed', value: (failed * 100) / total, color: 'var(--p-red-500)' },
-    { label: 'Processing', value: (inProgress * 100) / total, color: 'var(--p-blue-500)' },
-    { label: 'Queued', value: (queued * 100) / total, color: 'var(--p-gray-300)' },
+    { label: 'Successful', value: (successful * 100) / total.value, color: 'var(--p-green-500)' },
+    { label: 'Duplicate', value: (duplicate * 100) / total.value, color: 'var(--p-fuchsia-800)' },
+    { label: 'Failed', value: (failed * 100) / total.value, color: 'var(--p-red-500)' },
+    { label: 'Processing', value: (inProgress * 100) / total.value, color: 'var(--p-blue-500)' },
+    { label: 'Queued', value: (queued * 100) / total.value, color: 'var(--p-gray-300)' },
   ]
 })
 
@@ -118,7 +116,7 @@ onUnmounted(() => {
       <div class="flex flex-col gap-3">
         <div class="flex items-center justify-between">
           <span class="text-xl font-bold">
-            {{ isCreationPhase ? 'Sending upload request...' : 'Uploading...' }}
+            {{ store.isBatchCreated ? 'Upload status' : 'Queueing uploads...' }}
           </span>
           <Button
             v-if="canRetry"
@@ -129,25 +127,7 @@ onUnmounted(() => {
             size="small"
           />
         </div>
-
-        <div
-          v-if="isCreationPhase"
-          class="flex items-center gap-3"
-        >
-          <ProgressBar
-            :value="creationProgress.percentage"
-            class="flex-1"
-            :show-value="false"
-          />
-          <span class="text-sm font-medium text-right">
-            {{ creationProgress.current }} / {{ creationProgress.total }}
-          </span>
-        </div>
-
-        <MeterGroup
-          v-else
-          :value="meters"
-        />
+        <MeterGroup :value="store.isBatchCreated ? uploadProgress : creationProgress" />
       </div>
     </template>
 

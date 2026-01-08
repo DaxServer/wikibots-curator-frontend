@@ -24,6 +24,8 @@ import type { Image } from '@/types/image'
 import { UPLOAD_STATUS, type UploadStatus } from '@/types/image'
 import { markRaw, watch } from 'vue'
 
+export const UPLOAD_SLICE_SIZE = 18
+
 const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
   id,
   index,
@@ -74,7 +76,6 @@ export const initCollectionsListeners = () => {
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
-    store.isCreatingBatch = false
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
 
@@ -262,13 +263,15 @@ export const initCollectionsListeners = () => {
   const onBatchCreated = (batchId: number) => {
     store.batchId = batchId
     store.uploadSliceIndex = 0
-    store.isCreatingBatch = true
     sendNextSlice()
   }
 
-  const onUploadSliceAck = (sliceId: number) => {
+  const onUploadSliceAck = (sliceId: number, items: UploadSliceAckItem[]) => {
     if (sliceId === store.uploadSliceIndex) {
       store.uploadSliceIndex += 1
+      items.forEach(({ id, status }) => {
+        store.updateItem(id, 'status', status as UploadStatus)
+      })
       sendNextSlice()
     }
   }
@@ -312,7 +315,7 @@ export const initCollectionsListeners = () => {
         onBatchCreated(msg.data)
         break
       case 'UPLOAD_SLICE_ACK':
-        onUploadSliceAck(msg.data)
+        onUploadSliceAck(msg.sliceid, msg.data)
         break
     }
   })
@@ -321,16 +324,16 @@ export const initCollectionsListeners = () => {
     if (!store.batchId) return
 
     const totalItems = store.selectedItems.length
-    const start = store.uploadSliceIndex * 10
+    const start = store.uploadSliceIndex * UPLOAD_SLICE_SIZE
 
     if (start >= totalItems) {
       store.isLoading = false
-      store.isCreatingBatch = false
+      store.isBatchCreated = true
       sendSubscribeBatch(store.batchId)
       return
     }
 
-    const end = Math.min(start + 10, totalItems)
+    const end = Math.min(start + UPLOAD_SLICE_SIZE, totalItems)
     const sliceItems = store.selectedItems.slice(start, end).map((item) => ({
       id: item.id,
       input: store.input,
@@ -376,7 +379,6 @@ export const useCollections = () => {
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
-    store.isCreatingBatch = false
     send(JSON.stringify({ type: 'SUBSCRIBE_BATCH', data: batchId } as SubscribeBatch))
   }
 
