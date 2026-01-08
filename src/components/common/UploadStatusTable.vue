@@ -13,6 +13,22 @@ type SkeletonRow = {
 const showSkeleton = ref(true)
 const total = Math.max(1, store.selectedItems.length) // To avoid division by zero
 
+// Creation phase detection
+const isCreationPhase = computed(() => store.isCreatingBatch)
+
+// Creation progress calculation
+const creationProgress = computed(() => {
+  const totalItems = store.selectedItems.length
+  const itemsCreated = Math.min(store.uploadSliceIndex * 10, totalItems)
+  const percentage = totalItems > 0 ? (itemsCreated / totalItems) * 100 : 0
+
+  return {
+    current: itemsCreated,
+    total: totalItems,
+    percentage,
+  }
+})
+
 const meters = computed<MeterItem[]>(() => {
   const successful = store.selectedItems.filter(
     (item) => item.meta.status === UPLOAD_STATUS.Completed,
@@ -101,7 +117,9 @@ onUnmounted(() => {
     <template #header>
       <div class="flex flex-col gap-3">
         <div class="flex items-center justify-between">
-          <span class="text-xl font-bold">Uploading...</span>
+          <span class="text-xl font-bold">
+            {{ isCreationPhase ? 'Sending upload request...' : 'Uploading...' }}
+          </span>
           <Button
             v-if="canRetry"
             icon="pi pi-refresh"
@@ -111,7 +129,25 @@ onUnmounted(() => {
             size="small"
           />
         </div>
-        <MeterGroup :value="meters" />
+
+        <div
+          v-if="isCreationPhase"
+          class="flex items-center gap-3"
+        >
+          <ProgressBar
+            :value="creationProgress.percentage"
+            class="flex-1"
+            :show-value="false"
+          />
+          <span class="text-sm font-medium text-right">
+            {{ creationProgress.current }} / {{ creationProgress.total }}
+          </span>
+        </div>
+
+        <MeterGroup
+          v-else
+          :value="meters"
+        />
       </div>
     </template>
 
