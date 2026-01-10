@@ -64,8 +64,9 @@ export const useCollectionsStore = defineStore('collections', () => {
   const selectedCount = computed(() => selectedItems.value.length)
   const itemsWithErrorsCount = computed(
     () =>
-      selectedItems.value.filter((i) => TITLE_ERROR_STATUSES.includes(i.meta.titleStatus as never))
-        .length,
+      selectedItems.value.filter(
+        (i) => i.meta.titleStatus && TITLE_ERROR_STATUSES.includes(i.meta.titleStatus),
+      ).length,
   )
   const itemsWithExistingTitlesCount = computed(
     () => selectedItems.value.filter((i) => i.image.existing.length > 0).length,

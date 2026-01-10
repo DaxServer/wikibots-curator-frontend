@@ -8,8 +8,8 @@ const showErrorsOnly = ref(false)
 
 const displayedItems = computed(() => {
   if (showErrorsOnly.value) {
-    return store.selectedItems.filter((i) =>
-      TITLE_ERROR_STATUSES.includes(i.meta.titleStatus as TitleStatus),
+    return store.selectedItems.filter(
+      (i) => i.meta.titleStatus && TITLE_ERROR_STATUSES.includes(i.meta.titleStatus),
     )
   }
   return store.selectedItems
@@ -18,7 +18,8 @@ const displayedItems = computed(() => {
 const disablePreview = computed(() => {
   if (store.selectedCount === 0) return true
   return store.selectedItems.some(
-    (i) => i.meta.selected && TITLE_ERROR_STATUSES.includes(i.meta.titleStatus as TitleStatus),
+    (i) =>
+      i.meta.selected && i.meta.titleStatus && TITLE_ERROR_STATUSES.includes(i.meta.titleStatus),
   )
 })
 
@@ -133,7 +134,8 @@ const onPreviewEdits = () => {
             class="flex flex-col p-4 py-8 border-l-4"
             :class="{
               'border-green-600': item.meta.titleStatus === TITLE_STATUS.Available,
-              'border-red-500': TITLE_ERROR_STATUSES.includes(item.meta.titleStatus as never),
+              'border-red-500':
+                item.meta.titleStatus && TITLE_ERROR_STATUSES.includes(item.meta.titleStatus),
               'border-gray-200': item.meta.titleStatus === undefined,
               'border-yellow-500':
                 item.meta.titleStatus === TITLE_STATUS.Unknown ||

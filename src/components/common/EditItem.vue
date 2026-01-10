@@ -62,7 +62,7 @@ const onTitleBlur = () => {
         <IconField>
           <InputText
             :modelValue="displayedTitle"
-            :invalid="TITLE_ERROR_STATUSES.includes(item.meta.titleStatus as never)"
+            :invalid="item.meta.titleStatus && TITLE_ERROR_STATUSES.includes(item.meta.titleStatus)"
             @update:modelValue="onTitleInput($event)"
             @focus="onTitleFocus"
             @blur="onTitleBlur"
@@ -73,9 +73,8 @@ const onTitleBlur = () => {
             :class="{
               'text-inherit! pi-spin pi-spinner': item.meta.titleStatus === TITLE_STATUS.Checking,
               'text-green-600! pi-check-circle': item.meta.titleStatus === TITLE_STATUS.Available,
-              'text-red-500! pi-times-circle': TITLE_ERROR_STATUSES.includes(
-                item.meta.titleStatus as never,
-              ),
+              'text-red-500! pi-times-circle':
+                item.meta.titleStatus && TITLE_ERROR_STATUSES.includes(item.meta.titleStatus),
               'text-yellow-500! pi-exclamation-triangle':
                 item.meta.titleStatus === TITLE_STATUS.Unknown,
             }"
