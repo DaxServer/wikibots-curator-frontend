@@ -83,7 +83,12 @@ const filteredUploads = computed((): BatchUploadItem[] => {
   let uploads = [...store.batchUploads]
 
   if (selectValues.value !== 'all') {
-    uploads = uploads.filter((upload) => upload.status === selectValues.value)
+    uploads = uploads.filter((upload) => {
+      if (selectValues.value === UPLOAD_STATUS.Duplicate) {
+        return isDuplicateStatus(upload.status as UploadStatus)
+      }
+      return upload.status === selectValues.value
+    })
   }
 
   if (searchText.value) {
