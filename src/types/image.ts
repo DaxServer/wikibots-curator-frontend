@@ -30,7 +30,24 @@ export type Item = {
   isSkeleton: boolean
 }
 
-export type TitleStatus = 'checking' | 'available' | 'taken' | 'unknown' | 'invalid' | 'blacklisted'
+export const TITLE_STATUS = {
+  Checking: 'checking',
+  Available: 'available',
+  Taken: 'taken',
+  Unknown: 'unknown',
+  Invalid: 'invalid',
+  Blacklisted: 'blacklisted',
+  Duplicate: 'duplicate',
+} as const
+
+export type TitleStatus = (typeof TITLE_STATUS)[keyof typeof TITLE_STATUS]
+
+export const TITLE_ERROR_STATUSES: readonly TitleStatus[] = [
+  TITLE_STATUS.Taken,
+  TITLE_STATUS.Invalid,
+  TITLE_STATUS.Blacklisted,
+  TITLE_STATUS.Duplicate,
+] as const
 
 export const UPLOAD_STATUS = {
   Queued: 'queued',

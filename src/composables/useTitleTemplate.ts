@@ -1,5 +1,6 @@
 import { useCommons } from '@/composables/useCommons'
 import { useCollectionsStore } from '@/stores/collections.store'
+import type { Image } from '@/types/image'
 import { applyTitleTemplate, validPaths, validateTemplate } from '@/utils/titleTemplate'
 import { computed, ref } from 'vue'
 
@@ -19,12 +20,13 @@ export const useTitleTemplate = () => {
     }
     store.globalTitleTemplate = internalTemplate.value
 
-    const itemsToVerify: { id: string; title: string }[] = []
+    const itemsToVerify: { id: string; title: string; image: Image }[] = []
     store.selectedItems.forEach((item) => {
       if (!store.items[item.id]?.meta.title) {
         itemsToVerify.push({
           id: item.id,
           title: applyTitleTemplate(internalTemplate.value, item.image, store.input),
+          image: item.image,
         })
       }
     })
