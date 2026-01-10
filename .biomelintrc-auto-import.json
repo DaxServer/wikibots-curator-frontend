@@ -102,6 +102,8 @@
       "SubscribeBatchesList",
       "SubscribeBatchesListData",
       "Subscribed",
+      "TITLE_ERROR_STATUSES",
+      "TITLE_STATUS",
       "TimeDataValue",
       "TimeValueSnak",
       "TitleBlacklistedError",

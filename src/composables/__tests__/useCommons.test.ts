@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { createPinia, setActivePinia } from 'pinia'
 import { useCollectionsStore } from '../../stores/collections.store'
-import type { Item } from '../../types/image'
+import type { Image, Item } from '../../types/image'
+import { TITLE_STATUS } from '../../types/image'
 
 // Mock ts-debounce
 let pendingDebounceExecutors: ((...args: unknown[]) => void)[] = []
@@ -66,7 +67,7 @@ describe('useCommons', () => {
       title,
       description: { language: 'en', value: '' },
       categories: '',
-      titleStatus: 'unknown',
+      titleStatus: TITLE_STATUS.Unknown,
     },
     isSkeleton: false,
   })
@@ -94,9 +95,9 @@ describe('useCommons', () => {
     )
     global.fetch = mockFetch as unknown as typeof fetch
 
-    await verifyTitles([{ id: '1', title: 'Test Title.jpeg' }])
+    await verifyTitles([{ id: '1', title: 'Test Title.jpeg', image: item.image }])
 
-    expect(store.items['1']!.meta.titleStatus).toBe('available')
+    expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Available)
     expect(mockFetch).toHaveBeenCalled()
   })
 
@@ -123,9 +124,9 @@ describe('useCommons', () => {
     )
     global.fetch = mockFetch as unknown as typeof fetch
 
-    await verifyTitles([{ id: '1', title: 'Taken Title.jpeg' }])
+    await verifyTitles([{ id: '1', title: 'Taken Title.jpeg', image: item.image }])
 
-    expect(store.items['1']!.meta.titleStatus).toBe('taken')
+    expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Taken)
   })
 
   it('debounce verifyTitles waits before calling API', async () => {
@@ -151,10 +152,10 @@ describe('useCommons', () => {
     global.fetch = mockFetch as unknown as typeof fetch
 
     // Call with debounce
-    verifyTitles([{ id: '1', title: 'Debounce Title.jpeg' }], { debounce: true })
+    verifyTitles([{ id: '1', title: 'Debounce Title.jpeg', image: item.image }], { debounce: true })
 
     // Status should be checking immediately
-    expect(store.items['1']!.meta.titleStatus).toBe('checking')
+    expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Checking)
 
     // Fetch should not be called immediately (it's debounced)
     expect(mockFetch).not.toHaveBeenCalled()
@@ -167,7 +168,7 @@ describe('useCommons', () => {
     pendingDebounceExecutors = []
 
     expect(mockFetch).toHaveBeenCalled()
-    expect(store.items['1']!.meta.titleStatus).toBe('available')
+    expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Available)
   })
 
   it('cancelTitleVerification prevents debounced checks from calling API', async () => {
@@ -192,10 +193,10 @@ describe('useCommons', () => {
     )
     global.fetch = mockFetch as unknown as typeof fetch
 
-    verifyTitles([{ id: '1', title: 'Debounce Title.jpeg' }], { debounce: true })
+    verifyTitles([{ id: '1', title: 'Debounce Title.jpeg', image: item.image }], { debounce: true })
     cancelTitleVerification()
 
-    expect(store.items['1']!.meta.titleStatus).toBe('unknown')
+    expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Unknown)
 
     expect(pendingDebounceExecutors.length).toBe(1)
     for (const exec of pendingDebounceExecutors) {
@@ -204,21 +205,22 @@ describe('useCommons', () => {
     pendingDebounceExecutors = []
 
     expect(mockFetch).not.toHaveBeenCalled()
-    expect(store.items['1']!.meta.titleStatus).toBe('unknown')
+    expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Unknown)
   })
 
   it('cancelTitleVerification stops bulk checks after first 50-title chunk', async () => {
     const store = useCollectionsStore()
 
-    const itemsToVerify: { id: string; title: string }[] = []
+    const itemsToVerify: { id: string; title: string; image: Image }[] = []
     const pages: Record<string, { missing?: boolean; title: string; revisions?: unknown[] }> = {}
 
     for (let i = 0; i < 51; i += 1) {
       const id = String(i + 1)
       const title = `Title ${id}.jpeg`
 
-      store.items[id] = createMockItem(id, title)
-      itemsToVerify.push({ id, title })
+      const item = createMockItem(id, title)
+      store.items[id] = item
+      itemsToVerify.push({ id, title, image: item.image })
 
       if (i < 50) {
         pages[id] = { missing: true, title: `File:${title}` }
@@ -241,7 +243,292 @@ describe('useCommons', () => {
     await verifyTitles(itemsToVerify)
 
     expect(mockFetch).toHaveBeenCalledTimes(1)
-    expect(store.items['51']!.meta.titleStatus).toBe('unknown')
+    expect(store.items['51']!.meta.titleStatus).toBe(TITLE_STATUS.Unknown)
+  })
+
+  describe('validateTitle', () => {
+    it('returns invalid for files without valid extension', () => {
+      const { validateTitle } = useCommons()
+      const item = createMockItem('1', 'noextension')
+      const duplicates = new Set<string>()
+
+      const result = validateTitle(
+        { id: item.id, title: 'noextension', image: item.image },
+        duplicates,
+      )
+
+      expect(result).toBe(TITLE_STATUS.Invalid)
+    })
+
+    it('returns blacklisted for blacklisted titles', () => {
+      const { validateTitle } = useCommons()
+      const item = createMockItem('1', ' lowercase.jpg')
+      const duplicates = new Set<string>()
+
+      const result = validateTitle(
+        { id: item.id, title: ' lowercase.jpg', image: item.image },
+        duplicates,
+      )
+
+      expect(result).toBe(TITLE_STATUS.Blacklisted)
+    })
+
+    it('returns duplicate for duplicate titles', () => {
+      const { validateTitle } = useCommons()
+      const item = createMockItem('1', 'Photo.jpg')
+      const duplicates = new Set<string>(['Photo.jpg'])
+
+      const result = validateTitle(
+        { id: item.id, title: 'Photo.jpg', image: item.image },
+        duplicates,
+      )
+
+      expect(result).toBe(TITLE_STATUS.Duplicate)
+    })
+
+    it('returns null for valid unique title', () => {
+      const { validateTitle } = useCommons()
+      const item = createMockItem('1', 'Valid Photo.jpg')
+      const duplicates = new Set<string>()
+
+      const result = validateTitle(
+        { id: item.id, title: 'Valid Photo.jpg', image: item.image },
+        duplicates,
+      )
+
+      expect(result).toBeNull()
+    })
+
+    it('prioritizes invalid check over duplicate check', () => {
+      const { validateTitle } = useCommons()
+      const item = createMockItem('1', 'noextension')
+      const duplicates = new Set<string>(['noextension'])
+
+      const result = validateTitle(
+        { id: item.id, title: 'noextension', image: item.image },
+        duplicates,
+      )
+
+      expect(result).toBe(TITLE_STATUS.Invalid)
+    })
+
+    it('prioritizes invalid check over blacklist check', () => {
+      const { validateTitle } = useCommons()
+      const item = createMockItem('1', ' noextension')
+      const duplicates = new Set<string>()
+
+      const result = validateTitle(
+        { id: item.id, title: ' noextension', image: item.image },
+        duplicates,
+      )
+
+      expect(result).toBe(TITLE_STATUS.Invalid)
+    })
+
+    it('returns invalid for empty title before checking duplicates', () => {
+      const { validateTitle } = useCommons()
+
+      const item = createMockItem('1', '')
+      // Empty title is invalid before duplicate check
+      const result = validateTitle({ id: item.id, title: '', image: item.image }, new Set<string>())
+
+      expect(result).toBe(TITLE_STATUS.Invalid)
+    })
+
+    it('uses effective title from getTemplateTitle when duplicate check is needed', () => {
+      const { validateTitle } = useCommons()
+
+      const item = createMockItem('1', 'Photo.jpg')
+      // buildTitle generates "Photo from Mapillary 2023-01-01 (1).jpg"
+      const defaultTitle = 'Photo from Mapillary 2023-01-01 (1).jpg'
+      const duplicates = new Set<string>([defaultTitle])
+
+      const result = validateTitle(
+        { id: item.id, title: 'Photo.jpg', image: item.image },
+        duplicates,
+      )
+
+      expect(result).toBeNull() // Photo.jpg is valid and not in duplicates
+    })
+  })
+
+  describe('findDuplicateTitles', () => {
+    it('returns empty set when no duplicates', () => {
+      const { findDuplicateTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'Photo1.jpg')
+      const item2 = createMockItem('2', 'Photo2.jpg')
+      store.replaceItems({ '1': item1, '2': item2 })
+
+      const duplicates = findDuplicateTitles()
+
+      expect(duplicates.size).toBe(0)
+    })
+
+    it('finds duplicate titles across selected items', () => {
+      const { findDuplicateTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'Photo.jpg')
+      const item2 = createMockItem('2', 'Photo.jpg')
+      const item3 = createMockItem('3', 'Other.jpg')
+      store.replaceItems({ '1': item1, '2': item2, '3': item3 })
+
+      const duplicates = findDuplicateTitles()
+
+      expect(duplicates.size).toBe(1)
+      expect(duplicates.has('Photo.jpg')).toBe(true)
+      expect(duplicates.has('Other.jpg')).toBe(false)
+    })
+
+    it('finds multiple duplicate groups', () => {
+      const { findDuplicateTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'A.jpg')
+      const item2 = createMockItem('2', 'A.jpg')
+      const item3 = createMockItem('3', 'B.jpg')
+      const item4 = createMockItem('4', 'B.jpg')
+      const item5 = createMockItem('5', 'C.jpg')
+      store.replaceItems({ '1': item1, '2': item2, '3': item3, '4': item4, '5': item5 })
+
+      const duplicates = findDuplicateTitles()
+
+      expect(duplicates.size).toBe(2)
+      expect(duplicates.has('A.jpg')).toBe(true)
+      expect(duplicates.has('B.jpg')).toBe(true)
+      expect(duplicates.has('C.jpg')).toBe(false)
+    })
+
+    it('finds triple duplicates', () => {
+      const { findDuplicateTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'Photo.jpg')
+      const item2 = createMockItem('2', 'Photo.jpg')
+      const item3 = createMockItem('3', 'Photo.jpg')
+      store.replaceItems({ '1': item1, '2': item2, '3': item3 })
+
+      const duplicates = findDuplicateTitles()
+
+      expect(duplicates.size).toBe(1)
+      expect(duplicates.has('Photo.jpg')).toBe(true)
+    })
+
+    it('ignores unselected items', () => {
+      const { findDuplicateTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'Photo.jpg')
+      const item2 = createMockItem('2', 'Photo.jpg')
+      item2.meta.selected = false
+      const item3 = createMockItem('3', 'Other.jpg')
+      store.replaceItems({ '1': item1, '2': item2, '3': item3 })
+
+      const duplicates = findDuplicateTitles()
+
+      expect(duplicates.size).toBe(0)
+    })
+
+    it('uses effective title from template', () => {
+      const { findDuplicateTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      // Set items with same explicit title to simulate template collision
+      const item1 = createMockItem('1', 'Same Title.jpg')
+      const item2 = createMockItem('2', 'Same Title.jpg')
+      const item3 = createMockItem('3', 'Same Title.jpg')
+      store.replaceItems({ '1': item1, '2': item2, '3': item3 })
+
+      const duplicates = findDuplicateTitles()
+
+      // All items have the same title, so they should all be duplicates
+      expect(duplicates.size).toBe(1)
+      expect(duplicates.has('Same Title.jpg')).toBe(true)
+    })
+
+    it('handles empty selected items', () => {
+      const { findDuplicateTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'Photo.jpg')
+      item1.meta.selected = false
+      const item2 = createMockItem('2', 'Other.jpg')
+      item2.meta.selected = false
+      store.replaceItems({ '1': item1, '2': item2 })
+
+      const duplicates = findDuplicateTitles()
+
+      expect(duplicates.size).toBe(0)
+    })
+  })
+
+  describe('verifyTitles with duplicate detection', () => {
+    it('marks duplicate titles with duplicate status', async () => {
+      const { verifyTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'Photo.jpg')
+      const item2 = createMockItem('2', 'Photo.jpg')
+      store.replaceItems({ '1': item1, '2': item2 })
+
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              query: { pages: {} },
+            }),
+        }),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      await verifyTitles([
+        { id: '1', title: 'Photo.jpg', image: item1.image },
+        { id: '2', title: 'Photo.jpg', image: item2.image },
+      ])
+
+      expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Duplicate)
+      expect(store.items['2']!.meta.titleStatus).toBe(TITLE_STATUS.Duplicate)
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+
+    it('only checks non-duplicate titles against API', async () => {
+      const { verifyTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      const item1 = createMockItem('1', 'Duplicate.jpg')
+      const item2 = createMockItem('2', 'Duplicate.jpg')
+      const item3 = createMockItem('3', 'Unique.jpg')
+      store.replaceItems({ '1': item1, '2': item2, '3': item3 })
+
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              query: {
+                pages: {
+                  '123': { missing: true, title: 'File:Unique.jpg' },
+                },
+              },
+            }),
+        }),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      await verifyTitles([
+        { id: '1', title: 'Duplicate.jpg', image: item1.image },
+        { id: '2', title: 'Duplicate.jpg', image: item2.image },
+        { id: '3', title: 'Unique.jpg', image: item3.image },
+      ])
+
+      expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Duplicate)
+      expect(store.items['2']!.meta.titleStatus).toBe(TITLE_STATUS.Duplicate)
+      expect(store.items['3']!.meta.titleStatus).toBe(TITLE_STATUS.Available)
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('buildWikitext', () => {

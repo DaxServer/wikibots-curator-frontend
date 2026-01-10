@@ -7,18 +7,15 @@
 export {}
 declare global {
   const AVAILABLE_IMAGE_FIELDS: typeof import('./src/utils/titleTemplate').AVAILABLE_IMAGE_FIELDS
-  const BATCH_SIZE: typeof import('./src/composables/useCollections').BATCH_SIZE
   const COLOR_VARIANTS: typeof import('./src/composables/useUploadStatus').COLOR_VARIANTS
   const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
-  const MessageProps: typeof import('primevue/message').MessageProps
   const Noir: typeof import('./src/assets/Noir').default
   const Rank: typeof import('./src/types/asyncapi').Rank
   const SnakDataType: typeof import('./src/types/asyncapi').SnakDataType
   const SnakType: typeof import('./src/types/asyncapi').SnakType
-  const UPLOAD_S: typeof import('./src/composables/useCollections').UPLOAD_S
-  const UPLOAD_SLI: typeof import('./src/composables/useCollections').UPLOAD_SLI
-  const UPLOAD_SLIC: typeof import('./src/composables/useCollections').UPLOAD_SLIC
+  const TITLE_ERROR_STATUSES: typeof import('./src/types/image').TITLE_ERROR_STATUSES
+  const TITLE_STATUS: typeof import('./src/types/image').TITLE_STATUS
   const UPLOAD_SLICE_SIZE: typeof import('./src/composables/useCollections').UPLOAD_SLICE_SIZE
   const UPLOAD_STATUS: typeof import('./src/types/image').UPLOAD_STATUS
   const VALID_EXTENSIONS: typeof import('./src/utils/titleTemplate').VALID_EXTENSIONS
@@ -413,6 +410,8 @@ declare module 'vue' {
     readonly Rank: UnwrapRef<typeof import('./src/types/asyncapi')['Rank']>
     readonly SnakDataType: UnwrapRef<typeof import('./src/types/asyncapi')['SnakDataType']>
     readonly SnakType: UnwrapRef<typeof import('./src/types/asyncapi')['SnakType']>
+    readonly TITLE_ERROR_STATUSES: UnwrapRef<typeof import('./src/types/image')['TITLE_ERROR_STATUSES']>
+    readonly TITLE_STATUS: UnwrapRef<typeof import('./src/types/image')['TITLE_STATUS']>
     readonly UPLOAD_SLICE_SIZE: UnwrapRef<typeof import('./src/composables/useCollections')['UPLOAD_SLICE_SIZE']>
     readonly UPLOAD_STATUS: UnwrapRef<typeof import('./src/types/image')['UPLOAD_STATUS']>
     readonly VALID_EXTENSIONS: UnwrapRef<typeof import('./src/utils/titleTemplate')['VALID_EXTENSIONS']>

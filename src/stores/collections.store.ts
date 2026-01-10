@@ -1,6 +1,7 @@
 import type { BatchItem, BatchUploadItem, Creator } from '@/types/asyncapi'
 import type { Handler, Layout } from '@/types/collections'
 import type { Item, Metadata, MetadataKey } from '@/types/image'
+import { TITLE_ERROR_STATUSES } from '@/types/image'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, shallowRef } from 'vue'
 
@@ -63,9 +64,8 @@ export const useCollectionsStore = defineStore('collections', () => {
   const selectedCount = computed(() => selectedItems.value.length)
   const itemsWithErrorsCount = computed(
     () =>
-      selectedItems.value.filter(
-        (i) => i.meta.titleStatus === 'taken' || i.meta.titleStatus === 'blacklisted',
-      ).length,
+      selectedItems.value.filter((i) => TITLE_ERROR_STATUSES.includes(i.meta.titleStatus as never))
+        .length,
   )
   const itemsWithExistingTitlesCount = computed(
     () => selectedItems.value.filter((i) => i.image.existing.length > 0).length,

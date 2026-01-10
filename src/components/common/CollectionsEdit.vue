@@ -8,17 +8,18 @@ const showErrorsOnly = ref(false)
 
 const displayedItems = computed(() => {
   if (showErrorsOnly.value) {
-    return store.selectedItems.filter((i) => i.meta.titleStatus === 'taken')
+    return store.selectedItems.filter((i) =>
+      TITLE_ERROR_STATUSES.includes(i.meta.titleStatus as TitleStatus),
+    )
   }
   return store.selectedItems
 })
 
 const disablePreview = computed(() => {
   if (store.selectedCount === 0) return true
-  for (const item of store.selectedItems) {
-    if (item.meta.selected && item.meta.titleStatus === 'taken') return true
-  }
-  return false
+  return store.selectedItems.some(
+    (i) => i.meta.selected && TITLE_ERROR_STATUSES.includes(i.meta.titleStatus as TitleStatus),
+  )
 })
 
 const onPreviewEdits = () => {
@@ -131,15 +132,13 @@ const onPreviewEdits = () => {
             :key="item.id"
             class="flex flex-col p-4 py-8 border-l-4"
             :class="{
-              'border-green-600': item.meta.titleStatus === 'available',
-              'border-red-500':
-                item.meta.titleStatus === 'taken' ||
-                item.meta.titleStatus === 'invalid' ||
-                item.meta.titleStatus === 'blacklisted',
+              'border-green-600': item.meta.titleStatus === TITLE_STATUS.Available,
+              'border-red-500': TITLE_ERROR_STATUSES.includes(item.meta.titleStatus as never),
               'border-gray-200': item.meta.titleStatus === undefined,
               'border-yellow-500':
-                item.meta.titleStatus === 'unknown' ||
-                (item.image.existing.length > 0 && item.meta.titleStatus === 'available'),
+                item.meta.titleStatus === TITLE_STATUS.Unknown ||
+                (item.image.existing.length > 0 &&
+                  item.meta.titleStatus === TITLE_STATUS.Available),
             }"
             :item="item"
             :altPrefix="altPrefix"

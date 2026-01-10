@@ -17,9 +17,9 @@ const displayedTitle = computed(() => {
 const onTitleChange = (title?: string) => {
   store.updateItem(props.item.id, 'title', title || '')
   if (!title) {
-    store.updateItem(props.item.id, 'titleStatus', 'invalid')
+    store.updateItem(props.item.id, 'titleStatus', TITLE_STATUS.Invalid)
   } else {
-    verifyTitles([{ id: props.item.id, title }], { debounce: true })
+    verifyTitles([{ id: props.item.id, title, image: props.item.image }], { debounce: true })
   }
 }
 
@@ -41,7 +41,9 @@ const onTitleBlur = () => {
   const titleToVerify = effectiveTitle.value.trim()
   if (!titleToVerify) return
 
-  verifyTitles([{ id: props.item.id, title: titleToVerify }], { debounce: true })
+  verifyTitles([{ id: props.item.id, title: titleToVerify, image: props.item.image }], {
+    debounce: true,
+  })
 }
 </script>
 
@@ -60,11 +62,7 @@ const onTitleBlur = () => {
         <IconField>
           <InputText
             :modelValue="displayedTitle"
-            :invalid="
-              item.meta.titleStatus === 'taken' ||
-              item.meta.titleStatus === 'invalid' ||
-              item.meta.titleStatus === 'blacklisted'
-            "
+            :invalid="TITLE_ERROR_STATUSES.includes(item.meta.titleStatus as never)"
             @update:modelValue="onTitleInput($event)"
             @focus="onTitleFocus"
             @blur="onTitleBlur"
@@ -73,18 +71,18 @@ const onTitleBlur = () => {
           <InputIcon
             class="pi"
             :class="{
-              'text-inherit! pi-spin pi-spinner': item.meta.titleStatus === 'checking',
-              'text-green-600! pi-check-circle': item.meta.titleStatus === 'available',
-              'text-red-500! pi-times-circle':
-                item.meta.titleStatus === 'taken' ||
-                item.meta.titleStatus === 'invalid' ||
-                item.meta.titleStatus === 'blacklisted',
-              'text-yellow-500! pi-exclamation-triangle': item.meta.titleStatus === 'unknown',
+              'text-inherit! pi-spin pi-spinner': item.meta.titleStatus === TITLE_STATUS.Checking,
+              'text-green-600! pi-check-circle': item.meta.titleStatus === TITLE_STATUS.Available,
+              'text-red-500! pi-times-circle': TITLE_ERROR_STATUSES.includes(
+                item.meta.titleStatus as never,
+              ),
+              'text-yellow-500! pi-exclamation-triangle':
+                item.meta.titleStatus === TITLE_STATUS.Unknown,
             }"
           />
         </IconField>
         <SimpleMessage
-          v-if="item.meta.titleStatus === 'checking'"
+          v-if="item.meta.titleStatus === TITLE_STATUS.Checking"
           severity="info"
           variant="simple"
           size="small"
@@ -94,7 +92,7 @@ const onTitleBlur = () => {
           Checking title availability...
         </SimpleMessage>
         <SimpleMessage
-          v-else-if="item.meta.titleStatus === 'taken'"
+          v-else-if="item.meta.titleStatus === TITLE_STATUS.Taken"
           severity="error"
           variant="simple"
           size="small"
@@ -110,7 +108,7 @@ const onTitleBlur = () => {
           </ExternalLink>
         </SimpleMessage>
         <SimpleMessage
-          v-else-if="item.meta.titleStatus === 'invalid'"
+          v-else-if="item.meta.titleStatus === TITLE_STATUS.Invalid"
           severity="error"
           variant="simple"
           size="small"
@@ -120,7 +118,7 @@ const onTitleBlur = () => {
           Extension is not valid. Valid extensions are: {{ VALID_EXTENSIONS.join(', ') }}
         </SimpleMessage>
         <SimpleMessage
-          v-else-if="item.meta.titleStatus === 'blacklisted'"
+          v-else-if="item.meta.titleStatus === TITLE_STATUS.Blacklisted"
           severity="error"
           variant="simple"
           size="small"
@@ -130,7 +128,17 @@ const onTitleBlur = () => {
           Title is blacklisted and cannot be used
         </SimpleMessage>
         <SimpleMessage
-          v-else-if="item.meta.titleStatus === 'unknown'"
+          v-else-if="item.meta.titleStatus === TITLE_STATUS.Duplicate"
+          severity="error"
+          variant="simple"
+          size="small"
+          icon="pi pi-times-circle"
+          class="pl-3"
+        >
+          Title is duplicated within this collection. Each item must have a unique title.
+        </SimpleMessage>
+        <SimpleMessage
+          v-else-if="item.meta.titleStatus === TITLE_STATUS.Unknown"
           severity="warn"
           variant="simple"
           size="small"
@@ -140,7 +148,7 @@ const onTitleBlur = () => {
           Unable to verify title availability
         </SimpleMessage>
         <SimpleMessage
-          v-else-if="item.meta.titleStatus === 'available'"
+          v-else-if="item.meta.titleStatus === TITLE_STATUS.Available"
           severity="success"
           variant="simple"
           size="small"

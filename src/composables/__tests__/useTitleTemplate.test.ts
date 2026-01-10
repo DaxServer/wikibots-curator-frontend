@@ -3,6 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, mock, spyOn } fr
 import { createPinia, setActivePinia } from 'pinia'
 import { useCollectionsStore } from '../../stores/collections.store'
 import type { Item } from '../../types/image'
+import { TITLE_STATUS } from '../../types/image'
 import { useTitleTemplate } from '../useTitleTemplate'
 
 describe('useTitleTemplate', () => {
@@ -30,7 +31,7 @@ describe('useTitleTemplate', () => {
       title: '',
       description: { language: 'en', value: '' },
       categories: '',
-      titleStatus: 'unknown',
+      titleStatus: TITLE_STATUS.Unknown,
     },
     isSkeleton: false,
   })

@@ -15,6 +15,7 @@ import {
 import { useTitleBlacklist } from '@/composables/useTitleBlacklist'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image, Item, Metadata, TitleStatus } from '@/types/image'
+import { TITLE_STATUS } from '@/types/image'
 import { applyTitleTemplate, isValidExtension } from '@/utils/titleTemplate'
 import { debounce } from 'ts-debounce'
 
@@ -89,22 +90,34 @@ ${categories}
     return buildWikitext({ ...item, meta: meta as Metadata })
   }
 
+  const validateTitle = (
+    item: { id: string; title: string; image: Image },
+    duplicateTitles: Set<string>,
+  ): TitleStatus | null => {
+    if (!isValidExtension(item.title)) return TITLE_STATUS.Invalid
+    if (isBlacklisted(item.title)) return TITLE_STATUS.Blacklisted
+
+    const effectiveTitle = item.title || getTemplateTitle(item.image)
+    if (effectiveTitle && duplicateTitles.has(effectiveTitle)) return TITLE_STATUS.Duplicate
+
+    return null
+  }
+
   const verifyTitles = async (
-    items: { id: string; title: string }[],
+    items: { id: string; title: string; image: Image }[],
     options: { debounce?: boolean } = {},
   ): Promise<void> => {
+    const duplicateTitles = findDuplicateTitles()
+
     if (options.debounce) {
       for (const item of items) {
-        if (!isValidExtension(item.title)) {
-          store.updateItem(item.id, 'titleStatus', 'invalid')
-          continue
-        }
-        if (isBlacklisted(item.title)) {
-          store.updateItem(item.id, 'titleStatus', 'blacklisted')
+        const error = validateTitle(item, duplicateTitles)
+        if (error) {
+          store.updateItem(item.id, 'titleStatus', error)
           continue
         }
 
-        store.updateItem(item.id, 'titleStatus', 'checking')
+        store.updateItem(item.id, 'titleStatus', TITLE_STATUS.Checking)
         if (!debouncedCheckTitleMap.has(item.id)) {
           const debounced = debounce(async (id: string, title: string) => {
             await checkFileTitleAvailability([{ id, title }])
@@ -117,15 +130,16 @@ ${categories}
     }
 
     const validItems: { id: string; title: string }[] = []
+
     for (const item of items) {
-      if (!isValidExtension(item.title)) {
-        store.updateItem(item.id, 'titleStatus', 'invalid')
-      } else if (isBlacklisted(item.title)) {
-        store.updateItem(item.id, 'titleStatus', 'blacklisted')
-      } else {
-        store.updateItem(item.id, 'titleStatus', 'checking')
-        validItems.push(item)
+      const error = validateTitle(item, duplicateTitles)
+      if (error) {
+        store.updateItem(item.id, 'titleStatus', error)
+        continue
       }
+
+      store.updateItem(item.id, 'titleStatus', TITLE_STATUS.Checking)
+      validItems.push({ id: item.id, title: item.title })
     }
 
     if (validItems.length > 0) {
@@ -181,14 +195,14 @@ ${categories}
         if (signal.aborted) return
 
         const page = pages.find((p) => p.title === `File:${item.title}`)
-        let status: TitleStatus = 'unknown'
+        let status: TitleStatus = TITLE_STATUS.Unknown
 
         if (!page) {
-          status = 'unknown'
+          status = TITLE_STATUS.Unknown
         } else if (page.missing) {
-          status = 'available'
+          status = TITLE_STATUS.Available
         } else if (page.revisions) {
-          status = 'taken'
+          status = TITLE_STATUS.Taken
         }
 
         store.updateItem(item.id, 'titleStatus', status)
@@ -206,8 +220,8 @@ ${categories}
     debouncedCheckTitleMap.clear()
 
     for (const item of Object.values(store.items)) {
-      if (item.meta.titleStatus === 'checking') {
-        store.updateItem(item.id, 'titleStatus', 'unknown')
+      if (item.meta.titleStatus === TITLE_STATUS.Checking) {
+        store.updateItem(item.id, 'titleStatus', TITLE_STATUS.Unknown)
       }
     }
   }
@@ -236,6 +250,19 @@ ${categories}
     if (explicit) return explicit
 
     return getTemplateTitle(item.image)
+  }
+
+  const findDuplicateTitles = (): Set<string> => {
+    const titleCount = new Map<string, number>()
+    for (const item of store.selectedItems) {
+      const title = getEffectiveTitle(item)
+      titleCount.set(title, (titleCount.get(title) || 0) + 1)
+    }
+    const duplicates = new Set<string>()
+    for (const [title, count] of titleCount.entries()) {
+      if (count > 1) duplicates.add(title)
+    }
+    return duplicates
   }
 
   const buildDescription = (): string => {
@@ -295,10 +322,12 @@ ${categories}
     buildTitle,
     buildSDC,
     buildWikitext,
+    findDuplicateTitles,
     getEffectiveTitle,
     getTemplateTitle,
     sourceLink,
     cancelTitleVerification,
+    validateTitle,
     verifyTitles,
     wikitext,
   }
