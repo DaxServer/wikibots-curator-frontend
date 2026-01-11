@@ -31,11 +31,6 @@ export default defineConfig((): import('vite').UserConfig => {
             type: true,
           },
           {
-            from: 'primevue/message',
-            imports: ['MessageProps'],
-            type: true,
-          },
-          {
             from: 'primevue/datatable',
             imports: ['DataTableCellEditCompleteEvent', 'DataTablePageEvent'],
             type: true,
@@ -46,9 +41,18 @@ export default defineConfig((): import('vite').UserConfig => {
             type: true,
           },
           {
+            from: 'primevue/message',
+            imports: ['MessageProps'],
+            type: true,
+          },
+          {
+            from: 'primevue/useconfirm',
+            imports: ['useConfirm'],
+          },
+          {
             from: 'ts-debounce',
             imports: ['debounce'],
-          }
+          },
         ],
         dirs: ['src/**'],
         dts: true,

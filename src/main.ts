@@ -4,6 +4,7 @@ import '@/assets/tailwind.css'
 import 'primeicons/primeicons.css'
 import { FocusTrap, Tooltip } from 'primevue'
 import PrimeVue from 'primevue/config'
+import ConfirmationService from 'primevue/confirmationservice'
 
 import App from '@/App.vue'
 import router from '@/router'
@@ -17,6 +18,7 @@ const pinia = createPinia()
 // Register plugins
 app.use(pinia)
 app.use(router)
+app.use(ConfirmationService)
 
 // Register PrimeVue
 app.use(PrimeVue, {
