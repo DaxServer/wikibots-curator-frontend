@@ -559,6 +559,7 @@ describe('useCollections Listeners', () => {
             username: '',
             userid: '',
             stats: {
+              cancelled: 0,
               completed: 0,
               duplicate: 0,
               failed: 0,
@@ -573,6 +574,7 @@ describe('useCollections Listeners', () => {
             username: '',
             userid: '',
             stats: {
+              cancelled: 0,
               completed: 0,
               duplicate: 0,
               failed: 0,
@@ -600,6 +602,7 @@ describe('useCollections Listeners', () => {
           username: '',
           userid: '',
           stats: {
+            cancelled: 0,
             completed: 0,
             duplicate: 0,
             failed: 0,
@@ -614,6 +617,7 @@ describe('useCollections Listeners', () => {
           username: '',
           userid: '',
           stats: {
+            cancelled: 0,
             completed: 0,
             duplicate: 0,
             failed: 0,
@@ -631,6 +635,7 @@ describe('useCollections Listeners', () => {
             username: '',
             userid: '',
             stats: {
+              cancelled: 0,
               completed: 0,
               duplicate: 0,
               failed: 0,
@@ -645,6 +650,7 @@ describe('useCollections Listeners', () => {
             username: '',
             userid: '',
             stats: {
+              cancelled: 0,
               completed: 0,
               duplicate: 0,
               failed: 0,
@@ -691,6 +697,7 @@ describe('useCollections Listeners', () => {
           username: '',
           userid: '',
           stats: {
+            cancelled: 0,
             completed: 0,
             duplicate: 0,
             failed: 0,
@@ -718,6 +725,7 @@ describe('useCollections Listeners', () => {
         username: '',
         userid: '',
         stats: {
+          cancelled: 0,
           completed: 0,
           duplicate: 0,
           failed: 0,
@@ -735,6 +743,7 @@ describe('useCollections Listeners', () => {
           username: '',
           userid: '',
           stats: {
+            cancelled: 0,
             completed: 0,
             duplicate: 0,
             failed: 0,
@@ -763,6 +772,7 @@ describe('useCollections Listeners', () => {
           username: '',
           userid: '',
           stats: {
+            cancelled: 0,
             completed: 0,
             duplicate: 0,
             failed: 0,

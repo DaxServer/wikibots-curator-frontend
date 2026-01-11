@@ -57,6 +57,7 @@ export const UPLOAD_STATUS = {
   Duplicate: 'duplicate',
   DuplicatedSdcUpdated: 'duplicated_sdc_updated',
   DuplicatedSdcNotUpdated: 'duplicated_sdc_not_updated',
+  Cancelled: 'cancelled',
 } as const
 
 export type UploadStatus = (typeof UPLOAD_STATUS)[keyof typeof UPLOAD_STATUS]

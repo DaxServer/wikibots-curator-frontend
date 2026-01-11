@@ -126,6 +126,11 @@ export type UploadSliceData = {
   handler: string
 }
 
+export type CancelBatch = {
+  data: number
+  type: 'CANCEL_BATCH'
+}
+
 export type BatchCreated = {
   type: 'BATCH_CREATED'
   data: number
@@ -153,6 +158,7 @@ export type BatchItem = {
 }
 
 export type BatchStats = {
+  cancelled: number
   completed: number
   duplicate: number
   failed: number
@@ -615,6 +621,7 @@ export type ClientMessage =
   | UnsubscribeBatchesList
   | Upload
   | UploadSlice
+  | CancelBatch
 
 export type ServerMessage =
   | BatchCreated

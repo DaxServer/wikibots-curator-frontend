@@ -46,6 +46,15 @@ export const COLOR_VARIANTS = {
     countColorInactive: 'text-blue-200',
     ring: 'ring-blue-500',
   },
+  orange: {
+    bg: 'bg-orange-50',
+    border: 'border-orange-200',
+    labelColor: 'text-orange-600',
+    labelColorInactive: 'text-orange-300',
+    countColor: 'text-orange-700',
+    countColorInactive: 'text-orange-200',
+    ring: 'ring-orange-500',
+  },
 } as const
 
 export type ColorVariant = keyof typeof COLOR_VARIANTS
@@ -64,6 +73,7 @@ const STATUS_LABELS: Record<UploadStatus, string> = {
   [UPLOAD_STATUS.Duplicate]: 'Duplicate (no changes)',
   [UPLOAD_STATUS.DuplicatedSdcUpdated]: 'Duplicate (SDC updated)',
   [UPLOAD_STATUS.DuplicatedSdcNotUpdated]: 'Duplicate (no changes to SDC)',
+  [UPLOAD_STATUS.Cancelled]: 'Cancelled',
 } as const
 
 export const useUploadStatus = () => {
@@ -74,6 +84,7 @@ export const useUploadStatus = () => {
     if (status === 'all') return 'gray'
     if (status === UPLOAD_STATUS.Completed) return 'green'
     if (status === UPLOAD_STATUS.Failed) return 'red'
+    if (status === UPLOAD_STATUS.Cancelled) return 'orange'
     if (isDuplicateStatus(status)) return 'fuchsia'
     if (status === UPLOAD_STATUS.InProgress) return 'blue'
     return 'gray'
@@ -83,6 +94,7 @@ export const useUploadStatus = () => {
     if (status === UPLOAD_STATUS.InProgress) return 'info'
     if (status === UPLOAD_STATUS.Queued) return 'secondary'
     if (status === UPLOAD_STATUS.Failed) return 'danger'
+    if (status === UPLOAD_STATUS.Cancelled) return 'warn'
     if (isDuplicateStatus(status)) return 'contrast'
     if (status === UPLOAD_STATUS.Completed) return 'success'
     return 'secondary'

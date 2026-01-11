@@ -4,7 +4,7 @@ export type Layout = 'list' | 'grid'
 export type BatchStatsCard = {
   label: string
   count: number
-  color: 'gray' | 'green' | 'red' | 'fuchsia' | 'blue'
+  color: ColorVariant
   value: 'all' | UploadStatus
   alwaysActive?: boolean
 }

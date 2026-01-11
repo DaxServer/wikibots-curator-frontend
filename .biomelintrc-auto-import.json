@@ -12,6 +12,7 @@
       "BatchesList",
       "BatchesListData",
       "COLOR_VARIANTS",
+      "CancelBatch",
       "Claims",
       "ClientMessage",
       "CollectionImageIds",
