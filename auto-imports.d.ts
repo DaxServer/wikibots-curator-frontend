@@ -201,6 +201,7 @@ declare global {
   const useCollectionsStore: typeof import('./src/stores/collections.store').useCollectionsStore
   const useColorMode: typeof import('@vueuse/core').useColorMode
   const useCommons: typeof import('./src/composables/useCommons').useCommons
+  const useConfirm: typeof import('primevue/useconfirm').useConfirm
   const useConfirmDialog: typeof import('@vueuse/core').useConfirmDialog
   const useCountdown: typeof import('@vueuse/core').useCountdown
   const useCounter: typeof import('@vueuse/core').useCounter
@@ -375,14 +376,14 @@ declare global {
   export type { MeterItem } from 'primevue'
   import('primevue')
   // @ts-ignore
-  export type { MessageProps } from 'primevue/message'
-  import('primevue/message')
-  // @ts-ignore
   export type { DataTableCellEditCompleteEvent, DataTablePageEvent } from 'primevue/datatable'
   import('primevue/datatable')
   // @ts-ignore
   export type { DataViewPageEvent } from 'primevue/dataview'
   import('primevue/dataview')
+  // @ts-ignore
+  export type { MessageProps } from 'primevue/message'
+  import('primevue/message')
   // @ts-ignore
   export type { ColorVariant } from './src/composables/useUploadStatus'
   import('./src/composables/useUploadStatus')
@@ -597,6 +598,7 @@ declare module 'vue' {
     readonly useCollectionsStore: UnwrapRef<typeof import('./src/stores/collections.store')['useCollectionsStore']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
     readonly useCommons: UnwrapRef<typeof import('./src/composables/useCommons')['useCommons']>
+    readonly useConfirm: UnwrapRef<typeof import('primevue/useconfirm')['useConfirm']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useCountdown: UnwrapRef<typeof import('@vueuse/core')['useCountdown']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
