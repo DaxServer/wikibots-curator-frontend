@@ -509,10 +509,6 @@ generatePythonCode().then(() => {
     cwd: backendPath,
   })
   console.log('Formatted Python code with ruff linter')
-  Bun.spawnSync(['poetry', 'run', 'black', '.'], {
-    cwd: backendPath,
-  })
-  console.log('Formatted Python code with black')
   Bun.spawnSync(['poetry', 'run', 'isort', '.'], {
     cwd: backendPath,
   })

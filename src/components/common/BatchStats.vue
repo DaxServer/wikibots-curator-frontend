@@ -38,5 +38,11 @@ const { getStatusSeverity, getStatusStyle } = useUploadStatus()
       :style="getStatusStyle(UPLOAD_STATUS.Queued)"
       :value="`${stats.queued} queued`"
     />
+    <Tag
+      v-if="stats.cancelled > 0"
+      :severity="getStatusSeverity(UPLOAD_STATUS.Cancelled)"
+      :style="getStatusStyle(UPLOAD_STATUS.Cancelled)"
+      :value="`${stats.cancelled} cancelled`"
+    />
   </div>
 </template>

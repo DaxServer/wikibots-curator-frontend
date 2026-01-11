@@ -7,6 +7,7 @@ const store = useCollectionsStore()
 const {
   loadBatchUploads,
   retryUploads,
+  cancelBatch,
   adminRetryBatch,
   sendSubscribeBatch,
   sendUnsubscribeBatch,
@@ -27,6 +28,7 @@ const computedStats = computed((): BatchStats => {
   const uploads = store.batchUploads
 
   return {
+    cancelled: uploads.filter((u) => u.status === UPLOAD_STATUS.Cancelled).length,
     total: uploads.length,
     completed: uploads.filter((u) => u.status === UPLOAD_STATUS.Completed).length,
     failed: uploads.filter((u) => u.status === UPLOAD_STATUS.Failed).length,
@@ -73,6 +75,12 @@ const statCards = computed((): BatchStatsCard[] => [
     count: computedStats.value.queued,
     color: getStatusColor(UPLOAD_STATUS.Queued),
     value: UPLOAD_STATUS.Queued,
+  },
+  {
+    label: 'Cancelled',
+    count: computedStats.value.cancelled,
+    color: getStatusColor(UPLOAD_STATUS.Cancelled),
+    value: UPLOAD_STATUS.Cancelled,
   },
 ])
 
@@ -169,8 +177,8 @@ onUnmounted(() => {
       />
       <Card>
         <template #title>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 justify-between">
+            <div class="flex items-end gap-3">
               <span>Batch #{{ batchId }}</span>
               <span class="text-sm font-normal text-gray-500">
                 <template v-if="store.batch">
@@ -187,12 +195,20 @@ onUnmounted(() => {
                 icon="pi pi-spin pi-spinner"
               />
               <Button
-                v-else-if="computedStats.failed > 0 && authStore.userid === store.batch.userid"
+                v-if="computedStats.failed > 0 && authStore.userid === store.batch.userid"
                 icon="pi pi-refresh"
                 severity="danger"
                 label="Retry Failed"
                 size="small"
                 @click="retryUploads(Number(batchId))"
+              />
+              <Button
+                v-if="computedStats.queued > 0 && authStore.userid === store.batch.userid"
+                icon="pi pi-times"
+                severity="danger"
+                label="Cancel Queued"
+                size="small"
+                @click="cancelBatch(Number(batchId))"
               />
               <Button
                 v-if="authStore.user === 'DaxServer'"
@@ -224,7 +240,7 @@ onUnmounted(() => {
           </div>
         </template>
         <template #content>
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-2">
+          <div class="grid grid-cols-7 gap-4 mt-2">
             <BatchStatsCard
               v-for="stat in statCards"
               :key="stat.label"

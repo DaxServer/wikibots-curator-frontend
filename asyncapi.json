@@ -72,6 +72,9 @@
         "UploadSliceAck": {
           "$ref": "#/components/messages/UploadSliceAck"
         },
+        "CancelBatch": {
+          "$ref": "#/components/messages/CancelBatch"
+        },
         "UploadsComplete": {
           "$ref": "#/components/messages/UploadsComplete"
         },
@@ -123,6 +126,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/UploadSlice"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/CancelBatch"
         }
       ]
     },
@@ -234,6 +240,11 @@
       "RetryUploads": {
         "payload": {
           "$ref": "#/components/schemas/RetryUploads"
+        }
+      },
+      "CancelBatch": {
+        "payload": {
+          "$ref": "#/components/schemas/CancelBatch"
         }
       },
       "SubscribeBatch": {
@@ -396,6 +407,7 @@
       "BatchStats": {
         "type": "object",
         "required": [
+          "cancelled",
           "completed",
           "duplicate",
           "failed",
@@ -404,6 +416,10 @@
           "total"
         ],
         "properties": {
+          "cancelled": {
+            "type": "integer",
+            "default": 0
+          },
           "completed": {
             "type": "integer",
             "default": 0
@@ -1033,6 +1049,23 @@
           },
           "type": {
             "const": "RETRY_UPLOADS"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CancelBatch": {
+        "type": "object",
+        "required": [
+          "data",
+          "type"
+        ],
+        "properties": {
+          "data": {
+            "type": "integer",
+            "description": "Batch identifier to cancel"
+          },
+          "type": {
+            "const": "CANCEL_BATCH"
           }
         },
         "additionalProperties": false

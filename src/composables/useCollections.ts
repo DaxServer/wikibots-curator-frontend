@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth.store'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type {
   BatchUploadItem,
+  CancelBatch,
   CreateBatch,
   FetchBatches,
   FetchBatchUploads,
@@ -457,6 +458,15 @@ export const useCollections = () => {
     )
   }
 
+  const cancelBatch = (batchId: number) => {
+    send(
+      JSON.stringify({
+        type: 'CANCEL_BATCH',
+        data: batchId,
+      } as CancelBatch),
+    )
+  }
+
   const adminRetryBatch = async (batchId: number) => {
     try {
       const response = await fetch(`/api/admin/batches/${batchId}/retry`, {
@@ -496,6 +506,7 @@ export const useCollections = () => {
     refreshBatches,
     loadBatchUploads,
     retryUploads,
+    cancelBatch,
     adminRetryBatch,
     sendSubscribeBatch,
     sendUnsubscribeBatch,
