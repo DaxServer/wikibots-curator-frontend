@@ -28,7 +28,7 @@ onMounted(async () => {
       <template v-else>
         <span class="text-gray-600">Hello, {{ auth.user }}!</span>
         <Button
-          v-if="auth.user === 'DaxServer'"
+          v-if="auth.isAdmin"
           as="router-link"
           to="/admin"
           label="Admin"
