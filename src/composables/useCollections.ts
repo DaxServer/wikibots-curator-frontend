@@ -473,19 +473,20 @@ export const useCollections = () => {
     )
   }
 
-  const adminRetryBatch = async (batchId: number) => {
+  const adminRetrySelectedUploads = async (uploadIds: number[], batchId: number) => {
     try {
-      const response = await fetch(`/api/admin/batches/${batchId}/retry`, {
+      const response = await fetch('/api/admin/retry', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ upload_ids: uploadIds }),
       })
       if (!response.ok) {
-        throw new Error('Failed to retry batch')
+        throw new Error('Failed to retry uploads')
       }
-      // Reload batch uploads
-      loadBatchUploads(batchId)
-    } catch (e) {
-      store.error = (e as Error).message
+    } catch {
+      store.error = 'Failed to retry uploads'
     } finally {
+      loadBatchUploads(batchId)
       sendSubscribeBatch(batchId)
     }
   }
@@ -513,7 +514,7 @@ export const useCollections = () => {
     loadBatchUploads,
     retryUploads,
     cancelBatch,
-    adminRetryBatch,
+    adminRetrySelectedUploads,
     sendSubscribeBatch,
     sendUnsubscribeBatch,
     subscribeBatchesList,
