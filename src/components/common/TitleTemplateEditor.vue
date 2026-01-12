@@ -1,15 +1,49 @@
 <script setup lang="ts">
+const store = useCollectionsStore()
 const {
   error,
   highlightedTemplate,
   isDirty,
+  itemsMissingCameraFields,
   previewItems,
   template,
+  usedCameraFields,
   applyTemplate,
   getVariableToken,
   insertVariable,
   onDragStart,
 } = useTitleTemplate()
+
+const isCameraField = (fieldPath: string): boolean => {
+  return (CAMERA_FIELD_PATHS as readonly string[]).includes(fieldPath)
+}
+
+const isCameraFieldMissing = (fieldPath: string): boolean => {
+  if (!isCameraField(fieldPath)) return false
+  return store.selectedItems.some((item) => {
+    if (fieldPath === 'camera.make') return !item.image.camera_make
+    if (fieldPath === 'camera.model') return !item.image.camera_model
+    return false
+  })
+}
+
+const isCameraFieldUsedAndMissing = (fieldPath: string): boolean => {
+  return (
+    isCameraField(fieldPath) &&
+    (usedCameraFields.value as readonly string[]).includes(fieldPath) &&
+    isCameraFieldMissing(fieldPath)
+  )
+}
+
+const getCameraFieldTooltip = (field: { description: string; path: string }) => {
+  if (isCameraFieldMissing(field.path)) {
+    return {
+      value: `${field.description} - some items are missing this field`,
+      severity: 'warn',
+    }
+  }
+  return { value: field.description }
+}
 
 onMounted(async () => {
   applyTemplate()
@@ -85,19 +119,32 @@ onMounted(async () => {
               <span class="text-sm font-bold uppercase text-gray-700 pl-2">{{ group }}</span>
               <div class="flex flex-wrap gap-3">
                 <div
-                  v-tooltip.top="field.description"
+                  v-tooltip.top="getCameraFieldTooltip(field)"
                   class="flex flex-col items-start gap-1 border border-gray-200 rounded-md cursor-grab active:cursor-grabbing"
                   v-for="(field, key) in fields"
                   :key="key"
+                  :class="{
+                    'border-yellow-400 bg-yellow-50': isCameraFieldUsedAndMissing(field.path),
+                  }"
                   draggable="true"
                   @dragstart="onDragStart($event, field.path)"
                   @click="insertVariable(field.path)"
                 >
-                  <Tag
-                    :value="field.name"
-                    severity="secondary"
-                    size="small"
-                  />
+                  <div class="container flex justify-between items-center">
+                    <Tag
+                      :value="field.name"
+                      :severity="isCameraFieldUsedAndMissing(field.path) ? 'warn' : 'secondary'"
+                      size="small"
+                    />
+                    <i
+                      v-if="isCameraField(field.path)"
+                      class="pi pi-exclamation-triangle text-xs mr-1"
+                      :class="{
+                        'text-yellow-600': isCameraFieldUsedAndMissing(field.path),
+                        'text-gray-400': !isCameraFieldUsedAndMissing(field.path),
+                      }"
+                    />
+                  </div>
                   <span class="text-sm p-1">{{ getVariableToken(field.path) }}</span>
                 </div>
               </div>

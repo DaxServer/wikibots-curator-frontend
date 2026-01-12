@@ -3,6 +3,7 @@ defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
 const { cancelTitleVerification } = useCommons()
+const { itemsMissingCameraFields } = useTitleTemplate()
 
 const showErrorsOnly = ref(false)
 
@@ -67,6 +68,15 @@ const onPreviewEdits = () => {
     </Card>
 
     <SdcWarningMessage v-if="store.itemsWithExistingTitlesCount > 0" />
+
+    <Message
+      v-if="itemsMissingCameraFields.length > 0"
+      severity="warn"
+      icon="pi pi-exclamation-triangle"
+    >
+      {{ itemsMissingCameraFields.length }} item{{ itemsMissingCameraFields.length > 1 ? 's' : '' }}
+      missing camera fields used in template
+    </Message>
 
     <div class="flex justify-between items-center">
       <Message

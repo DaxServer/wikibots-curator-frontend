@@ -320,4 +320,198 @@ describe('useTitleTemplate', () => {
       onDragStart(event, 'test.path')
     })
   })
+
+  describe('usedCameraFields', () => {
+    it('returns empty array when no camera fields are in template', () => {
+      const { template, usedCameraFields } = useTitleTemplate()
+      template.value = 'Photo by {{mapillary.user.username}}.jpg'
+      expect(usedCameraFields.value).toEqual([])
+    })
+
+    it('returns camera.make when used in template', () => {
+      const { template, usedCameraFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+      expect(usedCameraFields.value).toEqual(['camera.make'])
+    })
+
+    it('returns camera.model when used in template', () => {
+      const { template, usedCameraFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.model}}.jpg'
+      expect(usedCameraFields.value).toEqual(['camera.model'])
+    })
+
+    it('returns both camera fields when both are used', () => {
+      const { template, usedCameraFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}} {{camera.model}}.jpg'
+      expect(usedCameraFields.value).toEqual(['camera.make', 'camera.model'])
+    })
+  })
+
+  describe('itemsMissingCameraFields', () => {
+    it('returns empty array when no camera fields are used', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = undefined as unknown as string
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, itemsMissingCameraFields } = useTitleTemplate()
+      template.value = 'Photo by {{mapillary.user.username}}.jpg'
+
+      expect(itemsMissingCameraFields.value).toEqual([])
+    })
+
+    it('returns items missing camera.make when field is used', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = undefined as unknown as string
+      item1.image.camera_model = 'Canon EOS 5D'
+      const item2 = createMockItem('2')
+      item2.image.camera_make = 'Nikon'
+      item2.image.camera_model = 'D850'
+      store.replaceItems({ '1': item1, '2': item2 })
+      store.updateItem('1', 'selected', true)
+      store.updateItem('2', 'selected', true)
+
+      const { template, itemsMissingCameraFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+
+      expect(itemsMissingCameraFields.value).toHaveLength(1)
+      expect(itemsMissingCameraFields.value[0]?.id).toBe('1')
+    })
+
+    it('returns items missing camera.model when field is used', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = 'Canon'
+      item1.image.camera_model = undefined as unknown as string
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, itemsMissingCameraFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.model}}.jpg'
+
+      expect(itemsMissingCameraFields.value).toHaveLength(1)
+      expect(itemsMissingCameraFields.value[0]?.id).toBe('1')
+    })
+
+    it('returns empty array when all items have camera fields', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = 'Canon'
+      item1.image.camera_model = 'EOS 5D'
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, itemsMissingCameraFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}} {{camera.model}}.jpg'
+
+      expect(itemsMissingCameraFields.value).toEqual([])
+    })
+  })
+
+  describe('highlightedTemplate with camera field warnings', () => {
+    it('shows yellow highlight for camera fields when items are missing them', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = undefined as unknown as string
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, highlightedTemplate } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+
+      expect(highlightedTemplate.value).toContain(
+        'text-yellow-600 bg-yellow-50 border border-yellow-400',
+      )
+    })
+
+    it('shows blue highlight for camera fields when no items are missing them', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = 'Canon'
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, highlightedTemplate } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+
+      expect(highlightedTemplate.value).toContain('text-blue-600 bg-blue-50')
+      expect(highlightedTemplate.value).not.toContain('text-yellow-600')
+    })
+
+    it('shows blue highlight for non-camera fields', () => {
+      const { template, highlightedTemplate } = useTitleTemplate()
+      template.value = 'Photo by {{mapillary.user.username}}.jpg'
+
+      expect(highlightedTemplate.value).toContain('text-blue-600 bg-blue-50')
+      expect(highlightedTemplate.value).not.toContain('text-yellow-600')
+    })
+  })
+
+  describe('applyTemplate with missing camera fields', () => {
+    it('sets MissingFields status for items missing camera fields', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = undefined as unknown as string
+      item1.image.camera_model = undefined as unknown as string
+      item1.meta.title = ''
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+
+      await applyTemplate()
+
+      expect(store.items['1']?.meta.titleStatus).toBe(TITLE_STATUS.MissingFields)
+    })
+
+    it('sets title even when MissingFields status is set', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = undefined as unknown as string
+      item1.meta.title = ''
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+
+      await applyTemplate()
+
+      // Title should still be set (with empty string for missing field)
+      expect(store.items['1']?.meta.title).toBe('Photo .jpg')
+    })
+
+    it('does not set MissingFields status when camera fields are present', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.camera_make = 'Canon'
+      item1.image.camera_model = 'EOS 5D'
+      item1.meta.title = ''
+
+      // Mock fetch to return available
+      const mockFetch = mock(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ query: { pages: { '123': { missing: true } } } })),
+        ),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}} {{camera.model}}.jpg'
+
+      await applyTemplate()
+
+      // Status should not be MissingFields (it might be Available or another status depending on fetch)
+      expect(store.items['1']?.meta.titleStatus).not.toBe(TITLE_STATUS.MissingFields)
+    })
+  })
 })

@@ -38,6 +38,7 @@ export const TITLE_STATUS = {
   Invalid: 'invalid',
   Blacklisted: 'blacklisted',
   Duplicate: 'duplicate',
+  MissingFields: 'missing_fields',
 } as const
 
 export type TitleStatus = (typeof TITLE_STATUS)[keyof typeof TITLE_STATUS]
@@ -47,6 +48,7 @@ export const TITLE_ERROR_STATUSES: readonly TitleStatus[] = [
   TITLE_STATUS.Invalid,
   TITLE_STATUS.Blacklisted,
   TITLE_STATUS.Duplicate,
+  TITLE_STATUS.MissingFields,
 ] as const
 
 export const UPLOAD_STATUS = {

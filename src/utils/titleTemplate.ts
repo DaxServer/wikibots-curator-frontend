@@ -94,6 +94,8 @@ export const AVAILABLE_IMAGE_FIELDS: Record<string, Record<string, FieldDefiniti
   },
 }
 
+export const CAMERA_FIELD_PATHS = ['camera.make', 'camera.model'] as const
+
 export const validPaths = Object.values(AVAILABLE_IMAGE_FIELDS).flatMap((group) =>
   Object.values(group).map((field) => field.path),
 )
@@ -176,6 +178,23 @@ export const VALID_EXTENSIONS = [
 export const isValidExtension = (filename: string): boolean => {
   const lower = filename.toLowerCase()
   return VALID_EXTENSIONS.some((ext) => lower.endsWith(`.${ext}`))
+}
+
+export const extractUsedCameraFields = (template: string): string[] => {
+  const matches = template.match(/\{\{([^{}]+)\}\}/g) || []
+  return matches
+    .map((m) => m.slice(2, -2).trim())
+    .filter((p): p is 'camera.make' | 'camera.model' =>
+      (CAMERA_FIELD_PATHS as readonly string[]).includes(p),
+    )
+}
+
+export const hasMissingCameraFields = (image: Image, usedFields: readonly string[]): boolean => {
+  return usedFields.some((path) => {
+    if (path === 'camera.make') return !image.camera_make
+    if (path === 'camera.model') return !image.camera_model
+    return false
+  })
 }
 
 export const validateTemplate = (t: string): { valid: boolean; error: string | null } => {
