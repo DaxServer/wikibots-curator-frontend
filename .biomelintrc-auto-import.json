@@ -59,6 +59,8 @@
       "GlobeCoordinateValueSnak",
       "Handler",
       "Image",
+      "ImageHandler",
+      "ImageHandler",
       "InjectionKey",
       "Item",
       "ItemId",

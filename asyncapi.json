@@ -18,6 +18,9 @@
         "BatchUploadsList": {
           "$ref": "#/components/messages/BatchUploadsList"
         },
+        "CancelBatch": {
+          "$ref": "#/components/messages/CancelBatch"
+        },
         "CollectionImageIds": {
           "$ref": "#/components/messages/CollectionImageIds"
         },
@@ -72,9 +75,6 @@
         "UploadSliceAck": {
           "$ref": "#/components/messages/UploadSliceAck"
         },
-        "CancelBatch": {
-          "$ref": "#/components/messages/CancelBatch"
-        },
         "UploadsComplete": {
           "$ref": "#/components/messages/UploadsComplete"
         },
@@ -94,6 +94,9 @@
         "$ref": "#/channels/wsChannel"
       },
       "messages": [
+        {
+          "$ref": "#/channels/wsChannel/messages/CancelBatch"
+        },
         {
           "$ref": "#/channels/wsChannel/messages/CreateBatch"
         },
@@ -126,9 +129,6 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/UploadSlice"
-        },
-        {
-          "$ref": "#/channels/wsChannel/messages/CancelBatch"
         }
       ]
     },
@@ -549,6 +549,23 @@
         },
         "additionalProperties": false
       },
+      "CancelBatch": {
+        "type": "object",
+        "required": [
+          "data",
+          "type"
+        ],
+        "properties": {
+          "data": {
+            "type": "integer",
+            "description": "Batch identifier to cancel"
+          },
+          "type": {
+            "const": "CANCEL_BATCH"
+          }
+        },
+        "additionalProperties": false
+      },
       "CollectionImageIds": {
         "type": "object",
         "required": [
@@ -842,7 +859,8 @@
         "type": "object",
         "required": [
           "data",
-          "type"
+          "type",
+          "handler"
         ],
         "properties": {
           "data": {
@@ -851,6 +869,9 @@
           },
           "type": {
             "const": "FETCH_IMAGES"
+          },
+          "handler": {
+            "$ref": "#/components/schemas/ImageHandler"
           }
         },
         "additionalProperties": false
@@ -895,6 +916,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "ImageHandler": {
+        "type": "string",
+        "enum": [
+          "mapillary",
+          "flickr"
+        ]
       },
       "Label": {
         "type": "object",
@@ -1049,23 +1077,6 @@
           },
           "type": {
             "const": "RETRY_UPLOADS"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CancelBatch": {
-        "type": "object",
-        "required": [
-          "data",
-          "type"
-        ],
-        "properties": {
-          "data": {
-            "type": "integer",
-            "description": "Batch identifier to cancel"
-          },
-          "type": {
-            "const": "CANCEL_BATCH"
           }
         },
         "additionalProperties": false

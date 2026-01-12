@@ -36,6 +36,11 @@ export type ValueSnak =
   | TimeValueSnak
   | UrlValueSnak
 
+export type CancelBatch = {
+  data: number
+  type: 'CANCEL_BATCH'
+}
+
 export type CreateBatch = {
   type: 'CREATE_BATCH'
 }
@@ -60,6 +65,12 @@ export type FetchBatchUploads = {
 export type FetchImages = {
   data: string
   type: 'FETCH_IMAGES'
+  handler: ImageHandler
+}
+
+export enum ImageHandler {
+  MAPILLARY = 'mapillary',
+  FLICKR = 'flickr',
 }
 
 export type RetryUploads = {
@@ -124,11 +135,6 @@ export type UploadSliceData = {
   sliceid: number
   items: UploadItem[]
   handler: string
-}
-
-export type CancelBatch = {
-  data: number
-  type: 'CANCEL_BATCH'
 }
 
 export type BatchCreated = {
@@ -610,6 +616,7 @@ export enum SnakType {
 }
 
 export type ClientMessage =
+  | CancelBatch
   | CreateBatch
   | FetchBatches
   | FetchBatchUploads
@@ -621,7 +628,6 @@ export type ClientMessage =
   | UnsubscribeBatchesList
   | Upload
   | UploadSlice
-  | CancelBatch
 
 export type ServerMessage =
   | BatchCreated
