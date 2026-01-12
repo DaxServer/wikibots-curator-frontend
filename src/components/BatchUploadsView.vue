@@ -8,7 +8,7 @@ const {
   loadBatchUploads,
   retryUploads,
   cancelBatch,
-  adminRetryBatch,
+  adminRetrySelectedUploads,
   sendSubscribeBatch,
   sendUnsubscribeBatch,
 } = useCollections()
@@ -23,6 +23,13 @@ const columns = [
   { field: 'filename', header: 'Filename' },
   { field: 'wikitext', header: 'Wikitext' },
 ]
+
+const selectionColumns = computed(() => {
+  if (store.isBatchUploadSelectionMode) {
+    return [{ field: '_selected', header: 'Select' }, ...columns]
+  }
+  return columns
+})
 
 const computedStats = computed((): BatchStats => {
   const uploads = store.batchUploads
@@ -162,6 +169,18 @@ onUnmounted(() => {
     sendUnsubscribeBatch()
   }
 })
+
+const onRowClick = (data: BatchUploadItem) => {
+  if (store.isBatchUploadSelectionMode) {
+    store.toggleBatchUploadSelection(data.id)
+  }
+}
+
+const selectAllCurrentPage = () => {
+  for (const upload of filteredUploads.value) {
+    store.batchUploadSelection.add(upload.id)
+  }
+}
 </script>
 
 <template>
@@ -210,14 +229,32 @@ onUnmounted(() => {
                 size="small"
                 @click="cancelBatch(Number(batchId))"
               />
+              <template v-if="store.isBatchUploadSelectionMode">
+                <Button
+                  icon="pi pi-check"
+                  severity="success"
+                  :label="`Retry (${store.selectedBatchUploadsCount})`"
+                  :disabled="store.selectedBatchUploadsCount === 0"
+                  size="small"
+                  class="ml-2"
+                  @click="adminRetrySelectedUploads(Array.from(store.batchUploadSelection), Number(batchId))"
+                />
+                <Button
+                  icon="pi pi-times"
+                  severity="secondary"
+                  label="Cancel"
+                  size="small"
+                  @click="store.exitBatchUploadSelectionMode()"
+                />
+              </template>
               <Button
-                v-if="authStore.isAdmin"
+                v-else-if="authStore.isAdmin"
                 icon="pi pi-refresh"
                 severity="warning"
-                label="Admin Retry"
+                label="Retry Selected"
                 size="small"
                 class="ml-2"
-                @click="adminRetryBatch(Number(batchId))"
+                @click="store.startBatchUploadSelectionMode()"
               />
             </template>
           </div>
@@ -257,12 +294,29 @@ onUnmounted(() => {
       </Card>
     </div>
 
+    <!-- Selection mode toolbar -->
+    <div v-if="store.isBatchUploadSelectionMode" class="flex gap-2">
+      <Button
+        label="Select All (Current Page)"
+        size="small"
+        severity="secondary"
+        @click="selectAllCurrentPage"
+      />
+      <Button
+        label="Deselect All"
+        size="small"
+        severity="secondary"
+        @click="store.deselectAllBatchUploads"
+      />
+    </div>
+
     <SharedDataTable
       :loading="store.batchUploadsLoading"
       :value="filteredUploads"
-      :columns="columns"
-      :row-class="() => ({ 'align-top': true })"
+      :columns="selectionColumns"
+      :row-class="() => ({ 'align-top': true, 'cursor-pointer': store.isBatchUploadSelectionMode })"
       :rows-per-page-options="[10, 20, 50, 100]"
+      @row-click="onRowClick"
     >
       <template #header>
         <FilterHeader
@@ -274,7 +328,14 @@ onUnmounted(() => {
         />
       </template>
       <template #body-cell="{ col, data }">
-        <template v-if="col.field === 'key'">
+        <template v-if="col.field === '_selected'">
+          <Checkbox
+            :model-value="store.batchUploadSelection.has(data.id)"
+            binary
+            @click.stop="store.toggleBatchUploadSelection(data.id)"
+          />
+        </template>
+        <template v-else-if="col.field === 'key'">
           <ExternalLink :href="`https://www.mapillary.com/app/?pKey=${data.key}&focus=photo`">
             {{ data.key }}&nbsp;
           </ExternalLink>
