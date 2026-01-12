@@ -134,7 +134,6 @@ const lastEditedBy = computed(() => {
   return Array.from(users).join(', ')
 })
 
-// Selection mode state (local to this component)
 const isBatchUploadSelectionMode = ref(false)
 const batchUploadSelection = ref<Set<number>>(new Set())
 const selectedBatchUploadsCount = computed(() => batchUploadSelection.value.size)
@@ -157,8 +156,8 @@ const toggleBatchUploadSelection = (uploadId: number) => {
   }
 }
 
-const selectAllBatchUploads = (uploads: BatchUploadItem[] = filteredUploads.value) => {
-  for (const upload of uploads) {
+const selectAllBatchUploads = () => {
+  for (const upload of filteredUploads.value) {
     batchUploadSelection.value.add(upload.id)
   }
 }
@@ -248,7 +247,10 @@ onUnmounted(() => {
                 @click="retryUploads(Number(batchId))"
               />
               <Button
-                v-if="computedStats.queued > 0 && (authStore.userid === store.batch.userid || authStore.isAdmin)"
+                v-if="
+                  computedStats.queued > 0 &&
+                  (authStore.userid === store.batch.userid || authStore.isAdmin)
+                "
                 icon="pi pi-times"
                 severity="danger"
                 label="Cancel Queued"
@@ -321,12 +323,15 @@ onUnmounted(() => {
     </div>
 
     <!-- Selection mode toolbar -->
-    <div v-if="isBatchUploadSelectionMode" class="flex gap-2">
+    <div
+      v-if="isBatchUploadSelectionMode"
+      class="flex gap-2"
+    >
       <Button
         label="Select All (Current Page)"
         size="small"
         severity="secondary"
-        @click="selectAllBatchUploads(filteredUploads)"
+        @click="selectAllBatchUploads()"
       />
       <Button
         label="Deselect All"
