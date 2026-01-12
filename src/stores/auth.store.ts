@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!user.value)
   const isAuthorized = ref(false)
   const isLoading = ref(false)
+  const isAdmin = computed(() => user.value === 'DaxServer')
 
   const reset = () => {
     user.value = ''
@@ -62,6 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading,
     user,
     userid,
+    isAdmin,
 
     // Actions
     login,

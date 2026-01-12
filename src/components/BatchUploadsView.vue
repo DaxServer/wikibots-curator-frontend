@@ -203,7 +203,7 @@ onUnmounted(() => {
                 @click="retryUploads(Number(batchId))"
               />
               <Button
-                v-if="computedStats.queued > 0 && authStore.userid === store.batch.userid"
+                v-if="computedStats.queued > 0 && (authStore.userid === store.batch.userid || authStore.isAdmin)"
                 icon="pi pi-times"
                 severity="danger"
                 label="Cancel Queued"
@@ -211,7 +211,7 @@ onUnmounted(() => {
                 @click="cancelBatch(Number(batchId))"
               />
               <Button
-                v-if="authStore.user === 'DaxServer'"
+                v-if="authStore.isAdmin"
                 icon="pi pi-refresh"
                 severity="warning"
                 label="Admin Retry"
