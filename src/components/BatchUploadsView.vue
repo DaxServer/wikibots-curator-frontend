@@ -168,7 +168,7 @@ const deselectAllBatchUploads = () => {
 }
 
 const handleAdminRetrySelectedUploads = async () => {
-  await adminRetrySelectedUploads(Array.from(batchUploadSelection.value), Number(batchId))
+  await adminRetrySelectedUploads(Array.from(batchUploadSelection.value), batchId.value)
   exitBatchUploadSelectionMode()
 }
 
