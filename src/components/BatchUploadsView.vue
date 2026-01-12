@@ -175,12 +175,6 @@ const onRowClick = (data: BatchUploadItem) => {
     store.toggleBatchUploadSelection(data.id)
   }
 }
-
-const selectAllCurrentPage = () => {
-  for (const upload of filteredUploads.value) {
-    store.batchUploadSelection.add(upload.id)
-  }
-}
 </script>
 
 <template>
@@ -300,13 +294,13 @@ const selectAllCurrentPage = () => {
         label="Select All (Current Page)"
         size="small"
         severity="secondary"
-        @click="selectAllCurrentPage"
+        @click="store.selectAllBatchUploads(filteredUploads)"
       />
       <Button
         label="Deselect All"
         size="small"
         severity="secondary"
-        @click="store.deselectAllBatchUploads"
+        @click="store.deselectAllBatchUploads()"
       />
     </div>
 

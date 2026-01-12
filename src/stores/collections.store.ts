@@ -129,12 +129,12 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const startBatchUploadSelectionMode = () => {
     isBatchUploadSelectionMode.value = true
-    batchUploadSelection.value = new Set()
+    batchUploadSelection.value.clear()
   }
 
   const exitBatchUploadSelectionMode = () => {
     isBatchUploadSelectionMode.value = false
-    batchUploadSelection.value = new Set()
+    batchUploadSelection.value.clear()
   }
 
   const toggleBatchUploadSelection = (uploadId: number) => {
@@ -145,8 +145,8 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
-  const selectAllBatchUploads = () => {
-    for (const upload of batchUploads.value) {
+  const selectAllBatchUploads = (uploads: BatchUploadItem[] = batchUploads.value) => {
+    for (const upload of uploads) {
       batchUploadSelection.value.add(upload.id)
     }
   }
