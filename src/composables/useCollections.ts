@@ -404,7 +404,13 @@ export const useCollections = () => {
   const loadCollection = () => {
     store.$reset()
     store.isLoading = true
-    send(JSON.stringify({ type: 'FETCH_IMAGES', data: store.input } as FetchImages))
+    send(
+      JSON.stringify({
+        type: 'FETCH_IMAGES',
+        data: store.input,
+        handler: store.handler,
+      } as FetchImages),
+    )
   }
 
   const loadBatches = (page: number, rows: number, userid?: string, filter?: string) => {

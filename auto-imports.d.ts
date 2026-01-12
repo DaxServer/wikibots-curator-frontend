@@ -10,6 +10,7 @@ declare global {
   const COLOR_VARIANTS: typeof import('./src/composables/useUploadStatus').COLOR_VARIANTS
   const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
+  const ImageHandler: typeof import('./src/types/asyncapi').ImageHandler
   const Noir: typeof import('./src/assets/Noir').default
   const Rank: typeof import('./src/types/asyncapi').Rank
   const SnakDataType: typeof import('./src/types/asyncapi').SnakDataType
@@ -388,7 +389,7 @@ declare global {
   export type { ColorVariant } from './src/composables/useUploadStatus'
   import('./src/composables/useUploadStatus')
   // @ts-ignore
-  export type { WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CreateBatch, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, UploadSlice, UploadSliceData, CancelBatch, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, PartialCollectionImages, PartialCollectionImagesData, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
+  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, Creator, Dates, ExistingPage, GeoLocation, Error, PartialCollectionImages, PartialCollectionImagesData, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
   export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
@@ -407,6 +408,7 @@ declare module 'vue' {
     readonly COLOR_VARIANTS: UnwrapRef<typeof import('./src/composables/useUploadStatus')['COLOR_VARIANTS']>
     readonly DataValueType: UnwrapRef<typeof import('./src/types/asyncapi')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly ImageHandler: UnwrapRef<typeof import('./src/types/asyncapi')['ImageHandler']>
     readonly Noir: UnwrapRef<typeof import('./src/assets/Noir')['default']>
     readonly Rank: UnwrapRef<typeof import('./src/types/asyncapi')['Rank']>
     readonly SnakDataType: UnwrapRef<typeof import('./src/types/asyncapi')['SnakDataType']>
