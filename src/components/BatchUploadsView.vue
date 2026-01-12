@@ -207,12 +207,6 @@ onUnmounted(() => {
     sendUnsubscribeBatch()
   }
 })
-
-const onRowClick = (data: BatchUploadItem) => {
-  if (isBatchUploadSelectionMode.value) {
-    toggleBatchUploadSelection(data.id)
-  }
-}
 </script>
 
 <template>
@@ -346,9 +340,8 @@ const onRowClick = (data: BatchUploadItem) => {
       :loading="store.batchUploadsLoading"
       :value="filteredUploads"
       :columns="selectionColumns"
-      :row-class="() => ({ 'align-top': true, 'cursor-pointer': isBatchUploadSelectionMode })"
+      :row-class="() => ({ 'align-top': true })"
       :rows-per-page-options="[10, 20, 50, 100]"
-      @row-click="onRowClick"
     >
       <template #header>
         <FilterHeader
@@ -364,7 +357,7 @@ const onRowClick = (data: BatchUploadItem) => {
           <Checkbox
             :model-value="batchUploadSelection.has(data.id)"
             binary
-            @click.stop="toggleBatchUploadSelection(data.id)"
+            @update:model-value="() => toggleBatchUploadSelection(data.id)"
           />
         </template>
         <template v-else-if="col.field === 'key'">
