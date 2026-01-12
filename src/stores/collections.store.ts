@@ -58,10 +58,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     page: 1,
   })
 
-  // Batch upload selection mode state
-  const isBatchUploadSelectionMode = ref(false)
-  const batchUploadSelection = ref<Set<number>>(new Set())
-
   const itemsArray = computed(() => Object.values(items))
   const totalImages = computed(() => itemsArray.value.length)
   const selectedItems = computed(() => itemsArray.value.filter((i) => i.meta.selected))
@@ -126,36 +122,6 @@ export const useCollectionsStore = defineStore('collections', () => {
       item.meta.selected = true
     }
   }
-
-  const startBatchUploadSelectionMode = () => {
-    isBatchUploadSelectionMode.value = true
-    batchUploadSelection.value.clear()
-  }
-
-  const exitBatchUploadSelectionMode = () => {
-    isBatchUploadSelectionMode.value = false
-    batchUploadSelection.value.clear()
-  }
-
-  const toggleBatchUploadSelection = (uploadId: number) => {
-    if (batchUploadSelection.value.has(uploadId)) {
-      batchUploadSelection.value.delete(uploadId)
-    } else {
-      batchUploadSelection.value.add(uploadId)
-    }
-  }
-
-  const selectAllBatchUploads = (uploads: BatchUploadItem[] = batchUploads.value) => {
-    for (const upload of uploads) {
-      batchUploadSelection.value.add(upload.id)
-    }
-  }
-
-  const deselectAllBatchUploads = () => {
-    batchUploadSelection.value.clear()
-  }
-
-  const selectedBatchUploadsCount = computed(() => batchUploadSelection.value.size)
 
   const setGlobalDescription = (value: string) => {
     globalDescription.value = value
@@ -302,9 +268,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     loadedCount,
     uploadSliceIndex,
     isBatchCreated,
-    isBatchUploadSelectionMode,
-    batchUploadSelection,
-    selectedBatchUploadsCount,
 
     clearError,
     setLoading,
@@ -318,11 +281,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     selectAll,
     deselectAll,
     selectPage,
-    startBatchUploadSelectionMode,
-    exitBatchUploadSelectionMode,
-    toggleBatchUploadSelection,
-    selectAllBatchUploads,
-    deselectAllBatchUploads,
     setViewMode,
     toggleViewMode,
     setGridPage,

@@ -25,7 +25,7 @@ const columns = [
 ]
 
 const selectionColumns = computed(() => {
-  if (store.isBatchUploadSelectionMode) {
+  if (isBatchUploadSelectionMode.value) {
     return [{ field: '_selected', header: 'Select' }, ...columns]
   }
   return columns
@@ -134,6 +134,44 @@ const lastEditedBy = computed(() => {
   return Array.from(users).join(', ')
 })
 
+// Selection mode state (local to this component)
+const isBatchUploadSelectionMode = ref(false)
+const batchUploadSelection = ref<Set<number>>(new Set())
+const selectedBatchUploadsCount = computed(() => batchUploadSelection.value.size)
+
+const startBatchUploadSelectionMode = () => {
+  isBatchUploadSelectionMode.value = true
+  batchUploadSelection.value.clear()
+}
+
+const exitBatchUploadSelectionMode = () => {
+  isBatchUploadSelectionMode.value = false
+  batchUploadSelection.value.clear()
+}
+
+const toggleBatchUploadSelection = (uploadId: number) => {
+  if (batchUploadSelection.value.has(uploadId)) {
+    batchUploadSelection.value.delete(uploadId)
+  } else {
+    batchUploadSelection.value.add(uploadId)
+  }
+}
+
+const selectAllBatchUploads = (uploads: BatchUploadItem[] = filteredUploads.value) => {
+  for (const upload of uploads) {
+    batchUploadSelection.value.add(upload.id)
+  }
+}
+
+const deselectAllBatchUploads = () => {
+  batchUploadSelection.value.clear()
+}
+
+const handleAdminRetrySelectedUploads = async () => {
+  await adminRetrySelectedUploads(Array.from(batchUploadSelection.value), Number(batchId))
+  exitBatchUploadSelectionMode()
+}
+
 const isSubscribed = ref(false)
 
 const load = (id: number) => {
@@ -171,8 +209,8 @@ onUnmounted(() => {
 })
 
 const onRowClick = (data: BatchUploadItem) => {
-  if (store.isBatchUploadSelectionMode) {
-    store.toggleBatchUploadSelection(data.id)
+  if (isBatchUploadSelectionMode.value) {
+    toggleBatchUploadSelection(data.id)
   }
 }
 </script>
@@ -223,22 +261,22 @@ const onRowClick = (data: BatchUploadItem) => {
                 size="small"
                 @click="cancelBatch(Number(batchId))"
               />
-              <template v-if="store.isBatchUploadSelectionMode">
+              <template v-if="isBatchUploadSelectionMode">
                 <Button
                   icon="pi pi-check"
                   severity="success"
-                  :label="`Retry (${store.selectedBatchUploadsCount})`"
-                  :disabled="store.selectedBatchUploadsCount === 0"
+                  :label="`Retry (${selectedBatchUploadsCount})`"
+                  :disabled="selectedBatchUploadsCount === 0"
                   size="small"
                   class="ml-2"
-                  @click="adminRetrySelectedUploads(Array.from(store.batchUploadSelection), Number(batchId))"
+                  @click="handleAdminRetrySelectedUploads()"
                 />
                 <Button
                   icon="pi pi-times"
                   severity="secondary"
                   label="Cancel"
                   size="small"
-                  @click="store.exitBatchUploadSelectionMode()"
+                  @click="exitBatchUploadSelectionMode()"
                 />
               </template>
               <Button
@@ -248,7 +286,7 @@ const onRowClick = (data: BatchUploadItem) => {
                 label="Retry Selected"
                 size="small"
                 class="ml-2"
-                @click="store.startBatchUploadSelectionMode()"
+                @click="startBatchUploadSelectionMode()"
               />
             </template>
           </div>
@@ -289,18 +327,18 @@ const onRowClick = (data: BatchUploadItem) => {
     </div>
 
     <!-- Selection mode toolbar -->
-    <div v-if="store.isBatchUploadSelectionMode" class="flex gap-2">
+    <div v-if="isBatchUploadSelectionMode" class="flex gap-2">
       <Button
         label="Select All (Current Page)"
         size="small"
         severity="secondary"
-        @click="store.selectAllBatchUploads(filteredUploads)"
+        @click="selectAllBatchUploads(filteredUploads)"
       />
       <Button
         label="Deselect All"
         size="small"
         severity="secondary"
-        @click="store.deselectAllBatchUploads()"
+        @click="deselectAllBatchUploads()"
       />
     </div>
 
@@ -308,7 +346,7 @@ const onRowClick = (data: BatchUploadItem) => {
       :loading="store.batchUploadsLoading"
       :value="filteredUploads"
       :columns="selectionColumns"
-      :row-class="() => ({ 'align-top': true, 'cursor-pointer': store.isBatchUploadSelectionMode })"
+      :row-class="() => ({ 'align-top': true, 'cursor-pointer': isBatchUploadSelectionMode })"
       :rows-per-page-options="[10, 20, 50, 100]"
       @row-click="onRowClick"
     >
@@ -324,9 +362,9 @@ const onRowClick = (data: BatchUploadItem) => {
       <template #body-cell="{ col, data }">
         <template v-if="col.field === '_selected'">
           <Checkbox
-            :model-value="store.batchUploadSelection.has(data.id)"
+            :model-value="batchUploadSelection.has(data.id)"
             binary
-            @click.stop="store.toggleBatchUploadSelection(data.id)"
+            @click.stop="toggleBatchUploadSelection(data.id)"
           />
         </template>
         <template v-else-if="col.field === 'key'">

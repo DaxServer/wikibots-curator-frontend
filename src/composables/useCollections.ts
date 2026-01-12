@@ -484,7 +484,6 @@ export const useCollections = () => {
         throw new Error('Failed to retry uploads')
       }
       loadBatchUploads(batchId)
-      store.exitBatchUploadSelectionMode()
       sendSubscribeBatch(batchId)
     } catch {
       store.error = 'Failed to retry uploads'
