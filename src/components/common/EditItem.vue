@@ -171,7 +171,7 @@ const onTitleBlur = () => {
 
     <div class="flex gap-4 py-4">
       <Image
-        :src="item.image.preview_url"
+        :src="item.image.urls.preview"
         :alt="`${altPrefix} ${item.id}`"
         class="max-w-3xl"
       />
@@ -206,7 +206,7 @@ const onTitleBlur = () => {
           <div>
             <div>
               <span class="text-gray-500">Size</span>
-              <div>{{ item.image.width }}×{{ item.image.height }}</div>
+              <div>{{ item.image.dimensions.width }}×{{ item.image.dimensions.height }}</div>
             </div>
           </div>
         </div>
@@ -214,7 +214,7 @@ const onTitleBlur = () => {
           <div class="flex flex-col gap-2 text-sm items-start">
             <ExternalLink
               as="button"
-              :href="item.image.url_original"
+              :href="item.image.urls.original"
               show-icon
               variant="text"
               color="primary"
@@ -225,7 +225,7 @@ const onTitleBlur = () => {
             </ExternalLink>
             <ExternalLink
               as="button"
-              :href="item.image.url"
+              :href="item.image.urls.url"
               show-icon
               variant="text"
               color="primary"
@@ -235,7 +235,7 @@ const onTitleBlur = () => {
               View on {{ store.handler.charAt(0).toUpperCase() + store.handler.slice(1) }}
             </ExternalLink>
             <Tag
-              v-if="item.image.is_pano"
+              v-if="item.image.camera.is_pano"
               severity="info"
               class="self-start"
             >

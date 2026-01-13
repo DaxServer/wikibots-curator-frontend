@@ -81,7 +81,7 @@ const rowsPerPageOptions = computed(() => {
     >
       <template #body="{ data }">
         <Image
-          :src="data.image.preview_url"
+          :src="data.image.urls.preview"
           :alt="`${altPrefix} ${data.id}`"
         />
       </template>

@@ -70,7 +70,7 @@ const onSelectCurrentPage = () => {
             </template>
             <template v-else>
               <Image
-                :src="item.image.thumbnail_url"
+                :src="item.image.urls.thumbnail"
                 :alt="`${altPrefix} ${item.id}`"
                 class="cursor-pointer w-full"
                 @click.stop="onToggleSelect(item)"
@@ -102,7 +102,7 @@ const onSelectCurrentPage = () => {
               :item="item"
             />
             <Image
-              :src="item.image.preview_url"
+              :src="item.image.urls.preview"
               :alt="`${altPrefix} ${item.id}`"
               class="cursor-pointer max-w-3xl"
               @click.stop="onToggleSelect(item)"

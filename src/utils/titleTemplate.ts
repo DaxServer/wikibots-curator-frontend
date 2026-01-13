@@ -118,8 +118,8 @@ const prepareContext = (image: Image, sequence: string) => {
 
   return {
     camera: {
-      make: image.camera_make,
-      model: image.camera_model,
+      make: image.camera.make,
+      model: image.camera.model,
     },
     captured: {
       date: d,
@@ -135,8 +135,8 @@ const prepareContext = (image: Image, sequence: string) => {
       raw: `${d}T${time_ms}Z`,
     },
     image: {
-      width: image.width,
-      height: image.height,
+      width: image.dimensions.width,
+      height: image.dimensions.height,
     },
     location: image.location,
     mapillary: {
@@ -191,8 +191,8 @@ export const extractUsedCameraFields = (template: string): string[] => {
 
 export const hasMissingCameraFields = (image: Image, usedFields: readonly string[]): boolean => {
   return usedFields.some((path) => {
-    if (path === 'camera.make') return !image.camera_make
-    if (path === 'camera.model') return !image.camera_model
+    if (path === 'camera.make') return !image.camera.make
+    if (path === 'camera.model') return !image.camera.model
     return false
   })
 }

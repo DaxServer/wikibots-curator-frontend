@@ -38,18 +38,15 @@ import type { initCollectionsListeners as InitCollectionsListenersType } from '.
 
 const createMockImage = (overrides: Partial<Image> = {}): Image => ({
   id: 'img1',
-  width: 100,
-  height: 100,
+  title: '',
+  description: '',
+  urls: { url: '', original: '', preview: '', thumbnail: '' },
+  dimensions: { width: 100, height: 100 },
   creator: { id: 'c1', username: 'u1', profile_url: '' },
   dates: { taken: new Date() },
   location: { latitude: 0, longitude: 0, compass_angle: 0 },
+  camera: { make: undefined, model: undefined, is_pano: false },
   existing: [],
-  preview_url: '',
-  thumbnail_url: '',
-  title: '',
-  url: '',
-  url_original: '',
-  description: '',
   ...overrides,
 })
 
@@ -350,18 +347,15 @@ describe('useCollections Listeners', () => {
       const images: Record<string, MediaImage> = {
         img1: {
           id: 'img1',
-          dates: { taken: new Date().toISOString() },
+          title: '',
           description: 'desc',
-          width: 100,
-          height: 100,
+          urls: { url: '', original: '', preview: '', thumbnail: '' },
+          dimensions: { width: 100, height: 100 },
+          dates: { taken: new Date().toISOString() },
           location: { latitude: 0, longitude: 0, compass_angle: 0 },
           creator: { id: 'c1', username: 'u1', profile_url: '' },
+          camera: { make: undefined, model: undefined, is_pano: false },
           existing: [],
-          preview_url: '',
-          thumbnail_url: '',
-          title: '',
-          url: '',
-          url_original: '',
         },
       }
 
@@ -381,17 +375,15 @@ describe('useCollections Listeners', () => {
       const images: Record<string, MediaImage> = {
         img1: {
           id: 'img1',
+          title: '',
+          description: '',
+          urls: { url: '', original: '', preview: '', thumbnail: '' },
+          dimensions: { width: 100, height: 100 },
           dates: { taken: takenIso },
-          width: 100,
-          height: 100,
           location: { latitude: 0, longitude: 0, compass_angle: 0 },
           creator,
+          camera: { make: undefined, model: undefined, is_pano: false },
           existing: [],
-          preview_url: '',
-          thumbnail_url: '',
-          title: '',
-          url: '',
-          url_original: '',
         },
       }
 
@@ -844,7 +836,7 @@ describe('useCollections Listeners', () => {
           id: '1',
           index: 0,
           isSkeleton: true,
-          image: createMockImage({ id: '1', height: 0, width: 0 }),
+          image: createMockImage({ id: '1', dimensions: { width: 0, height: 0 } }),
           meta: {
             description: { value: '', language: 'en' },
             categories: '',
@@ -859,18 +851,15 @@ describe('useCollections Listeners', () => {
       const images: MediaImage[] = [
         {
           id: '1',
+          title: '',
+          description: '',
+          urls: { url: '', original: '', preview: '', thumbnail: '' },
+          dimensions: { width: 100, height: 100 },
           dates: { taken: new Date().toISOString() },
           creator: { id: 'c1', username: 'u1', profile_url: '' },
-          width: 100,
-          height: 100,
           location: { latitude: 0, longitude: 0, compass_angle: 0 },
+          camera: { make: undefined, model: undefined, is_pano: false },
           existing: [],
-          preview_url: '',
-          thumbnail_url: '',
-          title: '',
-          url: '',
-          url_original: '',
-          description: '',
         },
       ]
 
@@ -888,7 +877,7 @@ describe('useCollections Listeners', () => {
           id: '1',
           index: 0,
           isSkeleton: true,
-          image: createMockImage({ id: '1', height: 0, width: 0 }),
+          image: createMockImage({ id: '1', dimensions: { width: 0, height: 0 } }),
           meta: {
             description: { value: '', language: 'en' },
             categories: '',
@@ -900,7 +889,7 @@ describe('useCollections Listeners', () => {
           id: '2',
           index: 1,
           isSkeleton: true,
-          image: createMockImage({ id: '2', height: 0, width: 0 }),
+          image: createMockImage({ id: '2', dimensions: { width: 0, height: 0 } }),
           meta: {
             description: { value: '', language: 'en' },
             categories: '',
@@ -916,18 +905,15 @@ describe('useCollections Listeners', () => {
       const images: MediaImage[] = [
         {
           id: '1',
+          title: '',
+          description: '',
+          urls: { url: '', original: '', preview: '', thumbnail: '' },
+          dimensions: { width: 100, height: 100 },
           dates: { taken: new Date().toISOString() },
           creator: { id: 'c1', username: 'u1', profile_url: '' },
-          width: 100,
-          height: 100,
           location: { latitude: 0, longitude: 0, compass_angle: 0 },
+          camera: { make: undefined, model: undefined, is_pano: false },
           existing: [],
-          preview_url: '',
-          thumbnail_url: '',
-          title: '',
-          url: '',
-          url_original: '',
-          description: '',
         },
       ]
 
@@ -944,7 +930,7 @@ describe('useCollections Listeners', () => {
           id: '1',
           index: 0,
           isSkeleton: true,
-          image: createMockImage({ id: '1', height: 0, width: 0 }),
+          image: createMockImage({ id: '1', dimensions: { width: 0, height: 0 } }),
           meta: {
             description: { value: '', language: 'en' },
             categories: '',
@@ -960,18 +946,15 @@ describe('useCollections Listeners', () => {
       const images: MediaImage[] = [
         {
           id: '1',
+          title: '',
+          description: '',
+          urls: { url: '', original: '', preview: '', thumbnail: '' },
+          dimensions: { width: 100, height: 100 },
           dates: { taken: new Date().toISOString() },
           creator: { id: 'other', username: 'x', profile_url: '' },
-          width: 100,
-          height: 100,
           location: { latitude: 0, longitude: 0, compass_angle: 0 },
+          camera: { make: undefined, model: undefined, is_pano: false },
           existing: [],
-          preview_url: '',
-          thumbnail_url: '',
-          title: '',
-          url: '',
-          url_original: '',
-          description: '',
         },
       ]
 
@@ -985,18 +968,15 @@ describe('useCollections Listeners', () => {
       const images: MediaImage[] = [
         {
           id: 'unknown',
-          dates: { taken: new Date().toISOString() },
+          title: '',
           description: '',
-          width: 100,
-          height: 100,
+          urls: { url: '', original: '', preview: '', thumbnail: '' },
+          dimensions: { width: 100, height: 100 },
+          dates: { taken: new Date().toISOString() },
           location: { latitude: 0, longitude: 0, compass_angle: 0 },
           creator: { id: '', username: '', profile_url: '' },
+          camera: { make: undefined, model: undefined, is_pano: false },
           existing: [],
-          preview_url: '',
-          thumbnail_url: '',
-          title: '',
-          url: '',
-          url_original: '',
         },
       ]
 
@@ -1011,18 +991,15 @@ describe('useCollections Listeners', () => {
       const images: MediaImage[] = [
         {
           id: '1',
-          dates: { taken: new Date().toISOString() },
+          title: '',
           description: '',
-          width: 100,
-          height: 100,
+          urls: { url: '', original: '', preview: '', thumbnail: '' },
+          dimensions: { width: 100, height: 100 },
+          dates: { taken: new Date().toISOString() },
           location: { latitude: 0, longitude: 0, compass_angle: 0 },
           creator: { id: '', username: '', profile_url: '' },
+          camera: { make: undefined, model: undefined, is_pano: false },
           existing: [],
-          preview_url: '',
-          thumbnail_url: '',
-          title: '',
-          url: '',
-          url_original: '',
         },
       ]
 

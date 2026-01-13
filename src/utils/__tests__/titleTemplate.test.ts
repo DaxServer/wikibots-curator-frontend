@@ -15,16 +15,17 @@ describe('titleTemplate utils', () => {
     id,
     title: 'Original Title',
     description: 'Original Description',
-    url: 'http://example.com/image.jpg',
-    url_original: 'http://example.com/original.jpg',
-    preview_url: 'http://example.com/preview.jpg',
-    thumbnail_url: 'http://example.com/thumbnail.jpg',
-    width: 100,
-    height: 100,
+    urls: {
+      url: 'http://example.com/image.jpg',
+      original: 'http://example.com/original.jpg',
+      preview: 'http://example.com/preview.jpg',
+      thumbnail: 'http://example.com/thumbnail.jpg',
+    },
+    dimensions: { width: 100, height: 100 },
     dates: { taken: new Date('2023-01-01T00:00:00Z') },
     location: { latitude: 0, longitude: 0, compass_angle: 0 },
     creator: { id: 'user', username: 'user', profile_url: '' },
-    is_pano: false,
+    camera: { make: undefined, model: undefined, is_pano: false },
     existing: [],
   })
 
@@ -70,12 +71,10 @@ describe('titleTemplate utils', () => {
       // Create a specific image with all fields populated for testing
       const fullImage: Image = {
         ...createMockImage('img_123'),
-        width: 1920,
-        height: 1080,
+        dimensions: { width: 1920, height: 1080 },
         // 2023-12-25 14:30:45.123 UTC
         dates: { taken: new Date('2023-12-25T14:30:45.123Z') },
-        camera_make: 'TestMake',
-        camera_model: 'TestModel',
+        camera: { make: 'TestMake', model: 'TestModel', is_pano: false },
         location: {
           latitude: 12.3456,
           longitude: -98.7654,
@@ -205,34 +204,34 @@ describe('titleTemplate utils', () => {
 
     it('returns true when camera.make is missing and checked', () => {
       const image = createMockImage('1')
-      image.camera_make = undefined as unknown as string
+      image.camera.make = undefined as unknown as string
       expect(hasMissingCameraFields(image, ['camera.make'])).toBe(true)
     })
 
     it('returns true when camera.model is missing and checked', () => {
       const image = createMockImage('1')
-      image.camera_model = undefined as unknown as string
+      image.camera.model = undefined as unknown as string
       expect(hasMissingCameraFields(image, ['camera.model'])).toBe(true)
     })
 
     it('returns false when camera fields are present', () => {
       const image = createMockImage('1')
-      image.camera_make = 'Canon'
-      image.camera_model = 'EOS 5D'
+      image.camera.make = 'Canon'
+      image.camera.model = 'EOS 5D'
       expect(hasMissingCameraFields(image, ['camera.make', 'camera.model'])).toBe(false)
     })
 
     it('returns true when at least one checked field is missing', () => {
       const image = createMockImage('1')
-      image.camera_make = 'Canon'
-      image.camera_model = undefined as unknown as string
+      image.camera.make = 'Canon'
+      image.camera.model = undefined as unknown as string
       expect(hasMissingCameraFields(image, ['camera.make', 'camera.model'])).toBe(true)
     })
 
     it('returns true for empty string camera values', () => {
       const image = createMockImage('1')
-      image.camera_make = ''
-      image.camera_model = ''
+      image.camera.make = ''
+      image.camera.model = ''
       expect(hasMissingCameraFields(image, ['camera.make', 'camera.model'])).toBe(true)
     })
   })
@@ -240,7 +239,7 @@ describe('titleTemplate utils', () => {
   describe('applyTitleTemplate with missing camera fields', () => {
     it('renders empty string for undefined camera.make', () => {
       const image = createMockImage('1')
-      image.camera_make = undefined as unknown as string
+      image.camera.make = undefined as unknown as string
       const template = 'Photo {{camera.make}}.jpg'
       const result = applyTitleTemplate(template, image, 'seq123')
       expect(result).toBe('Photo .jpg')
@@ -248,7 +247,7 @@ describe('titleTemplate utils', () => {
 
     it('renders empty string for undefined camera.model', () => {
       const image = createMockImage('1')
-      image.camera_model = undefined as unknown as string
+      image.camera.model = undefined as unknown as string
       const template = 'Photo {{camera.model}}.jpg'
       const result = applyTitleTemplate(template, image, 'seq123')
       expect(result).toBe('Photo .jpg')
@@ -256,8 +255,8 @@ describe('titleTemplate utils', () => {
 
     it('renders empty string for both undefined camera fields', () => {
       const image = createMockImage('1')
-      image.camera_make = undefined as unknown as string
-      image.camera_model = undefined as unknown as string
+      image.camera.make = undefined as unknown as string
+      image.camera.model = undefined as unknown as string
       const template = 'Photo {{camera.make}} {{camera.model}}.jpg'
       const result = applyTitleTemplate(template, image, 'seq123')
       expect(result).toBe('Photo  .jpg')

@@ -259,24 +259,24 @@ export type CollectionImagesData = {
 }
 
 export type MediaImage = {
-  camera_make?: string
-  camera_model?: string
+  camera: CameraInfo
   creator: Creator
   dates: Dates
   description?: string
+  dimensions: ImageDimensions
   existing: ExistingPage[]
-  height: number
   id: string
-  is_pano?: boolean
   license?: string
   location: GeoLocation
-  preview_url: string
   tags?: string[]
-  thumbnail_url: string
   title: string
-  url: string
-  url_original: string
-  width: number
+  urls: ImageUrls
+}
+
+export type CameraInfo = {
+  make?: string
+  model?: string
+  is_pano: boolean
 }
 
 export type Creator = {
@@ -289,6 +289,11 @@ export type Dates = {
   taken: string
 }
 
+export type ImageDimensions = {
+  width: number
+  height: number
+}
+
 export type ExistingPage = {
   url: string
 }
@@ -298,6 +303,13 @@ export type GeoLocation = {
   compass_angle: number
   latitude: number
   longitude: number
+}
+
+export type ImageUrls = {
+  url: string
+  original: string
+  preview: string
+  thumbnail: string
 }
 
 export type Error = {

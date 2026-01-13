@@ -70,9 +70,12 @@ export const useTitleTemplate = () => {
   }
 
   const isDirty = computed(() => internalTemplate.value !== store.globalTitleTemplate)
-
   const usedCameraFields = computed(() => extractUsedCameraFields(internalTemplate.value))
-
+  const anyItemsMissingCameraFields = computed(() =>
+    store.selectedItems.some((item) =>
+      hasMissingCameraFields(item.image, ['camera.make', 'camera.model']),
+    ),
+  )
   const itemsMissingCameraFields = computed(() => {
     const usedFields = usedCameraFields.value
     if (usedFields.length === 0) return []
@@ -154,6 +157,7 @@ export const useTitleTemplate = () => {
     error,
     highlightedTemplate,
     isDirty,
+    anyItemsMissingCameraFields,
     itemsMissingCameraFields,
     previewItems,
     template,
