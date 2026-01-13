@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const store = useCollectionsStore()
 const {
   error,
   highlightedTemplate,
@@ -14,29 +13,29 @@ const {
   onDragStart,
 } = useTitleTemplate()
 
+const missingCameraFields = computed(() => {
+  const missing = new Set<string>()
+  itemsMissingCameraFields.value.forEach((item) => {
+    if (!item.image.camera_make) missing.add('camera.make')
+    if (!item.image.camera_model) missing.add('camera.model')
+  })
+  return missing
+})
+
 const isCameraField = (fieldPath: string): boolean => {
   return (CAMERA_FIELD_PATHS as readonly string[]).includes(fieldPath)
-}
-
-const isCameraFieldMissing = (fieldPath: string): boolean => {
-  if (!isCameraField(fieldPath)) return false
-  return store.selectedItems.some((item) => {
-    if (fieldPath === 'camera.make') return !item.image.camera_make
-    if (fieldPath === 'camera.model') return !item.image.camera_model
-    return false
-  })
 }
 
 const isCameraFieldUsedAndMissing = (fieldPath: string): boolean => {
   return (
     isCameraField(fieldPath) &&
     (usedCameraFields.value as readonly string[]).includes(fieldPath) &&
-    isCameraFieldMissing(fieldPath)
+    missingCameraFields.value.has(fieldPath)
   )
 }
 
 const getCameraFieldTooltip = (field: { description: string; path: string }) => {
-  if (isCameraFieldMissing(field.path)) {
+  if (missingCameraFields.value.has(field.path)) {
     return {
       value: `${field.description} - some items are missing this field`,
       severity: 'warn',
