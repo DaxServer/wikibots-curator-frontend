@@ -147,6 +147,16 @@ const onTitleBlur = () => {
           Unable to verify title availability
         </SimpleMessage>
         <SimpleMessage
+          v-else-if="item.meta.titleStatus === TITLE_STATUS.MissingFields"
+          severity="error"
+          variant="simple"
+          size="small"
+          icon="pi pi-exclamation-triangle"
+          class="pl-3"
+        >
+          This item is missing camera fields (make/model) required by the title template
+        </SimpleMessage>
+        <SimpleMessage
           v-else-if="item.meta.titleStatus === TITLE_STATUS.Available"
           severity="success"
           variant="simple"

@@ -2,6 +2,9 @@ import type { Image } from '@/types/image'
 import { describe, expect, it } from 'bun:test'
 import {
   applyTitleTemplate,
+  CAMERA_FIELD_PATHS,
+  extractUsedCameraFields,
+  hasMissingCameraFields,
   isValidExtension,
   VALID_EXTENSIONS,
   validateTemplate,
@@ -164,6 +167,106 @@ describe('titleTemplate utils', () => {
 
     it('returns false for empty string', () => {
       expect(isValidExtension('')).toBe(false)
+    })
+  })
+
+  describe('extractUsedCameraFields', () => {
+    it('returns empty array when no camera fields are used', () => {
+      const template = 'Photo by {{mapillary.user.username}}.jpg'
+      expect(extractUsedCameraFields(template)).toEqual([])
+    })
+
+    it('returns camera.make when used in template', () => {
+      const template = 'Photo {{camera.make}}.jpg'
+      expect(extractUsedCameraFields(template)).toEqual(['camera.make'])
+    })
+
+    it('returns camera.model when used in template', () => {
+      const template = 'Photo {{camera.model}}.jpg'
+      expect(extractUsedCameraFields(template)).toEqual(['camera.model'])
+    })
+
+    it('returns both camera fields when both are used', () => {
+      const template = 'Photo {{camera.make}} {{camera.model}}.jpg'
+      expect(extractUsedCameraFields(template)).toEqual(['camera.make', 'camera.model'])
+    })
+
+    it('handles whitespace in template variables', () => {
+      const template = 'Photo {{ camera.make }}.jpg'
+      expect(extractUsedCameraFields(template)).toEqual(['camera.make'])
+    })
+  })
+
+  describe('hasMissingCameraFields', () => {
+    it('returns false when no fields are checked', () => {
+      const image = createMockImage('1')
+      expect(hasMissingCameraFields(image, [])).toBe(false)
+    })
+
+    it('returns true when camera.make is missing and checked', () => {
+      const image = createMockImage('1')
+      image.camera_make = undefined as unknown as string
+      expect(hasMissingCameraFields(image, ['camera.make'])).toBe(true)
+    })
+
+    it('returns true when camera.model is missing and checked', () => {
+      const image = createMockImage('1')
+      image.camera_model = undefined as unknown as string
+      expect(hasMissingCameraFields(image, ['camera.model'])).toBe(true)
+    })
+
+    it('returns false when camera fields are present', () => {
+      const image = createMockImage('1')
+      image.camera_make = 'Canon'
+      image.camera_model = 'EOS 5D'
+      expect(hasMissingCameraFields(image, ['camera.make', 'camera.model'])).toBe(false)
+    })
+
+    it('returns true when at least one checked field is missing', () => {
+      const image = createMockImage('1')
+      image.camera_make = 'Canon'
+      image.camera_model = undefined as unknown as string
+      expect(hasMissingCameraFields(image, ['camera.make', 'camera.model'])).toBe(true)
+    })
+
+    it('returns true for empty string camera values', () => {
+      const image = createMockImage('1')
+      image.camera_make = ''
+      image.camera_model = ''
+      expect(hasMissingCameraFields(image, ['camera.make', 'camera.model'])).toBe(true)
+    })
+  })
+
+  describe('applyTitleTemplate with missing camera fields', () => {
+    it('renders empty string for undefined camera.make', () => {
+      const image = createMockImage('1')
+      image.camera_make = undefined as unknown as string
+      const template = 'Photo {{camera.make}}.jpg'
+      const result = applyTitleTemplate(template, image, 'seq123')
+      expect(result).toBe('Photo .jpg')
+    })
+
+    it('renders empty string for undefined camera.model', () => {
+      const image = createMockImage('1')
+      image.camera_model = undefined as unknown as string
+      const template = 'Photo {{camera.model}}.jpg'
+      const result = applyTitleTemplate(template, image, 'seq123')
+      expect(result).toBe('Photo .jpg')
+    })
+
+    it('renders empty string for both undefined camera fields', () => {
+      const image = createMockImage('1')
+      image.camera_make = undefined as unknown as string
+      image.camera_model = undefined as unknown as string
+      const template = 'Photo {{camera.make}} {{camera.model}}.jpg'
+      const result = applyTitleTemplate(template, image, 'seq123')
+      expect(result).toBe('Photo  .jpg')
+    })
+  })
+
+  describe('CAMERA_FIELD_PATHS constant', () => {
+    it('contains camera.make and camera.model', () => {
+      expect(CAMERA_FIELD_PATHS).toEqual(['camera.make', 'camera.model'])
     })
   })
 })

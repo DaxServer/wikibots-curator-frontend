@@ -1,7 +1,15 @@
 import { useCommons } from '@/composables/useCommons'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image } from '@/types/image'
-import { applyTitleTemplate, validPaths, validateTemplate } from '@/utils/titleTemplate'
+import { TITLE_STATUS } from '@/types/image'
+import {
+  CAMERA_FIELD_PATHS,
+  applyTitleTemplate,
+  extractUsedCameraFields,
+  hasMissingCameraFields,
+  validPaths,
+  validateTemplate,
+} from '@/utils/titleTemplate'
 import { computed, ref } from 'vue'
 
 export const useTitleTemplate = () => {
@@ -20,9 +28,20 @@ export const useTitleTemplate = () => {
     }
     store.globalTitleTemplate = internalTemplate.value
 
+    const usedCameraFields = extractUsedCameraFields(internalTemplate.value)
+
     const itemsToVerify: { id: string; title: string; image: Image }[] = []
     store.selectedItems.forEach((item) => {
       if (!store.items[item.id]?.meta.title) {
+        // Check if item is missing required camera fields
+        if (usedCameraFields.length > 0 && hasMissingCameraFields(item.image, usedCameraFields)) {
+          store.updateItem(item.id, 'titleStatus', TITLE_STATUS.MissingFields)
+          // Still set the title, but mark as missing fields
+          const title = applyTitleTemplate(internalTemplate.value, item.image, store.input)
+          store.updateItem(item.id, 'title', title)
+          return
+        }
+
         itemsToVerify.push({
           id: item.id,
           title: applyTitleTemplate(internalTemplate.value, item.image, store.input),
@@ -52,6 +71,15 @@ export const useTitleTemplate = () => {
 
   const isDirty = computed(() => internalTemplate.value !== store.globalTitleTemplate)
 
+  const usedCameraFields = computed(() => extractUsedCameraFields(internalTemplate.value))
+
+  const itemsMissingCameraFields = computed(() => {
+    const usedFields = usedCameraFields.value
+    if (usedFields.length === 0) return []
+
+    return store.selectedItems.filter((item) => hasMissingCameraFields(item.image, usedFields))
+  })
+
   const highlightedTemplate = computed(() => {
     if (!template.value) return ' '
     const text = template.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -63,9 +91,18 @@ export const useTitleTemplate = () => {
           if (completeTag) {
             const content = match.slice(2, -2).trim()
             const isValid = validPaths.includes(content)
-            const classes = isValid
-              ? 'text-blue-600 bg-blue-50'
-              : 'text-red-600 bg-red-50 border-b-2 border-red-600'
+            const isCameraField = (CAMERA_FIELD_PATHS as readonly string[]).includes(content)
+            const hasMissingItems = isCameraField && itemsMissingCameraFields.value.length > 0
+
+            let classes: string
+            if (hasMissingItems && isValid) {
+              // Yellow/orange warn color for camera fields with missing values
+              classes = 'text-yellow-600 bg-yellow-50 border border-yellow-400'
+            } else if (isValid) {
+              classes = 'text-blue-600 bg-blue-50'
+            } else {
+              classes = 'text-red-600 bg-red-50 border-b-2 border-red-600'
+            }
             return `<span class="${classes} rounded-sm">${match}</span>`
           }
           if (openBrace || closeBrace) {
@@ -117,8 +154,10 @@ export const useTitleTemplate = () => {
     error,
     highlightedTemplate,
     isDirty,
+    itemsMissingCameraFields,
     previewItems,
     template,
+    usedCameraFields,
 
     applyTemplate,
     getVariableToken,

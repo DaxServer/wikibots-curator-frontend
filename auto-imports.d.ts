@@ -7,6 +7,7 @@
 export {}
 declare global {
   const AVAILABLE_IMAGE_FIELDS: typeof import('./src/utils/titleTemplate').AVAILABLE_IMAGE_FIELDS
+  const CAMERA_FIELD_PATHS: typeof import('./src/utils/titleTemplate').CAMERA_FIELD_PATHS
   const COLOR_VARIANTS: typeof import('./src/composables/useUploadStatus').COLOR_VARIANTS
   const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
@@ -77,12 +78,14 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core').eagerComputed
   const effectScope: typeof import('vue').effectScope
   const extendRef: typeof import('@vueuse/core').extendRef
+  const extractUsedCameraFields: typeof import('./src/utils/titleTemplate').extractUsedCameraFields
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const getNumericId: typeof import('./src/composables/sdc').getNumericId
   const h: typeof import('vue').h
+  const hasMissingCameraFields: typeof import('./src/utils/titleTemplate').hasMissingCameraFields
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const initCollectionsListeners: typeof import('./src/composables/useCollections').initCollectionsListeners
   const inject: typeof import('vue').inject
@@ -405,6 +408,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly AVAILABLE_IMAGE_FIELDS: UnwrapRef<typeof import('./src/utils/titleTemplate')['AVAILABLE_IMAGE_FIELDS']>
+    readonly CAMERA_FIELD_PATHS: UnwrapRef<typeof import('./src/utils/titleTemplate')['CAMERA_FIELD_PATHS']>
     readonly COLOR_VARIANTS: UnwrapRef<typeof import('./src/composables/useUploadStatus')['COLOR_VARIANTS']>
     readonly DataValueType: UnwrapRef<typeof import('./src/types/asyncapi')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
@@ -475,12 +479,14 @@ declare module 'vue' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
+    readonly extractUsedCameraFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['extractUsedCameraFields']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly getNumericId: UnwrapRef<typeof import('./src/composables/sdc')['getNumericId']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly hasMissingCameraFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['hasMissingCameraFields']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly initCollectionsListeners: UnwrapRef<typeof import('./src/composables/useCollections')['initCollectionsListeners']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
