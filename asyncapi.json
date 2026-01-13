@@ -549,6 +549,24 @@
         },
         "additionalProperties": false
       },
+      "CameraInfo": {
+        "type": "object",
+        "required": [
+          "is_pano"
+        ],
+        "properties": {
+          "make": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "is_pano": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CancelBatch": {
         "type": "object",
         "required": [
@@ -917,6 +935,22 @@
         },
         "additionalProperties": false
       },
+      "ImageDimensions": {
+        "type": "object",
+        "required": [
+          "width",
+          "height"
+        ],
+        "properties": {
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
       "ImageHandler": {
         "type": "string",
         "enum": [
@@ -940,28 +974,50 @@
         },
         "additionalProperties": false
       },
+      "ImageUrls": {
+        "type": "object",
+        "required": [
+          "url",
+          "original",
+          "preview",
+          "thumbnail"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "original": {
+            "type": "string",
+            "format": "uri"
+          },
+          "preview": {
+            "type": "string",
+            "format": "uri"
+          },
+          "thumbnail": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      },
       "MediaImage": {
         "type": "object",
         "required": [
+          "camera",
           "creator",
           "dates",
+          "dimensions",
           "existing",
-          "height",
           "id",
           "location",
-          "preview_url",
-          "thumbnail_url",
           "title",
-          "url",
-          "url_original",
-          "width"
+          "urls"
         ],
         "properties": {
-          "camera_make": {
-            "type": "string"
-          },
-          "camera_model": {
-            "type": "string"
+          "camera": {
+            "$ref": "#/components/schemas/CameraInfo"
           },
           "creator": {
             "$ref": "#/components/schemas/Creator"
@@ -972,20 +1028,17 @@
           "description": {
             "type": "string"
           },
+          "dimensions": {
+            "$ref": "#/components/schemas/ImageDimensions"
+          },
           "existing": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ExistingPage"
             }
           },
-          "height": {
-            "type": "integer"
-          },
           "id": {
             "type": "string"
-          },
-          "is_pano": {
-            "type": "boolean"
           },
           "license": {
             "type": "string"
@@ -993,33 +1046,17 @@
           "location": {
             "$ref": "#/components/schemas/GeoLocation"
           },
-          "preview_url": {
-            "type": "string",
-            "format": "uri"
-          },
           "tags": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "thumbnail_url": {
-            "type": "string",
-            "format": "uri"
-          },
           "title": {
             "type": "string"
           },
-          "url": {
-            "type": "string",
-            "format": "uri"
-          },
-          "url_original": {
-            "type": "string",
-            "format": "uri"
-          },
-          "width": {
-            "type": "integer"
+          "urls": {
+            "$ref": "#/components/schemas/ImageUrls"
           }
         },
         "additionalProperties": false

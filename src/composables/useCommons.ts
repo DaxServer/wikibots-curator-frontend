@@ -63,7 +63,7 @@ export const useCommons = () => {
     let additionalInfo = ''
 
     additionalInfo = `{{Location|${item.image.location.latitude}|${item.image.location.longitude}|heading:${item.image.location.compass_angle}}}`
-    if (item.image.is_pano === true) additionalInfo += '\n{{Pano360}}'
+    if (item.image.camera.is_pano === true) additionalInfo += '\n{{Pano360}}'
 
     categories = categories.trim()
 
@@ -291,7 +291,7 @@ ${categories}
     claims.push(createInceptionClaim(image.dates.taken))
 
     // Source of file
-    claims.push(createSourceOfFileClaim(image.url))
+    claims.push(createSourceOfFileClaim(image.urls.url))
 
     // Coordinates of the point of view
     claims.push(createPointOfViewClaim(image.location))
@@ -308,10 +308,10 @@ ${categories}
     }
 
     // Width
-    claims.push(createWidthClaim(image.width))
+    claims.push(createWidthClaim(image.dimensions.width))
 
     // Height
-    claims.push(createHeightClaim(image.height))
+    claims.push(createHeightClaim(image.dimensions.height))
 
     return claims
   }

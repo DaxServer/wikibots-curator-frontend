@@ -14,16 +14,17 @@ describe('useTitleTemplate', () => {
       id,
       title: 'Original Title',
       description: 'Original Description',
-      url: 'http://example.com/image.jpg',
-      url_original: 'http://example.com/original.jpg',
-      preview_url: 'http://example.com/preview.jpg',
-      thumbnail_url: 'http://example.com/thumbnail.jpg',
-      width: 100,
-      height: 100,
+      urls: {
+        url: 'http://example.com/image.jpg',
+        original: 'http://example.com/original.jpg',
+        preview: 'http://example.com/preview.jpg',
+        thumbnail: 'http://example.com/thumbnail.jpg',
+      },
+      dimensions: { width: 100, height: 100 },
       dates: { taken: new Date('2023-01-01T00:00:00Z') },
       location: { latitude: 0, longitude: 0, compass_angle: 0 },
       creator: { id: 'user', username: 'User', profile_url: '' },
-      is_pano: false,
+      camera: { make: undefined, model: undefined, is_pano: false },
       existing: [],
     },
     meta: {
@@ -351,7 +352,7 @@ describe('useTitleTemplate', () => {
     it('returns empty array when no camera fields are used', () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = undefined as unknown as string
+      item1.image.camera.make = undefined as unknown as string
       store.replaceItems({ '1': item1 })
       store.updateItem('1', 'selected', true)
 
@@ -364,11 +365,11 @@ describe('useTitleTemplate', () => {
     it('returns items missing camera.make when field is used', () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = undefined as unknown as string
-      item1.image.camera_model = 'Canon EOS 5D'
+      item1.image.camera.make = undefined as unknown as string
+      item1.image.camera.model = 'Canon EOS 5D'
       const item2 = createMockItem('2')
-      item2.image.camera_make = 'Nikon'
-      item2.image.camera_model = 'D850'
+      item2.image.camera.make = 'Nikon'
+      item2.image.camera.model = 'D850'
       store.replaceItems({ '1': item1, '2': item2 })
       store.updateItem('1', 'selected', true)
       store.updateItem('2', 'selected', true)
@@ -383,8 +384,8 @@ describe('useTitleTemplate', () => {
     it('returns items missing camera.model when field is used', () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = 'Canon'
-      item1.image.camera_model = undefined as unknown as string
+      item1.image.camera.make = 'Canon'
+      item1.image.camera.model = undefined as unknown as string
       store.replaceItems({ '1': item1 })
       store.updateItem('1', 'selected', true)
 
@@ -398,8 +399,8 @@ describe('useTitleTemplate', () => {
     it('returns empty array when all items have camera fields', () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = 'Canon'
-      item1.image.camera_model = 'EOS 5D'
+      item1.image.camera.make = 'Canon'
+      item1.image.camera.model = 'EOS 5D'
       store.replaceItems({ '1': item1 })
       store.updateItem('1', 'selected', true)
 
@@ -414,7 +415,7 @@ describe('useTitleTemplate', () => {
     it('shows yellow highlight for camera fields when items are missing them', () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = undefined as unknown as string
+      item1.image.camera.make = undefined as unknown as string
       store.replaceItems({ '1': item1 })
       store.updateItem('1', 'selected', true)
 
@@ -429,7 +430,7 @@ describe('useTitleTemplate', () => {
     it('shows blue highlight for camera fields when no items are missing them', () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = 'Canon'
+      item1.image.camera.make = 'Canon'
       store.replaceItems({ '1': item1 })
       store.updateItem('1', 'selected', true)
 
@@ -453,8 +454,8 @@ describe('useTitleTemplate', () => {
     it('sets MissingFields status for items missing camera fields', async () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = undefined as unknown as string
-      item1.image.camera_model = undefined as unknown as string
+      item1.image.camera.make = undefined as unknown as string
+      item1.image.camera.model = undefined as unknown as string
       item1.meta.title = ''
       store.replaceItems({ '1': item1 })
       store.updateItem('1', 'selected', true)
@@ -471,7 +472,7 @@ describe('useTitleTemplate', () => {
     it('sets title even when MissingFields status is set', async () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = undefined as unknown as string
+      item1.image.camera.make = undefined as unknown as string
       item1.meta.title = ''
       store.replaceItems({ '1': item1 })
       store.updateItem('1', 'selected', true)
@@ -489,8 +490,8 @@ describe('useTitleTemplate', () => {
     it('does not set MissingFields status when camera fields are present', async () => {
       const store = useCollectionsStore()
       const item1 = createMockItem('1')
-      item1.image.camera_make = 'Canon'
-      item1.image.camera_model = 'EOS 5D'
+      item1.image.camera.make = 'Canon'
+      item1.image.camera.model = 'EOS 5D'
       item1.meta.title = ''
 
       // Mock fetch to return available

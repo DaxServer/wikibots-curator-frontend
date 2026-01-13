@@ -3,6 +3,7 @@ const {
   error,
   highlightedTemplate,
   isDirty,
+  anyItemsMissingCameraFields,
   itemsMissingCameraFields,
   previewItems,
   template,
@@ -16,8 +17,8 @@ const {
 const missingCameraFields = computed(() => {
   const missing = new Set<string>()
   itemsMissingCameraFields.value.forEach((item) => {
-    if (!item.image.camera_make) missing.add('camera.make')
-    if (!item.image.camera_model) missing.add('camera.model')
+    if (!item.image.camera.make) missing.add('camera.make')
+    if (!item.image.camera.model) missing.add('camera.model')
   })
   return missing
 })
@@ -35,7 +36,7 @@ const isCameraFieldUsedAndMissing = (fieldPath: string): boolean => {
 }
 
 const getCameraFieldTooltip = (field: { description: string; path: string }) => {
-  if (missingCameraFields.value.has(field.path)) {
+  if (anyItemsMissingCameraFields.value) {
     return {
       value: `${field.description} - some items are missing this field`,
       severity: 'warn',

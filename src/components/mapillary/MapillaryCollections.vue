@@ -29,21 +29,21 @@ onMounted(() => {
             {{ item.image.id }}
           </div>
           <Tag
-            v-if="item.image.is_pano"
+            v-if="item.image.camera.is_pano"
             severity="info"
             value="Panorama"
             class="align-self-start"
           />
           <ExternalLink
             as="button"
-            :href="item.image.url_original"
+            :href="item.image.urls.original"
             class="w-fit pl-0!"
           >
             View image
           </ExternalLink>
           <ExternalLink
             as="button"
-            :href="item.image.url"
+            :href="item.image.urls.url"
             class="w-fit pl-0!"
           >
             View on Mapillary
