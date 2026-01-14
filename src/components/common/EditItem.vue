@@ -200,7 +200,15 @@ const onTitleBlur = () => {
           <div>
             <div>
               <span class="text-gray-500">Compass Angle</span>
-              <div>{{ item.image.location.compass_angle }}°</div>
+              <div v-if="item.image.location.compass_angle">
+                {{ item.image.location.compass_angle }}°
+              </div>
+              <Chip
+                v-else
+                label="Not available"
+                size="small"
+                severity="secondary"
+              />
             </div>
           </div>
           <div>
