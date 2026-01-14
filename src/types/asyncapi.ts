@@ -300,7 +300,7 @@ export type ExistingPage = {
 
 export type GeoLocation = {
   accuracy?: number
-  compass_angle: number
+  compass_angle?: number
   latitude: number
   longitude: number
 }

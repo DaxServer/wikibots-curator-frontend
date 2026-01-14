@@ -912,7 +912,6 @@
       "GeoLocation": {
         "type": "object",
         "required": [
-          "compass_angle",
           "latitude",
           "longitude"
         ],

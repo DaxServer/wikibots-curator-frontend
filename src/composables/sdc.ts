@@ -200,12 +200,18 @@ export const createHeightClaim = (height: number): Statement => {
 }
 
 export const createPointOfViewClaim = (location: GeoLocation): Statement => {
+  const qualifiers: Snak[] = []
+  if (location.compass_angle !== undefined) {
+    qualifiers.push(
+      createQuantitySnak(WikidataProperty.Heading, location.compass_angle, WikidataEntity.Degree),
+    )
+  }
   return createStatement(
     createGlobeCoordinateSnak(
       WikidataProperty.CoordinatesOfThePointOfView,
       location.latitude,
       location.longitude,
     ),
-    [createQuantitySnak(WikidataProperty.Heading, location.compass_angle, WikidataEntity.Degree)],
+    qualifiers,
   )
 }
