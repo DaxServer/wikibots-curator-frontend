@@ -586,6 +586,82 @@ describe('useCommons', () => {
       expect(wikitext).toContain('{{cc-by-3.0}}')
       expect(wikitext).not.toContain('  {{cc-by-3.0}}  ')
     })
+
+    it('should include heading parameter when compass_angle is defined', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.location.compass_angle = 180
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('|heading:180}}')
+    })
+
+    it('should not include heading parameter when compass_angle is undefined', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.location.compass_angle = undefined
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).not.toContain('|heading:')
+    })
+
+    it('should not include heading parameter when compass_angle is 0', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.location.compass_angle = 0
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).not.toContain('|heading:0')
+    })
+
+    it('should include heading with decimal precision', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.location.compass_angle = 45.5
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('|heading:45.5}}')
+    })
+
+    it('should include heading with different coordinates', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.location.latitude = 37.7749
+      item.image.location.longitude = -122.4194
+      item.image.location.compass_angle = 90
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{Location|37.7749|-122.4194|heading:90}}')
+    })
+
+    it('should include Pano360 template when is_pano is true', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.camera.is_pano = true
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{Pano360}}')
+    })
+
+    it('should not include Pano360 template when is_pano is false', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.camera.is_pano = false
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).not.toContain('{{Pano360}}')
+    })
+
+    it('should include both heading and pano360 when applicable', () => {
+      const { buildWikitext } = useCommons()
+      const item = createMockItem('1')
+      item.image.location.compass_angle = 270
+      item.image.camera.is_pano = true
+
+      const wikitext = buildWikitext(item)
+      expect(wikitext).toContain('{{Location|0|0|heading:270}}')
+      expect(wikitext).toContain('{{Pano360}}')
+    })
     describe('buildSDC', () => {
       it('should include copyright claims when no override provided', () => {
         const { buildSDC } = useCommons()
