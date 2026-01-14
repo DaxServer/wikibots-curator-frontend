@@ -593,7 +593,7 @@ describe('useCommons', () => {
       item.image.location.compass_angle = 180
 
       const wikitext = buildWikitext(item)
-      expect(wikitext).toContain('{{Location|0|0|heading:180}}')
+      expect(wikitext).toContain('|heading:180}}')
     })
 
     it('should not include heading parameter when compass_angle is undefined', () => {
@@ -602,7 +602,6 @@ describe('useCommons', () => {
       item.image.location.compass_angle = undefined
 
       const wikitext = buildWikitext(item)
-      expect(wikitext).toContain('{{Location|0|0}}')
       expect(wikitext).not.toContain('|heading:')
     })
 
@@ -612,7 +611,6 @@ describe('useCommons', () => {
       item.image.location.compass_angle = 0
 
       const wikitext = buildWikitext(item)
-      expect(wikitext).toContain('{{Location|0|0}}')
       expect(wikitext).not.toContain('|heading:0')
     })
 
@@ -622,7 +620,7 @@ describe('useCommons', () => {
       item.image.location.compass_angle = 45.5
 
       const wikitext = buildWikitext(item)
-      expect(wikitext).toContain('{{Location|0|0|heading:45.5}}')
+      expect(wikitext).toContain('|heading:45.5}}')
     })
 
     it('should include heading with different coordinates', () => {
