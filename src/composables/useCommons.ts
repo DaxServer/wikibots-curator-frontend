@@ -62,7 +62,11 @@ export const useCommons = () => {
 
     let additionalInfo = ''
 
-    additionalInfo = `{{Location|${item.image.location.latitude}|${item.image.location.longitude}|heading:${item.image.location.compass_angle}}}`
+    additionalInfo = `{{Location|${item.image.location.latitude}|${item.image.location.longitude}`
+    if (item.image.location.compass_angle) {
+      additionalInfo += `|heading:${item.image.location.compass_angle}`
+    }
+    additionalInfo += '}}'
     if (item.image.camera.is_pano === true) additionalInfo += '\n{{Pano360}}'
 
     categories = categories.trim()
