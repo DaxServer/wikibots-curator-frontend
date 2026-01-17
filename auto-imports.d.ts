@@ -392,6 +392,9 @@ declare global {
   export type { ColorVariant } from './src/composables/useUploadStatus'
   import('./src/composables/useUploadStatus')
   // @ts-ignore
+  export type { User, Batch, UploadRequest, PaginatedResponse } from './src/types/admin'
+  import('./src/types/admin')
+  // @ts-ignore
   export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore

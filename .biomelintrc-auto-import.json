@@ -2,6 +2,7 @@
   "javascript": {
     "globals": [
       "AVAILABLE_IMAGE_FIELDS",
+      "Batch",
       "BatchCreated",
       "BatchItem",
       "BatchStats",
@@ -80,6 +81,7 @@
       "MeterItem",
       "NoValueSnak",
       "Noir",
+      "PaginatedResponse",
       "PartialCollectionImages",
       "PartialCollectionImagesData",
       "PropType",
@@ -125,6 +127,7 @@
       "UploadCreatedItem",
       "UploadData",
       "UploadItem",
+      "UploadRequest",
       "UploadSlice",
       "UploadSliceAck",
       "UploadSliceAckItem",
@@ -136,6 +139,7 @@
       "UploadsUpdate",
       "UrlDataValue",
       "UrlValueSnak",
+      "User",
       "VALID_EXTENSIONS",
       "VNode",
       "ValueSnak",

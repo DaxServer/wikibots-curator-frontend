@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Batch, PaginatedResponse, UploadRequest, User } from '@/types/admin'
+
 const selectedTable = ref<'batches' | 'users' | 'upload_requests'>('batches')
 const tableOptions = [
   { label: 'Batches', value: 'batches' },
