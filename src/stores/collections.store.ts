@@ -36,6 +36,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const globalLanguage = ref<string>('en')
   const globalCategories = ref<string>('')
   const globalLicense = ref<string>('')
+  const globalDateCategory = ref<boolean>(false)
   const globalTitleTemplate = ref<string>('')
 
   // Batches state
@@ -139,6 +140,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalLicense.value = value
   }
 
+  const setGlobalDateCategory = (value: boolean) => {
+    globalDateCategory.value = value
+  }
+
   const setGlobalTitleTemplate = (value: string) => {
     globalTitleTemplate.value = value
   }
@@ -193,6 +198,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalLanguage.value = 'en'
     globalCategories.value = ''
     globalLicense.value = ''
+    globalDateCategory.value = false
     stepper.value = '1'
     globalTitleTemplate.value = ''
     creator.value = { id: '', username: '', profile_url: '' }
@@ -243,6 +249,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalLanguage,
     globalCategories,
     globalLicense,
+    globalDateCategory,
     globalTitleTemplate,
     itemsArray,
     totalImages,
@@ -275,6 +282,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalLanguage,
     setGlobalCategories,
     setGlobalLicense,
+    setGlobalDateCategory,
     setGlobalTitleTemplate,
     updateItem,
     updateSelected,

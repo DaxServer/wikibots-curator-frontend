@@ -73,9 +73,13 @@ export const useCommons = () => {
 
     const license = item.meta.license?.trim() || store.globalLicense.trim() || '{{cc-by-sa-4.0}}'
 
+    const dateTemplate = store.globalDateCategory
+      ? `{{Taken on|cat=no|${date}}}`
+      : `{{Taken on|${date}}}`
+
     const info = `== {{int:filedesc}} ==
 {{Information
- | date        = {{Taken on|${date}}}
+ | date        = ${dateTemplate}
  | source      = ${source}
 }}
 ${additionalInfo}

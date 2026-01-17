@@ -5,7 +5,7 @@ const store = useCollectionsStore()
 const { submitUpload } = useCollections()
 const { getEffectiveTitle, wikitext } = useCommons()
 
-onMounted(() => {
+onActivated(() => {
   window.scroll({
     top: 0,
     behavior: 'smooth',

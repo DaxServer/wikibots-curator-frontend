@@ -30,6 +30,7 @@ declare module 'vue' {
     ConfirmDialog: typeof import('primevue/confirmdialog')['default']
     DataTable: typeof import('primevue/datatable')['default']
     DataView: typeof import('primevue/dataview')['default']
+    DateCategorySetting: typeof import('./src/components/common/DateCategorySetting.vue')['default']
     Divider: typeof import('primevue/divider')['default']
     EditItem: typeof import('./src/components/common/EditItem.vue')['default']
     ErrorDisplay: typeof import('./src/components/common/ErrorDisplay.vue')['default']
