@@ -64,6 +64,7 @@ const onPreviewEdits = () => {
             </div>
           </template>
         </ItemInputs>
+        <DateCategorySetting class="mt-4" />
       </template>
     </Card>
 
