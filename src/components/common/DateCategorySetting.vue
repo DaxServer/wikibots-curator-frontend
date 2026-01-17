@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 const store = useCollectionsStore()
-
-const takenOnTemplate = '{{Taken on|...}}'
 </script>
 
 <template>
@@ -29,7 +27,12 @@ const takenOnTemplate = '{{Taken on|...}}'
       Adds
       <code class="bg-gray-200 px-1">|cat=no</code>
       to
-      <code>{{ takenOnTemplate }}</code>
+      <code
+        class="bg-gray-200 px-1"
+        v-pre
+      >
+        {{Taken on|...}}
+      </code>
       template to prevent automatic categorization by date
     </SimpleMessage>
   </div>
