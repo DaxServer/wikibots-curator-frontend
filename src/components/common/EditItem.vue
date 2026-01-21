@@ -178,78 +178,67 @@ const onTitleBlur = () => {
       <div>
         <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
+            <span class="text-gray-500">Taken</span>
             <div>
-              <span class="text-gray-500">Taken</span>
-              <div>
-                {{ item.image.dates.taken.toLocaleString() }}
-              </div>
+              {{ item.image.dates.taken.toLocaleString() }}
             </div>
           </div>
           <div>
+            <span class="text-gray-500">Coordinates</span>
             <div>
-              <span class="text-gray-500">Coordinates</span>
-              <div>
-                Lat: {{ item.image.location.latitude }}
-                <br />
-                Lng: {{ item.image.location.longitude }}
-              </div>
+              Lat: {{ item.image.location.latitude }}
+              <br />
+              Lng: {{ item.image.location.longitude }}
             </div>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <div>
-              <span class="text-gray-500">Compass Angle</span>
-              <div v-if="item.image.location.compass_angle">
-                {{ item.image.location.compass_angle }}°
-              </div>
-              <Chip
-                v-else
-                label="Not available"
-                size="small"
-                severity="secondary"
-              />
+            <span class="text-gray-500">Compass Angle</span>
+            <div v-if="item.image.location.compass_angle">
+              {{ item.image.location.compass_angle }}°
             </div>
+            <Chip
+              v-else
+              label="Not available"
+              size="small"
+              severity="secondary"
+            />
           </div>
           <div>
-            <div>
-              <span class="text-gray-500">Size</span>
-              <div>{{ item.image.dimensions.width }}×{{ item.image.dimensions.height }}</div>
-            </div>
+            <span class="text-gray-500">Size</span>
+            <div>{{ item.image.dimensions.width }}×{{ item.image.dimensions.height }}</div>
           </div>
         </div>
-        <div class="mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-4 items-start">
           <div class="flex flex-col gap-2 text-sm items-start">
             <ExternalLink
-              as="button"
               :href="item.image.urls.original"
               show-icon
               variant="text"
               color="primary"
               size="small"
-              class="self-start pl-0 text-none"
+              class="self-start pl-0 text-none hover:underline"
             >
               View image
             </ExternalLink>
             <ExternalLink
-              as="button"
               :href="item.image.urls.url"
               show-icon
               variant="text"
               color="primary"
               size="small"
-              class="self-start pl-0 text-none"
+              class="self-start pl-0 text-none hover:underline"
             >
               View on {{ store.handler.charAt(0).toUpperCase() + store.handler.slice(1) }}
             </ExternalLink>
-            <Tag
-              v-if="item.image.camera.is_pano"
-              severity="info"
-              class="self-start"
-            >
-              Panorama
-            </Tag>
           </div>
+          <Tag
+            v-if="item.image.camera.is_pano"
+            severity="info"
+          >
+            Panorama
+          </Tag>
         </div>
         <div
           v-if="item.image.existing.length"
