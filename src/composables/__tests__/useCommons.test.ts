@@ -130,6 +130,57 @@ describe('useCommons', () => {
     expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Taken)
   })
 
+  it('handles normalized titles from Commons API (underscore to space)', async () => {
+    const store = useCollectionsStore()
+    const item = createMockItem(
+      '1',
+      'Mapillary (l1QCIHNgZvYUfjRse09ybX) (osmplus_org) 2025-12-11 11H36M26S400.jpg',
+    )
+    store.replaceItems({ '1': item })
+
+    const { verifyTitles } = useCommons()
+
+    // Mock fetch response with normalized title (underscore converted to space)
+    const mockFetch = mock(() =>
+      Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            batchcomplete: true,
+            query: {
+              normalized: [
+                {
+                  fromencoded: false,
+                  from: 'File:Mapillary (l1QCIHNgZvYUfjRse09ybX) (osmplus_org) 2025-12-11 11H36M26S400.jpg',
+                  to: 'File:Mapillary (l1QCIHNgZvYUfjRse09ybX) (osmplus org) 2025-12-11 11H36M26S400.jpg',
+                },
+              ],
+              pages: {
+                '123': {
+                  ns: 6,
+                  title:
+                    'File:Mapillary (l1QCIHNgZvYUfjRse09ybX) (osmplus org) 2025-12-11 11H36M26S400.jpg',
+                  missing: true,
+                },
+              },
+            },
+          }),
+      }),
+    )
+    global.fetch = mockFetch as unknown as typeof fetch
+
+    await verifyTitles([
+      {
+        id: '1',
+        title: 'Mapillary (l1QCIHNgZvYUfjRse09ybX) (osmplus_org) 2025-12-11 11H36M26S400.jpg',
+        image: item.image,
+      },
+    ])
+
+    // Should correctly identify as Available since the normalized page has missing: true
+    expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Available)
+  })
+
   it('debounce verifyTitles waits before calling API', async () => {
     const store = useCollectionsStore()
     const item = createMockItem('1', 'Debounce Title')
@@ -528,6 +579,66 @@ describe('useCommons', () => {
       expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Duplicate)
       expect(store.items['2']!.meta.titleStatus).toBe(TITLE_STATUS.Duplicate)
       expect(store.items['3']!.meta.titleStatus).toBe(TITLE_STATUS.Available)
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
+
+    it('handles two items with different titles that normalize to the same title', async () => {
+      const { verifyTitles } = useCommons()
+      const store = useCollectionsStore()
+
+      // Two items with different titles (underscores in different places)
+      // that normalize to the same title on Commons
+      // Example: "Photo_one_two" vs "Photo one_two" both normalize to "Photo one two"
+      const item1 = createMockItem('1', 'Photo_one_two.jpg')
+      const item2 = createMockItem('2', 'Photo one_two.jpg')
+      store.replaceItems({ '1': item1, '2': item2 })
+
+      // Mock API response where both titles normalize to the SAME Commons title
+      // This simulates the situation where Commons normalizes underscores to spaces
+      // and both inputs end up with the same normalized form
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              batchcomplete: true,
+              query: {
+                normalized: [
+                  {
+                    fromencoded: false,
+                    from: 'File:Photo_one_two.jpg',
+                    to: 'File:Photo one two.jpg',
+                  },
+                  {
+                    fromencoded: false,
+                    from: 'File:Photo one_two.jpg',
+                    to: 'File:Photo one two.jpg',
+                  },
+                ],
+                pages: {
+                  '-1': {
+                    ns: 6,
+                    title: 'File:Photo one two.jpg',
+                    missing: true,
+                  },
+                },
+              },
+            }),
+        }),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      await verifyTitles([
+        { id: '1', title: 'Photo_one_two.jpg', image: item1.image },
+        { id: '2', title: 'Photo one_two.jpg', image: item2.image },
+      ])
+
+      // Both items should be marked as Available since Commons shows the normalized
+      // title as missing (not taken on Commons)
+      // The test verifies that the normalization lookup correctly maps both
+      // different input titles to the same normalized title
+      expect(store.items['1']!.meta.titleStatus).toBe(TITLE_STATUS.Available)
+      expect(store.items['2']!.meta.titleStatus).toBe(TITLE_STATUS.Available)
       expect(mockFetch).toHaveBeenCalledTimes(1)
     })
   })

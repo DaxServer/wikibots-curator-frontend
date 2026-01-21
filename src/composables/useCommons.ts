@@ -193,16 +193,31 @@ ${categories}
       if (!res || !res.ok) continue
       const data = (await res.json()) as {
         query?: {
+          normalized?: Array<{ from: string; to: string }>
           pages?: Record<string, { missing?: boolean; title: string; revisions?: unknown[] }>
         }
       }
 
+      // Build page lookup map for O(1) access
       const pages = Object.values(data.query?.pages || {})
+      const pageByTitle = new Map(pages.map((p) => [p.title, p]))
+
+      // Build mapping from original title to normalized title
+      const originalToNormalized = new Map<string, string>()
+      for (const n of data.query?.normalized || []) {
+        originalToNormalized.set(n.from, n.to)
+      }
 
       for (const item of chunk) {
         if (signal.aborted) return
 
-        const page = pages.find((p) => p.title === `File:${item.title}`)
+        // Check both original title and normalized title using O(1) map lookups
+        const originalTitle = `File:${item.title}`
+        const normalizedTitle = originalToNormalized.get(originalTitle)
+        const page =
+          pageByTitle.get(originalTitle) ??
+          (normalizedTitle ? pageByTitle.get(normalizedTitle) : undefined)
+
         let status: TitleStatus = TITLE_STATUS.Unknown
 
         if (!page) {
