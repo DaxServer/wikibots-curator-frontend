@@ -210,7 +210,7 @@ const onTitleBlur = () => {
             <div>{{ item.image.dimensions.width }}×{{ item.image.dimensions.height }}</div>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-4 items-start">
           <div class="flex flex-col gap-2 text-sm items-start">
             <ExternalLink
               :href="item.image.urls.original"
