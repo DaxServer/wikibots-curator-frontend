@@ -198,26 +198,25 @@ ${categories}
         }
       }
 
-      // Build mapping from normalized title to array of original titles
-      // Multiple titles can normalize to the same Commons title
-      const normalizedToOriginal = new Map<string, string[]>()
-      for (const n of data.query?.normalized || []) {
-        if (!normalizedToOriginal.has(n.to)) {
-          normalizedToOriginal.set(n.to, [])
-        }
-        normalizedToOriginal.get(n.to)!.push(n.from)
-      }
-
+      // Build page lookup map for O(1) access
       const pages = Object.values(data.query?.pages || {})
+      const pageByTitle = new Map(pages.map((p) => [p.title, p]))
+
+      // Build mapping from original title to normalized title
+      const originalToNormalized = new Map<string, string>()
+      for (const n of data.query?.normalized || []) {
+        originalToNormalized.set(n.from, n.to)
+      }
 
       for (const item of chunk) {
         if (signal.aborted) return
 
-        // Check both original title and normalized title
+        // Check both original title and normalized title using O(1) map lookups
         const originalTitle = `File:${item.title}`
+        const normalizedTitle = originalToNormalized.get(originalTitle)
         const page =
-          pages.find((p) => p.title === originalTitle) ||
-          pages.find((p) => normalizedToOriginal.get(p.title)?.includes(originalTitle))
+          pageByTitle.get(originalTitle) ??
+          (normalizedTitle ? pageByTitle.get(normalizedTitle) : undefined)
 
         let status: TitleStatus = TITLE_STATUS.Unknown
 
