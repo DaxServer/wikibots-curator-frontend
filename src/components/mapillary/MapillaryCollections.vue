@@ -35,16 +35,14 @@ onMounted(() => {
             class="align-self-start"
           />
           <ExternalLink
-            as="button"
             :href="item.image.urls.original"
-            class="w-fit pl-0!"
+            class="w-fit pl-0! hover:underline"
           >
             View image
           </ExternalLink>
           <ExternalLink
-            as="button"
             :href="item.image.urls.url"
-            class="w-fit pl-0!"
+            class="w-fit pl-0! hover:underline"
           >
             View on Mapillary
           </ExternalLink>
