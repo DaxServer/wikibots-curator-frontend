@@ -55,7 +55,7 @@ describe('useTitleTemplate', () => {
       const { template } = useTitleTemplate()
       // Default value from the composable
       expect(template.value).toBe(
-        'Mapillary ({{mapillary.photo.sequence}}) ({{mapillary.user.username}}) {{captured.date}} {{captured.time}}.jpg',
+        'Mapillary ({{mapillary.photo.sequence}}) ({{mapillary.user.username}}) {{captured.date}} {{captured.time_ms}}.jpg',
       )
     })
 

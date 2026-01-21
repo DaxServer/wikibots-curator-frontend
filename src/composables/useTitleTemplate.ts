@@ -16,7 +16,7 @@ export const useTitleTemplate = () => {
   const store = useCollectionsStore()
   const { verifyTitles } = useCommons()
   const internalTemplate = ref(
-    'Mapillary ({{mapillary.photo.sequence}}) ({{mapillary.user.username}}) {{captured.date}} {{captured.time}}.jpg',
+    'Mapillary ({{mapillary.photo.sequence}}) ({{mapillary.user.username}}) {{captured.date}} {{captured.time_ms}}.jpg',
   )
   const error = ref<string | null>(null)
 
