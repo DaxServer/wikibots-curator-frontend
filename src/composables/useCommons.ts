@@ -193,8 +193,19 @@ ${categories}
       if (!res || !res.ok) continue
       const data = (await res.json()) as {
         query?: {
+          normalized?: Array<{ from: string; to: string }>
           pages?: Record<string, { missing?: boolean; title: string; revisions?: unknown[] }>
         }
+      }
+
+      // Build mapping from normalized title to array of original titles
+      // Multiple titles can normalize to the same Commons title
+      const normalizedToOriginal = new Map<string, string[]>()
+      for (const n of data.query?.normalized || []) {
+        if (!normalizedToOriginal.has(n.to)) {
+          normalizedToOriginal.set(n.to, [])
+        }
+        normalizedToOriginal.get(n.to)!.push(n.from)
       }
 
       const pages = Object.values(data.query?.pages || {})
@@ -202,7 +213,12 @@ ${categories}
       for (const item of chunk) {
         if (signal.aborted) return
 
-        const page = pages.find((p) => p.title === `File:${item.title}`)
+        // Check both original title and normalized title
+        const originalTitle = `File:${item.title}`
+        const page =
+          pages.find((p) => p.title === originalTitle) ||
+          pages.find((p) => normalizedToOriginal.get(p.title)?.includes(originalTitle))
+
         let status: TitleStatus = TITLE_STATUS.Unknown
 
         if (!page) {
