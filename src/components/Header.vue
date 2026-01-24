@@ -19,6 +19,14 @@ onMounted(async () => {
 
     <div class="flex items-center gap-2">
       <Button
+        as="a"
+        href="https://phabricator.wikimedia.org/maniphest/task/edit/form/43/?projectPHIDs=tool-curator&subscriberPHIDs=DaxServer"
+        target="_blank"
+        label="Report issues"
+        severity="help"
+        text
+      />
+      <Button
         v-if="!auth.isAuthenticated"
         label="Login"
         :loading="auth.isLoading"
