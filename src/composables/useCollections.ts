@@ -27,6 +27,14 @@ import { markRaw, watch } from 'vue'
 
 export const UPLOAD_SLICE_SIZE = 18
 
+const toImage = (mediaImage: MediaImage): Image => ({
+  ...mediaImage,
+  description: mediaImage.description ?? '',
+  dates: {
+    taken: new Date(mediaImage.dates.taken),
+  },
+})
+
 const createItem = (image: Image, id: string, index: number, descriptionText: string): Item => ({
   id,
   index,
@@ -159,13 +167,7 @@ export const initCollectionsListeners = () => {
     const allItems: Record<string, Item> = {}
     let index = 0
     for (const [id, image] of Object.entries(images)) {
-      const img: Image = {
-        ...image,
-        description: image.description ?? '',
-        dates: {
-          taken: new Date(image.dates.taken),
-        },
-      }
+      const img = toImage(image)
       index += 1
       const descriptionText = buildDescription()
       allItems[id] = createItem(img, id, index, descriptionText)
@@ -240,13 +242,7 @@ export const initCollectionsListeners = () => {
 
   const onPartialCollectionImages = (images: MediaImage[]) => {
     for (const image of images) {
-      const img: Image = {
-        ...image,
-        description: image.description ?? '',
-        dates: {
-          taken: new Date(image.dates.taken),
-        },
-      }
+      const img = toImage(image)
 
       const skeletonItem = store.items[image.id]
       if (!skeletonItem) {
