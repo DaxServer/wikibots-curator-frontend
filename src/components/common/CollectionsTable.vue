@@ -82,40 +82,17 @@ const onStepperUpdate = (next: string) => {
 
     <SdcWarningMessage v-if="store.stepper === '2' && store.anyItemsWithExistingFiles" />
 
-    <KeepAlive>
-      <IngestSelectionList
-        v-if="store.stepper === '2'"
-        :alt-prefix="altPrefix"
-      >
-        <template #metadata="{ item }">
-          <slot
-            name="metadata"
-            :item="item"
-          ></slot>
-        </template>
-      </IngestSelectionList>
-    </KeepAlive>
-
-    <KeepAlive>
-      <CollectionsEdit
-        v-if="store.stepper === '3'"
-        :alt-prefix="altPrefix"
-      />
-    </KeepAlive>
-
-    <KeepAlive>
-      <UploadPreview
-        v-if="store.stepper === '4'"
-        :alt-prefix="altPrefix"
-      />
-    </KeepAlive>
-
-    <KeepAlive>
-      <UploadStatusTable
-        v-if="store.stepper === '5'"
-        :items="store.selectedItems"
-      />
-    </KeepAlive>
+    <CollectionsDataView
+      v-if="['2', '3', '4', '5'].includes(store.stepper)"
+      :alt-prefix="altPrefix"
+    >
+      <template #metadata="{ item }">
+        <slot
+          name="metadata"
+          :item="item"
+        ></slot>
+      </template>
+    </CollectionsDataView>
 
     <!-- <div
         v-if="store.totalImages === 0 && !store.isLoading"
