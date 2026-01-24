@@ -283,9 +283,9 @@ onUnmounted(() => {
       </SimpleMessage>
     </template>
 
-    <!-- Selection/Error info for Steps 2 & 3 -->
+    <!-- Selection/Error info for Steps 3 -->
     <div
-      v-if="['2', '3'].includes(store.stepper)"
+      v-if="store.stepper === '3'"
       class="flex justify-between items-center"
     >
       <Message
@@ -295,37 +295,35 @@ onUnmounted(() => {
         Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
       </Message>
       <div class="flex items-center gap-2">
-        <template v-if="store.stepper === '3'">
-          <div class="flex items-center gap-2 mr-2">
-            <Checkbox
-              v-model="showErrorsOnly"
-              binary
-              inputId="showErrors"
-            />
-            <label
-              for="showErrors"
-              class="cursor-pointer"
-            >
-              Show items with errors
-            </label>
-          </div>
-          <Message
-            v-if="store.itemsWithErrorsCount > 0"
-            severity="error"
-            icon="pi pi-exclamation-triangle"
-          >
-            {{ store.itemsWithErrorsCount }} item{{ store.itemsWithErrorsCount > 1 ? 's' : '' }}
-            with errors
-          </Message>
-          <Button
-            icon="pi pi-eye"
-            icon-pos="left"
-            label="Preview edits"
-            :severity="disablePreview ? 'secondary' : 'primary'"
-            :disabled="disablePreview"
-            @click="onPreviewEdits"
+        <div class="flex items-center gap-2 mr-2">
+          <Checkbox
+            v-model="showErrorsOnly"
+            binary
+            inputId="showErrors"
           />
-        </template>
+          <label
+            for="showErrors"
+            class="cursor-pointer"
+          >
+            Show items with errors
+          </label>
+        </div>
+        <Message
+          v-if="store.itemsWithErrorsCount > 0"
+          severity="error"
+          icon="pi pi-exclamation-triangle"
+        >
+          {{ store.itemsWithErrorsCount }} item{{ store.itemsWithErrorsCount > 1 ? 's' : '' }}
+          with errors
+        </Message>
+        <Button
+          icon="pi pi-eye"
+          icon-pos="left"
+          label="Preview edits"
+          :severity="disablePreview ? 'secondary' : 'primary'"
+          :disabled="disablePreview"
+          @click="onPreviewEdits"
+        />
       </div>
     </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   item: Item
   altPrefix: string
   layout: Layout
@@ -7,28 +7,30 @@ defineProps<{
 
 const store = useCollectionsStore()
 
-const onToggleSelect = () => {
-  store.updateItem(item.id, 'selected', !item.meta.selected)
+const getCardClass = () => {
+  return props.item.meta.selected ? 'bg-green-100!' : ''
 }
 </script>
 
 <template>
-  <div class="h-full flex flex-col">
-    <!-- Checkbox + Index header at top -->
-    <div class="flex items-start gap-4 mb-4">
-      <span class="text-4xl font-medium">{{ item.index }}</span>
-      <Checkbox
-        binary
-        :modelValue="item.meta.selected"
-        size="large"
-        class="mt-2"
-        @update:modelValue="(v: boolean) => store.updateItem(item.id, 'selected', v)"
-      />
-    </div>
-    <!-- Metadata slot for remaining content -->
-    <slot
-      name="metadata"
-      :item="item"
-    />
-  </div>
+  <Card :class="getCardClass()">
+    <template #content>
+      <template v-if="item.isSkeleton">
+        <MediaSkeleton layout="grid" />
+      </template>
+      <template v-else>
+        <Image
+          :src="item.image.urls.thumbnail"
+          :alt="`${altPrefix} ${item.id}`"
+          class="cursor-pointer w-full"
+          @click.stop="store.updateItem(item.id, 'selected', !item.meta.selected)"
+        />
+        <!-- Metadata slot for remaining content -->
+        <slot
+          name="metadata"
+          :item="item"
+        />
+      </template>
+    </template>
+  </Card>
 </template>

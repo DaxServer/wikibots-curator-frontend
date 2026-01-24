@@ -7,16 +7,6 @@ const props = defineProps<{
 const { getEffectiveTitle } = useCommons()
 const { isDuplicateStatus, getStatusLabel, getStatusSeverity, getStatusStyle } = useUploadStatus()
 
-const getRowClass = (item: Item) => {
-  if (props.showSkeleton) return ''
-  const status = item.meta.status
-  if (status === UPLOAD_STATUS.Completed) return 'bg-green-100'
-  if (status === UPLOAD_STATUS.Failed) return 'bg-red-100'
-  if (status && isDuplicateStatus(status)) return 'bg-fuchsia-50'
-  if (status === UPLOAD_STATUS.InProgress) return 'bg-blue-100'
-  return ''
-}
-
 const duplicateLinks = computed(() => {
   const error = props.item.meta.errorInfo
   if (!error) return []
@@ -46,8 +36,10 @@ const duplicateLinks = computed(() => {
         File:{{ getEffectiveTitle(item) }}
       </ExternalLink>
       <ExternalLink
-        v-else-if="item.meta.status && isDuplicateStatus(item.meta.status) && duplicateLinks.length"
-        :href="duplicateLinks[0]?.url"
+        v-else-if="
+          item.meta.status && isDuplicateStatus(item.meta.status) && duplicateLinks.length > 0
+        "
+        :href="duplicateLinks[0]!.url"
         class="text-fuchsia-600 hover:underline"
       >
         File:{{ getEffectiveTitle(item) }}
