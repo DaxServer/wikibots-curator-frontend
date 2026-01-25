@@ -192,6 +192,7 @@ declare global {
   const useAttrs: typeof import('vue').useAttrs
   const useAuthStore: typeof import('./src/stores/auth.store').useAuthStore
   const useBase64: typeof import('@vueuse/core').useBase64
+  const useBatchSelection: typeof import('./src/composables/useBatchSelection').useBatchSelection
   const useBattery: typeof import('@vueuse/core').useBattery
   const useBluetooth: typeof import('@vueuse/core').useBluetooth
   const useBreakpoints: typeof import('@vueuse/core').useBreakpoints
@@ -215,6 +216,7 @@ declare global {
   const useCurrentElement: typeof import('@vueuse/core').useCurrentElement
   const useCycleList: typeof import('@vueuse/core').useCycleList
   const useDark: typeof import('@vueuse/core').useDark
+  const useDataFilters: typeof import('./src/composables/useDataFilters').useDataFilters
   const useDateFormat: typeof import('@vueuse/core').useDateFormat
   const useDebounce: typeof import('@vueuse/core').useDebounce
   const useDebounceFn: typeof import('@vueuse/core').useDebounceFn
@@ -593,6 +595,7 @@ declare module 'vue' {
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('./src/stores/auth.store')['useAuthStore']>
     readonly useBase64: UnwrapRef<typeof import('@vueuse/core')['useBase64']>
+    readonly useBatchSelection: UnwrapRef<typeof import('./src/composables/useBatchSelection')['useBatchSelection']>
     readonly useBattery: UnwrapRef<typeof import('@vueuse/core')['useBattery']>
     readonly useBluetooth: UnwrapRef<typeof import('@vueuse/core')['useBluetooth']>
     readonly useBreakpoints: UnwrapRef<typeof import('@vueuse/core')['useBreakpoints']>
@@ -616,6 +619,7 @@ declare module 'vue' {
     readonly useCurrentElement: UnwrapRef<typeof import('@vueuse/core')['useCurrentElement']>
     readonly useCycleList: UnwrapRef<typeof import('@vueuse/core')['useCycleList']>
     readonly useDark: UnwrapRef<typeof import('@vueuse/core')['useDark']>
+    readonly useDataFilters: UnwrapRef<typeof import('./src/composables/useDataFilters')['useDataFilters']>
     readonly useDateFormat: UnwrapRef<typeof import('@vueuse/core')['useDateFormat']>
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>

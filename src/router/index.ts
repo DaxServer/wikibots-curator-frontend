@@ -1,7 +1,7 @@
-import AdminView from '@/components/AdminView.vue'
-import BatchesView from '@/components/BatchesView.vue'
-import BatchUploadsView from '@/components/BatchUploadsView.vue'
 import MapillaryCollections from '@/components/mapillary/MapillaryCollections.vue'
+import AdminView from '@/components/views/AdminView.vue'
+import BatchesView from '@/components/views/BatchesView.vue'
+import BatchUploadsView from '@/components/views/BatchUploadsView.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
