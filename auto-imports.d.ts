@@ -334,6 +334,7 @@ declare global {
   const useTitle: typeof import('@vueuse/core').useTitle
   const useTitleBlacklist: typeof import('./src/composables/useTitleBlacklist').useTitleBlacklist
   const useTitleTemplate: typeof import('./src/composables/useTitleTemplate').useTitleTemplate
+  const useTitleVerification: typeof import('./src/composables/useTitleVerification').useTitleVerification
   const useToNumber: typeof import('@vueuse/core').useToNumber
   const useToString: typeof import('@vueuse/core').useToString
   const useToggle: typeof import('@vueuse/core').useToggle
@@ -737,6 +738,7 @@ declare module 'vue' {
     readonly useTitle: UnwrapRef<typeof import('@vueuse/core')['useTitle']>
     readonly useTitleBlacklist: UnwrapRef<typeof import('./src/composables/useTitleBlacklist')['useTitleBlacklist']>
     readonly useTitleTemplate: UnwrapRef<typeof import('./src/composables/useTitleTemplate')['useTitleTemplate']>
+    readonly useTitleVerification: UnwrapRef<typeof import('./src/composables/useTitleVerification')['useTitleVerification']>
     readonly useToNumber: UnwrapRef<typeof import('@vueuse/core')['useToNumber']>
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
