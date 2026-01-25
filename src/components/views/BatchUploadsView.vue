@@ -15,6 +15,18 @@ const {
 const { isDuplicateStatus, getStatusLabel, getStatusColor, getStatusSeverity, getStatusStyle } =
   useUploadStatus()
 
+const {
+  isSelectionMode,
+  selectedCount,
+  startSelectionMode,
+  exitSelectionMode,
+  toggleSelection,
+  isSelected,
+  selectAll,
+  deselectAll,
+  selectedIds,
+} = useBatchSelection()
+
 const columns = [
   { field: 'id', header: 'ID' },
   { field: 'key', header: 'Mapillary Image ID' },
@@ -25,7 +37,7 @@ const columns = [
 ]
 
 const selectionColumns = computed(() => {
-  if (isBatchUploadSelectionMode.value) {
+  if (isSelectionMode.value) {
     return [{ field: '_selected', header: 'Select' }, ...columns]
   }
   return columns
@@ -91,36 +103,7 @@ const statCards = computed((): BatchStatsCard[] => [
   },
 ])
 
-const searchText = ref('')
-const selectValues = ref<'all' | UploadStatus>('all')
-
-const filteredUploads = computed((): BatchUploadItem[] => {
-  let uploads = [...store.batchUploads]
-
-  if (selectValues.value !== 'all') {
-    uploads = uploads.filter((upload) => {
-      if (selectValues.value === UPLOAD_STATUS.Duplicate) {
-        return isDuplicateStatus(upload.status as UploadStatus)
-      }
-      return upload.status === selectValues.value
-    })
-  }
-
-  if (searchText.value) {
-    const lower = searchText.value.toLowerCase()
-    uploads = uploads.filter(
-      (u) =>
-        u.filename?.toLowerCase().includes(lower) ||
-        u.key?.toLowerCase().includes(lower) ||
-        String(u.id).includes(lower) ||
-        u.wikitext?.toLowerCase().includes(lower) ||
-        u.status.toLowerCase().includes(lower) ||
-        u.error?.message.toLowerCase().includes(lower),
-    )
-  }
-
-  return uploads
-})
+const { filterValue, searchText, filteredItems } = useDataFilters()
 
 const hasPendingJobs = computed(() => {
   return computedStats.value.queued > 0 || computedStats.value.in_progress > 0
@@ -134,41 +117,9 @@ const lastEditedBy = computed(() => {
   return Array.from(users).join(', ')
 })
 
-const isBatchUploadSelectionMode = ref(false)
-const batchUploadSelection = ref<Set<number>>(new Set())
-const selectedBatchUploadsCount = computed(() => batchUploadSelection.value.size)
-
-const startBatchUploadSelectionMode = () => {
-  isBatchUploadSelectionMode.value = true
-  batchUploadSelection.value.clear()
-}
-
-const exitBatchUploadSelectionMode = () => {
-  isBatchUploadSelectionMode.value = false
-  batchUploadSelection.value.clear()
-}
-
-const toggleBatchUploadSelection = (uploadId: number) => {
-  if (batchUploadSelection.value.has(uploadId)) {
-    batchUploadSelection.value.delete(uploadId)
-  } else {
-    batchUploadSelection.value.add(uploadId)
-  }
-}
-
-const selectAllBatchUploads = () => {
-  for (const upload of filteredUploads.value) {
-    batchUploadSelection.value.add(upload.id)
-  }
-}
-
-const deselectAllBatchUploads = () => {
-  batchUploadSelection.value.clear()
-}
-
 const handleAdminRetrySelectedUploads = async () => {
-  await adminRetrySelectedUploads(Array.from(batchUploadSelection.value), batchId.value)
-  exitBatchUploadSelectionMode()
+  await adminRetrySelectedUploads(Array.from(selectedIds.value), batchId.value)
+  exitSelectionMode()
 }
 
 const isSubscribed = ref(false)
@@ -257,12 +208,12 @@ onUnmounted(() => {
                 size="small"
                 @click="cancelBatch(Number(batchId))"
               />
-              <template v-if="isBatchUploadSelectionMode">
+              <template v-if="isSelectionMode">
                 <Button
                   icon="pi pi-check"
                   severity="success"
-                  :label="`Retry (${selectedBatchUploadsCount})`"
-                  :disabled="selectedBatchUploadsCount === 0"
+                  :label="`Retry (${selectedCount})`"
+                  :disabled="selectedCount === 0"
                   size="small"
                   class="ml-2"
                   @click="handleAdminRetrySelectedUploads()"
@@ -272,7 +223,7 @@ onUnmounted(() => {
                   severity="secondary"
                   label="Cancel"
                   size="small"
-                  @click="exitBatchUploadSelectionMode()"
+                  @click="exitSelectionMode()"
                 />
               </template>
               <Button
@@ -282,7 +233,7 @@ onUnmounted(() => {
                 label="Retry Selected"
                 size="small"
                 class="ml-2"
-                @click="startBatchUploadSelectionMode()"
+                @click="startSelectionMode()"
               />
             </template>
           </div>
@@ -314,8 +265,8 @@ onUnmounted(() => {
               :color="stat.color"
               :skeleton="store.batch === undefined"
               :always-active="stat.alwaysActive"
-              :selected="selectValues === stat.value"
-              @click="selectValues = stat.value"
+              :selected="filterValue === stat.value"
+              @click="filterValue = stat.value"
             />
           </div>
         </template>
@@ -324,26 +275,26 @@ onUnmounted(() => {
 
     <!-- Selection mode toolbar -->
     <div
-      v-if="isBatchUploadSelectionMode"
+      v-if="isSelectionMode"
       class="flex gap-2"
     >
       <Button
         label="Select All (Current Page)"
         size="small"
         severity="secondary"
-        @click="selectAllBatchUploads()"
+        @click="selectAll()"
       />
       <Button
         label="Deselect All"
         size="small"
         severity="secondary"
-        @click="deselectAllBatchUploads()"
+        @click="deselectAll()"
       />
     </div>
 
     <SharedDataTable
       :loading="store.batchUploadsLoading"
-      :value="filteredUploads"
+      :value="filteredItems"
       :columns="selectionColumns"
       :row-class="() => ({ 'align-top': true })"
       :rows-per-page-options="[10, 20, 50, 100]"
@@ -351,7 +302,7 @@ onUnmounted(() => {
       <template #header>
         <FilterHeader
           v-model:filter-text="searchText"
-          :filter-info="`(${filteredUploads.length} of ${store.batchUploads.length} uploads)`"
+          :filter-info="`(${filteredItems.length} of ${store.batchUploads.length} uploads)`"
           search-placeholder="Search uploads..."
           search-id="search-uploads"
           @clear="searchText = ''"
@@ -360,9 +311,9 @@ onUnmounted(() => {
       <template #body-cell="{ col, data }">
         <template v-if="col.field === '_selected'">
           <Checkbox
-            :model-value="batchUploadSelection.has(data.id)"
+            :model-value="isSelected(data.id)"
             binary
-            @update:model-value="() => toggleBatchUploadSelection(data.id)"
+            @update:model-value="() => toggleSelection(data.id)"
           />
         </template>
         <template v-else-if="col.field === 'key'">

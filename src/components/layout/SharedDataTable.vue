@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T">
 withDefaults(
   defineProps<{
-    value: T[]
+    value: readonly T[]
     columns: { field: string; header: string }[]
     totalRecords?: number
     rows?: number
