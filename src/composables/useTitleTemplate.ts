@@ -1,4 +1,4 @@
-import { useCommons } from '@/composables/useCommons'
+import { useTitleVerification } from '@/composables/useTitleVerification'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image } from '@/types/image'
 import { TITLE_STATUS } from '@/types/image'
@@ -14,7 +14,7 @@ import { computed, ref } from 'vue'
 
 export const useTitleTemplate = () => {
   const store = useCollectionsStore()
-  const { verifyTitles } = useCommons()
+  const { verifyTitles } = useTitleVerification()
   const internalTemplate = ref(
     'Mapillary ({{mapillary.photo.sequence}}) ({{mapillary.user.username}}) {{captured.date}} {{captured.time_ms}}.jpg',
   )
@@ -33,10 +33,8 @@ export const useTitleTemplate = () => {
     const itemsToVerify: { id: string; title: string; image: Image }[] = []
     store.selectedItems.forEach((item) => {
       if (!store.items[item.id]?.meta.title) {
-        // Check if item is missing required camera fields
         if (usedCameraFields.length > 0 && hasMissingCameraFields(item.image, usedCameraFields)) {
           store.updateItem(item.id, 'titleStatus', TITLE_STATUS.MissingFields)
-          // Still set the title, but mark as missing fields
           const title = applyTitleTemplate(internalTemplate.value, item.image, store.input)
           store.updateItem(item.id, 'title', title)
           return

@@ -26,6 +26,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const uploadSliceIndex = ref(0)
   const isBatchCreated = ref(false)
   const showSelectedOnly = ref(true)
+  const showErrorsOnly = ref(false)
   const viewMode = ref<Layout>('list')
   const gridPage = ref<number>(1)
   const gridItemsPerPage = ref<number>(24)
@@ -189,6 +190,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     isStatusChecking.value = false
     isLoading.value = false
     showSelectedOnly.value = true
+    showErrorsOnly.value = false
     viewMode.value = 'list'
     gridPage.value = 1
     gridItemsPerPage.value = 12
@@ -240,6 +242,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     batchId,
     stepper,
     showSelectedOnly,
+    showErrorsOnly,
     viewMode,
     gridPage,
     gridItemsPerPage,

@@ -23,9 +23,9 @@ const duplicateLinks = computed(() => {
 </script>
 
 <template>
-  <div class="col-span-1 px-2 font-medium">{{ item.index }}</div>
+  <div class="col-span-1 font-medium">{{ item.index }}</div>
 
-  <div class="col-span-8 px-2 overflow-hidden text-ellipsis whitespace-nowrap">
+  <div class="col-span-8 wrap-anywhere">
     <Skeleton v-if="showSkeleton" />
     <template v-else>
       <ExternalLink
@@ -48,7 +48,7 @@ const duplicateLinks = computed(() => {
     </template>
   </div>
 
-  <div class="col-span-3 px-2 flex justify-end">
+  <div class="col-span-3 flex justify-end">
     <Skeleton v-if="showSkeleton" />
     <template v-else-if="!item.meta.status">
       <Tag severity="secondary">Creating</Tag>

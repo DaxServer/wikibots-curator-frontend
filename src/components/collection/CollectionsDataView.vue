@@ -2,120 +2,30 @@
 const props = defineProps<{ altPrefix: string }>()
 
 const store = useCollectionsStore()
-const { submitUpload, retryUploads, sendUnsubscribeBatch, startUploadProcess } = useCollections()
-const { cancelTitleVerification } = useCommons()
-const { itemsMissingCameraFields } = useTitleTemplate()
-const { isDuplicateStatus } = useUploadStatus()
+const { sendUnsubscribeBatch, startUploadProcess } = useCollections()
 
-// --- Step 2 & 3 State & Logic ---
-const showErrorsOnly = ref(false)
 const dataViewPage = ref<DataViewPageEvent | null>(null)
 
-const getRowsPerPage = computed(() => {
-  if (store.stepper === '2') {
-    return store.viewMode === 'grid' ? 24 : 10
-  }
-  return 10
-})
-
-const rowsPerPageOptions = computed(() => {
-  if (store.stepper === '2') {
-    return store.viewMode === 'grid' ? [24, 48, 72, 96] : [10, 25, 50, 100]
-  }
-  if (store.stepper === '3') {
-    return [10, 20, 50]
-  }
-  if (store.stepper === '4') {
-    const total = store.selectedItems.length
-    const options = [10, 25, 50, 100]
-    if (total > 0 && !options.includes(total)) {
-      options.push(total)
-    }
-    return options.sort((a, b) => a - b)
-  }
+// Step 2 pagination
+const step2GetRowsPerPage = computed(() => (store.viewMode === 'grid' ? 24 : 10))
+const step2RowsPerPageOptions = computed(() => {
+  if (store.viewMode === 'grid') return [24, 48, 72, 96]
   return [10, 25, 50, 100]
 })
 
-const onSelectCurrentPage = () => {
+const step2OnSelectCurrentPage = () => {
   if (dataViewPage.value) {
     store.selectPage(dataViewPage.value.first, dataViewPage.value.rows)
   } else {
-    store.selectPage(0, getRowsPerPage.value)
+    store.selectPage(0, step2GetRowsPerPage.value)
   }
 }
 
-const disablePreview = computed(() => {
-  if (store.selectedCount === 0) return true
-  return store.selectedItems.some(
-    (i) =>
-      i.meta.selected && i.meta.titleStatus && TITLE_ERROR_STATUSES.includes(i.meta.titleStatus),
-  )
-})
+// Step 3 filter errors only
+const showErrorsOnly = ref(false)
 
-const onPreviewEdits = () => {
-  cancelTitleVerification()
-  store.stepper = '4'
-}
-
-// --- Step 5 State & Logic ---
-const showSkeleton = ref(true)
-const total = computed(() => Math.max(1, store.selectedItems.length))
-
-const creationProgress = computed<MeterItem[]>(() => {
-  const uploadRequested = store.selectedItems.filter(
-    (item) => item.meta.status !== undefined,
-  ).length
-
-  return [
-    {
-      label: 'Queued',
-      value: (uploadRequested * 100) / total.value,
-      color: 'var(--p-surface-500)',
-    },
-  ]
-})
-
-const uploadProgress = computed<MeterItem[]>(() => {
-  const successful = store.selectedItems.filter(
-    (item) => item.meta.status === UPLOAD_STATUS.Completed,
-  ).length
-  const inProgress = store.selectedItems.filter(
-    (item) => item.meta.status === UPLOAD_STATUS.InProgress,
-  ).length
-  const failed = store.selectedItems.filter(
-    (item) => item.meta.status === UPLOAD_STATUS.Failed,
-  ).length
-  const duplicate = store.selectedItems.filter(
-    (item) => item.meta.status && isDuplicateStatus(item.meta.status),
-  ).length
-  const queued = store.selectedItems.filter(
-    (item) => item.meta.status === UPLOAD_STATUS.Queued,
-  ).length
-
-  return [
-    { label: 'Successful', value: (successful * 100) / total.value, color: 'var(--p-green-500)' },
-    { label: 'Duplicate', value: (duplicate * 100) / total.value, color: 'var(--p-fuchsia-800)' },
-    { label: 'Failed', value: (failed * 100) / total.value, color: 'var(--p-red-500)' },
-    { label: 'Processing', value: (inProgress * 100) / total.value, color: 'var(--p-blue-500)' },
-    { label: 'Queued', value: (queued * 100) / total.value, color: 'var(--p-gray-300)' },
-  ]
-})
-
-const canRetry = computed(() => {
-  const hasFailed = store.selectedItems.some((item) => item.meta.status === UPLOAD_STATUS.Failed)
-  const isCompleted = !store.selectedItems.some(
-    (item) =>
-      item.meta.status === UPLOAD_STATUS.InProgress || item.meta.status === UPLOAD_STATUS.Queued,
-  )
-  return hasFailed && !!store.batchId && isCompleted
-})
-
-const onRetry = () => {
-  if (store.batchId) {
-    retryUploads(store.batchId)
-  }
-}
-
+// Step 5 skeleton
+const showSkeleton = ref(false)
 const skeletonRows = computed<Item[]>(() =>
   Array.from(
     { length: 10 },
@@ -132,6 +42,26 @@ const skeletonRows = computed<Item[]>(() =>
       }) as unknown as Item,
   ),
 )
+
+const getRowsPerPage = computed(() => {
+  return store.stepper === '2' ? step2GetRowsPerPage.value : 10
+})
+
+const rowsPerPageOptions = computed(() => {
+  if (store.stepper === '2') return step2RowsPerPageOptions.value
+  if (store.stepper === '3') {
+    return [10, 20, 50]
+  }
+  if (store.stepper === '4') {
+    const total = store.selectedItems.length
+    const options = [10, 25, 50, 100]
+    if (total > 0 && !options.includes(total)) {
+      options.push(total)
+    }
+    return options.sort((a, b) => a - b)
+  }
+  return [10, 25, 50, 100]
+})
 
 // --- Shared Computing ---
 const currentItems = computed(() => {
@@ -155,8 +85,7 @@ const currentItems = computed(() => {
 })
 
 const currentLayout = computed(() => {
-  if (store.stepper === '2') return store.viewMode
-  return 'list'
+  return store.stepper === '2' ? store.viewMode : 'list'
 })
 
 // --- Lifecycle ---
@@ -181,150 +110,19 @@ watch(
     }
   },
 )
-
-onUnmounted(() => {
-  if (store.stepper === '5') {
-    sendUnsubscribeBatch()
-  }
-})
 </script>
 
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Step 3 specific top cards -->
+    <!-- Step 3 header -->
     <template v-if="store.stepper === '3'">
-      <TitleTemplateEditor />
-
-      <Card class="bg-surface-100 border-l-4 border-blue-500">
-        <template #title>Fallbacks</template>
-        <template #content>
-          <ItemInputs
-            class="mt-2"
-            :language="store.globalLanguage"
-            :description="store.globalDescription"
-            :categories="store.globalCategories"
-            :license="store.globalLicense"
-            @update:language="(v: string) => (store.globalLanguage = v)"
-            @update:description="(v: string) => (store.globalDescription = v)"
-            @update:categories="(v: string) => (store.globalCategories = v)"
-            @update:license="(v: string) => (store.globalLicense = v)"
-          >
-            <template #description-help>
-              <div class="flex flex-col gap-4">
-                <div class="inline-flex flex-none">
-                  <SimpleMessage
-                    severity="info"
-                    variant="simple"
-                    size="small"
-                    icon="pi pi-info-circle"
-                  >
-                    Will be applied to all selected images
-                    <span class="underline">only as a fallback</span>
-                  </SimpleMessage>
-                </div>
-              </div>
-            </template>
-          </ItemInputs>
-          <DateCategorySetting class="mt-4" />
-        </template>
-      </Card>
-
-      <SdcWarningMessage v-if="store.itemsWithExistingTitlesCount > 0" />
-
-      <Message
-        v-if="itemsMissingCameraFields.length > 0"
-        severity="warn"
-        icon="pi pi-exclamation-triangle"
-      >
-        {{ itemsMissingCameraFields.length }} item{{
-          itemsMissingCameraFields.length > 1 ? 's' : ''
-        }}
-        missing camera fields used in template
-      </Message>
+      <Step3Header />
+      <Step3Controls @show-errors-only="showErrorsOnly = $event" />
     </template>
 
-    <!-- Step 4 specific top info -->
-    <template v-if="store.stepper === '4'">
-      <Card class="bg-surface-100">
-        <template #content>
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-              <div class="text-xl font-bold">Preview</div>
-              <span class="text-sm text-gray-500">
-                displaying {{ store.selectedCount }} items to upload
-              </span>
-            </div>
-            <Button
-              severity="primary"
-              :disabled="store.selectedCount === 0"
-              @click="submitUpload"
-            >
-              <i class="pi pi-cloud-upload mr-2"></i>
-              Upload
-            </Button>
-          </div>
-        </template>
-      </Card>
-
-      <SdcWarningMessage v-if="store.itemsWithExistingTitlesCount > 0" />
-
-      <SimpleMessage
-        severity="info"
-        icon="pi pi-info-circle"
-      >
-        The
-        <span
-          v-pre
-          class="text-primary"
-        >
-          {{ Information }}
-        </span>
-        template will be populated from SDC
-      </SimpleMessage>
-    </template>
-
-    <!-- Selection/Error info for Steps 3 -->
-    <div
-      v-if="store.stepper === '3'"
-      class="flex justify-between items-center"
-    >
-      <Message
-        severity="info"
-        icon="pi pi-info-circle"
-      >
-        Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
-      </Message>
-      <div class="flex items-center gap-2">
-        <div class="flex items-center gap-2 mr-2">
-          <Checkbox
-            v-model="showErrorsOnly"
-            binary
-            inputId="showErrors"
-          />
-          <label
-            for="showErrors"
-            class="cursor-pointer"
-          >
-            Show items with errors
-          </label>
-        </div>
-        <Message
-          v-if="store.itemsWithErrorsCount > 0"
-          severity="error"
-          icon="pi pi-exclamation-triangle"
-        >
-          {{ store.itemsWithErrorsCount }} item{{ store.itemsWithErrorsCount > 1 ? 's' : '' }}
-          with errors
-        </Message>
-        <Button
-          icon="pi pi-eye"
-          icon-pos="left"
-          label="Preview edits"
-          :severity="disablePreview ? 'secondary' : 'primary'"
-          :disabled="disablePreview"
-          @click="onPreviewEdits"
-        />
-      </div>
+    <!-- Step 4 header -->
+    <div v-if="store.stepper === '4'">
+      <Step4Header />
     </div>
 
     <DataView
@@ -349,26 +147,10 @@ onUnmounted(() => {
     >
       <template #header>
         <div v-if="store.stepper === '2'">
-          <CollectionsControls @select:current-page="onSelectCurrentPage" />
+          <CollectionsControls @select:current-page="step2OnSelectCurrentPage" />
         </div>
-        <div
-          v-if="store.stepper === '5'"
-          class="flex flex-col gap-3"
-        >
-          <div class="flex items-center justify-between">
-            <span class="text-xl font-bold">
-              {{ store.isBatchCreated ? 'Upload status' : 'Queueing uploads...' }}
-            </span>
-            <Button
-              v-if="canRetry"
-              icon="pi pi-refresh"
-              severity="danger"
-              label="Retry Failed"
-              @click="onRetry"
-              size="small"
-            />
-          </div>
-          <MeterGroup :value="store.isBatchCreated ? uploadProgress : creationProgress" />
+        <div v-if="store.stepper === '5'">
+          <Step5Header />
         </div>
       </template>
 

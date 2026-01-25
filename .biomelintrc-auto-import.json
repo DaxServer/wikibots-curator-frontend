@@ -454,6 +454,7 @@
       "useTitle",
       "useTitleBlacklist",
       "useTitleTemplate",
+      "useTitleVerification",
       "useToNumber",
       "useToString",
       "useToggle",
