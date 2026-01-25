@@ -5,7 +5,8 @@ defineProps<{
   totalItems: number
   perPageOptions: number[]
 }>()
-const emit = defineEmits<{
+
+defineEmits<{
   'update:page': [number]
   'update:itemsPerPage': [number]
 }>()

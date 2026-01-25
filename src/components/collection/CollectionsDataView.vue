@@ -163,8 +163,12 @@ const currentLayout = computed(() => {
 watch(
   () => store.stepper,
   (newStep, oldStep) => {
-    if (newStep === '5') {
+    // Scroll to top when moving to steps 3, 4, or 5
+    if (newStep === '3' || newStep === '4' || newStep === '5') {
       window.scroll({ top: 0, behavior: 'smooth' })
+    }
+
+    if (newStep === '5') {
       showSkeleton.value = true
       setTimeout(() => {
         showSkeleton.value = false
@@ -174,10 +178,6 @@ watch(
 
     if (oldStep === '5') {
       sendUnsubscribeBatch()
-    }
-
-    if (newStep === '4') {
-      window.scroll({ top: 0, behavior: 'smooth' })
     }
   },
 )
