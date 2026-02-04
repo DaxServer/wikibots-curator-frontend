@@ -1,41 +1,20 @@
 import { useAdminStore } from '@/stores/admin.store'
 import type { AdminBatch, AdminUploadRequest, AdminUser, PaginatedResponse } from '@/types/admin'
 
+const fetchData = async <T>(
+  endpoint: string,
+  page: number,
+  limit: number,
+): Promise<PaginatedResponse<T>> => {
+  const response = await fetch(`/api/admin/${endpoint}?page=${page}&limit=${limit}`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${endpoint}`)
+  }
+  return response.json()
+}
+
 export const useAdmin = () => {
   const store = useAdminStore()
-
-  const getAdminBatches = async (
-    page: number,
-    limit: number,
-  ): Promise<PaginatedResponse<AdminBatch>> => {
-    const response = await fetch(`/api/admin/batches?page=${page}&limit=${limit}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch batches')
-    }
-    return response.json()
-  }
-
-  const getAdminUsers = async (
-    page: number,
-    limit: number,
-  ): Promise<PaginatedResponse<AdminUser>> => {
-    const response = await fetch(`/api/admin/users?page=${page}&limit=${limit}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch users')
-    }
-    return response.json()
-  }
-
-  const getAdminUploadRequests = async (
-    page: number,
-    limit: number,
-  ): Promise<PaginatedResponse<AdminUploadRequest>> => {
-    const response = await fetch(`/api/admin/upload_requests?page=${page}&limit=${limit}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch upload requests')
-    }
-    return response.json()
-  }
 
   const updateAdminUploadRequest = async (
     id: number,
@@ -63,19 +42,23 @@ export const useAdmin = () => {
     try {
       switch (adminTable) {
         case 'batches': {
-          const data = await getAdminBatches(page, adminParams.rows)
+          const data = await fetchData<AdminBatch>('batches', page, adminParams.rows)
           store.adminBatches = data.items
           store.adminTotal = data.total
           break
         }
         case 'users': {
-          const data = await getAdminUsers(page, adminParams.rows)
+          const data = await fetchData<AdminUser>('users', page, adminParams.rows)
           store.adminUsers = data.items
           store.adminTotal = data.total
           break
         }
         case 'upload_requests': {
-          const data = await getAdminUploadRequests(page, adminParams.rows)
+          const data = await fetchData<AdminUploadRequest>(
+            'upload_requests',
+            page,
+            adminParams.rows,
+          )
           store.adminUploadRequests = data.items
           store.adminTotal = data.total
           break
@@ -87,9 +70,6 @@ export const useAdmin = () => {
   }
 
   return {
-    getAdminBatches,
-    getAdminUsers,
-    getAdminUploadRequests,
     updateAdminUploadRequest,
     refreshAdminData,
   }
