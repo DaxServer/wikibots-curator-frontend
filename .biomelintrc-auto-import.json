@@ -2,6 +2,9 @@
   "javascript": {
     "globals": [
       "AVAILABLE_IMAGE_FIELDS",
+      "AdminBatch",
+      "AdminUploadRequest",
+      "AdminUser",
       "BatchCreated",
       "BatchItem",
       "BatchStats",
@@ -80,6 +83,7 @@
       "MeterItem",
       "NoValueSnak",
       "Noir",
+      "PaginatedResponse",
       "PartialCollectionImages",
       "PartialCollectionImagesData",
       "PropType",
@@ -294,6 +298,8 @@
       "unrefElement",
       "until",
       "useActiveElement",
+      "useAdmin",
+      "useAdminStore",
       "useAnimate",
       "useArrayDifference",
       "useArrayEvery",

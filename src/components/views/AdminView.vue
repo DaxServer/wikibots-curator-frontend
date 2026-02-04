@@ -1,84 +1,40 @@
 <script setup lang="ts">
-const selectedTable = ref<'batches' | 'users' | 'upload_requests'>('batches')
+const store = useAdminStore()
+const { refreshAdminData, updateAdminUploadRequest } = useAdmin()
+
 const tableOptions = [
   { label: 'Batches', value: 'batches' },
   { label: 'Users', value: 'users' },
   { label: 'Upload Requests', value: 'upload_requests' },
 ]
 
-const items = ref<(Batch | User | UploadRequest)[]>([])
-const loading = ref(false)
-const totalRecords = ref(0)
-const lazyParams = ref({
-  first: 0,
-  rows: 100,
-  page: 1,
-})
-
-const columns = computed(() => {
-  if (items.value.length === 0) return []
-
-  const firstItem = items.value[0]
-  if (!firstItem) return []
-
-  return Object.keys(firstItem).map((key) => ({
-    field: key,
-    header: key,
-  }))
-})
-
-const loadLazyData = async (event?: { page: number; first: number; rows: number }) => {
-  loading.value = true
-  if (event) {
-    lazyParams.value = event
+const onPage = (event: DataTablePageEvent) => {
+  store.adminParams = {
+    first: event.first,
+    rows: event.rows,
+    page: event.page + 1,
   }
-
-  const params = lazyParams.value
-  const page = Math.floor(params.first / params.rows) + 1
-
-  try {
-    const url = `/api/admin/${selectedTable.value}?page=${page}&limit=${params.rows}`
-    const response = await fetch(url)
-    if (!response.ok) throw new Error('Failed to fetch data')
-    const data: PaginatedResponse<Batch | User | UploadRequest> = await response.json()
-    items.value = data.items
-    totalRecords.value = data.total
-  } catch (e) {
-    console.error(e)
-  } finally {
-    loading.value = false
-  }
+  refreshAdminData()
 }
 
 const onTableChange = () => {
-  items.value = []
-  lazyParams.value.first = 0
-  lazyParams.value.page = 1
-  loadLazyData()
+  store.adminParams.first = 0
+  store.adminParams.page = 1
+  refreshAdminData()
 }
 
 const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
   if (event.newValue === event.value) return
 
   try {
-    const url = `/api/admin/${selectedTable.value}/${event.data.id}`
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ [event.field]: event.newValue }),
-    })
-    if (!response.ok) throw new Error('Failed to update data')
-  } catch (e) {
-    alert('Failed to update data')
+    await updateAdminUploadRequest(event.data.id, event.field, event.newValue)
   } finally {
-    loadLazyData()
+    refreshAdminData()
   }
 }
 
 onMounted(() => {
-  loadLazyData()
+  refreshAdminData()
 })
 </script>
 
@@ -87,7 +43,7 @@ onMounted(() => {
     <div class="max-w-7xl mx-auto flex items-center mb-4 gap-4">
       <h1 class="text-2xl font-bold">Admin Dashboard</h1>
       <SelectButton
-        v-model="selectedTable"
+        v-model="store.adminTable"
         :options="tableOptions"
         option-label="label"
         option-value="value"
@@ -96,55 +52,82 @@ onMounted(() => {
       />
     </div>
 
+    <!-- Upload requests table with cell editing -->
     <DataTable
-      :value="items"
+      v-if="store.data.table === 'upload_requests'"
+      :value="store.data.data"
       lazy
       paginator
       paginator-position="both"
       paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
       current-page-report-template="Page {currentPage} of {totalPages}"
-      :alwaysShowPaginator="false"
+      :always-show-paginator="false"
       :rows-per-page-options="[10, 25, 50, 100, 200]"
-      :edit-mode="selectedTable === 'upload_requests' ? 'cell' : undefined"
-      :first="lazyParams.first"
-      :rows="lazyParams.rows"
-      :total-records="totalRecords"
-      @page="loadLazyData"
+      edit-mode="cell"
+      :first="store.adminParams.first"
+      :rows="store.adminParams.rows"
+      :total-records="store.adminTotal"
+      :loading="store.adminLoading"
+      @page="onPage"
       @cell-edit-complete="onCellEditComplete"
       :row-class="() => ({ 'align-top': true })"
     >
       <Column
-        v-for="col of columns"
+        v-for="col of store.data.columns"
         :key="col.field"
         :field="col.field"
         :header="col.header"
       >
         <template #editor="{ data, field }">
           <Textarea
-            v-model="data[field]"
+            v-model="data[field as keyof typeof data]"
             autofocus
             fluid
             auto-resize
           />
         </template>
         <template #body="{ data, field }">
-          <Skeleton v-if="loading" />
-          <template v-else-if="['created_at', 'updated_at'].includes(col.field)">
-            {{ new Date(data[field as string]).toLocaleString() }}
+          <template v-if="field === 'created_at' || field === 'updated_at'">
+            {{ new Date(data[field as keyof typeof data]).toLocaleString() }}
           </template>
-          <template v-else-if="col.field === 'wikitext'">
-            <pre class="text-xs">{{ data[field as string] }}</pre>
+          <template v-else-if="field === 'wikitext'">
+            <pre class="text-xs">{{ data[field as keyof typeof data] }}</pre>
           </template>
-          <template v-else-if="col.field === 'error' || col.field === 'labels'">
+          <template v-else-if="field === 'error' || field === 'labels'">
             <pre class="text-xs whitespace-pre-wrap">{{
-              JSON.stringify(data[field as string], null, 2)
+              JSON.stringify(data[field as keyof typeof data], null, 2)
             }}</pre>
           </template>
           <template v-else>
-            {{ data[field as string] }}
+            {{ data[field as keyof typeof data] }}
           </template>
         </template>
       </Column>
     </DataTable>
+
+    <!-- Read-only tables for batches and users -->
+    <SharedDataTable
+      v-else
+      class="max-w-7xl mx-auto"
+      :value="store.data.data as (AdminBatch | AdminUser)[]"
+      :columns="store.data.columns"
+      :rows="store.adminParams.rows"
+      :total-records="store.adminTotal"
+      :first="store.adminParams.first"
+      :loading="store.adminLoading"
+      lazy
+      :always-show-paginator="false"
+      :row-class="() => ({ 'align-top': true })"
+      @page="onPage"
+    >
+      <template #body-cell="{ col, data }">
+        <template v-if="col.field === 'created_at' || col.field === 'updated_at'">
+          {{ new Date(data[col.field as keyof typeof data]).toLocaleString() }}
+        </template>
+        <template v-else>
+          {{ data[col.field as keyof typeof data] }}
+        </template>
+      </template>
+    </SharedDataTable>
   </div>
 </template>
