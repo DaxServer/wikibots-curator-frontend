@@ -95,6 +95,7 @@
       "Ref",
       "Reference",
       "RetryUploads",
+      "RetryUploadsResponse",
       "ServerMessage",
       "ShallowRef",
       "Slot",

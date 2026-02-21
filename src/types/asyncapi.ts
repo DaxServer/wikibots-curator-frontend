@@ -329,6 +329,12 @@ export type PartialCollectionImagesData = {
   collection: string
 }
 
+export type RetryUploadsResponse = {
+  type: 'RETRY_UPLOADS_RESPONSE'
+  data: number
+  nonce: string
+}
+
 export type Subscribed = {
   data: number
   type: 'SUBSCRIBED'
@@ -649,6 +655,7 @@ export type ServerMessage =
   | CollectionImages
   | Error
   | PartialCollectionImages
+  | RetryUploadsResponse
   | Subscribed
   | TryBatchRetrieval
   | UploadCreated

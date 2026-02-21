@@ -47,6 +47,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const batchUploads = shallowRef<BatchUploadItem[]>([])
   const batchUploadsLoading = ref(false)
   const currentBatchId = ref<number | null>(null)
+  const retryNewBatchId = ref<number | null>(null)
   const batchesFilter = ref([
     { label: 'My uploads', value: 'my' },
     { label: 'All uploads', value: 'all' },
@@ -148,6 +149,10 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalTitleTemplate.value = value
   }
 
+  const setRetryNewBatchId = (batchId: number | null) => {
+    retryNewBatchId.value = batchId
+  }
+
   const setViewMode = (mode: Layout) => {
     viewMode.value = mode
   }
@@ -214,6 +219,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     totalImageIds.value = []
     uploadSliceIndex.value = 0
     isBatchCreated.value = false
+    retryNewBatchId.value = null
   }
 
   const resetBatches = () => {
@@ -265,6 +271,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     batchUploads,
     batchUploadsLoading,
     currentBatchId,
+    retryNewBatchId,
     batchesFilter,
     batchesSelectedFilter,
     batchesFilterText,
@@ -284,6 +291,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalLicense,
     setGlobalDateCategory,
     setGlobalTitleTemplate,
+    setRetryNewBatchId,
     updateItem,
     updateSelected,
     selectAll,

@@ -48,6 +48,9 @@
         "RetryUploads": {
           "$ref": "#/components/messages/RetryUploads"
         },
+        "RetryUploadsResponse": {
+          "$ref": "#/components/messages/RetryUploadsResponse"
+        },
         "SubscribeBatch": {
           "$ref": "#/components/messages/SubscribeBatch"
         },
@@ -160,6 +163,9 @@
           "$ref": "#/channels/wsChannel/messages/PartialCollectionImages"
         },
         {
+          "$ref": "#/channels/wsChannel/messages/RetryUploadsResponse"
+        },
+        {
           "$ref": "#/channels/wsChannel/messages/Subscribed"
         },
         {
@@ -240,6 +246,11 @@
       "RetryUploads": {
         "payload": {
           "$ref": "#/components/schemas/RetryUploads"
+        }
+      },
+      "RetryUploadsResponse": {
+        "payload": {
+          "$ref": "#/components/schemas/RetryUploadsResponse"
         }
       },
       "CancelBatch": {
@@ -1113,6 +1124,27 @@
           },
           "type": {
             "const": "RETRY_UPLOADS"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RetryUploadsResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "RETRY_UPLOADS_RESPONSE"
+          },
+          "data": {
+            "type": "integer",
+            "description": "New batch identifier containing retried uploads"
+          },
+          "nonce": {
+            "type": "string"
           }
         },
         "additionalProperties": false

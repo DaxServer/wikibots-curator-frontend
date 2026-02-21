@@ -282,6 +282,10 @@ export const initCollectionsListeners = () => {
     }
   }
 
+  const onRetryUploadsResponse = (newBatchId: number) => {
+    store.setRetryNewBatchId(newBatchId)
+  }
+
   watch(data, (raw) => {
     if (!raw) return
     const msg = JSON.parse(raw as string) as ServerMessage
@@ -322,6 +326,9 @@ export const initCollectionsListeners = () => {
         break
       case 'UPLOAD_SLICE_ACK':
         onUploadSliceAck(msg.sliceid, msg.data)
+        break
+      case 'RETRY_UPLOADS_RESPONSE':
+        onRetryUploadsResponse(msg.data)
         break
     }
   })
@@ -375,6 +382,7 @@ export const initCollectionsListeners = () => {
     onPartialCollectionImages,
     onBatchCreated,
     onUploadSliceAck,
+    onRetryUploadsResponse,
   }
 }
 
@@ -488,11 +496,20 @@ export const useCollections = () => {
       if (!response.ok) {
         throw new Error('Failed to retry uploads')
       }
+      const data = await response.json()
+      if (data.new_batch_id) {
+        store.setRetryNewBatchId(data.new_batch_id)
+        // Don't reload current batch since we're navigating away
+        return
+      }
     } catch {
       store.error = 'Failed to retry uploads'
     } finally {
-      loadBatchUploads(batchId)
-      sendSubscribeBatch(batchId)
+      // Only reload if we're not navigating to a new batch
+      if (!store.retryNewBatchId) {
+        loadBatchUploads(batchId)
+        sendSubscribeBatch(batchId)
+      }
     }
   }
 
