@@ -27,8 +27,8 @@
   },
   "devDependencies": {
     "@asyncapi/modelina": "^5.10.1",
-    "@biomejs/biome": "^2.4.3",
-    "@happy-dom/global-registrator": "^20.6.3",
+    "@biomejs/biome": "^2.4.4",
+    "@happy-dom/global-registrator": "^20.7.0",
     "@pinia/testing": "^1.0.3",
     "@primevue/auto-import-resolver": "^4.5.4",
     "@tailwindcss/vite": "^4.2.0",
@@ -39,9 +39,9 @@
     "@types/node": "^25.3.0",
     "@vitejs/plugin-vue": "^6.0.4",
     "@vue/tsconfig": "^0.8.1",
-    "@vue/typescript-plugin": "^3.2.4",
+    "@vue/typescript-plugin": "^3.2.5",
     "arkregex": "^0.0.5",
-    "happy-dom": "^20.6.3",
+    "happy-dom": "^20.7.0",
     "jiti": "^2.6.1",
     "prettier": "^3.8.1",
     "prettier-plugin-organize-imports": "^4.3.0",
@@ -52,7 +52,7 @@
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.6",
     "vite-tsconfig-paths": "^6.1.1",
-    "vue-tsc": "^3.2.4"
+    "vue-tsc": "^3.2.5"
   },
   "trustedDependencies": [
     "@tailwindcss/oxide"
