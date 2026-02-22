@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const batchId = useRouteParams<number>('id')
+const router = useRouter()
 
 const authStore = useAuthStore()
 const store = useCollectionsStore()
@@ -148,6 +149,21 @@ watch(hasPendingJobs, (isActive) => {
     isSubscribed.value = true
   }
 })
+
+watch(
+  () => store.retryNewBatchId,
+  (newBatchId) => {
+    if (newBatchId) {
+      store.setRetryNewBatchId(null)
+      // Unsubscribe from old batch before navigating (if subscribed)
+      if (isSubscribed.value) {
+        sendUnsubscribeBatch()
+        isSubscribed.value = false
+      }
+      router.push(`/batches/${newBatchId}`)
+    }
+  },
+)
 
 onUnmounted(() => {
   store.batch = undefined
