@@ -11,8 +11,11 @@ const fetchData = async <T>(
   endpoint: string,
   page: number,
   limit: number,
+  filterText?: string,
 ): Promise<PaginatedResponse<T>> => {
-  const response = await fetch(`/api/admin/${endpoint}?page=${page}&limit=${limit}`)
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+  if (filterText) params.set('filter_text', filterText)
+  const response = await fetch(`/api/admin/${endpoint}?${params}`)
   if (!response.ok) {
     throw new Error(`Failed to fetch ${endpoint}`)
   }
@@ -40,21 +43,22 @@ export const useAdmin = () => {
   }
 
   const refreshAdminData = async () => {
-    const { adminTable, adminParams } = store
+    const { adminTable, adminParams, adminFilterText } = store
     const page = Math.floor(adminParams.first / adminParams.rows) + 1
+    const filterText = adminFilterText || undefined
 
     store.adminLoading = true
 
     try {
       switch (adminTable) {
         case 'batches': {
-          const data = await fetchData<AdminBatch>('batches', page, adminParams.rows)
+          const data = await fetchData<AdminBatch>('batches', page, adminParams.rows, filterText)
           store.adminBatches = data.items
           store.adminTotal = data.total
           break
         }
         case 'users': {
-          const data = await fetchData<AdminUser>('users', page, adminParams.rows)
+          const data = await fetchData<AdminUser>('users', page, adminParams.rows, filterText)
           store.adminUsers = data.items
           store.adminTotal = data.total
           break
@@ -64,13 +68,14 @@ export const useAdmin = () => {
             'upload_requests',
             page,
             adminParams.rows,
+            filterText,
           )
           store.adminUploadRequests = data.items
           store.adminTotal = data.total
           break
         }
         case 'presets': {
-          const data = await fetchData<AdminPreset>('presets', page, adminParams.rows)
+          const data = await fetchData<AdminPreset>('presets', page, adminParams.rows, filterText)
           store.adminPresets = data.items
           store.adminTotal = data.total
           break

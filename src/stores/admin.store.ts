@@ -15,6 +15,7 @@ export const useAdminStore = defineStore('admin', () => {
     rows: 100,
     page: 1,
   })
+  const adminFilterText = ref('')
 
   const data = computed(() => {
     switch (adminTable.value) {
@@ -85,6 +86,7 @@ export const useAdminStore = defineStore('admin', () => {
     adminTotal,
     adminLoading,
     adminParams,
+    adminFilterText,
     data,
   }
 })
