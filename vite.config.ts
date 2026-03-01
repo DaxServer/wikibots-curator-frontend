@@ -50,6 +50,10 @@ export default defineConfig((): import('vite').UserConfig => {
             imports: ['useConfirm'],
           },
           {
+            from: 'primevue/usetoast',
+            imports: ['useToast'],
+          },
+          {
             from: 'ts-debounce',
             imports: ['debounce'],
           },

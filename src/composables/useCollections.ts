@@ -1,4 +1,5 @@
 import { useCommons } from '@/composables/useCommons'
+import { useFeatureFlags } from '@/composables/useFeatureFlags'
 import { useSocket } from '@/composables/useSocket'
 import { useUploadStatus } from '@/composables/useUploadStatus'
 import { useAuthStore } from '@/stores/auth.store'
@@ -7,11 +8,15 @@ import type {
   BatchUploadItem,
   CancelBatch,
   CreateBatch,
+  DeletePreset,
   FetchBatches,
   FetchBatchUploads,
   FetchImages,
+  FetchPresets,
   MediaImage,
+  PresetsList,
   RetryUploads,
+  SavePreset,
   ServerMessage,
   SubscribeBatch,
   SubscribeBatchesList,
@@ -89,7 +94,36 @@ export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
   const { buildDescription, getEffectiveTitle, wikitext } = useCommons()
   const { isDuplicateStatus } = useUploadStatus()
-  const { data, send } = useSocket
+  const { data, send, status } = useSocket
+  const { presetsEnabled } = useFeatureFlags()
+
+  // Fetch presets when WebSocket is open and handler is set
+  const fetchPresetsIfReady = () => {
+    if (!presetsEnabled.value) return
+    if (status.value === 'OPEN' && store.handler) {
+      send(
+        JSON.stringify({
+          type: 'FETCH_PRESETS',
+          data: { handler: store.handler },
+        } as FetchPresets),
+      )
+    }
+  }
+
+  // Fetch when WebSocket connects
+  watch(status, (newStatus) => {
+    if (newStatus === 'OPEN') {
+      fetchPresetsIfReady()
+    }
+  })
+
+  // Fetch when handler is set
+  watch(
+    () => store.handler,
+    () => {
+      fetchPresetsIfReady()
+    },
+  )
 
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
@@ -286,6 +320,12 @@ export const initCollectionsListeners = () => {
     store.setRetryNewBatchId(newBatchId)
   }
 
+  const onPresetsList = (data: PresetsList['data']) => {
+    if (data.handler === store.handler) {
+      store.setPresets(data.presets)
+    }
+  }
+
   watch(data, (raw) => {
     if (!raw) return
     const msg = JSON.parse(raw as string) as ServerMessage
@@ -329,6 +369,9 @@ export const initCollectionsListeners = () => {
         break
       case 'RETRY_UPLOADS_RESPONSE':
         onRetryUploadsResponse(msg.data)
+        break
+      case 'PRESETS_LIST':
+        onPresetsList(msg.data)
         break
     }
   })
@@ -383,6 +426,7 @@ export const initCollectionsListeners = () => {
     onBatchCreated,
     onUploadSliceAck,
     onRetryUploadsResponse,
+    onPresetsList,
   }
 }
 
@@ -527,6 +571,39 @@ export const useCollections = () => {
     store.stepper = '5'
   }
 
+  const fetchPresets = () => {
+    const { presetsEnabled } = useFeatureFlags()
+    if (!presetsEnabled.value) return
+
+    send(
+      JSON.stringify({
+        type: 'FETCH_PRESETS',
+        data: { handler: store.handler },
+      } as FetchPresets),
+    )
+  }
+
+  const savePreset = (preset: SavePreset['data']) => {
+    const { presetsEnabled } = useFeatureFlags()
+    if (!presetsEnabled.value) return
+
+    send(
+      JSON.stringify({
+        type: 'SAVE_PRESET',
+        data: preset,
+      } as SavePreset),
+    )
+  }
+
+  const deletePreset = (presetId: number) => {
+    send(
+      JSON.stringify({
+        type: 'DELETE_PRESET',
+        data: { preset_id: presetId },
+      } as DeletePreset),
+    )
+  }
+
   return {
     loadCollection,
     submitUpload,
@@ -541,5 +618,8 @@ export const useCollections = () => {
     sendUnsubscribeBatch,
     subscribeBatchesList,
     unsubscribeBatchesList,
+    fetchPresets,
+    savePreset,
+    deletePreset,
   }
 }

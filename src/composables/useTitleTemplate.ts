@@ -10,7 +10,7 @@ import {
   validPaths,
   validateTemplate,
 } from '@/utils/titleTemplate'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 export const useTitleTemplate = () => {
   const store = useCollectionsStore()
@@ -27,22 +27,27 @@ export const useTitleTemplate = () => {
       return
     }
     store.globalTitleTemplate = internalTemplate.value
+    await verifyTitlesWithTemplate()
+  }
 
-    const usedCameraFields = extractUsedCameraFields(internalTemplate.value)
+  const verifyTitlesWithTemplate = async () => {
+    // Use the store's template, not internalTemplate, so this works from any context
+    const templateToUse = store.globalTitleTemplate
+    const usedCameraFields = extractUsedCameraFields(templateToUse)
 
     const itemsToVerify: { id: string; title: string; image: Image }[] = []
     store.selectedItems.forEach((item) => {
       if (!store.items[item.id]?.meta.title) {
         if (usedCameraFields.length > 0 && hasMissingCameraFields(item.image, usedCameraFields)) {
           store.updateItem(item.id, 'titleStatus', TITLE_STATUS.MissingFields)
-          const title = applyTitleTemplate(internalTemplate.value, item.image, store.input)
+          const title = applyTitleTemplate(templateToUse, item.image, store.input)
           store.updateItem(item.id, 'title', title)
           return
         }
 
         itemsToVerify.push({
           id: item.id,
-          title: applyTitleTemplate(internalTemplate.value, item.image, store.input),
+          title: applyTitleTemplate(templateToUse, item.image, store.input),
           image: item.image,
         })
       }
@@ -61,6 +66,20 @@ export const useTitleTemplate = () => {
       error.value = err
     },
   })
+
+  // Sync internalTemplate when store's globalTitleTemplate changes externally (e.g., from preset)
+  watch(
+    () => store.globalTitleTemplate,
+    (newTemplate, oldTemplate) => {
+      // Only sync if internalTemplate matches the old store value (user hasn't made local edits)
+      // This allows external changes like presets to update the editor while preserving user edits
+      if (internalTemplate.value === oldTemplate) {
+        internalTemplate.value = newTemplate
+        const { error: err } = validateTemplate(newTemplate)
+        error.value = err
+      }
+    },
+  )
 
   const insertVariable = (variable: string) => {
     const prefix = template.value.length > 0 && !template.value.endsWith(' ') ? ' ' : ''
@@ -162,6 +181,7 @@ export const useTitleTemplate = () => {
     usedCameraFields,
 
     applyTemplate,
+    verifyTitlesWithTemplate,
     getVariableToken,
     insertVariable,
     onDragStart,

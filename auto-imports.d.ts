@@ -242,6 +242,7 @@ declare global {
   const useEventSource: typeof import('@vueuse/core').useEventSource
   const useEyeDropper: typeof import('@vueuse/core').useEyeDropper
   const useFavicon: typeof import('@vueuse/core').useFavicon
+  const useFeatureFlags: typeof import('./src/composables/useFeatureFlags').useFeatureFlags
   const useFetch: typeof import('@vueuse/core').useFetch
   const useFileDialog: typeof import('@vueuse/core').useFileDialog
   const useFileSystemAccess: typeof import('@vueuse/core').useFileSystemAccess
@@ -294,6 +295,7 @@ declare global {
   const usePreferredLanguages: typeof import('@vueuse/core').usePreferredLanguages
   const usePreferredReducedMotion: typeof import('@vueuse/core').usePreferredReducedMotion
   const usePreferredReducedTransparency: typeof import('@vueuse/core').usePreferredReducedTransparency
+  const usePresets: typeof import('./src/composables/usePresets').usePresets
   const usePrevious: typeof import('@vueuse/core').usePrevious
   const useRafFn: typeof import('@vueuse/core').useRafFn
   const useRefHistory: typeof import('@vueuse/core').useRefHistory
@@ -340,6 +342,7 @@ declare global {
   const useTitleVerification: typeof import('./src/composables/useTitleVerification').useTitleVerification
   const useToNumber: typeof import('@vueuse/core').useToNumber
   const useToString: typeof import('@vueuse/core').useToString
+  const useToast: typeof import('primevue/usetoast').useToast
   const useToggle: typeof import('@vueuse/core').useToggle
   const useTransition: typeof import('@vueuse/core').useTransition
   const useUploadStatus: typeof import('./src/composables/useUploadStatus').useUploadStatus
@@ -401,7 +404,7 @@ declare global {
   export type { AdminUser, AdminBatch, AdminUploadRequest, PaginatedResponse } from './src/types/admin'
   import('./src/types/admin')
   // @ts-ignore
-  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, RetryUploads, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, Label, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
+  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
   export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
@@ -652,6 +655,7 @@ declare module 'vue' {
     readonly useEventSource: UnwrapRef<typeof import('@vueuse/core')['useEventSource']>
     readonly useEyeDropper: UnwrapRef<typeof import('@vueuse/core')['useEyeDropper']>
     readonly useFavicon: UnwrapRef<typeof import('@vueuse/core')['useFavicon']>
+    readonly useFeatureFlags: UnwrapRef<typeof import('./src/composables/useFeatureFlags')['useFeatureFlags']>
     readonly useFetch: UnwrapRef<typeof import('@vueuse/core')['useFetch']>
     readonly useFileDialog: UnwrapRef<typeof import('@vueuse/core')['useFileDialog']>
     readonly useFileSystemAccess: UnwrapRef<typeof import('@vueuse/core')['useFileSystemAccess']>
@@ -704,6 +708,7 @@ declare module 'vue' {
     readonly usePreferredLanguages: UnwrapRef<typeof import('@vueuse/core')['usePreferredLanguages']>
     readonly usePreferredReducedMotion: UnwrapRef<typeof import('@vueuse/core')['usePreferredReducedMotion']>
     readonly usePreferredReducedTransparency: UnwrapRef<typeof import('@vueuse/core')['usePreferredReducedTransparency']>
+    readonly usePresets: UnwrapRef<typeof import('./src/composables/usePresets')['usePresets']>
     readonly usePrevious: UnwrapRef<typeof import('@vueuse/core')['usePrevious']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
     readonly useRefHistory: UnwrapRef<typeof import('@vueuse/core')['useRefHistory']>
@@ -750,6 +755,7 @@ declare module 'vue' {
     readonly useTitleVerification: UnwrapRef<typeof import('./src/composables/useTitleVerification')['useTitleVerification']>
     readonly useToNumber: UnwrapRef<typeof import('@vueuse/core')['useToNumber']>
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
+    readonly useToast: UnwrapRef<typeof import('primevue/usetoast')['useToast']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUploadStatus: UnwrapRef<typeof import('./src/composables/useUploadStatus')['useUploadStatus']>

@@ -5,6 +5,7 @@ import 'primeicons/primeicons.css'
 import { FocusTrap, Tooltip } from 'primevue'
 import PrimeVue from 'primevue/config'
 import ConfirmationService from 'primevue/confirmationservice'
+import ToastService from 'primevue/toastservice'
 
 import App from '@/App.vue'
 import router from '@/router'
@@ -19,6 +20,7 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 app.use(ConfirmationService)
+app.use(ToastService)
 
 // Register PrimeVue
 app.use(PrimeVue, {

@@ -6,10 +6,12 @@ const props = withDefaults(
     categories: string
     license?: string
     showFallbackMessages?: boolean
+    readonly?: boolean
   }>(),
   {
     showFallbackMessages: false,
     license: '',
+    readonly: false,
   },
 )
 
@@ -58,6 +60,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
           :options="languageOptions"
           option-label="label"
           option-value="value"
+          :disabled="readonly"
           @update:model-value="$emit('update:language', $event)"
         />
         <small
@@ -75,6 +78,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
             id="description_input"
             rows="1"
             auto-resize
+            :disabled="readonly"
             @update:model-value="$emit('update:description', $event)"
             fluid
           />
@@ -98,6 +102,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         id="categories_input"
         rows="3"
         auto-resize
+        :disabled="readonly"
         @update:model-value="$emit('update:categories', $event)"
         fluid
       />
@@ -135,6 +140,7 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
           id="license_input"
           rows="2"
           auto-resize
+          :disabled="readonly"
           @update:model-value="$emit('update:license', $event)"
           fluid
         />

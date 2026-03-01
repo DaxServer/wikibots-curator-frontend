@@ -45,6 +45,15 @@ export type CreateBatch = {
   type: 'CREATE_BATCH'
 }
 
+export type DeletePreset = {
+  type: 'DELETE_PRESET'
+  data: DeletePresetData
+}
+
+export type DeletePresetData = {
+  preset_id: number
+}
+
 export type FetchBatches = {
   data: FetchBatchesData
   type: 'FETCH_BATCHES'
@@ -73,9 +82,39 @@ export enum ImageHandler {
   FLICKR = 'flickr',
 }
 
+export type FetchPresets = {
+  type: 'FETCH_PRESETS'
+  data: FetchPresetsData
+}
+
+export type FetchPresetsData = {
+  handler: string
+}
+
 export type RetryUploads = {
   data: number
   type: 'RETRY_UPLOADS'
+}
+
+export type SavePreset = {
+  type: 'SAVE_PRESET'
+  data: SavePresetData
+}
+
+export type SavePresetData = {
+  preset_id?: number
+  title: string
+  title_template: string
+  labels?: Label
+  categories?: string
+  exclude_from_date_category: boolean
+  is_default: boolean
+  handler: string
+}
+
+export type Label = {
+  language: string
+  value: string
 }
 
 export type SubscribeBatch = {
@@ -118,11 +157,6 @@ export type UploadItem = {
   wikitext: string
   labels?: Label
   copyright_override?: boolean
-}
-
-export type Label = {
-  language: string
-  value: string
 }
 
 export type UploadSlice = {
@@ -327,6 +361,30 @@ export type PartialCollectionImages = {
 export type PartialCollectionImagesData = {
   images: MediaImage[]
   collection: string
+}
+
+export type PresetsList = {
+  type: 'PRESETS_LIST'
+  data: PresetsListData
+  nonce: string
+}
+
+export type PresetsListData = {
+  handler: string
+  presets: PresetItem[]
+}
+
+export type PresetItem = {
+  id: number
+  title: string
+  title_template: string
+  labels?: Label
+  categories?: string
+  exclude_from_date_category: boolean
+  handler: string
+  is_default: boolean
+  created_at: string
+  updated_at: string
 }
 
 export type RetryUploadsResponse = {
@@ -636,10 +694,13 @@ export enum SnakType {
 export type ClientMessage =
   | CancelBatch
   | CreateBatch
+  | DeletePreset
   | FetchBatches
   | FetchBatchUploads
   | FetchImages
+  | FetchPresets
   | RetryUploads
+  | SavePreset
   | SubscribeBatch
   | SubscribeBatchesList
   | UnsubscribeBatch
@@ -655,6 +716,7 @@ export type ServerMessage =
   | CollectionImages
   | Error
   | PartialCollectionImages
+  | PresetsList
   | RetryUploadsResponse
   | Subscribed
   | TryBatchRetrieval

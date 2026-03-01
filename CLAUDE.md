@@ -149,6 +149,11 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - Unsubscribe from old batch before navigating to avoid stale subscriptions
 - Skip unnecessary data fetches when navigating away (early-return or conditional in retry functions)
 
+**State updates after WebSocket responses:**
+- WebSocket responses that update store arrays (e.g., `PRESETS_LIST` → `store.presets`) are asynchronous
+- Use watchers on the updated store property to complete dependent operations (e.g., setting `currentPresetId` after save)
+- Use temporary flags to prevent watcher conflicts when multiple watchers observe the same reactive source
+
 ## Code Style
 
 - **No `any` types** - Enforced by Biome linter (`noExplicitAny: error`)
@@ -164,3 +169,4 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)
 - **Title Status** - Validation state of generated titles (`TITLE_ERROR_STATUSES` in `types/image.ts`)
 - **Layout** - View mode (`list` or `grid`) for collection display
+- **Preset Modes** - Three UI states: Preset Mode (`currentPresetId` set), Editing Preset Mode (`presetIdToUpdate` set, `currentPresetId` null), Manual Mode (both null)
