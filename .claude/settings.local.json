@@ -13,7 +13,9 @@
       "Bash(but commit:*)",
       "Bash(but push:*)",
       "Bash(bun generate:*)",
-      "Bash(but:*)"
+      "Bash(but:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

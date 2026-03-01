@@ -193,7 +193,7 @@ export type BatchItem = {
   id: number
   created_at: string
   updated_at: string
-  edit_group_id?: string
+  edit_group_id?: string | null
   username: string
   userid: string
   stats: BatchStats

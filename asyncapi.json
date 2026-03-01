@@ -453,8 +453,7 @@
             "format": "date-time"
           },
           "edit_group_id": {
-            "type": "string",
-            "nullable": true
+            "type": ["string", "null"]
           },
           "username": {
             "type": "string"
