@@ -13,6 +13,7 @@ onMounted(() => {
 <template>
   <main>
     <ConfirmDialog />
+    <Toast />
     <Header />
 
     <template v-if="auth.isAuthenticated">

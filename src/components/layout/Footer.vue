@@ -3,6 +3,7 @@ const sourceLinks = [
   { text: 'bots', url: 'https://github.com/DaxServer/wikibots' },
   { text: 'app backend', url: 'https://github.com/DaxServer/wikibots-curator-backend' },
   { text: 'app frontend', url: 'https://github.com/DaxServer/wikibots-curator-frontend' },
+  { text: 'toolsdb usage', url: 'https://tool-db-usage.toolforge.org/owner/s56192' },
 ]
 </script>
 

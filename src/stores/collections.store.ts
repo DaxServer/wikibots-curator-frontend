@@ -1,4 +1,4 @@
-import type { BatchItem, BatchUploadItem, Creator } from '@/types/asyncapi'
+import type { BatchItem, BatchUploadItem, Creator, PresetItem } from '@/types/asyncapi'
 import type { Handler, Layout } from '@/types/collections'
 import type { Item, Metadata, MetadataKey } from '@/types/image'
 import { TITLE_ERROR_STATUSES } from '@/types/image'
@@ -39,6 +39,10 @@ export const useCollectionsStore = defineStore('collections', () => {
   const globalDateCategory = ref<boolean>(false)
   const globalTitleTemplate = ref<string>('')
 
+  // Presets state
+  const presets = ref<PresetItem[]>([])
+  const currentPresetId = ref<number | null>(null)
+
   // Batches state
   const batches = shallowRef<BatchItem[]>([])
   const batchesTotal = ref<number>(0)
@@ -76,6 +80,14 @@ export const useCollectionsStore = defineStore('collections', () => {
   const anyItemsWithExistingFiles = computed(() =>
     itemsArray.value.some((i) => i.image.existing.length > 0),
   )
+
+  // Preset getters
+  const defaultPreset = computed(() => presets.value.find((p) => p.is_default))
+  const hasPresets = computed(() => presets.value.length > 0)
+  const currentPreset = computed(() => {
+    if (!currentPresetId.value) return null
+    return presets.value.find((p) => p.id === currentPresetId.value) ?? null
+  })
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -149,6 +161,24 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalTitleTemplate.value = value
   }
 
+  // Preset actions
+  const setPresets = (newPresets: PresetItem[]) => {
+    presets.value = newPresets
+  }
+
+  const setCurrentPresetId = (id: number | null) => {
+    currentPresetId.value = id
+  }
+
+  const applyPreset = (preset: PresetItem) => {
+    globalTitleTemplate.value = preset.title_template
+    globalDescription.value = preset.labels?.value ?? ''
+    globalLanguage.value = preset.labels?.language ?? 'en'
+    globalCategories.value = preset.categories ?? ''
+    globalDateCategory.value = !preset.exclude_from_date_category
+    currentPresetId.value = preset.id
+  }
+
   const setRetryNewBatchId = (batchId: number | null) => {
     retryNewBatchId.value = batchId
   }
@@ -220,6 +250,9 @@ export const useCollectionsStore = defineStore('collections', () => {
     uploadSliceIndex.value = 0
     isBatchCreated.value = false
     retryNewBatchId.value = null
+    // Don't clear presets - they are user-specific, not collection-specific
+    // presets.value = []
+    currentPresetId.value = null
   }
 
   const resetBatches = () => {
@@ -282,6 +315,11 @@ export const useCollectionsStore = defineStore('collections', () => {
     loadedCount,
     uploadSliceIndex,
     isBatchCreated,
+    presets,
+    currentPresetId,
+    defaultPreset,
+    hasPresets,
+    currentPreset,
 
     clearError,
     setLoading,
@@ -292,6 +330,9 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalDateCategory,
     setGlobalTitleTemplate,
     setRetryNewBatchId,
+    setPresets,
+    setCurrentPresetId,
+    applyPreset,
     updateItem,
     updateSelected,
     selectAll,

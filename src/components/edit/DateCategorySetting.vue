@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 const store = useCollectionsStore()
+
+defineProps<{
+  readonly?: boolean
+}>()
 </script>
 
 <template>
@@ -9,11 +13,12 @@ const store = useCollectionsStore()
         :model-value="store.globalDateCategory"
         binary
         inputId="dateCategory_input"
+        :disabled="readonly"
         @update:model-value="store.setGlobalDateCategory($event)"
       />
       <label
         for="dateCategory_input"
-        class="cursor-pointer select-none"
+        :class="readonly ? 'cursor-default select-none' : 'cursor-pointer select-none'"
       >
         Exclude from date category
       </label>
