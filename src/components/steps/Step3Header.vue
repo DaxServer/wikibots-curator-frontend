@@ -103,7 +103,7 @@ watch(
       presetIdToUpdate.value = null
     } else if (pending.title) {
       // Creating new preset: find it by title and set as current
-      const newPreset = newPresets.find((p) => p.title === pending.title)
+      const newPreset = newPresets.findLast((p) => p.title === pending.title)
       if (newPreset) {
         store.setCurrentPresetId(newPreset.id)
         pendingPresetSave.value = null
@@ -169,7 +169,6 @@ watch(
       v-if="presetsEnabled && currentPreset && showPresetDetails"
       :preset="currentPreset"
       @edit-manually="handleEditPreset"
-      @edit-preset="handleEditPreset"
     />
 
     <!-- Manual Mode: Show editable forms -->

@@ -6,7 +6,11 @@
       "Bash(bun typecheck:*)",
       "Bash(bun lint:*)",
       "Bash(bun format:*)",
-      "Bash(bun test:*)"
+      "Bash(bun test:*)",
+      "Bash(gh pr view:*)",
+      "Bash(but status:*)",
+      "Bash(but stage:*)",
+      "Bash(but commit:*)"
     ]
   }
 }
