@@ -4,7 +4,7 @@ const store = useCollectionsStore()
 const { itemsMissingCameraFields, verifyTitlesWithTemplate } = useTitleTemplate()
 const { currentPreset } = usePresets()
 const { presetsEnabled } = useFeatureFlags()
-const { savePreset, fetchPresets } = useCollections()
+const { savePreset } = useCollections()
 
 const showPresetSelectDialog = ref(false)
 const showPresetDetails = ref(false)
@@ -54,7 +54,6 @@ const handlePresetSave = async ({
   }
 
   savePreset(data)
-  fetchPresets()
 
   const isUpdate = !!data.preset_id
   toast.add({
@@ -241,6 +240,7 @@ watch(
     <PresetSelectDialog
       v-if="presetsEnabled"
       :visible="showPresetSelectDialog"
+      @update:visible="(value) => (showPresetSelectDialog = value)"
       @apply="applyPreset"
       @enter-manually="handleEnterManually"
     />
