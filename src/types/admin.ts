@@ -1,6 +1,6 @@
 // Types matching backend admin endpoints
 
-import type { Label, UploadUpdateItem } from './asyncapi'
+import type { BatchItem, Label, PresetItem, UploadUpdateItem } from '@/types/asyncapi'
 
 export type AdminUser = {
   userid: string
@@ -9,12 +9,7 @@ export type AdminUser = {
   updated_at: string
 }
 
-export type AdminBatch = {
-  id: number
-  userid: string
-  created_at: string
-  updated_at: string
-}
+export type AdminBatch = Omit<BatchItem, 'username' | 'stats'>
 
 export type AdminUploadRequest = {
   id: number
@@ -37,6 +32,8 @@ export type AdminUploadRequest = {
   created_at: string
   updated_at: string
 }
+
+export type AdminPreset = PresetItem & { userid: string }
 
 export type PaginatedResponse<T> = {
   items: T[]

@@ -1,12 +1,13 @@
-import type { AdminBatch, AdminUploadRequest, AdminUser } from '@/types/admin'
+import type { AdminBatch, AdminPreset, AdminUploadRequest, AdminUser } from '@/types/admin'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 
 export const useAdminStore = defineStore('admin', () => {
-  const adminTable = ref<'batches' | 'users' | 'upload_requests'>('batches')
+  const adminTable = ref<'batches' | 'users' | 'upload_requests' | 'presets'>('batches')
   const adminBatches = shallowRef<AdminBatch[]>([])
   const adminUsers = shallowRef<AdminUser[]>([])
   const adminUploadRequests = shallowRef<AdminUploadRequest[]>([])
+  const adminPresets = shallowRef<AdminPreset[]>([])
   const adminTotal = ref(0)
   const adminLoading = ref(false)
   const adminParams = ref({
@@ -23,6 +24,7 @@ export const useAdminStore = defineStore('admin', () => {
           columns: [
             { field: 'id', header: 'ID' },
             { field: 'userid', header: 'User ID' },
+            { field: 'edit_group_id', header: 'Edit Group ID' },
             { field: 'created_at', header: 'Created At' },
             { field: 'updated_at', header: 'Updated At' },
           ],
@@ -54,6 +56,23 @@ export const useAdminStore = defineStore('admin', () => {
           ],
           data: adminUploadRequests.value,
         }
+      case 'presets':
+        return {
+          table: adminTable.value,
+          columns: [
+            { field: 'id', header: 'ID' },
+            { field: 'userid', header: 'User ID' },
+            { field: 'handler', header: 'Handler' },
+            { field: 'title', header: 'Title' },
+            { field: 'title_template', header: 'Title Template' },
+            { field: 'categories', header: 'Categories' },
+            { field: 'is_default', header: 'Is Default' },
+            { field: 'labels', header: 'Labels' },
+            { field: 'created_at', header: 'Created At' },
+            { field: 'updated_at', header: 'Updated At' },
+          ],
+          data: adminPresets.value,
+        }
     }
   })
 
@@ -62,6 +81,7 @@ export const useAdminStore = defineStore('admin', () => {
     adminBatches,
     adminUsers,
     adminUploadRequests,
+    adminPresets,
     adminTotal,
     adminLoading,
     adminParams,

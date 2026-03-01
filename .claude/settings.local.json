@@ -11,7 +11,9 @@
       "Bash(but status:*)",
       "Bash(but stage:*)",
       "Bash(but commit:*)",
-      "Bash(but push:*)"
+      "Bash(but push:*)",
+      "Bash(bun generate:*)",
+      "Bash(but:*)"
     ]
   }
 }

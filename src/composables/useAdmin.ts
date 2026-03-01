@@ -1,5 +1,11 @@
 import { useAdminStore } from '@/stores/admin.store'
-import type { AdminBatch, AdminUploadRequest, AdminUser, PaginatedResponse } from '@/types/admin'
+import type {
+  AdminBatch,
+  AdminPreset,
+  AdminUploadRequest,
+  AdminUser,
+  PaginatedResponse,
+} from '@/types/admin'
 
 const fetchData = async <T>(
   endpoint: string,
@@ -60,6 +66,12 @@ export const useAdmin = () => {
             adminParams.rows,
           )
           store.adminUploadRequests = data.items
+          store.adminTotal = data.total
+          break
+        }
+        case 'presets': {
+          const data = await fetchData<AdminPreset>('presets', page, adminParams.rows)
+          store.adminPresets = data.items
           store.adminTotal = data.total
           break
         }
