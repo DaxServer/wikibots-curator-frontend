@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
-const { fetchPresets } = useCollections()
+const { fetchPresets, deletePreset } = useCollections()
 
 const props = defineProps<{
   visible: boolean
@@ -12,6 +12,8 @@ const emit = defineEmits<{
   enterManually: []
 }>()
 
+const deletingPresetId = ref<number | null>(null)
+
 const handleApplyPreset = (presetId: number) => {
   emit('apply', presetId)
   emit('update:visible', false)
@@ -22,11 +24,28 @@ const handleEnterManually = () => {
   emit('update:visible', false)
 }
 
+const handleDeletePreset = (presetId: number) => {
+  deletingPresetId.value = presetId
+  deletePreset(presetId)
+}
+
 watch(
   () => props.visible,
   (visible) => {
     if (visible) {
       fetchPresets()
+    }
+  },
+)
+
+watch(
+  () => store.presets,
+  () => {
+    if (deletingPresetId.value !== null) {
+      if (store.currentPresetId === deletingPresetId.value) {
+        store.setCurrentPresetId(null)
+      }
+      deletingPresetId.value = null
     }
   },
 )
@@ -62,7 +81,18 @@ watch(
               </div>
             </div>
           </div>
-          <i class="pi pi-chevron-right text-surface-400" />
+          <div class="flex items-center gap-2 shrink-0">
+            <Button
+              :icon="deletingPresetId === preset.id ? 'pi pi-spinner pi-spin' : 'pi pi-trash'"
+              :label="deletingPresetId === preset.id ? 'Deleting...' : undefined"
+              severity="danger"
+              :outlined="deletingPresetId !== preset.id"
+              size="small"
+              :disabled="deletingPresetId !== null"
+              @click.stop="handleDeletePreset(preset.id)"
+            />
+            <i class="pi pi-chevron-right text-surface-400" />
+          </div>
         </div>
       </div>
 

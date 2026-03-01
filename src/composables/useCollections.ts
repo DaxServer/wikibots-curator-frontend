@@ -94,36 +94,8 @@ export const initCollectionsListeners = () => {
   const store = useCollectionsStore()
   const { buildDescription, getEffectiveTitle, wikitext } = useCommons()
   const { isDuplicateStatus } = useUploadStatus()
-  const { data, send, status } = useSocket
-  const { presetsEnabled } = useFeatureFlags()
+  const { data, send } = useSocket
 
-  // Fetch presets when WebSocket is open and handler is set
-  const fetchPresetsIfReady = () => {
-    if (!presetsEnabled.value) return
-    if (status.value === 'OPEN' && store.handler) {
-      send(
-        JSON.stringify({
-          type: 'FETCH_PRESETS',
-          data: { handler: store.handler },
-        } as FetchPresets),
-      )
-    }
-  }
-
-  // Fetch when WebSocket connects
-  watch(status, (newStatus) => {
-    if (newStatus === 'OPEN') {
-      fetchPresetsIfReady()
-    }
-  })
-
-  // Fetch when handler is set
-  watch(
-    () => store.handler,
-    () => {
-      fetchPresetsIfReady()
-    },
-  )
 
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
@@ -460,6 +432,7 @@ export const useCollections = () => {
 
   const loadCollection = () => {
     store.$reset()
+    fetchPresets()
     store.isLoading = true
     send(
       JSON.stringify({
