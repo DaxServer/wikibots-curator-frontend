@@ -548,6 +548,7 @@ describe('useCollections Listeners', () => {
           {
             id: 1,
             created_at: '',
+            updated_at: '',
             username: '',
             userid: '',
             stats: {
@@ -563,6 +564,7 @@ describe('useCollections Listeners', () => {
           {
             id: 2,
             created_at: '',
+            updated_at: '',
             username: '',
             userid: '',
             stats: {
@@ -591,6 +593,7 @@ describe('useCollections Listeners', () => {
         {
           id: 1,
           created_at: '',
+          updated_at: '',
           username: '',
           userid: '',
           stats: {
@@ -606,6 +609,7 @@ describe('useCollections Listeners', () => {
         {
           id: 2,
           created_at: '',
+          updated_at: '',
           username: '',
           userid: '',
           stats: {
@@ -624,6 +628,7 @@ describe('useCollections Listeners', () => {
           {
             id: 2,
             created_at: 'updated',
+            updated_at: '',
             username: '',
             userid: '',
             stats: {
@@ -639,6 +644,7 @@ describe('useCollections Listeners', () => {
           {
             id: 3,
             created_at: '',
+            updated_at: '',
             username: '',
             userid: '',
             stats: {
@@ -686,6 +692,7 @@ describe('useCollections Listeners', () => {
         batch: {
           id: 123,
           created_at: '',
+          updated_at: '',
           username: '',
           userid: '',
           stats: {
@@ -714,6 +721,7 @@ describe('useCollections Listeners', () => {
       store.batch = {
         id: 123,
         created_at: '',
+        updated_at: '',
         username: '',
         userid: '',
         stats: {
@@ -732,6 +740,7 @@ describe('useCollections Listeners', () => {
         batch: {
           id: 999,
           created_at: '',
+          updated_at: '',
           username: '',
           userid: '',
           stats: {
@@ -761,6 +770,7 @@ describe('useCollections Listeners', () => {
         batch: {
           id: 0,
           created_at: '',
+          updated_at: '',
           username: '',
           userid: '',
           stats: {

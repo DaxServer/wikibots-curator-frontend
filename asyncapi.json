@@ -435,6 +435,7 @@
         "required": [
           "id",
           "created_at",
+          "updated_at",
           "username",
           "userid",
           "stats"
@@ -446,6 +447,13 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "edit_group_id": {
+            "type": ["string", "null"]
           },
           "username": {
             "type": "string"

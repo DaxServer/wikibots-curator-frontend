@@ -6,6 +6,7 @@ const tableOptions = [
   { label: 'Batches', value: 'batches' },
   { label: 'Users', value: 'users' },
   { label: 'Upload Requests', value: 'upload_requests' },
+  { label: 'Presets', value: 'presets' },
 ]
 
 const onPage = (event: DataTablePageEvent) => {
@@ -109,7 +110,7 @@ onMounted(() => {
     <SharedDataTable
       v-else
       class="max-w-7xl mx-auto"
-      :value="store.data.data as (AdminBatch | AdminUser)[]"
+      :value="store.data.data as (AdminBatch | AdminUser | AdminPreset)[]"
       :columns="store.data.columns"
       :rows="store.adminParams.rows"
       :total-records="store.adminTotal"
@@ -123,6 +124,11 @@ onMounted(() => {
       <template #body-cell="{ col, data }">
         <template v-if="col.field === 'created_at' || col.field === 'updated_at'">
           {{ new Date(data[col.field as keyof typeof data]).toLocaleString() }}
+        </template>
+        <template v-else-if="col.field === 'labels'">
+          <pre class="text-xs whitespace-pre-wrap">{{
+            JSON.stringify(data[col.field as keyof typeof data], null, 2)
+          }}</pre>
         </template>
         <template v-else>
           {{ data[col.field as keyof typeof data] }}

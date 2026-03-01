@@ -96,7 +96,6 @@ export const initCollectionsListeners = () => {
   const { isDuplicateStatus } = useUploadStatus()
   const { data, send } = useSocket
 
-
   const sendSubscribeBatch = (batchId: number) => {
     if (store.isStatusChecking) return
     store.isStatusChecking = true
