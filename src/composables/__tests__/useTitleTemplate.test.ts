@@ -59,6 +59,18 @@ describe('useTitleTemplate', () => {
       )
     })
 
+    it('initializes template from store when a preset has already been applied', () => {
+      // Simulates the bug: TitleTemplateEditor mounts AFTER a preset has been applied.
+      // The store already has the preset's template, but the composable was not yet instantiated
+      // so the watcher never fired. internalTemplate must seed from the store, not the hardcoded default.
+      const store = useCollectionsStore()
+      store.globalTitleTemplate = 'Custom preset {{mapillary.user.username}}.jpg'
+
+      const { template } = useTitleTemplate()
+
+      expect(template.value).toBe('Custom preset {{mapillary.user.username}}.jpg')
+    })
+
     it('validates and updates store when template is applied', async () => {
       const store = useCollectionsStore()
       const { template, error, applyTemplate } = useTitleTemplate()
