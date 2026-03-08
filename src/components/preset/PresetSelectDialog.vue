@@ -42,8 +42,11 @@ watch(
   () => store.presets,
   () => {
     if (deletingPresetId.value !== null) {
-      if (store.currentPresetId === deletingPresetId.value) {
-        store.setCurrentPresetId(null)
+      if (
+        store.currentPresetId === deletingPresetId.value ||
+        store.presetIdToUpdate === deletingPresetId.value
+      ) {
+        store.enterManualMode()
       }
       deletingPresetId.value = null
     }

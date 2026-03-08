@@ -1,6 +1,7 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { createPinia, setActivePinia } from 'pinia'
+import { nextTick } from 'vue'
 import { useCollectionsStore } from '../../stores/collections.store'
 import type { Item } from '../../types/image'
 import { TITLE_STATUS } from '../../types/image'
@@ -459,6 +460,46 @@ describe('useTitleTemplate', () => {
 
       expect(highlightedTemplate.value).toContain('text-blue-600 bg-blue-50')
       expect(highlightedTemplate.value).not.toContain('text-yellow-600')
+    })
+  })
+
+  describe('globalTitleTemplate watcher', () => {
+    it('syncs internalTemplate when presetMode is "preset"', async () => {
+      const store = useCollectionsStore()
+      store.enterPresetMode(1)
+      const { template } = useTitleTemplate()
+
+      store.globalTitleTemplate = 'Synced from preset.jpg'
+      await nextTick()
+
+      expect(template.value).toBe('Synced from preset.jpg')
+    })
+
+    it('syncs internalTemplate when presetMode is "manual"', async () => {
+      const store = useCollectionsStore()
+      // manual mode by default (no currentPresetId, no presetIdToUpdate)
+      const { template } = useTitleTemplate()
+
+      store.globalTitleTemplate = 'Synced in manual mode.jpg'
+      await nextTick()
+
+      expect(template.value).toBe('Synced in manual mode.jpg')
+    })
+
+    it('does NOT sync internalTemplate when presetMode is "editing"', async () => {
+      const store = useCollectionsStore()
+      store.globalTitleTemplate = 'Preset template.jpg'
+      store.enterEditingMode(1)
+      const { template } = useTitleTemplate()
+      // internalTemplate is seeded from store: 'Preset template.jpg'
+      expect(template.value).toBe('Preset template.jpg')
+
+      // External change to globalTitleTemplate while in editing mode
+      store.globalTitleTemplate = 'External change.jpg'
+      await nextTick()
+
+      // Should NOT sync — user is in editing mode
+      expect(template.value).toBe('Preset template.jpg')
     })
   })
 

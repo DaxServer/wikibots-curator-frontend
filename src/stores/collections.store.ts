@@ -42,6 +42,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   // Presets state
   const presets = ref<PresetItem[]>([])
   const currentPresetId = ref<number | null>(null)
+  const presetIdToUpdate = ref<number | null>(null)
 
   // Batches state
   const batches = shallowRef<BatchItem[]>([])
@@ -88,6 +89,12 @@ export const useCollectionsStore = defineStore('collections', () => {
     if (!currentPresetId.value) return null
     return presets.value.find((p) => p.id === currentPresetId.value) ?? null
   })
+  const presetMode = computed((): 'preset' | 'editing' | 'manual' => {
+    if (currentPresetId.value !== null) return 'preset'
+    if (presetIdToUpdate.value !== null) return 'editing'
+    return 'manual'
+  })
+  const isPresetMode = computed(() => presetMode.value === 'preset')
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -166,8 +173,19 @@ export const useCollectionsStore = defineStore('collections', () => {
     presets.value = newPresets
   }
 
-  const setCurrentPresetId = (id: number | null) => {
+  const enterPresetMode = (id: number) => {
     currentPresetId.value = id
+    presetIdToUpdate.value = null
+  }
+
+  const enterEditingMode = (id: number) => {
+    presetIdToUpdate.value = id
+    currentPresetId.value = null
+  }
+
+  const enterManualMode = () => {
+    currentPresetId.value = null
+    presetIdToUpdate.value = null
   }
 
   const applyPreset = (preset: PresetItem) => {
@@ -176,7 +194,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalLanguage.value = preset.labels?.language ?? 'en'
     globalCategories.value = preset.categories ?? ''
     globalDateCategory.value = !preset.exclude_from_date_category
-    currentPresetId.value = preset.id
+    enterPresetMode(preset.id)
   }
 
   const setRetryNewBatchId = (batchId: number | null) => {
@@ -253,6 +271,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     // Don't clear presets - they are user-specific, not collection-specific
     // presets.value = []
     currentPresetId.value = null
+    presetIdToUpdate.value = null
   }
 
   const resetBatches = () => {
@@ -317,9 +336,12 @@ export const useCollectionsStore = defineStore('collections', () => {
     isBatchCreated,
     presets,
     currentPresetId,
+    presetIdToUpdate,
     defaultPreset,
     hasPresets,
     currentPreset,
+    presetMode,
+    isPresetMode,
 
     clearError,
     setLoading,
@@ -331,7 +353,9 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalTitleTemplate,
     setRetryNewBatchId,
     setPresets,
-    setCurrentPresetId,
+    enterPresetMode,
+    enterEditingMode,
+    enterManualMode,
     applyPreset,
     updateItem,
     updateSelected,
