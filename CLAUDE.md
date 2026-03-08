@@ -70,6 +70,8 @@ The project uses extensive auto-imports configured in `vite.config.ts`:
 
 Auto-imports can generate TypeScript errors with JavaScript reserved keywords (e.g., `const`, `var`, `function`). If `auto-imports.d.ts` has errors related to reserved keywords, manually remove those lines from the generated file.
 
+**Composable `.ts` files are NOT auto-imported.** Only `.vue` SFCs receive Vite's auto-import treatment at runtime. Composable `.ts` files (e.g., `usePresetManager.ts`) must explicitly import stores, other composables, and PrimeVue utilities like `useToast`.
+
 ### Biome Integration
 
 Auto-import generates a `.biomelintrc-auto-import.json` that configures Biome to ignore auto-imported variables. The linter is configured to exclude `**/*.d.ts` files.
@@ -128,6 +130,22 @@ Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 - Happy DOM for browser simulation
 - `@pinia/testing` for store testing
 - Tests follow the pattern: `[name].test.ts`
+- Store tests go in `src/stores/__tests__/`; shared test fixtures in `src/__tests__/fixtures.ts` (imported as `@/__tests__/fixtures`)
+
+**Composable tests with watchers:** Composables that call `watch()` (including transitively) must run inside an `effectScope` to prevent watcher leaks across tests:
+```ts
+import { afterEach, beforeEach } from 'bun:test'
+import { effectScope } from 'vue'
+let scope = effectScope()
+beforeEach(() => { scope = effectScope() })
+afterEach(() => { scope.stop() })
+const run = () => scope.run(() => useMyComposable())!
+```
+
+**PrimeVue mocks in tests:** `useToast` and similar PrimeVue utilities require mocking before any import that depends on them:
+```ts
+mock.module('primevue/usetoast', () => ({ useToast: () => ({ add: mock(() => {}) }) }))
+```
 
 ## API Proxying
 
@@ -169,4 +187,4 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)
 - **Title Status** - Validation state of generated titles (`TITLE_ERROR_STATUSES` in `types/image.ts`)
 - **Layout** - View mode (`list` or `grid`) for collection display
-- **Preset Modes** - Three UI states: Preset Mode (`currentPresetId` set), Editing Preset Mode (`presetIdToUpdate` set, `currentPresetId` null), Manual Mode (both null)
+- **Preset Modes** - Three UI states tracked by `store.presetMode` (`'preset' | 'editing' | 'manual'`). Both `currentPresetId` and `presetIdToUpdate` live in the store. Transitions via `enterPresetMode(id)`, `enterEditingMode(id)`, `enterManualMode()`. Orchestration lives in `usePresetManager` composable.

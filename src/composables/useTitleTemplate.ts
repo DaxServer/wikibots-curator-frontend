@@ -69,14 +69,13 @@ export const useTitleTemplate = () => {
   })
 
   // Sync internalTemplate when store's globalTitleTemplate changes externally (e.g., from preset)
+  // In editing mode the user controls internalTemplate; all other modes always sync from store
   watch(
     () => store.globalTitleTemplate,
-    (newTemplate, oldTemplate) => {
-      // Only sync if internalTemplate matches the old store value (user hasn't made local edits)
-      // This allows external changes like presets to update the editor while preserving user edits
-      if (internalTemplate.value === oldTemplate) {
-        internalTemplate.value = newTemplate
-        const { error: err } = validateTemplate(newTemplate)
+    (newVal) => {
+      if (store.presetMode !== 'editing') {
+        internalTemplate.value = newVal
+        const { error: err } = validateTemplate(newVal)
         error.value = err
       }
     },

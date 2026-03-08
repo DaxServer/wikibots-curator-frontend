@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{
-  preset: PresetItem
-}>()
+const store = useCollectionsStore()
+// currentPreset is guaranteed non-null by v-if in parent
+const preset = computed(() => store.currentPreset!)
 
 defineEmits<{
   'edit-manually': []

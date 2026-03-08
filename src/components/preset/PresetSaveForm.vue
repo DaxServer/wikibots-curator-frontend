@@ -1,7 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
-  presetIdToUpdate?: number | null
-}>()
+const store = useCollectionsStore()
 
 const emit = defineEmits<{
   save: [data: { title: string; setAsDefault: boolean }]
@@ -13,9 +11,8 @@ const setAsDefault = ref(false)
 
 // Pre-fill preset title and checkbox when updating
 watch(
-  () => props.presetIdToUpdate,
+  () => store.presetIdToUpdate,
   (presetId) => {
-    const store = useCollectionsStore()
     if (presetId) {
       const preset = store.presets.find((p) => p.id === presetId)
       if (preset) {
@@ -53,15 +50,15 @@ const handleSave = () => {
 
     <div class="flex items-center gap-3">
       <Button
-        :label="presetIdToUpdate ? 'Update preset' : 'Save preset'"
-        :icon="presetIdToUpdate ? 'pi pi-pencil' : 'pi pi-bookmark'"
+        :label="store.presetIdToUpdate ? 'Update preset' : 'Save preset'"
+        :icon="store.presetIdToUpdate ? 'pi pi-pencil' : 'pi pi-bookmark'"
         :disabled="!presetTitle.trim()"
         size="small"
         @click="handleSave"
       />
 
       <Button
-        v-if="presetIdToUpdate"
+        v-if="store.presetIdToUpdate"
         label="Cancel"
         severity="secondary"
         outlined

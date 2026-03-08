@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const props = defineProps<{
-  currentPreset: PresetItem | null
+const store = useCollectionsStore()
+
+defineProps<{
   showPresetDetails?: boolean
-  presetIdToUpdate?: number | null
 }>()
 
 defineEmits<{
@@ -16,17 +16,17 @@ defineEmits<{
 <template>
   <!-- Preset Mode -->
   <div
-    v-if="currentPreset"
+    v-if="store.currentPreset"
     class="flex justify-between items-center px-4 py-3 bg-surface-50 border border-surface-200 rounded"
   >
     <div class="flex items-center gap-3">
       <i class="pi pi-bookmark-fill text-green-600 text-lg" />
       <div class="flex flex-col">
-        <span class="font-medium text-surface-900">Preset: "{{ currentPreset.title }}"</span>
+        <span class="font-medium text-surface-900">Preset: "{{ store.currentPreset.title }}"</span>
         <span class="text-sm text-surface-600">Using saved values for this upload</span>
       </div>
       <Tag
-        v-if="currentPreset.is_default"
+        v-if="store.currentPreset.is_default"
         value="Default"
         severity="success"
         size="small"
@@ -57,7 +57,7 @@ defineEmits<{
 
   <!-- Editing Preset Mode -->
   <div
-    v-else-if="presetIdToUpdate"
+    v-else-if="store.presetIdToUpdate"
     class="flex justify-between items-center px-4 py-3 bg-surface-50 border border-surface-200 rounded"
   >
     <div class="flex items-center gap-3">

@@ -98,14 +98,15 @@ declare global {
   const isShallow: typeof import('vue').isShallow
   const isValidExtension: typeof import('./src/utils/titleTemplate').isValidExtension
   const makeDestructurable: typeof import('@vueuse/core').makeDestructurable
+  const makePreset: typeof import('./src/__tests__/fixtures').makePreset
   const mapActions: typeof import('pinia').mapActions
   const mapGetters: typeof import('pinia').mapGetters
   const mapState: typeof import('pinia').mapState
   const mapStores: typeof import('pinia').mapStores
   const mapWritableState: typeof import('pinia').mapWritableState
   const markRaw: typeof import('vue').markRaw
-  const mockSend: typeof import('./src/composables/__tests__/useCollections.test').mockSend
-  const mockSocketData: typeof import('./src/composables/__tests__/useCollections.test').mockSocketData
+  const mockSend: typeof import('./src/composables/__tests__/usePresetManager.test').mockSend
+  const mockSocketData: typeof import('./src/composables/__tests__/usePresetManager.test').mockSocketData
   const nextTick: typeof import('vue').nextTick
   const onActivated: typeof import('vue').onActivated
   const onBeforeMount: typeof import('vue').onBeforeMount
@@ -295,6 +296,7 @@ declare global {
   const usePreferredLanguages: typeof import('@vueuse/core').usePreferredLanguages
   const usePreferredReducedMotion: typeof import('@vueuse/core').usePreferredReducedMotion
   const usePreferredReducedTransparency: typeof import('@vueuse/core').usePreferredReducedTransparency
+  const usePresetManager: typeof import('./src/composables/usePresetManager').usePresetManager
   const usePresets: typeof import('./src/composables/usePresets').usePresets
   const usePrevious: typeof import('@vueuse/core').usePrevious
   const useRafFn: typeof import('@vueuse/core').useRafFn
@@ -511,14 +513,15 @@ declare module 'vue' {
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
     readonly isValidExtension: UnwrapRef<typeof import('./src/utils/titleTemplate')['isValidExtension']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
+    readonly makePreset: UnwrapRef<typeof import('./src/__tests__/fixtures')['makePreset']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
     readonly mapStores: UnwrapRef<typeof import('pinia')['mapStores']>
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
-    readonly mockSend: UnwrapRef<typeof import('./src/composables/__tests__/useCollections.test')['mockSend']>
-    readonly mockSocketData: UnwrapRef<typeof import('./src/composables/__tests__/useCollections.test')['mockSocketData']>
+    readonly mockSend: UnwrapRef<typeof import('./src/composables/__tests__/usePresetManager.test')['mockSend']>
+    readonly mockSocketData: UnwrapRef<typeof import('./src/composables/__tests__/usePresetManager.test')['mockSocketData']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
@@ -708,7 +711,7 @@ declare module 'vue' {
     readonly usePreferredLanguages: UnwrapRef<typeof import('@vueuse/core')['usePreferredLanguages']>
     readonly usePreferredReducedMotion: UnwrapRef<typeof import('@vueuse/core')['usePreferredReducedMotion']>
     readonly usePreferredReducedTransparency: UnwrapRef<typeof import('@vueuse/core')['usePreferredReducedTransparency']>
-    readonly usePresets: UnwrapRef<typeof import('./src/composables/usePresets')['usePresets']>
+    readonly usePresetManager: UnwrapRef<typeof import('./src/composables/usePresetManager')['usePresetManager']>
     readonly usePrevious: UnwrapRef<typeof import('@vueuse/core')['usePrevious']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
     readonly useRefHistory: UnwrapRef<typeof import('@vueuse/core')['useRefHistory']>
