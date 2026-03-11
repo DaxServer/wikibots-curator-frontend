@@ -297,7 +297,6 @@ declare global {
   const usePreferredReducedMotion: typeof import('@vueuse/core').usePreferredReducedMotion
   const usePreferredReducedTransparency: typeof import('@vueuse/core').usePreferredReducedTransparency
   const usePresetManager: typeof import('./src/composables/usePresetManager').usePresetManager
-  const usePresets: typeof import('./src/composables/usePresets').usePresets
   const usePrevious: typeof import('@vueuse/core').usePrevious
   const useRafFn: typeof import('@vueuse/core').useRafFn
   const useRefHistory: typeof import('@vueuse/core').useRefHistory
