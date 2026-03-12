@@ -11,6 +11,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Accordion: typeof import('primevue/accordion')['default']
+    AccordionContent: typeof import('primevue/accordioncontent')['default']
+    AccordionHeader: typeof import('primevue/accordionheader')['default']
+    AccordionPanel: typeof import('primevue/accordionpanel')['default']
     AdminView: typeof import('./src/components/views/AdminView.vue')['default']
     App: typeof import('./src/App.vue')['default']
     BatchesView: typeof import('./src/components/views/BatchesView.vue')['default']
@@ -55,9 +59,13 @@ declare module 'vue' {
     Menu: typeof import('primevue/menu')['default']
     Message: typeof import('primevue/message')['default']
     MeterGroup: typeof import('primevue/metergroup')['default']
+    PresetAccordion: typeof import('./src/components/preset/PresetAccordion.vue')['default']
     PresetDisplay: typeof import('./src/components/preset/PresetDisplay.vue')['default']
+    PresetListItem: typeof import('./src/components/preset/PresetListItem.vue')['default']
+    PresetPreview: typeof import('./src/components/preset/PresetPreview.vue')['default']
     PresetSaveForm: typeof import('./src/components/preset/PresetSaveForm.vue')['default']
     PresetSelectDialog: typeof import('./src/components/preset/PresetSelectDialog.vue')['default']
+    PresetSelector: typeof import('./src/components/preset/PresetSelector.vue')['default']
     PresetToolbar: typeof import('./src/components/preset/PresetToolbar.vue')['default']
     PreviewContent: typeof import('./src/components/preview/PreviewContent.vue')['default']
     ProgressBar: typeof import('primevue/progressbar')['default']
@@ -77,6 +85,7 @@ declare module 'vue' {
     StatusContent: typeof import('./src/components/upload/StatusContent.vue')['default']
     Step: typeof import('primevue/step')['default']
     Step3Controls: typeof import('./src/components/steps/Step3Controls.vue')['default']
+    Step3ErrorBanner: typeof import('./src/components/steps/Step3ErrorBanner.vue')['default']
     Step3Header: typeof import('./src/components/steps/Step3Header.vue')['default']
     Step4Header: typeof import('./src/components/steps/Step4Header.vue')['default']
     Step5Header: typeof import('./src/components/steps/Step5Header.vue')['default']

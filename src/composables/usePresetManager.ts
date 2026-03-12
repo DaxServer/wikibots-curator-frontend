@@ -13,17 +13,44 @@ export const usePresetManager = () => {
   const { verifyTitlesWithTemplate } = useTitleTemplate()
   const toast = useToast()
 
-  const showPresetSelectDialog = ref(false)
-  const showPresetDetails = ref(false)
+  const isEditing = ref(false)
+  const presetIdBeingEdited = ref<number | null>(null)
   const hasAutoAppliedDefault = ref(false)
   const pendingPresetSave = ref<{ id?: number; title?: string } | null>(null)
 
-  const applyPreset = async (presetId: number) => {
+  const selectPreset = async (presetId: number) => {
     const preset = store.presets.find((p) => p.id === presetId)
     if (!preset) return
     store.applyPreset(preset)
+    isEditing.value = false
     await verifyTitlesWithTemplate()
-    showPresetDetails.value = false
+  }
+
+  const clearPreset = () => {
+    store.setActivePreset(null)
+    isEditing.value = false
+  }
+
+  const handleEditPreset = () => {
+    if (store.currentPresetId === null) return
+    isEditing.value = true
+    presetIdBeingEdited.value = store.currentPresetId
+    store.setEditingPreset(true)
+  }
+
+  const handleCancelEdit = async () => {
+    // Reset UI state immediately for responsive feedback
+    isEditing.value = false
+    store.setEditingPreset(false)
+
+    // Then restore preset values in background
+    if (presetIdBeingEdited.value !== null) {
+      const preset = store.presets.find((p) => p.id === presetIdBeingEdited.value)
+      if (preset) {
+        store.applyPreset(preset)
+        await verifyTitlesWithTemplate()
+      }
+    }
   }
 
   const handlePresetSave = async ({
@@ -48,14 +75,16 @@ export const usePresetManager = () => {
       handler: store.handler,
     }
 
-    if (store.presetIdToUpdate) {
-      data.preset_id = store.presetIdToUpdate
-      pendingPresetSave.value = { id: store.presetIdToUpdate }
+    if (presetIdBeingEdited.value) {
+      data.preset_id = presetIdBeingEdited.value
+      pendingPresetSave.value = { id: presetIdBeingEdited.value }
     } else {
       pendingPresetSave.value = { title }
     }
 
     savePreset(data)
+    isEditing.value = false
+    store.setEditingPreset(false)
 
     const isUpdate = !!data.preset_id
     toast.add({
@@ -68,20 +97,6 @@ export const usePresetManager = () => {
     })
   }
 
-  const handleEditPreset = () => {
-    if (store.currentPresetId === null) return
-    store.enterEditingMode(store.currentPresetId)
-  }
-
-  const handleCancelEdit = () => {
-    if (store.presetIdToUpdate === null) return
-    store.enterPresetMode(store.presetIdToUpdate)
-  }
-
-  const handleEnterManually = () => {
-    store.enterManualMode()
-  }
-
   // Watch for preset updates after save to restore/set currentPresetId
   watch(
     () => store.presets,
@@ -90,12 +105,12 @@ export const usePresetManager = () => {
       if (!pending) return
 
       if (pending.id) {
-        store.enterPresetMode(pending.id)
+        store.setActivePreset(pending.id)
         pendingPresetSave.value = null
       } else if (pending.title) {
         const newPreset = newPresets.findLast((p) => p.title === pending.title)
         if (newPreset) {
-          store.enterPresetMode(newPreset.id)
+          store.setActivePreset(newPreset.id)
           pendingPresetSave.value = null
         }
       }
@@ -116,34 +131,19 @@ export const usePresetManager = () => {
       ) {
         store.applyPreset(store.defaultPreset)
         await verifyTitlesWithTemplate()
-        showPresetDetails.value = false
         hasAutoAppliedDefault.value = true
       }
     },
     { immediate: true },
   )
 
-  // Show preset select dialog when entering step 3 with presets but no default/current
-  watch(
-    () => store.stepper,
-    (newStep, oldStep) => {
-      if (!presetsEnabled.value) return
-      if (newStep === '3' && oldStep !== '3') {
-        if (store.presets.length > 0 && !store.defaultPreset && !store.currentPresetId) {
-          showPresetSelectDialog.value = true
-        }
-      }
-    },
-  )
-
   return {
-    showPresetSelectDialog,
-    showPresetDetails,
+    isEditing,
 
-    applyPreset,
-    handlePresetSave,
+    selectPreset,
+    clearPreset,
     handleEditPreset,
     handleCancelEdit,
-    handleEnterManually,
+    handlePresetSave,
   }
 }

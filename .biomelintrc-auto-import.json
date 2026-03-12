@@ -124,6 +124,7 @@
       "SubscribeBatchesList",
       "SubscribeBatchesListData",
       "Subscribed",
+      "TITLE_ERROR_LABELS",
       "TITLE_ERROR_STATUSES",
       "TITLE_STATUS",
       "TimeDataValue",

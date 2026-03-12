@@ -51,6 +51,14 @@ export const TITLE_ERROR_STATUSES: readonly TitleStatus[] = [
   TITLE_STATUS.MissingFields,
 ] as const
 
+export const TITLE_ERROR_LABELS: Record<string, string> = {
+  [TITLE_STATUS.Taken]: 'Title already exists on Wikimedia Commons',
+  [TITLE_STATUS.Invalid]: 'Title contains invalid characters',
+  [TITLE_STATUS.Blacklisted]: 'Title is blacklisted',
+  [TITLE_STATUS.Duplicate]: 'Duplicate title in this batch',
+  [TITLE_STATUS.MissingFields]: 'Title template uses fields missing from this image',
+}
+
 export const UPLOAD_STATUS = {
   Queued: 'queued',
   InProgress: 'in_progress',

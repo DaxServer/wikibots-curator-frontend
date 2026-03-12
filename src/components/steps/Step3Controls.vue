@@ -1,8 +1,4 @@
 <script setup lang="ts">
-defineEmits<{
-  showErrorsOnly: [boolean]
-}>()
-
 const store = useCollectionsStore()
 const { cancelTitleVerification } = useCommons()
 
@@ -28,36 +24,13 @@ const onPreviewEdits = () => {
     >
       Displaying {{ store.showSelectedOnly ? 'only selected' : 'all' }} items
     </Message>
-    <div class="flex items-center gap-2">
-      <div class="flex items-center gap-2 mr-2">
-        <Checkbox
-          @update:modelValue="$emit('showErrorsOnly', $event as boolean)"
-          binary
-          inputId="showErrors"
-        />
-        <label
-          for="showErrors"
-          class="cursor-pointer"
-        >
-          Show items with errors
-        </label>
-      </div>
-      <Message
-        v-if="store.itemsWithErrorsCount > 0"
-        severity="error"
-        icon="pi pi-exclamation-triangle"
-      >
-        {{ store.itemsWithErrorsCount }} item{{ store.itemsWithErrorsCount > 1 ? 's' : '' }}
-        with errors
-      </Message>
-      <Button
-        icon="pi pi-eye"
-        icon-pos="left"
-        label="Preview edits"
-        :severity="disablePreview ? 'secondary' : 'primary'"
-        :disabled="disablePreview"
-        @click="onPreviewEdits"
-      />
-    </div>
+    <Button
+      icon="pi pi-eye"
+      icon-pos="left"
+      label="Preview edits"
+      :severity="disablePreview ? 'secondary' : 'primary'"
+      :disabled="disablePreview"
+      @click="onPreviewEdits"
+    />
   </div>
 </template>

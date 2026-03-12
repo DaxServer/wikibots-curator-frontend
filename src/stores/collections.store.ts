@@ -42,7 +42,8 @@ export const useCollectionsStore = defineStore('collections', () => {
   // Presets state
   const presets = ref<PresetItem[]>([])
   const currentPresetId = ref<number | null>(null)
-  const presetIdToUpdate = ref<number | null>(null)
+  const isEditingPreset = ref(false)
+  const isAccordionOpen = ref(false)
 
   // Batches state
   const batches = shallowRef<BatchItem[]>([])
@@ -89,13 +90,6 @@ export const useCollectionsStore = defineStore('collections', () => {
     if (!currentPresetId.value) return null
     return presets.value.find((p) => p.id === currentPresetId.value) ?? null
   })
-  const presetMode = computed((): 'preset' | 'editing' | 'manual' => {
-    if (currentPresetId.value !== null) return 'preset'
-    if (presetIdToUpdate.value !== null) return 'editing'
-    return 'manual'
-  })
-  const isPresetMode = computed(() => presetMode.value === 'preset')
-
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
   }
@@ -173,19 +167,20 @@ export const useCollectionsStore = defineStore('collections', () => {
     presets.value = newPresets
   }
 
-  const enterPresetMode = (id: number) => {
+  const setActivePreset = (id: number | null) => {
     currentPresetId.value = id
-    presetIdToUpdate.value = null
   }
 
-  const enterEditingMode = (id: number) => {
-    presetIdToUpdate.value = id
-    currentPresetId.value = null
+  const setEditingPreset = (editing: boolean) => {
+    isEditingPreset.value = editing
   }
 
-  const enterManualMode = () => {
-    currentPresetId.value = null
-    presetIdToUpdate.value = null
+  const setAccordionOpen = (open: boolean) => {
+    isAccordionOpen.value = open
+  }
+
+  const toggleAccordion = () => {
+    isAccordionOpen.value = !isAccordionOpen.value
   }
 
   const applyPreset = (preset: PresetItem) => {
@@ -194,7 +189,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalLanguage.value = preset.labels?.language ?? 'en'
     globalCategories.value = preset.categories ?? ''
     globalDateCategory.value = !preset.exclude_from_date_category
-    enterPresetMode(preset.id)
+    setActivePreset(preset.id)
   }
 
   const setRetryNewBatchId = (batchId: number | null) => {
@@ -271,7 +266,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     // Don't clear presets - they are user-specific, not collection-specific
     // presets.value = []
     currentPresetId.value = null
-    presetIdToUpdate.value = null
+    isEditingPreset.value = false
   }
 
   const resetBatches = () => {
@@ -336,14 +331,15 @@ export const useCollectionsStore = defineStore('collections', () => {
     isBatchCreated,
     presets,
     currentPresetId,
-    presetIdToUpdate,
+    isEditingPreset,
+    isAccordionOpen,
     defaultPreset,
     hasPresets,
     currentPreset,
-    presetMode,
-    isPresetMode,
 
     clearError,
+    setAccordionOpen,
+    toggleAccordion,
     setLoading,
     setGlobalDescription,
     setGlobalLanguage,
@@ -353,9 +349,8 @@ export const useCollectionsStore = defineStore('collections', () => {
     setGlobalTitleTemplate,
     setRetryNewBatchId,
     setPresets,
-    enterPresetMode,
-    enterEditingMode,
-    enterManualMode,
+    setActivePreset,
+    setEditingPreset,
     applyPreset,
     updateItem,
     updateSelected,

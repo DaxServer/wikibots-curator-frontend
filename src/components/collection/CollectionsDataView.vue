@@ -47,6 +47,15 @@ const getRowsPerPage = computed(() => {
   return store.stepper === '2' ? step2GetRowsPerPage.value : 10
 })
 
+// Hide images list and step 3 controls when editing preset or accordion is open
+const shouldHideDataView = computed(() => {
+  return store.stepper === '3' && (store.isEditingPreset || store.isAccordionOpen)
+})
+
+const shouldHideStep3Controls = computed(() => {
+  return store.isEditingPreset || store.isAccordionOpen
+})
+
 const rowsPerPageOptions = computed(() => {
   if (store.stepper === '2') return step2RowsPerPageOptions.value
   if (store.stepper === '3') {
@@ -117,7 +126,10 @@ watch(
     <!-- Step 3 header -->
     <template v-if="store.stepper === '3'">
       <Step3Header />
-      <Step3Controls @show-errors-only="showErrorsOnly = $event" />
+      <template v-if="!shouldHideStep3Controls">
+        <Step3ErrorBanner @toggle-filter="showErrorsOnly = $event" />
+        <Step3Controls />
+      </template>
     </template>
 
     <!-- Step 4 header -->
@@ -126,6 +138,7 @@ watch(
     </div>
 
     <DataView
+      v-if="!shouldHideDataView"
       :value="currentItems"
       data-key="id"
       :layout="currentLayout"
