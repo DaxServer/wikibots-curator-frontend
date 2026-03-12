@@ -11,6 +11,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Accordion: typeof import('primevue/accordion')['default']
+    AccordionContent: typeof import('primevue/accordioncontent')['default']
+    AccordionHeader: typeof import('primevue/accordionheader')['default']
+    AccordionPanel: typeof import('primevue/accordionpanel')['default']
     AdminView: typeof import('./src/components/views/AdminView.vue')['default']
     App: typeof import('./src/App.vue')['default']
     BatchesView: typeof import('./src/components/views/BatchesView.vue')['default']
@@ -55,7 +59,10 @@ declare module 'vue' {
     Menu: typeof import('primevue/menu')['default']
     Message: typeof import('primevue/message')['default']
     MeterGroup: typeof import('primevue/metergroup')['default']
+    PresetAccordion: typeof import('./src/components/preset/PresetAccordion.vue')['default']
     PresetDisplay: typeof import('./src/components/preset/PresetDisplay.vue')['default']
+    PresetListItem: typeof import('./src/components/preset/PresetListItem.vue')['default']
+    PresetPreview: typeof import('./src/components/preset/PresetPreview.vue')['default']
     PresetSaveForm: typeof import('./src/components/preset/PresetSaveForm.vue')['default']
     PresetSelectDialog: typeof import('./src/components/preset/PresetSelectDialog.vue')['default']
     PresetSelector: typeof import('./src/components/preset/PresetSelector.vue')['default']

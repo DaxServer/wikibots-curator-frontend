@@ -117,6 +117,8 @@ Centralized state in Pinia stores located in `src/stores/`:
 
 Stores use the Composition API pattern with `defineStore` (arrow function syntax). State is reactive with `ref`/`reactive`, and computed properties derive values.
 
+**Store vs local state:** Use Pinia store for state shared across multiple components. Local refs duplicated across components require manual event synchronization chains that are fragile and hard to maintain. If state affects multiple components or requires events to stay in sync, it belongs in the store.
+
 ### Component Patterns
 
 Components use `<script setup lang="ts">` with Composition API. Since components and composables are auto-imported, you typically won't see import statements for them.
@@ -124,6 +126,29 @@ Components use `<script setup lang="ts">` with Composition API. Since components
 Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 
 **Template conventions:** Props are accessed directly by name (not `props.propName`). Events are emitted with `$emit('event')` directly in templates, not via the `emit` const from `defineEmits`. The `const emit =` assignment is only needed when emitting from script logic.
+
+**Vue Transitions:** For complex animations like accordions, use named transitions with scoped CSS instead of inline Transition props with Tailwind classes:
+```vue
+<Transition name="accordion">
+  <div v-if="isOpen" class="overflow-hidden">...</div>
+</Transition>
+
+<style scoped>
+.accordion-enter-active, .accordion-leave-active {
+  transition: all 300ms ease-in-out;
+  max-height: 2000px;
+  overflow: hidden;
+}
+.accordion-enter-from, .accordion-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+</style>
+```
+
+**Parent-child communication:** Use event emitters instead of `defineExpose` for sharing state between components. Emit state changes up the component tree rather than exposing refs.
+
+**TypeScript null handling:** Be explicit about nullable props. Use `prop: Type | null` instead of `prop?: Type` when a prop can be null, to distinguish between "not provided" (undefined) and "explicitly null" values.
 
 ### Testing
 
@@ -182,6 +207,13 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - **No linter ignore statements** - Fix issues instead
 - Run `bun typecheck && bun lint && bun format` before committing
 
+## PrimeVue Component Patterns
+
+**Button styling:** Use `severity` prop with `outlined` for semantic styling:
+- Normal action: `outlined` (default)
+- Danger action: `severity="danger"` + `outlined`
+- Primary action: `severity="primary"` (filled, no outlined)
+
 ## Domain Concepts
 
 - **Handler** - Image source (currently only `mapillary`)
@@ -189,4 +221,11 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)
 - **Title Status** - Validation state of generated titles (`TITLE_ERROR_STATUSES` in `types/image.ts`)
 - **Layout** - View mode (`list` or `grid`) for collection display
-- **Preset** - Active preset tracked by `store.currentPresetId` (null = manual mode). `store.isEditingPreset` is a flag set by `usePresetManager` when a user is editing a preset's fields; it prevents `useTitleTemplate` from syncing `internalTemplate` from the store during edits. Orchestration lives in `usePresetManager` composable (`selectPreset`, `clearPreset`, `handleEditPreset`, `handleCancelEdit`).
+- **Preset** - Active preset tracked by `store.currentPresetId` (null = manual mode). Three preset UI modes with different visibility rules:
+  1. **Selected preset (not editing)**: Shows read-only PresetPreview, hides forms, shows images list and controls
+  2. **Editing preset**: Hides preset preview, shows editable forms, hides images list and controls, hides "Change preset" and Edit/Remove buttons
+  3. **Manual mode (no preset)**: Shows editable forms, shows images list and controls
+
+  Preset creation (via accordion "Create new preset" button) is treated like editing mode - hides images list until canceled/saved. Preset removal (via "Remove preset" button) enters manual mode with both forms and images list visible.
+
+  Orchestration lives in `usePresetManager` composable (`selectPreset`, `clearPreset`, `handleEditPreset`, `handleCancelEdit`).

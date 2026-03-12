@@ -43,6 +43,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const presets = ref<PresetItem[]>([])
   const currentPresetId = ref<number | null>(null)
   const isEditingPreset = ref(false)
+  const isAccordionOpen = ref(false)
 
   // Batches state
   const batches = shallowRef<BatchItem[]>([])
@@ -172,6 +173,14 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const setEditingPreset = (editing: boolean) => {
     isEditingPreset.value = editing
+  }
+
+  const setAccordionOpen = (open: boolean) => {
+    isAccordionOpen.value = open
+  }
+
+  const toggleAccordion = () => {
+    isAccordionOpen.value = !isAccordionOpen.value
   }
 
   const applyPreset = (preset: PresetItem) => {
@@ -323,11 +332,14 @@ export const useCollectionsStore = defineStore('collections', () => {
     presets,
     currentPresetId,
     isEditingPreset,
+    isAccordionOpen,
     defaultPreset,
     hasPresets,
     currentPreset,
 
     clearError,
+    setAccordionOpen,
+    toggleAccordion,
     setLoading,
     setGlobalDescription,
     setGlobalLanguage,

@@ -12,7 +12,39 @@ const {
   handlePresetSave,
 } = usePresetManager()
 
-const LANGUAGE_LABELS: Record<string, string> = { en: 'English', de: 'Deutsch' }
+const isCreatingPreset = ref(false)
+
+// We're viewing a preset (not editing) when one is selected and not in edit/create mode
+const isViewingPreset = computed(
+  () => store.currentPresetId && !isEditing.value && !isCreatingPreset.value,
+)
+
+// Show save form when not viewing preset and accordion is closed
+const showPresetSaveForm = computed(
+  () => presetsEnabled && !isViewingPreset.value && !store.isAccordionOpen,
+)
+
+const handleCreatePreset = () => {
+  // Clear any selected preset to enter manual/new preset mode
+  clearPreset()
+  isCreatingPreset.value = true
+  // Set accordion open to keep images list hidden
+  store.setAccordionOpen(true)
+}
+
+const handleRemovePreset = () => {
+  // Clear preset to enter manual mode (show fields + images list)
+  clearPreset()
+  isCreatingPreset.value = false
+  // Close accordion to show both fields and images
+  store.setAccordionOpen(false)
+}
+
+const handleCancelEditWrapper = () => {
+  handleCancelEdit()
+  isCreatingPreset.value = false
+  store.setAccordionOpen(false)
+}
 </script>
 
 <template>
@@ -25,41 +57,26 @@ const LANGUAGE_LABELS: Record<string, string> = { en: 'English', de: 'Deutsch' }
       >
         <PresetSelector
           :is-editing="isEditing"
-          @select="(id) => (id !== null ? selectPreset(id) : clearPreset())"
+          @select="selectPreset"
           @edit="handleEditPreset"
-          @discard="handleCancelEdit"
+          @discard="handleCancelEditWrapper"
+          @create="handleCreatePreset"
+          @remove="handleRemovePreset"
         />
       </template>
 
       <template #content>
         <!-- Preset mode (not editing): subtle read-only field summary -->
         <div
-          v-if="store.currentPresetId && !isEditing"
-          class="flex flex-col gap-2 text-sm text-surface-500 mt-1"
+          v-if="store.currentPresetId && !isEditing && !store.isAccordionOpen"
+          class="mt-1"
         >
-          <div>
-            <span class="font-medium text-surface-600">Template:</span>
-            <span class="font-mono ml-2">{{ store.globalTitleTemplate || '—' }}</span>
-          </div>
-          <div class="flex flex-wrap gap-x-6 gap-y-1">
-            <span>
-              <span class="font-medium text-surface-600">Language:</span>
-              {{ LANGUAGE_LABELS[store.globalLanguage] ?? store.globalLanguage }}
-            </span>
-            <span v-if="store.globalDescription">
-              <span class="font-medium text-surface-600">Description:</span>
-              {{ store.globalDescription }}
-            </span>
-          </div>
-          <div v-if="store.globalCategories">
-            <span class="font-medium text-surface-600">Categories:</span>
-            <span class="ml-2 whitespace-pre-wrap">{{ store.globalCategories }}</span>
-          </div>
+          <PresetPreview :preset="store.currentPreset" />
         </div>
 
         <!-- Manual or editing mode: editable forms -->
         <div
-          v-else
+          v-else-if="!store.isAccordionOpen"
           class="flex flex-col gap-6"
           :class="{ 'mt-2': presetsEnabled }"
         >
@@ -107,21 +124,21 @@ const LANGUAGE_LABELS: Record<string, string> = { en: 'English', de: 'Deutsch' }
         </div>
       </template>
 
-      <!-- Save form: only when editing or manual mode -->
+      <!-- Save form: only when editing, creating new, or manual mode -->
       <template
-        v-if="presetsEnabled && (!store.currentPresetId || isEditing)"
+        v-if="showPresetSaveForm"
         #footer
       >
         <PresetSaveForm
           :is-editing="isEditing"
           :preset-title="store.currentPreset?.title"
           @save="handlePresetSave"
-          @cancel="handleCancelEdit"
+          @cancel="handleCancelEditWrapper"
         />
       </template>
     </Card>
 
-    <template v-if="!isEditing">
+    <template v-if="!isEditing && !store.isAccordionOpen">
       <SdcWarningMessage v-if="store.itemsWithExistingTitlesCount > 0" />
 
       <Message
