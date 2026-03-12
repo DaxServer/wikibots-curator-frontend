@@ -54,120 +54,151 @@ describe('usePresetManager', () => {
   })
 
   describe('initial state', () => {
-    it('showPresetSelectDialog is false', () => {
-      const { showPresetSelectDialog } = runManager()
-      expect(showPresetSelectDialog.value).toBe(false)
-    })
-
-    it('showPresetDetails is false', () => {
-      const { showPresetDetails } = runManager()
-      expect(showPresetDetails.value).toBe(false)
+    it('isEditing is false', () => {
+      const { isEditing } = runManager()
+      expect(isEditing.value).toBe(false)
     })
   })
 
-  describe('applyPreset(presetId)', () => {
+  describe('selectPreset(presetId)', () => {
     it('applies the matching preset to the store', async () => {
       const store = useCollectionsStore()
       store.setPresets([makePreset({ id: 5 })])
-      const { applyPreset } = runManager()
+      const { selectPreset } = runManager()
 
-      await applyPreset(5)
+      await selectPreset(5)
 
       expect(store.currentPresetId).toBe(5)
-      expect(store.presetMode).toBe('preset')
     })
 
-    it('sets showPresetDetails to false after applying', async () => {
+    it('resets isEditing to false after selecting', async () => {
       const store = useCollectionsStore()
       store.setPresets([makePreset({ id: 5 })])
-      const { applyPreset, showPresetDetails } = runManager()
-      showPresetDetails.value = true
+      const { selectPreset, isEditing } = runManager()
+      isEditing.value = true
 
-      await applyPreset(5)
+      await selectPreset(5)
 
-      expect(showPresetDetails.value).toBe(false)
+      expect(isEditing.value).toBe(false)
     })
 
     it('does nothing if preset id is not found', async () => {
       const store = useCollectionsStore()
-      const { applyPreset } = runManager()
+      const { selectPreset } = runManager()
 
-      await applyPreset(999)
+      await selectPreset(999)
 
       expect(store.currentPresetId).toBeNull()
+    })
+  })
+
+  describe('clearPreset()', () => {
+    it('clears currentPresetId', () => {
+      const store = useCollectionsStore()
+      store.setActivePreset(5)
+      const { clearPreset } = runManager()
+
+      clearPreset()
+
+      expect(store.currentPresetId).toBeNull()
+    })
+
+    it('sets isEditing to false', () => {
+      const { clearPreset, isEditing } = runManager()
+      isEditing.value = true
+
+      clearPreset()
+
+      expect(isEditing.value).toBe(false)
     })
   })
 
   describe('handleEditPreset()', () => {
-    it('switches to editing mode with the current preset id', () => {
+    it('sets isEditing to true when currentPresetId is set', () => {
       const store = useCollectionsStore()
-      store.enterPresetMode(3)
-      const { handleEditPreset } = runManager()
+      store.setActivePreset(3)
+      const { handleEditPreset, isEditing } = runManager()
 
       handleEditPreset()
 
-      expect(store.presetIdToUpdate).toBe(3)
-      expect(store.presetMode).toBe('editing')
+      expect(isEditing.value).toBe(true)
     })
 
     it('does nothing if currentPresetId is null', () => {
-      const store = useCollectionsStore()
-      const { handleEditPreset } = runManager()
+      const { handleEditPreset, isEditing } = runManager()
 
       handleEditPreset()
 
-      expect(store.presetMode).toBe('manual')
-      expect(store.presetIdToUpdate).toBeNull()
+      expect(isEditing.value).toBe(false)
     })
   })
 
   describe('handleCancelEdit()', () => {
-    it('restores preset mode with the preset being edited', () => {
+    it('sets isEditing to false', async () => {
       const store = useCollectionsStore()
-      store.enterEditingMode(7)
-      const { handleCancelEdit } = runManager()
+      store.setPresets([makePreset({ id: 7 })])
+      store.setActivePreset(7)
+      const { handleEditPreset, handleCancelEdit, isEditing } = runManager()
+      handleEditPreset()
 
-      handleCancelEdit()
+      await handleCancelEdit()
+
+      expect(isEditing.value).toBe(false)
+    })
+
+    it('preserves currentPresetId when cancelling edit', async () => {
+      const store = useCollectionsStore()
+      store.setPresets([makePreset({ id: 7 })])
+      store.setActivePreset(7)
+      const { handleEditPreset, handleCancelEdit } = runManager()
+      handleEditPreset()
+
+      await handleCancelEdit()
 
       expect(store.currentPresetId).toBe(7)
-      expect(store.presetMode).toBe('preset')
     })
 
-    it('does nothing if presetIdToUpdate is null', () => {
+    it('restores original preset field values when discarding', async () => {
       const store = useCollectionsStore()
-      const { handleCancelEdit } = runManager()
+      store.setPresets([makePreset({ id: 7, title_template: 'Original template.jpg' })])
+      store.setActivePreset(7)
+      const { handleEditPreset, handleCancelEdit } = runManager()
+      handleEditPreset()
 
-      handleCancelEdit()
+      // Simulate user changing the template while editing
+      store.globalTitleTemplate = 'User modified template.jpg'
 
-      expect(store.presetMode).toBe('manual')
-    })
-  })
+      await handleCancelEdit()
 
-  describe('handleEnterManually()', () => {
-    it('clears preset mode', () => {
-      const store = useCollectionsStore()
-      store.enterPresetMode(1)
-      const { handleEnterManually } = runManager()
-
-      handleEnterManually()
-
-      expect(store.presetMode).toBe('manual')
-      expect(store.currentPresetId).toBeNull()
+      expect(store.globalTitleTemplate).toBe('Original template.jpg')
     })
   })
 
   describe('handlePresetSave() - update existing preset', () => {
-    it('calls send() with preset_id when presetIdToUpdate is set', async () => {
+    it('calls send() with preset_id when isEditing and presetIdBeingEdited is set', async () => {
       enablePresets()
       const store = useCollectionsStore()
-      store.enterEditingMode(4)
-      const { handlePresetSave } = runManager()
+      store.setActivePreset(4)
+      const { handleEditPreset, handlePresetSave } = runManager()
+      handleEditPreset()
 
       await handlePresetSave({ title: 'My Preset', setAsDefault: false })
 
       expect(mockSend).toHaveBeenCalledTimes(1)
       const sent = JSON.parse(mockSend.mock.calls[0]![0])
       expect(sent.data.preset_id).toBe(4)
+    })
+
+    it('resets isEditing to false after save', async () => {
+      enablePresets()
+      const store = useCollectionsStore()
+      store.setActivePreset(4)
+      const { handleEditPreset, handlePresetSave, isEditing } = runManager()
+      handleEditPreset()
+
+      await handlePresetSave({ title: 'My Preset', setAsDefault: false })
+
+      expect(isEditing.value).toBe(false)
     })
   })
 
@@ -194,18 +225,18 @@ describe('usePresetManager', () => {
   })
 
   describe('pending save watcher - update case', () => {
-    it('restores preset mode when presets update after save', async () => {
+    it('restores currentPresetId when presets update after save', async () => {
       enablePresets()
       const store = useCollectionsStore()
-      store.enterEditingMode(2)
-      const { handlePresetSave } = runManager()
+      store.setActivePreset(2)
+      const { handleEditPreset, handlePresetSave } = runManager()
+      handleEditPreset()
       await handlePresetSave({ title: 'Updated', setAsDefault: false })
 
       store.setPresets([makePreset({ id: 2, title: 'Updated' })])
       await nextTick()
 
       expect(store.currentPresetId).toBe(2)
-      expect(store.presetMode).toBe('preset')
     })
 
     it('does not change state when presets update without a pending save', async () => {
@@ -230,7 +261,6 @@ describe('usePresetManager', () => {
       await nextTick()
 
       expect(store.currentPresetId).toBe(99)
-      expect(store.presetMode).toBe('preset')
     })
 
     it('does not resolve if preset with matching title is not in list', async () => {
@@ -256,14 +286,13 @@ describe('usePresetManager', () => {
       await nextTick()
 
       expect(store.currentPresetId).toBe(10)
-      expect(store.presetMode).toBe('preset')
     })
 
     it('does not auto-apply if currentPresetId is already set', async () => {
       enablePresets()
       const store = useCollectionsStore()
       store.setPresets([makePreset({ id: 10, is_default: true })])
-      store.enterPresetMode(99)
+      store.setActivePreset(99)
 
       runManager()
       await nextTick()
@@ -274,8 +303,9 @@ describe('usePresetManager', () => {
     it('does not auto-apply while a save is pending', async () => {
       enablePresets()
       const store = useCollectionsStore()
-      store.enterEditingMode(2)
-      const { handlePresetSave } = runManager()
+      store.setActivePreset(2)
+      const { handleEditPreset, handlePresetSave } = runManager()
+      handleEditPreset()
       await handlePresetSave({ title: 'Saving...', setAsDefault: false })
 
       store.setPresets([makePreset({ id: 10, is_default: true })])

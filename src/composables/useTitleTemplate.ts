@@ -73,7 +73,7 @@ export const useTitleTemplate = () => {
   watch(
     () => store.globalTitleTemplate,
     (newVal) => {
-      if (store.presetMode !== 'editing') {
+      if (!store.isEditingPreset) {
         internalTemplate.value = newVal
         const { error: err } = validateTemplate(newVal)
         error.value = err

@@ -16,6 +16,7 @@ declare global {
   const Rank: typeof import('./src/types/asyncapi').Rank
   const SnakDataType: typeof import('./src/types/asyncapi').SnakDataType
   const SnakType: typeof import('./src/types/asyncapi').SnakType
+  const TITLE_ERROR_LABELS: typeof import('./src/types/image').TITLE_ERROR_LABELS
   const TITLE_ERROR_STATUSES: typeof import('./src/types/image').TITLE_ERROR_STATUSES
   const TITLE_STATUS: typeof import('./src/types/image').TITLE_STATUS
   const UPLOAD_SLICE_SIZE: typeof import('./src/composables/useCollections').UPLOAD_SLICE_SIZE
@@ -430,6 +431,7 @@ declare module 'vue' {
     readonly Rank: UnwrapRef<typeof import('./src/types/asyncapi')['Rank']>
     readonly SnakDataType: UnwrapRef<typeof import('./src/types/asyncapi')['SnakDataType']>
     readonly SnakType: UnwrapRef<typeof import('./src/types/asyncapi')['SnakType']>
+    readonly TITLE_ERROR_LABELS: UnwrapRef<typeof import('./src/types/image')['TITLE_ERROR_LABELS']>
     readonly TITLE_ERROR_STATUSES: UnwrapRef<typeof import('./src/types/image')['TITLE_ERROR_STATUSES']>
     readonly TITLE_STATUS: UnwrapRef<typeof import('./src/types/image')['TITLE_STATUS']>
     readonly UPLOAD_SLICE_SIZE: UnwrapRef<typeof import('./src/composables/useCollections')['UPLOAD_SLICE_SIZE']>

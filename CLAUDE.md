@@ -123,6 +123,8 @@ Components use `<script setup lang="ts">` with Composition API. Since components
 
 Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 
+**Template conventions:** Props are accessed directly by name (not `props.propName`). Events are emitted with `$emit('event')` directly in templates, not via the `emit` const from `defineEmits`. The `const emit =` assignment is only needed when emitting from script logic.
+
 ### Testing
 
 - Tests in `__tests__/` directories alongside source files
@@ -187,4 +189,4 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)
 - **Title Status** - Validation state of generated titles (`TITLE_ERROR_STATUSES` in `types/image.ts`)
 - **Layout** - View mode (`list` or `grid`) for collection display
-- **Preset Modes** - Three UI states tracked by `store.presetMode` (`'preset' | 'editing' | 'manual'`). Both `currentPresetId` and `presetIdToUpdate` live in the store. Transitions via `enterPresetMode(id)`, `enterEditingMode(id)`, `enterManualMode()`. Orchestration lives in `usePresetManager` composable.
+- **Preset** - Active preset tracked by `store.currentPresetId` (null = manual mode). `store.isEditingPreset` is a flag set by `usePresetManager` when a user is editing a preset's fields; it prevents `useTitleTemplate` from syncing `internalTemplate` from the store during edits. Orchestration lives in `usePresetManager` composable (`selectPreset`, `clearPreset`, `handleEditPreset`, `handleCancelEdit`).

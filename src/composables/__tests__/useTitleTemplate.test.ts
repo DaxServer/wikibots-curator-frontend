@@ -464,9 +464,9 @@ describe('useTitleTemplate', () => {
   })
 
   describe('globalTitleTemplate watcher', () => {
-    it('syncs internalTemplate when presetMode is "preset"', async () => {
+    it('syncs internalTemplate when a preset is active', async () => {
       const store = useCollectionsStore()
-      store.enterPresetMode(1)
+      store.setActivePreset(1)
       const { template } = useTitleTemplate()
 
       store.globalTitleTemplate = 'Synced from preset.jpg'
@@ -475,9 +475,9 @@ describe('useTitleTemplate', () => {
       expect(template.value).toBe('Synced from preset.jpg')
     })
 
-    it('syncs internalTemplate when presetMode is "manual"', async () => {
+    it('syncs internalTemplate in manual mode', async () => {
       const store = useCollectionsStore()
-      // manual mode by default (no currentPresetId, no presetIdToUpdate)
+      // manual mode by default (no currentPresetId)
       const { template } = useTitleTemplate()
 
       store.globalTitleTemplate = 'Synced in manual mode.jpg'
@@ -486,10 +486,10 @@ describe('useTitleTemplate', () => {
       expect(template.value).toBe('Synced in manual mode.jpg')
     })
 
-    it('does NOT sync internalTemplate when presetMode is "editing"', async () => {
+    it('does NOT sync internalTemplate when isEditingPreset is true', async () => {
       const store = useCollectionsStore()
       store.globalTitleTemplate = 'Preset template.jpg'
-      store.enterEditingMode(1)
+      store.setEditingPreset(true)
       const { template } = useTitleTemplate()
       // internalTemplate is seeded from store: 'Preset template.jpg'
       expect(template.value).toBe('Preset template.jpg')
@@ -498,7 +498,7 @@ describe('useTitleTemplate', () => {
       store.globalTitleTemplate = 'External change.jpg'
       await nextTick()
 
-      // Should NOT sync — user is in editing mode
+      // Should NOT sync — user is editing a preset
       expect(template.value).toBe('Preset template.jpg')
     })
   })

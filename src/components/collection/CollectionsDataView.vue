@@ -117,7 +117,10 @@ watch(
     <!-- Step 3 header -->
     <template v-if="store.stepper === '3'">
       <Step3Header />
-      <Step3Controls @show-errors-only="showErrorsOnly = $event" />
+      <template v-if="!store.isEditingPreset">
+        <Step3ErrorBanner @toggle-filter="showErrorsOnly = $event" />
+        <Step3Controls />
+      </template>
     </template>
 
     <!-- Step 4 header -->
@@ -126,6 +129,7 @@ watch(
     </div>
 
     <DataView
+      v-if="!(store.stepper === '3' && store.isEditingPreset)"
       :value="currentItems"
       data-key="id"
       :layout="currentLayout"

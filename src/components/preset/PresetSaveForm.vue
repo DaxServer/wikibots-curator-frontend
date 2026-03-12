@@ -1,26 +1,29 @@
 <script setup lang="ts">
-const store = useCollectionsStore()
+const props = defineProps<{
+  isEditing: boolean
+  presetTitle?: string
+}>()
 
 const emit = defineEmits<{
   save: [data: { title: string; setAsDefault: boolean }]
   cancel: []
 }>()
 
-const presetTitle = ref('')
+const store = useCollectionsStore()
+
+const title = ref('')
 const setAsDefault = ref(false)
 
-// Pre-fill preset title and checkbox when updating
+// Pre-fill title and checkbox when editing a preset
 watch(
-  () => store.presetIdToUpdate,
-  (presetId) => {
-    if (presetId) {
-      const preset = store.presets.find((p) => p.id === presetId)
-      if (preset) {
-        presetTitle.value = preset.title
-        setAsDefault.value = preset.is_default
-      }
+  () => props.presetTitle,
+  (newTitle) => {
+    if (props.isEditing && newTitle) {
+      title.value = newTitle
+      const preset = store.presets.find((p) => p.title === newTitle)
+      setAsDefault.value = preset?.is_default ?? false
     } else {
-      presetTitle.value = ''
+      title.value = ''
       setAsDefault.value = false
     }
   },
@@ -28,7 +31,7 @@ watch(
 )
 
 const handleSave = () => {
-  const trimmedTitle = presetTitle.value.trim()
+  const trimmedTitle = title.value.trim()
   if (!trimmedTitle) return
 
   emit('save', { title: trimmedTitle, setAsDefault: setAsDefault.value })
@@ -40,7 +43,7 @@ const handleSave = () => {
     <div>
       <FloatLabel variant="on">
         <InputText
-          v-model="presetTitle"
+          v-model="title"
           id="preset_title"
           fluid
         />
@@ -50,17 +53,17 @@ const handleSave = () => {
 
     <div class="flex items-center gap-3">
       <Button
-        :label="store.presetIdToUpdate ? 'Update preset' : 'Save preset'"
-        :icon="store.presetIdToUpdate ? 'pi pi-pencil' : 'pi pi-bookmark'"
-        :disabled="!presetTitle.trim()"
+        :label="isEditing ? 'Update preset' : 'Save preset'"
+        :icon="isEditing ? 'pi pi-pencil' : 'pi pi-bookmark'"
+        :disabled="!title.trim()"
         size="small"
         @click="handleSave"
       />
 
       <Button
-        v-if="store.presetIdToUpdate"
+        v-if="isEditing"
         label="Cancel"
-        severity="secondary"
+        severity="danger"
         outlined
         size="small"
         @click="$emit('cancel')"

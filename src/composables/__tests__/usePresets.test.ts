@@ -18,7 +18,7 @@ describe('store preset computed properties', () => {
     it('returns the current preset when one is selected', () => {
       const store = useCollectionsStore()
       store.setPresets([makePreset({ id: 1, title: 'Test Preset' })])
-      store.enterPresetMode(1)
+      store.setActivePreset(1)
 
       expect(store.currentPreset?.title).toBe('Test Preset')
     })
@@ -26,35 +26,35 @@ describe('store preset computed properties', () => {
     it('returns null when presetId does not match any preset', () => {
       const store = useCollectionsStore()
       store.setPresets([makePreset({ id: 1 })])
-      store.enterPresetMode(999)
+      store.setActivePreset(999)
 
       expect(store.currentPreset).toBeNull()
     })
   })
 
-  describe('isPresetMode', () => {
-    it('returns false when no preset is selected', () => {
+  describe('currentPresetId', () => {
+    it('is null when no preset is selected', () => {
       const store = useCollectionsStore()
 
-      expect(store.isPresetMode).toBe(false)
+      expect(store.currentPresetId).toBeNull()
     })
 
-    it('returns true when a preset is selected', () => {
+    it('is set when a preset is selected', () => {
       const store = useCollectionsStore()
       store.setPresets([makePreset({ id: 1 })])
-      store.enterPresetMode(1)
+      store.setActivePreset(1)
 
-      expect(store.isPresetMode).toBe(true)
+      expect(store.currentPresetId).toBe(1)
     })
 
-    it('returns false when clearing preset selection', () => {
+    it('is null after clearing preset selection', () => {
       const store = useCollectionsStore()
       store.setPresets([makePreset({ id: 1 })])
-      store.enterPresetMode(1)
-      expect(store.isPresetMode).toBe(true)
+      store.setActivePreset(1)
+      expect(store.currentPresetId).toBe(1)
 
-      store.enterManualMode()
-      expect(store.isPresetMode).toBe(false)
+      store.setActivePreset(null)
+      expect(store.currentPresetId).toBeNull()
     })
   })
 })
