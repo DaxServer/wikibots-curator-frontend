@@ -14,6 +14,7 @@ export const usePresetManager = () => {
   const toast = useToast()
 
   const isEditing = ref(false)
+  const isCreatingPreset = ref(false)
   const presetIdBeingEdited = ref<number | null>(null)
   const hasAutoAppliedDefault = ref(false)
   const pendingPresetSave = ref<{ id?: number; title?: string } | null>(null)
@@ -29,6 +30,7 @@ export const usePresetManager = () => {
   const clearPreset = () => {
     store.setActivePreset(null)
     isEditing.value = false
+    isCreatingPreset.value = false
   }
 
   const handleEditPreset = () => {
@@ -41,6 +43,7 @@ export const usePresetManager = () => {
   const handleCancelEdit = async () => {
     // Reset UI state immediately for responsive feedback
     isEditing.value = false
+    isCreatingPreset.value = false
     store.setEditingPreset(false)
 
     // Then restore preset values in background
@@ -111,6 +114,7 @@ export const usePresetManager = () => {
         const newPreset = newPresets.findLast((p) => p.title === pending.title)
         if (newPreset) {
           store.setActivePreset(newPreset.id)
+          isCreatingPreset.value = false
           pendingPresetSave.value = null
         }
       }
@@ -139,6 +143,7 @@ export const usePresetManager = () => {
 
   return {
     isEditing,
+    isCreatingPreset,
 
     selectPreset,
     clearPreset,

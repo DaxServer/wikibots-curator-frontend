@@ -5,14 +5,13 @@ const { presetsEnabled } = useFeatureFlags()
 
 const {
   isEditing,
+  isCreatingPreset,
   selectPreset,
   clearPreset,
   handleEditPreset,
   handleCancelEdit,
   handlePresetSave,
 } = usePresetManager()
-
-const isCreatingPreset = ref(false)
 
 // We're viewing a preset (not editing) when one is selected and not in edit/create mode
 const isViewingPreset = computed(
@@ -35,14 +34,12 @@ const handleCreatePreset = () => {
 const handleRemovePreset = () => {
   // Clear preset to enter manual mode (show fields + images list)
   clearPreset()
-  isCreatingPreset.value = false
   // Close accordion to show both fields and images
   store.setAccordionOpen(false)
 }
 
 const handleCancelEditWrapper = () => {
   handleCancelEdit()
-  isCreatingPreset.value = false
   store.setAccordionOpen(false)
 }
 </script>

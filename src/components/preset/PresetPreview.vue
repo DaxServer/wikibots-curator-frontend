@@ -70,14 +70,14 @@ const LANGUAGE_LABELS: Record<string, string> = { en: 'English', de: 'Deutsch' }
 
     <!-- Exclude from date category -->
     <div class="flex items-center gap-2">
-      <span class="font-medium">Exclude from date category:</span>
+      <span class="font-medium">Automatic date categorization:</span>
       <i
         v-if="preset?.exclude_from_date_category"
-        class="pi pi-check-circle text-green-600"
+        class="pi pi-times-circle text-red-500"
       />
       <i
         v-else
-        class="pi pi-times-circle text-red-500"
+        class="pi pi-check-circle text-green-600"
       />
     </div>
   </div>
