@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const store = useAdminStore()
-const { refreshAdminData, updateAdminUploadRequest } = useAdmin()
+const { refreshAdminData, updateAdminUploadRequest, cancelSelected, clearText, clearAll } = useAdmin()
+const toast = useToast()
 const { getStatusSeverity, getStatusStyle, getStatusLabel } = useUploadStatus()
 
 const tableOptions = [
@@ -29,17 +30,57 @@ const doSearch = () => {
 
 const debouncedSearch = debounce(doSearch, 500)
 
-const clearSearch = () => {
-  store.adminFilterText = ''
+const onClearText = () => {
   debouncedSearch.cancel()
+  clearText()
+}
+
+const clearSearch = () => {
+  const wasEmpty = store.adminFilterText === ''
+  debouncedSearch.cancel()
+  clearAll()
+  if (wasEmpty) {
+    doSearch()
+  }
 }
 
 const onTableChange = () => {
-  store.adminFilterText = ''
   debouncedSearch.cancel()
+  clearAll()
   store.adminParams.first = 0
   store.adminParams.page = 1
   refreshAdminData()
+}
+
+const onStatusChange = () => {
+  store.selectedUploadRequests = []
+  doSearch()
+}
+
+const onDateChange = () => {
+  store.selectedUploadRequests = []
+  doSearch()
+}
+
+const handleBulkCancel = async () => {
+  try {
+    const result = await cancelSelected()
+    toast.add({
+      severity: 'success',
+      summary: 'Cancelled',
+      detail: `${result.cancelled_count} upload request(s) cancelled`,
+      life: 3000,
+    })
+    store.selectedUploadRequests = []
+    refreshAdminData()
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to cancel upload requests',
+      life: 3000,
+    })
+  }
 }
 
 const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
@@ -108,6 +149,8 @@ onMounted(() => {
       :rows="store.adminParams.rows"
       :total-records="store.adminTotal"
       :loading="store.adminLoading"
+      v-model:selection="store.selectedUploadRequests"
+      selection-mode="multiple"
       @page="onPage"
       @cell-edit-complete="onCellEditComplete"
       :row-class="() => ({ 'align-top': true })"
@@ -123,10 +166,43 @@ onMounted(() => {
           search-placeholder="Search ID, Batch, User, File or Status"
           search-id="search-admin-upload-requests"
           :loading="isSearching"
-          @clear="clearSearch"
+          show-upload-filters
+          v-model:status-filter="store.adminStatusFilter"
+          v-model:date-range="store.adminDateRange"
+          @clear-text="onClearText"
+          @clear-all="clearSearch"
           @search="doSearch"
+          @status-change="onStatusChange"
+          @date-change="onDateChange"
         />
+        <div
+          v-if="store.selectedUploadRequests.length > 0"
+          class="flex items-center gap-2 mt-2 p-2 bg-blue-50 rounded border border-blue-200"
+        >
+          <span class="text-sm text-blue-700">
+            {{ store.selectedUploadRequests.length }} selected
+            <template v-if="store.cancellableCount > 0">
+              ({{ store.cancellableCount }} cancellable)
+            </template>
+          </span>
+          <Button
+            label="Clear selection"
+            severity="secondary"
+            outlined
+            size="small"
+            @click="store.selectedUploadRequests = []"
+          />
+          <Button
+            label="Cancel selected"
+            severity="danger"
+            outlined
+            size="small"
+            :disabled="store.cancellableCount === 0"
+            @click="handleBulkCancel"
+          />
+        </div>
       </template>
+      <Column selection-mode="multiple" header-style="width: 3rem" />
       <Column
         v-for="col of store.data.columns"
         :key="col.field"
@@ -198,7 +274,8 @@ onMounted(() => {
           "
           search-id="search-admin-table"
           :loading="isSearching"
-          @clear="clearSearch"
+          @clear-text="onClearText"
+          @clear-all="clearSearch"
           @search="doSearch"
         />
       </template>

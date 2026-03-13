@@ -209,6 +209,8 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 ## PrimeVue Component Patterns
 
+**DatePicker events:** Use `@update:model-value` as the single handler for all date changes (selection and clear). The separate `@date-select` and `@clear` events are unreliable — `@clear` may not fire when `show-clear` is used. Emit downstream events (e.g., `dateChange`) from `@update:model-value` instead.
+
 **Button styling:** Use `severity` prop with `outlined` for semantic styling:
 - Normal action: `outlined` (default)
 - Danger action: `severity="danger"` + `outlined`

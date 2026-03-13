@@ -1,4 +1,5 @@
 import type { AdminBatch, AdminPreset, AdminUploadRequest, AdminUser } from '@/types/admin'
+import { UPLOAD_STATUS } from '@/types/image'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 
@@ -16,6 +17,16 @@ export const useAdminStore = defineStore('admin', () => {
     page: 1,
   })
   const adminFilterText = ref('')
+  const adminStatusFilter = ref<string[]>([])
+  const adminDateRange = ref<[Date, Date | null] | null>(null)
+  const selectedUploadRequests = ref<AdminUploadRequest[]>([])
+
+  const cancellableCount = computed(
+    () =>
+      selectedUploadRequests.value.filter(
+        (r) => r.status === UPLOAD_STATUS.Queued || r.status === UPLOAD_STATUS.InProgress,
+      ).length,
+  )
 
   const data = computed(() => {
     switch (adminTable.value) {
@@ -88,6 +99,10 @@ export const useAdminStore = defineStore('admin', () => {
     adminLoading,
     adminParams,
     adminFilterText,
+    adminStatusFilter,
+    adminDateRange,
+    selectedUploadRequests,
+    cancellableCount,
     data,
   }
 })

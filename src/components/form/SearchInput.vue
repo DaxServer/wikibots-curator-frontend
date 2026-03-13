@@ -25,7 +25,7 @@ const handleClear = () => {
       <InputText
         :id="id"
         :model-value="modelValue"
-        class="min-w-2xs"
+        class="min-w-xs"
         @update:model-value="emit('update:modelValue', $event ?? '')"
         @keydown.enter="emit('enter')"
       />
