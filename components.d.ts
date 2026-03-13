@@ -11,10 +11,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Accordion: typeof import('primevue/accordion')['default']
-    AccordionContent: typeof import('primevue/accordioncontent')['default']
-    AccordionHeader: typeof import('primevue/accordionheader')['default']
-    AccordionPanel: typeof import('primevue/accordionpanel')['default']
     AdminView: typeof import('./src/components/views/AdminView.vue')['default']
     App: typeof import('./src/App.vue')['default']
     BatchesView: typeof import('./src/components/views/BatchesView.vue')['default']
@@ -36,7 +32,6 @@ declare module 'vue' {
     DataTable: typeof import('primevue/datatable')['default']
     DataView: typeof import('primevue/dataview')['default']
     DateCategorySetting: typeof import('./src/components/edit/DateCategorySetting.vue')['default']
-    Dialog: typeof import('primevue/dialog')['default']
     Divider: typeof import('primevue/divider')['default']
     EditContentBottom: typeof import('./src/components/edit/EditContentBottom.vue')['default']
     EditContentRight: typeof import('./src/components/edit/EditContentRight.vue')['default']
@@ -60,13 +55,10 @@ declare module 'vue' {
     Message: typeof import('primevue/message')['default']
     MeterGroup: typeof import('primevue/metergroup')['default']
     PresetAccordion: typeof import('./src/components/preset/PresetAccordion.vue')['default']
-    PresetDisplay: typeof import('./src/components/preset/PresetDisplay.vue')['default']
     PresetListItem: typeof import('./src/components/preset/PresetListItem.vue')['default']
     PresetPreview: typeof import('./src/components/preset/PresetPreview.vue')['default']
     PresetSaveForm: typeof import('./src/components/preset/PresetSaveForm.vue')['default']
-    PresetSelectDialog: typeof import('./src/components/preset/PresetSelectDialog.vue')['default']
     PresetSelector: typeof import('./src/components/preset/PresetSelector.vue')['default']
-    PresetToolbar: typeof import('./src/components/preset/PresetToolbar.vue')['default']
     PreviewContent: typeof import('./src/components/preview/PreviewContent.vue')['default']
     ProgressBar: typeof import('primevue/progressbar')['default']
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']
