@@ -50,13 +50,6 @@ const onTitleBlur = () => {
 <template>
   <div class="flex items-start gap-4">
     <span class="text-4xl font-medium">{{ item.index }}</span>
-    <Checkbox
-      binary
-      :modelValue="item.meta.selected"
-      size="large"
-      class="mt-2"
-      @update:modelValue="(v: boolean) => store.updateItem(item.id, 'selected', v)"
-    />
     <div class="flex-1 flex flex-col gap-1">
       <IconField>
         <InputText

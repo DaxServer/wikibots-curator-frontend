@@ -56,7 +56,10 @@ describe('useAdmin', () => {
     it('includes date_from and date_to when both dates are set', async () => {
       const store = useAdminStore()
       store.adminTable = 'upload_requests'
-      store.adminDateRange = [new Date('2026-03-01T00:00:00.000Z'), new Date('2026-03-13T00:00:00.000Z')]
+      store.adminDateRange = [
+        new Date('2026-03-01T00:00:00.000Z'),
+        new Date('2026-03-13T00:00:00.000Z'),
+      ]
 
       let capturedUrl = ''
       const mockFetch = mock(() =>
