@@ -10,10 +10,10 @@ const props = defineProps<{
   dateRange?: [Date, Date | null] | null
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   'update:filterText': [value: string]
   'update:statusFilter': [value: string[]]
-  'update:dateRange': [value: [Date, Date | null] | null]
+  'update:dateRange': [value: Date | Array<Date> | Array<Date | null> | undefined | null]
   clearText: []
   clearAll: []
   search: []
@@ -37,6 +37,13 @@ const hasActiveFilters = computed(
 
 const formatDate = (d: Date) =>
   d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+
+const updateDateFileter = (
+  dateRange: Date | Array<Date> | Array<Date | null> | undefined | null,
+) => {
+  emit('update:dateRange', dateRange)
+  emit('dateChange')
+}
 </script>
 
 <template>
@@ -63,7 +70,7 @@ const formatDate = (d: Date) =>
           date-format="yy-mm-dd"
           show-clear
           class="max-w-xs"
-          @update:model-value="$emit('update:dateRange', $event as [Date, Date | null] | null); $emit('dateChange')"
+          @update:model-value="updateDateFileter"
         />
       </template>
       <SearchInput
@@ -81,9 +88,9 @@ const formatDate = (d: Date) =>
       class="flex flex-wrap items-center gap-1.5 text-sm text-gray-600"
     >
       <span
-          v-if="filterInfo"
-          class="text-gray-500"
-        >
+        v-if="filterInfo"
+        class="text-gray-500"
+      >
         {{ filterInfo }}
       </span>
       <template v-if="filterText">

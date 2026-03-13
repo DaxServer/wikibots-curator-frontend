@@ -1,4 +1,3 @@
-import { UPLOAD_STATUS } from '@/types/image'
 import { useAdminStore } from '@/stores/admin.store'
 import type {
   AdminBatch,
@@ -7,6 +6,7 @@ import type {
   AdminUser,
   PaginatedResponse,
 } from '@/types/admin'
+import { UPLOAD_STATUS } from '@/types/image'
 
 const fetchData = async <T>(
   endpoint: string,
@@ -113,9 +113,7 @@ export const useAdmin = () => {
 
   const cancelSelected = async (): Promise<{ cancelled_count: number }> => {
     const ids = store.selectedUploadRequests
-      .filter(
-        (r) => r.status === UPLOAD_STATUS.Queued || r.status === UPLOAD_STATUS.InProgress,
-      )
+      .filter((r) => r.status === UPLOAD_STATUS.Queued || r.status === UPLOAD_STATUS.InProgress)
       .map((r) => r.id)
     const response = await fetch('/api/admin/upload_requests/bulk-cancel', {
       method: 'POST',

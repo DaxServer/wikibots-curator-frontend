@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const store = useAdminStore()
-const { refreshAdminData, updateAdminUploadRequest, cancelSelected, clearText, clearAll } = useAdmin()
+const { refreshAdminData, updateAdminUploadRequest, cancelSelected, clearText, clearAll } =
+  useAdmin()
 const toast = useToast()
 const { getStatusSeverity, getStatusStyle, getStatusLabel } = useUploadStatus()
 
@@ -202,7 +203,10 @@ onMounted(() => {
           />
         </div>
       </template>
-      <Column selection-mode="multiple" header-style="width: 3rem" />
+      <Column
+        selection-mode="multiple"
+        header-style="width: 3rem"
+      />
       <Column
         v-for="col of store.data.columns"
         :key="col.field"
