@@ -1,3 +1,4 @@
+import { UPLOAD_STATUS } from '@/types/image'
 import { useAdminStore } from '@/stores/admin.store'
 import type {
   AdminBatch,
@@ -81,6 +82,7 @@ export const useAdmin = () => {
             extraParams.status = store.adminStatusFilter
           }
           if (store.adminDateRange?.[0]) {
+            // Use ISO format (UTC) to match backend timestamps - all dates are stored in UTC
             extraParams.date_from = store.adminDateRange[0].toISOString().split('T')[0]!
             if (store.adminDateRange[1]) {
               extraParams.date_to = store.adminDateRange[1].toISOString().split('T')[0]!
@@ -112,7 +114,7 @@ export const useAdmin = () => {
   const cancelSelected = async (): Promise<{ cancelled_count: number }> => {
     const ids = store.selectedUploadRequests
       .filter(
-        (r) => r.status === 'queued' || r.status === 'in_progress',
+        (r) => r.status === UPLOAD_STATUS.Queued || r.status === UPLOAD_STATUS.InProgress,
       )
       .map((r) => r.id)
     const response = await fetch('/api/admin/upload_requests/bulk-cancel', {
