@@ -6,7 +6,6 @@ import Components from 'unplugin-vue-components/vite'
 import type { PluginOption } from 'vite'
 import { defineConfig } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig((): import('vite').UserConfig => {
   return {
@@ -14,7 +13,6 @@ export default defineConfig((): import('vite').UserConfig => {
       vue(),
       vueDevTools(),
       tailwindcss(),
-      tsconfigPaths(),
       AutoImport({
         imports: [
           'vue',
@@ -95,6 +93,9 @@ export default defineConfig((): import('vite').UserConfig => {
           rewrite: (path) => path.replace(/^\/callback\/wikimedia/, '/auth/callback'),
         },
       },
+    },
+    resolve: {
+      tsconfigPaths: true,
     },
   }
 })
