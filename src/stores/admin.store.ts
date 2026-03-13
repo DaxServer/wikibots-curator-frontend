@@ -69,6 +69,7 @@ export const useAdminStore = defineStore('admin', () => {
             { field: 'categories', header: 'Categories' },
             { field: 'is_default', header: 'Is Default' },
             { field: 'labels', header: 'Labels' },
+            { field: 'exclude_from_date_category', header: 'Exclude from Date Category' },
             { field: 'created_at', header: 'Created At' },
             { field: 'updated_at', header: 'Updated At' },
           ],
