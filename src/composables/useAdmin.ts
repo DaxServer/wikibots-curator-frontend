@@ -1,3 +1,4 @@
+import { UPLOAD_STATUS } from '@/types/image'
 import { useAdminStore } from '@/stores/admin.store'
 import type {
   AdminBatch,
@@ -12,9 +13,21 @@ const fetchData = async <T>(
   page: number,
   limit: number,
   filterText?: string,
+  extraParams?: Record<string, string | string[]>,
 ): Promise<PaginatedResponse<T>> => {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) })
   if (filterText) params.set('filter_text', filterText)
+  if (extraParams) {
+    for (const [key, value] of Object.entries(extraParams)) {
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          params.append(key, v)
+        }
+      } else {
+        params.set(key, value)
+      }
+    }
+  }
   const response = await fetch(`/api/admin/${endpoint}?${params}`)
   if (!response.ok) {
     throw new Error(`Failed to fetch ${endpoint}`)
@@ -64,11 +77,23 @@ export const useAdmin = () => {
           break
         }
         case 'upload_requests': {
+          const extraParams: Record<string, string | string[]> = {}
+          if (store.adminStatusFilter.length > 0) {
+            extraParams.status = store.adminStatusFilter
+          }
+          if (store.adminDateRange?.[0]) {
+            // Use ISO format (UTC) to match backend timestamps - all dates are stored in UTC
+            extraParams.date_from = store.adminDateRange[0].toISOString().split('T')[0]!
+            if (store.adminDateRange[1]) {
+              extraParams.date_to = store.adminDateRange[1].toISOString().split('T')[0]!
+            }
+          }
           const data = await fetchData<AdminUploadRequest>(
             'upload_requests',
             page,
             adminParams.rows,
             filterText,
+            extraParams,
           )
           store.adminUploadRequests = data.items
           store.adminTotal = data.total
@@ -86,8 +111,40 @@ export const useAdmin = () => {
     }
   }
 
+  const cancelSelected = async (): Promise<{ cancelled_count: number }> => {
+    const ids = store.selectedUploadRequests
+      .filter(
+        (r) => r.status === UPLOAD_STATUS.Queued || r.status === UPLOAD_STATUS.InProgress,
+      )
+      .map((r) => r.id)
+    const response = await fetch('/api/admin/upload_requests/bulk-cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids }),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to cancel upload requests')
+    }
+    return response.json()
+  }
+
+  const clearText = () => {
+    store.adminFilterText = ''
+    store.selectedUploadRequests = []
+  }
+
+  const clearAll = () => {
+    store.adminFilterText = ''
+    store.adminStatusFilter = []
+    store.adminDateRange = null
+    store.selectedUploadRequests = []
+  }
+
   return {
     updateAdminUploadRequest,
     refreshAdminData,
+    cancelSelected,
+    clearText,
+    clearAll,
   }
 }

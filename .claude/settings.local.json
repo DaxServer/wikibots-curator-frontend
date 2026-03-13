@@ -3,19 +3,20 @@
     "allow": [
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_context7_context7__query-docs",
-      "Bash(bun format:*)",
-      "Bash(bun generate:*)",
-      "Bash(bun lint:*)",
-      "Bash(bun test:*)",
-      "Bash(bun typecheck:*)",
-      "Bash(gh pr view:*)",
-      "Bash(but commit:*)",
-      "Bash(but pr:*)",
-      "Bash(but push:*)",
-      "Bash(but stage:*)",
-      "Bash(but status:*)",
+      "Bash(bun format *)",
+      "Bash(bun generate)",
+      "Bash(bun lint *)",
+      "Bash(bun test *)",
+      "Bash(bun typecheck *)",
+      "Bash(gh pr view *)",
+      "Bash(but commit *)",
+      "Bash(but pr *)",
+      "Bash(but push *)",
+      "Bash(but stage *)",
+      "Bash(but status *)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(gh api */comments)"
     ]
   }
 }
