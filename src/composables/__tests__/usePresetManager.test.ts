@@ -214,14 +214,6 @@ describe('usePresetManager', () => {
       expect(sent.data.preset_id).toBeUndefined()
     })
 
-    it('does nothing when presetsEnabled is false', async () => {
-      // auth.user is empty by default = presetsEnabled false
-      const { handlePresetSave } = runManager()
-
-      await handlePresetSave({ title: 'New Preset', setAsDefault: false })
-
-      expect(mockSend).not.toHaveBeenCalled()
-    })
   })
 
   describe('pending save watcher - update case', () => {

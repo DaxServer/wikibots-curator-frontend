@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 const { itemsMissingCameraFields } = useTitleTemplate()
-const { presetsEnabled } = useFeatureFlags()
-
 const {
   isEditing,
   isCreatingPreset,
@@ -20,7 +18,7 @@ const isViewingPreset = computed(
 
 // Show save form when not viewing preset and accordion is closed
 const showPresetSaveForm = computed(
-  () => presetsEnabled && !isViewingPreset.value && !store.isAccordionOpen,
+  () => !isViewingPreset.value && !store.isAccordionOpen,
 )
 
 const handleCreatePreset = () => {
@@ -48,10 +46,7 @@ const handleCancelEditWrapper = () => {
   <div class="flex flex-col gap-6">
     <Card>
       <!-- Preset selector row -->
-      <template
-        v-if="presetsEnabled"
-        #title
-      >
+      <template #title>
         <PresetSelector
           :is-editing="isEditing"
           @select="selectPreset"
@@ -75,7 +70,7 @@ const handleCancelEditWrapper = () => {
         <div
           v-else-if="!store.isAccordionOpen"
           class="flex flex-col gap-6"
-          :class="{ 'mt-2': presetsEnabled }"
+          class="mt-2"
         >
           <TitleTemplateEditor />
 

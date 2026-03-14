@@ -1,5 +1,4 @@
 import { useCollections } from '@/composables/useCollections'
-import { useFeatureFlags } from '@/composables/useFeatureFlags'
 import { useTitleTemplate } from '@/composables/useTitleTemplate'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { SavePreset } from '@/types/asyncapi'
@@ -9,7 +8,6 @@ import { ref, watch } from 'vue'
 export const usePresetManager = () => {
   const store = useCollectionsStore()
   const { savePreset } = useCollections()
-  const { presetsEnabled } = useFeatureFlags()
   const { verifyTitlesWithTemplate } = useTitleTemplate()
   const toast = useToast()
 
@@ -63,8 +61,6 @@ export const usePresetManager = () => {
     title: string
     setAsDefault: boolean
   }) => {
-    if (!presetsEnabled.value) return
-
     const data: SavePreset['data'] = {
       title,
       title_template: store.globalTitleTemplate,
@@ -125,7 +121,6 @@ export const usePresetManager = () => {
   watch(
     () => store.presets,
     async (presets) => {
-      if (!presetsEnabled.value) return
       if (pendingPresetSave.value) return
       if (
         presets.length > 0 &&

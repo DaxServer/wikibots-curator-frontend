@@ -1,5 +1,4 @@
 import { useCommons } from '@/composables/useCommons'
-import { useFeatureFlags } from '@/composables/useFeatureFlags'
 import { useSocket } from '@/composables/useSocket'
 import { useUploadStatus } from '@/composables/useUploadStatus'
 import { useAuthStore } from '@/stores/auth.store'
@@ -544,9 +543,6 @@ export const useCollections = () => {
   }
 
   const fetchPresets = () => {
-    const { presetsEnabled } = useFeatureFlags()
-    if (!presetsEnabled.value) return
-
     send(
       JSON.stringify({
         type: 'FETCH_PRESETS',
@@ -556,9 +552,6 @@ export const useCollections = () => {
   }
 
   const savePreset = (preset: SavePreset['data']) => {
-    const { presetsEnabled } = useFeatureFlags()
-    if (!presetsEnabled.value) return
-
     send(
       JSON.stringify({
         type: 'SAVE_PRESET',
