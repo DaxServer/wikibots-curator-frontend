@@ -69,8 +69,7 @@ const handleCancelEditWrapper = () => {
         <!-- Manual or editing mode: editable forms -->
         <div
           v-else-if="!store.isAccordionOpen"
-          class="flex flex-col gap-6"
-          class="mt-2"
+          class="flex flex-col gap-6 mt-2"
         >
           <TitleTemplateEditor />
 
