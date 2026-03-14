@@ -42,8 +42,8 @@ export const useTitleTemplate = () => {
     store.selectedItems.forEach((item) => {
       const itemMeta = store.items[item.id]?.meta
       if (!itemMeta?.title || itemMeta?.titleStatus === TITLE_STATUS.MissingFields) {
-        if (usedOptFields.length > 0 && hasMissingOptionalFields(item.image, usedOptFields)) {
-          const missing = usedOptFields.filter((p) => hasMissingOptionalFields(item.image, [p]))
+        const missing = usedOptFields.filter((p) => hasMissingOptionalFields(item.image, [p]))
+        if (missing.length > 0) {
           const title = applyTitleTemplate(templateToUse, item.image, store.input)
           store.updateItem(item.id, 'titleStatus', TITLE_STATUS.MissingFields)
           store.updateItem(item.id, 'missingFields', missing)

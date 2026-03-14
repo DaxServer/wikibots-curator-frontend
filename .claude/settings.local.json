@@ -13,7 +13,6 @@
       "Bash(but push *)",
       "Bash(but stage *)",
       "Bash(but status *)",
-      "Bash(gh api */comments)",
       "Bash(gh pr view *)",
       "Bash(git diff:*)",
       "WebSearch",
