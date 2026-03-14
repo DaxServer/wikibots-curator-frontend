@@ -16,7 +16,8 @@
       "Bash(gh pr view *)",
       "Bash(git diff:*)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(gh run view *)"
     ]
   }
 }
