@@ -28,6 +28,11 @@ export const useAdminStore = defineStore('admin', () => {
       ).length,
   )
 
+  const failableCount = computed(
+    () =>
+      selectedUploadRequests.value.filter((r) => r.status !== UPLOAD_STATUS.Failed).length,
+  )
+
   const data = computed(() => {
     switch (adminTable.value) {
       case 'batches':
@@ -103,6 +108,7 @@ export const useAdminStore = defineStore('admin', () => {
     adminDateRange,
     selectedUploadRequests,
     cancellableCount,
+    failableCount,
     data,
   }
 })

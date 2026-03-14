@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const store = useAdminStore()
-const { refreshAdminData, updateAdminUploadRequest, cancelSelected, clearText, clearAll } =
+const { refreshAdminData, updateAdminUploadRequest, cancelSelected, markSelectedAsFailed, clearText, clearAll } =
   useAdmin()
 const toast = useToast()
 const { getStatusSeverity, getStatusStyle, getStatusLabel } = useUploadStatus()
@@ -79,6 +79,27 @@ const handleBulkCancel = async () => {
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to cancel upload requests',
+      life: 3000,
+    })
+  }
+}
+
+const handleBulkFail = async () => {
+  try {
+    const result = await markSelectedAsFailed()
+    toast.add({
+      severity: 'success',
+      summary: 'Marked as failed',
+      detail: `${result.failed_count} upload request(s) marked as failed`,
+      life: 3000,
+    })
+    store.selectedUploadRequests = []
+    refreshAdminData()
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to mark upload requests as failed',
       life: 3000,
     })
   }
@@ -185,6 +206,9 @@ onMounted(() => {
             <template v-if="store.cancellableCount > 0">
               ({{ store.cancellableCount }} cancellable)
             </template>
+            <template v-if="store.failableCount > 0">
+              ({{ store.failableCount }} failable)
+            </template>
           </span>
           <Button
             label="Clear selection"
@@ -200,6 +224,14 @@ onMounted(() => {
             size="small"
             :disabled="store.cancellableCount === 0"
             @click="handleBulkCancel"
+          />
+          <Button
+            label="Mark as failed"
+            severity="danger"
+            outlined
+            size="small"
+            :disabled="store.failableCount === 0"
+            @click="handleBulkFail"
           />
         </div>
       </template>

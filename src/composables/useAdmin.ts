@@ -126,6 +126,21 @@ export const useAdmin = () => {
     return response.json()
   }
 
+  const markSelectedAsFailed = async (): Promise<{ failed_count: number }> => {
+    const ids = store.selectedUploadRequests
+      .filter((r) => r.status !== UPLOAD_STATUS.Failed)
+      .map((r) => r.id)
+    const response = await fetch('/api/admin/upload_requests/bulk-fail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids }),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to mark upload requests as failed')
+    }
+    return response.json()
+  }
+
   const clearText = () => {
     store.adminFilterText = ''
     store.selectedUploadRequests = []
@@ -142,6 +157,7 @@ export const useAdmin = () => {
     updateAdminUploadRequest,
     refreshAdminData,
     cancelSelected,
+    markSelectedAsFailed,
     clearText,
     clearAll,
   }

@@ -1,4 +1,5 @@
 import type { AdminUploadRequest } from '@/types/admin'
+import { UPLOAD_STATUS } from '@/types/image'
 import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAdminStore } from '../../stores/admin.store'
@@ -205,6 +206,63 @@ describe('useAdmin', () => {
       } catch (e) {
         threw = true
         expect((e as Error).message).toBe('Failed to cancel upload requests')
+      }
+      expect(threw).toBe(true)
+    })
+  })
+
+  describe('markSelectedAsFailed', () => {
+    it('calls bulk-fail endpoint with filtered IDs', async () => {
+      const store = useAdminStore()
+      store.adminUploadRequests = [
+        makeUploadRequest(1, UPLOAD_STATUS.Queued),
+        makeUploadRequest(2, UPLOAD_STATUS.Failed),
+        makeUploadRequest(3, UPLOAD_STATUS.InProgress),
+      ]
+      store.selectedUploadRequests = [
+        store.adminUploadRequests[0]!,
+        store.adminUploadRequests[1]!,
+        store.adminUploadRequests[2]!,
+      ]
+
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ failed_count: 2 }),
+        }),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      const { markSelectedAsFailed } = useAdmin()
+      const result = await markSelectedAsFailed()
+
+      expect(result).toEqual({ failed_count: 2 })
+      const call = mockFetch.mock.calls[0] as unknown as [string, RequestInit]
+      expect(call[0]).toBe('/api/admin/upload_requests/bulk-fail')
+      expect(call[1].method).toBe('POST')
+      const body = JSON.parse(call[1].body as string) as { ids: number[] }
+      expect(body.ids).toEqual([1, 3]) // Only non-failed
+    })
+
+    it('throws when API call fails', async () => {
+      const store = useAdminStore()
+      store.selectedUploadRequests = [makeUploadRequest(1, UPLOAD_STATUS.Queued)]
+
+      const mockFetch = mock(() =>
+        Promise.resolve({
+          ok: false,
+          json: () => Promise.resolve({}),
+        }),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      const { markSelectedAsFailed } = useAdmin()
+      let threw = false
+      try {
+        await markSelectedAsFailed()
+      } catch (e) {
+        threw = true
+        expect((e as Error).message).toBe('Failed to mark upload requests as failed')
       }
       expect(threw).toBe(true)
     })
