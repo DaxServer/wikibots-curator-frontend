@@ -1,3 +1,4 @@
+import type { GeoLocation } from '@/types/asyncapi'
 import type { Image } from '@/types/image'
 import Handlebars from 'handlebars'
 
@@ -91,13 +92,41 @@ export const AVAILABLE_IMAGE_FIELDS: Record<string, Record<string, FieldDefiniti
       name: 'Compass angle',
       description: 'Compass angle / heading',
     },
+    city: { path: 'location.city', name: 'City', description: 'City name' },
+    country: { path: 'location.country', name: 'Country', description: 'Country name' },
+    country_code: {
+      path: 'location.country_code',
+      name: 'Country code',
+      description: 'ISO country code',
+    },
+    county: { path: 'location.county', name: 'County', description: 'County name' },
+    state: { path: 'location.state', name: 'State', description: 'State or province name' },
+    postcode: { path: 'location.postcode', name: 'Postcode', description: 'Postal code' },
   },
 }
 
 export const CAMERA_FIELD_PATHS = ['camera.make', 'camera.model'] as const
 
+export const OPTIONAL_LOCATION_FIELD_PATHS = [
+  'location.compass_angle',
+  'location.city',
+  'location.country',
+  'location.country_code',
+  'location.county',
+  'location.state',
+  'location.postcode',
+] as const
+
+export const OPTIONAL_FIELD_PATHS = [...CAMERA_FIELD_PATHS, ...OPTIONAL_LOCATION_FIELD_PATHS] as const
+
 export const validPaths = Object.values(AVAILABLE_IMAGE_FIELDS).flatMap((group) =>
   Object.values(group).map((field) => field.path),
+)
+
+export const FIELD_PATH_TO_NAME: Record<string, string> = Object.fromEntries(
+  Object.values(AVAILABLE_IMAGE_FIELDS).flatMap((group) =>
+    Object.values(group).map((field) => [field.path, field.name]),
+  ),
 )
 
 const prepareContext = (image: Image, sequence: string) => {
@@ -193,6 +222,30 @@ export const hasMissingCameraFields = (image: Image, usedFields: readonly string
   return usedFields.some((path) => {
     if (path === 'camera.make') return !image.camera.make
     if (path === 'camera.model') return !image.camera.model
+    return false
+  })
+}
+
+export const extractUsedOptionalFields = (template: string): string[] => {
+  const matches = template.match(/\{\{([^{}]+)\}\}/g) || []
+  return matches
+    .map((m) => m.slice(2, -2).trim())
+    .filter((p): p is (typeof OPTIONAL_FIELD_PATHS)[number] =>
+      (OPTIONAL_FIELD_PATHS as readonly string[]).includes(p),
+    )
+}
+
+export const hasMissingOptionalFields = (image: Image, usedFields: readonly string[]): boolean => {
+  return usedFields.some((path) => {
+    if (path === 'camera.make') return !image.camera.make
+    if (path === 'camera.model') return !image.camera.model
+    if (path.startsWith('location.')) {
+      const locationKey = path.slice('location.'.length) as keyof GeoLocation
+      const value = (image.location as GeoLocation)[locationKey]
+      // compass_angle uses == null: 0 is a valid heading (North), only null/undefined is missing
+      // String fields use falsy: empty string is treated the same as absent
+      return typeof value === 'number' ? value == null : !value
+    }
     return false
   })
 }

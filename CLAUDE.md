@@ -218,6 +218,21 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 ## Domain Concepts
 
+### Title Template System
+
+The title template system lives in `src/composables/useTitleTemplate.ts` and `src/utils/titleTemplate.ts`.
+
+**`meta.title` semantics:** `Metadata.title` stores only user-entered titles. When empty, `getEffectiveTitle()` in `useTitleVerification.ts` falls back to `getTemplateTitle()` which computes from `store.globalTitleTemplate`. `verifyTitles()` never writes to `meta.title` — it only updates `titleStatus`.
+
+**`verifyTitlesWithTemplate` guard:** Items with a non-empty `meta.title` are skipped (treated as user-entered), except items in `MissingFields` status whose title was written by the template system. When a `MissingFields` item recovers (offending field removed from template), its `meta.title` must be explicitly cleared to `''` so `getEffectiveTitle` falls back to the template again.
+
+**Optional field warning system:**
+- `OPTIONAL_FIELD_PATHS` = `[...CAMERA_FIELD_PATHS, ...OPTIONAL_LOCATION_FIELD_PATHS]` — all fields that can be absent
+- `allMissingOptionalFieldPaths` (Set) — which paths ANY selected item is missing, independent of the template; drives icon visibility in `TitleTemplateEditor.vue`
+- `itemsMissingOptionalFields` — items missing at least one field that is ALSO used in the current template; drives yellow highlight count
+- Icon shows if field is in `allMissingOptionalFieldPaths`; icon is yellow if also in `usedOptionalFields`
+- Location numeric fields (`compass_angle`) use `== null` check (0 = North, valid); location string fields use `!value` (empty string = missing), matching camera field behavior
+
 - **Handler** - Image source (currently only `mapillary`)
 - **Item** - An image with metadata (`Item` type in `types/image.ts`)
 - **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)

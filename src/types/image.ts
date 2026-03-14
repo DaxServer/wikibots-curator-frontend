@@ -16,6 +16,8 @@ export interface Metadata {
   status?: UploadStatus
   statusReason?: string
   titleStatus?: TitleStatus
+  /** Field paths from OPTIONAL_FIELD_PATHS that are missing on this item (set when titleStatus is MissingFields) */
+  missingFields?: string[]
   successUrl?: string
   errorInfo?: StructuredError
 }

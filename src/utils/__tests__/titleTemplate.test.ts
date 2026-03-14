@@ -4,8 +4,12 @@ import {
   applyTitleTemplate,
   CAMERA_FIELD_PATHS,
   extractUsedCameraFields,
+  extractUsedOptionalFields,
   hasMissingCameraFields,
+  hasMissingOptionalFields,
   isValidExtension,
+  OPTIONAL_FIELD_PATHS,
+  OPTIONAL_LOCATION_FIELD_PATHS,
   VALID_EXTENSIONS,
   validateTemplate,
 } from '../titleTemplate'
@@ -266,6 +270,95 @@ describe('titleTemplate utils', () => {
   describe('CAMERA_FIELD_PATHS constant', () => {
     it('contains camera.make and camera.model', () => {
       expect(CAMERA_FIELD_PATHS).toEqual(['camera.make', 'camera.model'])
+    })
+  })
+
+  describe('OPTIONAL_LOCATION_FIELD_PATHS constant', () => {
+    it('contains all 7 optional location paths', () => {
+      expect(OPTIONAL_LOCATION_FIELD_PATHS).toEqual([
+        'location.compass_angle',
+        'location.city',
+        'location.country',
+        'location.country_code',
+        'location.county',
+        'location.state',
+        'location.postcode',
+      ])
+    })
+  })
+
+  describe('OPTIONAL_FIELD_PATHS constant', () => {
+    it('is the union of CAMERA_FIELD_PATHS and OPTIONAL_LOCATION_FIELD_PATHS', () => {
+      expect(OPTIONAL_FIELD_PATHS).toEqual([...CAMERA_FIELD_PATHS, ...OPTIONAL_LOCATION_FIELD_PATHS])
+    })
+  })
+
+  describe('extractUsedOptionalFields', () => {
+    it('returns empty array for template with no optional fields', () => {
+      expect(extractUsedOptionalFields('Photo by {{mapillary.user.username}}.jpg')).toEqual([])
+    })
+
+    it('returns location.city when used in template', () => {
+      expect(extractUsedOptionalFields('Photo in {{location.city}}.jpg')).toEqual(['location.city'])
+    })
+
+    it('returns camera.make when used in template', () => {
+      expect(extractUsedOptionalFields('Photo {{camera.make}}.jpg')).toEqual(['camera.make'])
+    })
+
+    it('returns mixed camera and location fields', () => {
+      const result = extractUsedOptionalFields('{{camera.make}} in {{location.city}}.jpg')
+      expect(result).toEqual(['camera.make', 'location.city'])
+    })
+
+    it('handles whitespace in template variables', () => {
+      expect(extractUsedOptionalFields('Photo {{ location.city }}.jpg')).toEqual(['location.city'])
+    })
+  })
+
+  describe('hasMissingOptionalFields', () => {
+    it('returns false when usedFields is empty', () => {
+      const image = createMockImage('1')
+      expect(hasMissingOptionalFields(image, [])).toBe(false)
+    })
+
+    it('returns true when location.city is used and missing (null)', () => {
+      const image = createMockImage('1')
+      // city is undefined/null by default (not set in createMockImage)
+      expect(hasMissingOptionalFields(image, ['location.city'])).toBe(true)
+    })
+
+    it('returns false when location.city is present', () => {
+      const image = createMockImage('1')
+      image.location = { ...image.location, city: 'Berlin' }
+      expect(hasMissingOptionalFields(image, ['location.city'])).toBe(false)
+    })
+
+    it('returns false when compass_angle is 0 (valid value pointing North)', () => {
+      const image = createMockImage('1')
+      // compass_angle is 0 in createMockImage - should be treated as valid
+      expect(hasMissingOptionalFields(image, ['location.compass_angle'])).toBe(false)
+    })
+
+    it('returns true when camera.make is missing', () => {
+      const image = createMockImage('1')
+      expect(hasMissingOptionalFields(image, ['camera.make'])).toBe(true)
+    })
+
+    it('returns false when all used fields are present', () => {
+      const image = createMockImage('1')
+      image.location = { ...image.location, city: 'Berlin', country: 'Germany' }
+      image.camera = { make: 'Canon', model: 'EOS 5D', is_pano: false }
+      expect(
+        hasMissingOptionalFields(image, ['location.city', 'location.country', 'camera.make']),
+      ).toBe(false)
+    })
+
+    it('returns true when at least one used field is missing', () => {
+      const image = createMockImage('1')
+      image.location = { ...image.location, city: 'Berlin' }
+      // country is not set
+      expect(hasMissingOptionalFields(image, ['location.city', 'location.country'])).toBe(true)
     })
   })
 })
