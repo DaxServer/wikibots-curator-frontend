@@ -5,6 +5,17 @@ const store = useCollectionsStore()
 const { sendUnsubscribeBatch, startUploadProcess } = useCollections()
 
 const dataViewPage = ref<DataViewPageEvent | null>(null)
+const dataViewFirst = ref(0)
+
+// Scroll to top when pagination changes (steps 2, 3, 4)
+watch(dataViewPage, () => {
+  window.scroll({ top: 0, behavior: 'smooth' })
+})
+
+const onPageChange = (event: DataViewPageEvent) => {
+  dataViewPage.value = event
+  dataViewFirst.value = event.first
+}
 
 // Step 2 pagination
 const step2GetRowsPerPage = computed(() => (store.viewMode === 'grid' ? 24 : 10))
@@ -101,10 +112,12 @@ const currentLayout = computed(() => {
 watch(
   () => store.stepper,
   (newStep, oldStep) => {
-    // Scroll to top when moving to steps 3, 4, or 5
-    if (newStep === '3' || newStep === '4' || newStep === '5') {
-      window.scroll({ top: 0, behavior: 'smooth' })
+    if (newStep !== oldStep) {
+      dataViewPage.value = null
+      dataViewFirst.value = 0
     }
+
+    window.scroll({ top: 0, behavior: 'smooth' })
 
     if (newStep === '5') {
       showSkeleton.value = true
@@ -144,12 +157,13 @@ watch(
       :layout="currentLayout"
       :paginator="store.stepper !== '5'"
       :rows="getRowsPerPage"
+      :first="dataViewFirst"
       paginator-position="both"
       :always-show-paginator="false"
       :rows-per-page-options="rowsPerPageOptions"
       paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
       current-page-report-template="Page {currentPage} of {totalPages}"
-      @page="dataViewPage = $event"
+      @page="onPageChange"
       :pt="{
         pcPaginator: {
           root: {
