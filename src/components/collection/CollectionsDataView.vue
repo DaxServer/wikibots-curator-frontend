@@ -8,10 +8,8 @@ const dataViewPage = ref<DataViewPageEvent | null>(null)
 const dataViewFirst = ref(0)
 
 // Scroll to top when pagination changes (steps 2, 3, 4)
-watch(dataViewPage, (newPage, oldPage) => {
-  if (newPage && oldPage && ['2', '3', '4'].includes(store.stepper)) {
-    window.scroll({ top: 0, behavior: 'smooth' })
-  }
+watch(dataViewPage, () => {
+  window.scroll({ top: 0, behavior: 'smooth' })
 })
 
 const onPageChange = (event: DataViewPageEvent) => {
@@ -119,10 +117,7 @@ watch(
       dataViewFirst.value = 0
     }
 
-    // Scroll to top when moving to steps 3, 4, or 5
-    if (newStep === '3' || newStep === '4' || newStep === '5') {
-      window.scroll({ top: 0, behavior: 'smooth' })
-    }
+    window.scroll({ top: 0, behavior: 'smooth' })
 
     if (newStep === '5') {
       showSkeleton.value = true
