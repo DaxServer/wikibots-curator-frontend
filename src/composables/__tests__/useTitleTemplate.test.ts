@@ -503,6 +503,301 @@ describe('useTitleTemplate', () => {
     })
   })
 
+  describe('usedOptionalFields', () => {
+    it('returns empty array when no optional fields are in template', () => {
+      const { template, usedOptionalFields } = useTitleTemplate()
+      template.value = 'Photo by {{mapillary.user.username}}.jpg'
+      expect(usedOptionalFields.value).toEqual([])
+    })
+
+    it('returns location.city when used in template', () => {
+      const { template, usedOptionalFields } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+      expect(usedOptionalFields.value).toEqual(['location.city'])
+    })
+
+    it('returns camera.make when used in template', () => {
+      const { template, usedOptionalFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+      expect(usedOptionalFields.value).toEqual(['camera.make'])
+    })
+
+    it('returns both camera and location fields', () => {
+      const { template, usedOptionalFields } = useTitleTemplate()
+      template.value = '{{camera.make}} in {{location.city}}.jpg'
+      expect(usedOptionalFields.value).toEqual(['camera.make', 'location.city'])
+    })
+  })
+
+  describe('itemsMissingOptionalFields', () => {
+    it('returns empty array when no optional fields are used', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, itemsMissingOptionalFields } = useTitleTemplate()
+      template.value = 'Photo by {{mapillary.user.username}}.jpg'
+
+      expect(itemsMissingOptionalFields.value).toEqual([])
+    })
+
+    it('returns items missing location.city when field is used', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      // city not set - location only has latitude, longitude, compass_angle
+      const item2 = createMockItem('2')
+      item2.image.location = { ...item2.image.location, city: 'Berlin' }
+      store.replaceItems({ '1': item1, '2': item2 })
+      store.updateItem('1', 'selected', true)
+      store.updateItem('2', 'selected', true)
+
+      const { template, itemsMissingOptionalFields } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+
+      expect(itemsMissingOptionalFields.value).toHaveLength(1)
+      expect(itemsMissingOptionalFields.value[0]?.id).toBe('1')
+    })
+
+    it('treats compass_angle of 0 as present (not missing)', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      // compass_angle is 0 in createMockItem - valid value pointing North
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, itemsMissingOptionalFields } = useTitleTemplate()
+      template.value = 'Photo {{location.compass_angle}}.jpg'
+
+      expect(itemsMissingOptionalFields.value).toEqual([])
+    })
+
+    it('returns items missing camera.make when field is used', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      // camera.make is undefined in createMockItem
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, itemsMissingOptionalFields } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+
+      expect(itemsMissingOptionalFields.value).toHaveLength(1)
+      expect(itemsMissingOptionalFields.value[0]?.id).toBe('1')
+    })
+
+    it('returns empty when all items have all used optional fields', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.location = { ...item1.image.location, city: 'Berlin' }
+      item1.image.camera = { make: 'Canon', model: 'EOS', is_pano: false }
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, itemsMissingOptionalFields } = useTitleTemplate()
+      template.value = '{{camera.make}} in {{location.city}}.jpg'
+
+      expect(itemsMissingOptionalFields.value).toEqual([])
+    })
+  })
+
+  describe('highlightedTemplate with optional field warnings', () => {
+    it('shows yellow highlight for location.city when used and missing', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      // city not set
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, highlightedTemplate } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+
+      expect(highlightedTemplate.value).toContain(
+        'text-yellow-600 bg-yellow-50 border border-yellow-400',
+      )
+    })
+
+    it('shows blue highlight for location.city when all items have it', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.location = { ...item1.image.location, city: 'Berlin' }
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, highlightedTemplate } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+
+      expect(highlightedTemplate.value).toContain('text-blue-600 bg-blue-50')
+      expect(highlightedTemplate.value).not.toContain('text-yellow-600')
+    })
+
+    it('only highlights the specific missing field, not other present optional fields', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      // city missing, country present
+      item1.image.location = { ...item1.image.location, country: 'Germany' }
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, highlightedTemplate } = useTitleTemplate()
+      template.value = '{{location.city}} {{location.country}}.jpg'
+
+      // city should be yellow (missing), country should be blue (present)
+      const html = highlightedTemplate.value
+      const citySpan = html.match(/(<span[^>]*>)\{\{location\.city\}\}<\/span>/)?.[1] ?? ''
+      const countrySpan = html.match(/(<span[^>]*>)\{\{location\.country\}\}<\/span>/)?.[1] ?? ''
+      expect(citySpan).toContain('text-yellow-600')
+      expect(countrySpan).toContain('text-blue-600')
+      expect(countrySpan).not.toContain('text-yellow-600')
+    })
+
+    it('shows yellow highlight for compass_angle when missing (null)', () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.location = { latitude: 0, longitude: 0 } // no compass_angle
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+
+      const { template, highlightedTemplate } = useTitleTemplate()
+      template.value = 'Photo {{location.compass_angle}}.jpg'
+
+      expect(highlightedTemplate.value).toContain(
+        'text-yellow-600 bg-yellow-50 border border-yellow-400',
+      )
+    })
+  })
+
+  describe('applyTemplate with missing optional fields', () => {
+    it('sets MissingFields status for items missing location.city', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      // city not set
+      item1.meta.title = ''
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+
+      await applyTemplate()
+
+      expect(store.items['1']?.meta.titleStatus).toBe(TITLE_STATUS.MissingFields)
+    })
+
+    it('stores missingFields list for missing location.city', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.meta.title = ''
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+
+      await applyTemplate()
+
+      expect(store.items['1']?.meta.missingFields).toEqual(['location.city'])
+    })
+
+    it('stores missingFields list for missing camera.make', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.meta.title = ''
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo {{camera.make}}.jpg'
+
+      await applyTemplate()
+
+      expect(store.items['1']?.meta.missingFields).toEqual(['camera.make'])
+    })
+
+    it('clears missingFields for items with all required fields present', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.location = { ...item1.image.location, city: 'Berlin' }
+      item1.meta.title = ''
+
+      const mockFetch = mock(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ query: { pages: { '123': { missing: true } } } })),
+        ),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+
+      await applyTemplate()
+
+      expect(store.items['1']?.meta.missingFields).toEqual([])
+    })
+
+    it('re-verifies items with MissingFields status when template is re-applied without the missing field', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      // city is missing — first apply sets MissingFields
+      item1.meta.title = ''
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+      await applyTemplate()
+      expect(store.items['1']?.meta.titleStatus).toBe(TITLE_STATUS.MissingFields)
+
+      // Now remove city from template and re-apply
+      const mockFetch = mock(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ query: { pages: { '123': { missing: true } } } })),
+        ),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      template.value = 'Photo.jpg'
+      await applyTemplate()
+
+      expect(store.items['1']?.meta.titleStatus).not.toBe(TITLE_STATUS.MissingFields)
+      // meta.title must be cleared so getEffectiveTitle falls back to the template
+      expect(store.items['1']?.meta.title).toBe('')
+    })
+
+    it('does not set MissingFields when location.city is present', async () => {
+      const store = useCollectionsStore()
+      const item1 = createMockItem('1')
+      item1.image.location = { ...item1.image.location, city: 'Berlin' }
+      item1.meta.title = ''
+
+      const mockFetch = mock(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ query: { pages: { '123': { missing: true } } } })),
+        ),
+      )
+      global.fetch = mockFetch as unknown as typeof fetch
+
+      store.replaceItems({ '1': item1 })
+      store.updateItem('1', 'selected', true)
+      store.input = 'seq123'
+
+      const { template, applyTemplate } = useTitleTemplate()
+      template.value = 'Photo in {{location.city}}.jpg'
+
+      await applyTemplate()
+
+      expect(store.items['1']?.meta.titleStatus).not.toBe(TITLE_STATUS.MissingFields)
+    })
+  })
+
   describe('applyTemplate with missing camera fields', () => {
     it('sets MissingFields status for items missing camera fields', async () => {
       const store = useCollectionsStore()

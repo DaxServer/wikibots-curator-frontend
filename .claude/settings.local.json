@@ -8,15 +8,15 @@
       "Bash(bun lint *)",
       "Bash(bun test *)",
       "Bash(bun typecheck *)",
-      "Bash(gh pr view *)",
       "Bash(but commit *)",
       "Bash(but pr *)",
       "Bash(but push *)",
       "Bash(but stage *)",
       "Bash(but status *)",
+      "Bash(gh pr view *)",
+      "Bash(git diff:*)",
       "WebSearch",
-      "WebFetch(domain:github.com)",
-      "Bash(gh api */comments)"
+      "WebFetch(domain:github.com)"
     ]
   }
 }

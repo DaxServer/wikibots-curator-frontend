@@ -3,10 +3,12 @@ import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image } from '@/types/image'
 import { TITLE_STATUS } from '@/types/image'
 import {
-  CAMERA_FIELD_PATHS,
+  OPTIONAL_FIELD_PATHS,
   applyTitleTemplate,
   extractUsedCameraFields,
+  extractUsedOptionalFields,
   hasMissingCameraFields,
+  hasMissingOptionalFields,
   validPaths,
   validateTemplate,
 } from '@/utils/titleTemplate'
@@ -34,18 +36,27 @@ export const useTitleTemplate = () => {
   const verifyTitlesWithTemplate = async () => {
     // Use the store's template, not internalTemplate, so this works from any context
     const templateToUse = store.globalTitleTemplate
-    const usedCameraFields = extractUsedCameraFields(templateToUse)
+    const usedOptFields = extractUsedOptionalFields(templateToUse)
 
     const itemsToVerify: { id: string; title: string; image: Image }[] = []
     store.selectedItems.forEach((item) => {
-      if (!store.items[item.id]?.meta.title) {
-        if (usedCameraFields.length > 0 && hasMissingCameraFields(item.image, usedCameraFields)) {
-          store.updateItem(item.id, 'titleStatus', TITLE_STATUS.MissingFields)
+      const itemMeta = store.items[item.id]?.meta
+      if (!itemMeta?.title || itemMeta?.titleStatus === TITLE_STATUS.MissingFields) {
+        const missing = usedOptFields.filter((p) => hasMissingOptionalFields(item.image, [p]))
+        if (missing.length > 0) {
           const title = applyTitleTemplate(templateToUse, item.image, store.input)
+          store.updateItem(item.id, 'titleStatus', TITLE_STATUS.MissingFields)
+          store.updateItem(item.id, 'missingFields', missing)
           store.updateItem(item.id, 'title', title)
           return
         }
 
+        store.updateItem(item.id, 'missingFields', [])
+        // Clear a title that was written during a prior MissingFields state so
+        // getEffectiveTitle falls back to the template rather than returning the stale partial value
+        if (itemMeta?.titleStatus === TITLE_STATUS.MissingFields) {
+          store.updateItem(item.id, 'title', '')
+        }
         itemsToVerify.push({
           id: item.id,
           title: applyTitleTemplate(templateToUse, item.image, store.input),
@@ -100,6 +111,27 @@ export const useTitleTemplate = () => {
     return store.selectedItems.filter((item) => hasMissingCameraFields(item.image, usedFields))
   })
 
+  const usedOptionalFields = computed(() => extractUsedOptionalFields(internalTemplate.value))
+  const itemsMissingOptionalFields = computed(() => {
+    const usedFields = usedOptionalFields.value
+    if (usedFields.length === 0) return []
+
+    return store.selectedItems.filter((item) => hasMissingOptionalFields(item.image, usedFields))
+  })
+
+  // Which optional field paths have at least one selected item missing them (independent of template)
+  const allMissingOptionalFieldPaths = computed(() => {
+    const missing = new Set<string>()
+    store.selectedItems.forEach((item) => {
+      for (const path of OPTIONAL_FIELD_PATHS) {
+        if (hasMissingOptionalFields(item.image, [path])) {
+          missing.add(path)
+        }
+      }
+    })
+    return missing
+  })
+
   const highlightedTemplate = computed(() => {
     if (!template.value) return ' '
     const text = template.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -111,12 +143,12 @@ export const useTitleTemplate = () => {
           if (completeTag) {
             const content = match.slice(2, -2).trim()
             const isValid = validPaths.includes(content)
-            const isCameraField = (CAMERA_FIELD_PATHS as readonly string[]).includes(content)
-            const hasMissingItems = isCameraField && itemsMissingCameraFields.value.length > 0
+            const isOptionalField = (OPTIONAL_FIELD_PATHS as readonly string[]).includes(content)
+            const hasMissingItems = isOptionalField && allMissingOptionalFieldPaths.value.has(content)
 
             let classes: string
             if (hasMissingItems && isValid) {
-              // Yellow/orange warn color for camera fields with missing values
+              // Yellow/orange warn color for optional fields with missing values
               classes = 'text-yellow-600 bg-yellow-50 border border-yellow-400'
             } else if (isValid) {
               classes = 'text-blue-600 bg-blue-50'
@@ -176,9 +208,12 @@ export const useTitleTemplate = () => {
     isDirty,
     anyItemsMissingCameraFields,
     itemsMissingCameraFields,
+    allMissingOptionalFieldPaths,
+    itemsMissingOptionalFields,
     previewItems,
     template,
     usedCameraFields,
+    usedOptionalFields,
 
     applyTemplate,
     verifyTitlesWithTemplate,

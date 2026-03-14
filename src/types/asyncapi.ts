@@ -336,9 +336,15 @@ export type ExistingPage = {
 
 export type GeoLocation = {
   accuracy?: number
+  city?: string
   compass_angle?: number
+  country?: string
+  country_code?: string
+  county?: string
   latitude: number
   longitude: number
+  postcode?: string
+  state?: string
 }
 
 export type ImageUrls = {

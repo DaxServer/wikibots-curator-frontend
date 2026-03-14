@@ -7,40 +7,25 @@ const {
   error,
   highlightedTemplate,
   isDirty,
-  anyItemsMissingCameraFields,
-  itemsMissingCameraFields,
+  allMissingOptionalFieldPaths,
   previewItems,
   template,
-  usedCameraFields,
+  usedOptionalFields,
   applyTemplate,
   getVariableToken,
   insertVariable,
   onDragStart,
 } = useTitleTemplate()
 
-const missingCameraFields = computed(() => {
-  const missing = new Set<string>()
-  itemsMissingCameraFields.value.forEach((item) => {
-    if (!item.image.camera.make) missing.add('camera.make')
-    if (!item.image.camera.model) missing.add('camera.model')
-  })
-  return missing
-})
-
-const isCameraField = (fieldPath: string): boolean => {
-  return (CAMERA_FIELD_PATHS as readonly string[]).includes(fieldPath)
-}
-
-const isCameraFieldUsedAndMissing = (fieldPath: string): boolean => {
+const isOptionalFieldUsedAndMissing = (fieldPath: string): boolean => {
   return (
-    isCameraField(fieldPath) &&
-    (usedCameraFields.value as readonly string[]).includes(fieldPath) &&
-    missingCameraFields.value.has(fieldPath)
+    (usedOptionalFields.value as readonly string[]).includes(fieldPath) &&
+    allMissingOptionalFieldPaths.value.has(fieldPath)
   )
 }
 
-const getCameraFieldTooltip = (field: { description: string; path: string }) => {
-  if (anyItemsMissingCameraFields.value) {
+const getOptionalFieldTooltip = (field: { description: string; path: string }) => {
+  if (isOptionalFieldUsedAndMissing(field.path)) {
     return {
       value: `${field.description} - some items are missing this field`,
       severity: 'warn',
@@ -136,12 +121,12 @@ onMounted(async () => {
                 <span class="text-sm font-bold uppercase text-gray-700 pl-2">{{ group }}</span>
                 <div class="flex flex-wrap gap-3">
                   <div
-                    v-tooltip.top="getCameraFieldTooltip(field)"
+                    v-tooltip.top="getOptionalFieldTooltip(field)"
                     class="flex flex-col items-start gap-1 border border-gray-200 rounded-md cursor-grab active:cursor-grabbing"
                     v-for="(field, key) in fields"
                     :key="key"
                     :class="{
-                      'border-yellow-400 bg-yellow-50': isCameraFieldUsedAndMissing(field.path),
+                      'border-yellow-400 bg-yellow-50': isOptionalFieldUsedAndMissing(field.path),
                     }"
                     draggable="true"
                     @dragstart="onDragStart($event, field.path)"
@@ -150,15 +135,15 @@ onMounted(async () => {
                     <div class="container flex justify-between items-center">
                       <Tag
                         :value="field.name"
-                        :severity="isCameraFieldUsedAndMissing(field.path) ? 'warn' : 'secondary'"
+                        :severity="isOptionalFieldUsedAndMissing(field.path) ? 'warn' : 'secondary'"
                         size="small"
                       />
                       <i
-                        v-if="isCameraField(field.path)"
+                        v-if="allMissingOptionalFieldPaths.has(field.path)"
                         class="pi pi-exclamation-triangle text-xs mr-1"
                         :class="{
-                          'text-yellow-600': isCameraFieldUsedAndMissing(field.path),
-                          'text-gray-400': !isCameraFieldUsedAndMissing(field.path),
+                          'text-yellow-600': isOptionalFieldUsedAndMissing(field.path),
+                          'text-gray-400': !isOptionalFieldUsedAndMissing(field.path),
                         }"
                       />
                     </div>

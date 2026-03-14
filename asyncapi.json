@@ -982,9 +982,21 @@
           "accuracy": {
             "type": "integer"
           },
+          "city": {
+            "type": "string"
+          },
           "compass_angle": {
             "type": "number",
             "format": "float"
+          },
+          "country": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string"
+          },
+          "county": {
+            "type": "string"
           },
           "latitude": {
             "type": "number",
@@ -993,6 +1005,12 @@
           "longitude": {
             "type": "number",
             "format": "float"
+          },
+          "postcode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
           }
         },
         "additionalProperties": false

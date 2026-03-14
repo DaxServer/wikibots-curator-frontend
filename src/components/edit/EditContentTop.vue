@@ -148,7 +148,11 @@ const onTitleBlur = () => {
         icon="pi pi-exclamation-triangle"
         class="pl-3"
       >
-        This item is missing camera fields (make/model) required by the title template
+        {{
+          item.meta.missingFields?.length
+            ? `Missing template fields: ${item.meta.missingFields.map((p) => FIELD_PATH_TO_NAME[p] ?? p).join(', ')}`
+            : 'Missing fields required by the title template'
+        }}
       </SimpleMessage>
       <SimpleMessage
         v-else-if="item.meta.titleStatus === TITLE_STATUS.Available"
