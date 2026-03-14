@@ -29,8 +29,7 @@ export const useAdminStore = defineStore('admin', () => {
   )
 
   const failableCount = computed(
-    () =>
-      selectedUploadRequests.value.filter((r) => r.status !== UPLOAD_STATUS.Failed).length,
+    () => selectedUploadRequests.value.filter((r) => r.status !== UPLOAD_STATUS.Failed).length,
   )
 
   const data = computed(() => {

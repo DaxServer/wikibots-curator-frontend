@@ -1,7 +1,13 @@
 <script setup lang="ts">
 const store = useAdminStore()
-const { refreshAdminData, updateAdminUploadRequest, cancelSelected, markSelectedAsFailed, clearText, clearAll } =
-  useAdmin()
+const {
+  refreshAdminData,
+  updateAdminUploadRequest,
+  cancelSelected,
+  markSelectedAsFailed,
+  clearText,
+  clearAll,
+} = useAdmin()
 const toast = useToast()
 const { getStatusSeverity, getStatusStyle, getStatusLabel } = useUploadStatus()
 
@@ -206,9 +212,7 @@ onMounted(() => {
             <template v-if="store.cancellableCount > 0">
               ({{ store.cancellableCount }} cancellable)
             </template>
-            <template v-if="store.failableCount > 0">
-              ({{ store.failableCount }} failable)
-            </template>
+            <template v-if="store.failableCount > 0">({{ store.failableCount }} failable)</template>
           </span>
           <Button
             label="Clear selection"

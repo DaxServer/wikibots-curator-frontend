@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it } from 'bun:test'
 import type { AdminUploadRequest } from '@/types/admin'
 import { UPLOAD_STATUS } from '@/types/image'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAdminStore } from '../admin.store'
 
