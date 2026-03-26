@@ -117,7 +117,10 @@ export const OPTIONAL_LOCATION_FIELD_PATHS = [
   'location.postcode',
 ] as const
 
-export const OPTIONAL_FIELD_PATHS = [...CAMERA_FIELD_PATHS, ...OPTIONAL_LOCATION_FIELD_PATHS] as const
+export const OPTIONAL_FIELD_PATHS = [
+  ...CAMERA_FIELD_PATHS,
+  ...OPTIONAL_LOCATION_FIELD_PATHS,
+] as const
 
 export const validPaths = Object.values(AVAILABLE_IMAGE_FIELDS).flatMap((group) =>
   Object.values(group).map((field) => field.path),

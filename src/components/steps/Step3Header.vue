@@ -17,9 +17,7 @@ const isViewingPreset = computed(
 )
 
 // Show save form when not viewing preset and accordion is closed
-const showPresetSaveForm = computed(
-  () => !isViewingPreset.value && !store.isAccordionOpen,
-)
+const showPresetSaveForm = computed(() => !isViewingPreset.value && !store.isAccordionOpen)
 
 const handleCreatePreset = () => {
   // Clear any selected preset to enter manual/new preset mode

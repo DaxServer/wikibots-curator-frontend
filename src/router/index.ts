@@ -2,6 +2,7 @@ import MapillaryCollections from '@/components/mapillary/MapillaryCollections.vu
 import AdminView from '@/components/views/AdminView.vue'
 import BatchesView from '@/components/views/BatchesView.vue'
 import BatchUploadsView from '@/components/views/BatchUploadsView.vue'
+import FailedUploadsView from '@/components/views/FailedUploadsView.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
@@ -29,6 +30,11 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminView,
+  },
+  {
+    path: '/admin/failed-uploads',
+    name: 'admin-failed-uploads',
+    component: FailedUploadsView,
   },
 ]
 

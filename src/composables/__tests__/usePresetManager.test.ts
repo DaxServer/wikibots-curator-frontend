@@ -213,7 +213,6 @@ describe('usePresetManager', () => {
       const sent = JSON.parse(mockSend.mock.calls[0]![0])
       expect(sent.data.preset_id).toBeUndefined()
     })
-
   })
 
   describe('pending save watcher - update case', () => {
