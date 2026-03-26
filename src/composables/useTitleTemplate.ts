@@ -144,7 +144,8 @@ export const useTitleTemplate = () => {
             const content = match.slice(2, -2).trim()
             const isValid = validPaths.includes(content)
             const isOptionalField = (OPTIONAL_FIELD_PATHS as readonly string[]).includes(content)
-            const hasMissingItems = isOptionalField && allMissingOptionalFieldPaths.value.has(content)
+            const hasMissingItems =
+              isOptionalField && allMissingOptionalFieldPaths.value.has(content)
 
             let classes: string
             if (hasMissingItems && isValid) {

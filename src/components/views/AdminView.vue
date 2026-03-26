@@ -149,15 +149,24 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="max-w-7xl mx-auto flex items-center mb-4 gap-4">
-      <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-      <SelectButton
-        v-model="store.adminTable"
-        :options="tableOptions"
-        option-label="label"
-        option-value="value"
-        :allow-empty="false"
-        @change="onTableChange"
+    <div class="max-w-7xl mx-auto flex items-center justify-between mb-4 gap-4">
+      <div class="flex items-center gap-4">
+        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+        <SelectButton
+          v-model="store.adminTable"
+          :options="tableOptions"
+          option-label="label"
+          option-value="value"
+          :allow-empty="false"
+          @change="onTableChange"
+        />
+      </div>
+      <Button
+        as="router-link"
+        to="/admin/failed-uploads"
+        label="Failed Uploads"
+        severity="danger"
+        outlined
       />
     </div>
 

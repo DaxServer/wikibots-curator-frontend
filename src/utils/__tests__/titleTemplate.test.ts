@@ -289,7 +289,10 @@ describe('titleTemplate utils', () => {
 
   describe('OPTIONAL_FIELD_PATHS constant', () => {
     it('is the union of CAMERA_FIELD_PATHS and OPTIONAL_LOCATION_FIELD_PATHS', () => {
-      expect(OPTIONAL_FIELD_PATHS).toEqual([...CAMERA_FIELD_PATHS, ...OPTIONAL_LOCATION_FIELD_PATHS])
+      expect(OPTIONAL_FIELD_PATHS).toEqual([
+        ...CAMERA_FIELD_PATHS,
+        ...OPTIONAL_LOCATION_FIELD_PATHS,
+      ])
     })
   })
 

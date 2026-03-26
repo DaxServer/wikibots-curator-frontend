@@ -248,6 +248,8 @@ declare global {
   const useEventListener: typeof import('@vueuse/core').useEventListener
   const useEventSource: typeof import('@vueuse/core').useEventSource
   const useEyeDropper: typeof import('@vueuse/core').useEyeDropper
+  const useFailedUploads: typeof import('./src/composables/useFailedUploads').useFailedUploads
+  const useFailedUploadsStore: typeof import('./src/stores/failedUploads.store').useFailedUploadsStore
   const useFavicon: typeof import('@vueuse/core').useFavicon
   const useFeatureFlags: typeof import('./src/composables/useFeatureFlags').useFeatureFlags
   const useFetch: typeof import('@vueuse/core').useFetch
@@ -408,7 +410,7 @@ declare global {
   export type { ColorVariant } from './src/composables/useUploadStatus'
   import('./src/composables/useUploadStatus')
   // @ts-ignore
-  export type { AdminUser, AdminBatch, AdminUploadRequest, AdminPreset, PaginatedResponse } from './src/types/admin'
+  export type { AdminUser, AdminBatch, AdminUploadRequest, AdminPreset, FailedUpload, BatchFailureGroup, PaginatedResponse, FailedUploadsResponse } from './src/types/admin'
   import('./src/types/admin')
   // @ts-ignore
   export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
@@ -668,6 +670,8 @@ declare module 'vue' {
     readonly useEventListener: UnwrapRef<typeof import('@vueuse/core')['useEventListener']>
     readonly useEventSource: UnwrapRef<typeof import('@vueuse/core')['useEventSource']>
     readonly useEyeDropper: UnwrapRef<typeof import('@vueuse/core')['useEyeDropper']>
+    readonly useFailedUploads: UnwrapRef<typeof import('./src/composables/useFailedUploads')['useFailedUploads']>
+    readonly useFailedUploadsStore: UnwrapRef<typeof import('./src/stores/failedUploads.store')['useFailedUploadsStore']>
     readonly useFavicon: UnwrapRef<typeof import('@vueuse/core')['useFavicon']>
     readonly useFeatureFlags: UnwrapRef<typeof import('./src/composables/useFeatureFlags')['useFeatureFlags']>
     readonly useFetch: UnwrapRef<typeof import('@vueuse/core')['useFetch']>
