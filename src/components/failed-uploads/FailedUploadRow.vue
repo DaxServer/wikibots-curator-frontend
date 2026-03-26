@@ -30,8 +30,8 @@ defineProps<{
         </p>
         <div class="flex flex-wrap gap-2 mt-2">
           <a
-            v-for="(link, idx) in upload.error.links"
-            :key="idx"
+            v-for="link in upload.error.links"
+            :key="link.url"
             :href="link.url"
             target="_blank"
             rel="noopener noreferrer"

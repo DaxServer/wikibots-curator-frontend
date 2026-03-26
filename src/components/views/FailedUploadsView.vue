@@ -3,6 +3,9 @@ const store = useFailedUploadsStore()
 const { fetchFailedUploads } = useFailedUploads()
 
 const sortOptions = ['recent', 'batchSize', 'errorType', 'user'] as const
+const hasActiveFilters = computed(
+  () => store.errorTypeFilter || store.handlerFilter || store.searchText,
+)
 
 const onPage = (event: { first: number; rows: number; page: number }) => {
   store.params = {
@@ -22,6 +25,11 @@ const onSortChange = () => {
 const onFilterChange = () => {
   store.params.first = 0
   store.params.page = 1
+  fetchFailedUploads()
+}
+
+const clearFiltersAndRefetch = () => {
+  store.resetFilters()
   fetchFailedUploads()
 }
 
@@ -103,17 +111,12 @@ onMounted(() => {
         />
 
         <Button
-          v-if="store.errorTypeFilter || store.handlerFilter || store.searchText"
+          v-if="hasActiveFilters"
           label="Clear filters"
           severity="secondary"
           outlined
           size="small"
-          @click="
-            () => {
-              store.resetFilters()
-              fetchFailedUploads()
-            }
-          "
+          @click="clearFiltersAndRefetch"
         />
       </div>
     </div>
@@ -132,16 +135,11 @@ onMounted(() => {
     >
       <p class="text-gray-600">No failed uploads found</p>
       <Button
-        v-if="store.errorTypeFilter || store.handlerFilter || store.searchText"
+        v-if="hasActiveFilters"
         label="Clear all filters"
         severity="secondary"
         class="ml-4"
-        @click="
-          () => {
-            store.resetFilters()
-            fetchFailedUploads()
-          }
-        "
+        @click="clearFiltersAndRefetch"
       />
     </div>
 

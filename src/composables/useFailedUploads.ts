@@ -30,7 +30,7 @@ export const useFailedUploads = () => {
 
       const response = await fetch(`/api/admin/failed_uploads?${queryParams}`)
       if (!response.ok) {
-        throw new Error('Failed to fetch failed uploads')
+        throw new Error(`Failed to fetch failed uploads: ${response.status} ${response.statusText}`)
       }
 
       const data: FailedUploadsResponse = await response.json()
