@@ -353,7 +353,7 @@ const generateOperationUnionTypes = (): string[] => {
 
   // Process each operation to generate union types
   for (const [operationName, operation] of Object.entries(document.operations)) {
-    if (!operation || !operation.messages || !Array.isArray(operation.messages)) {
+    if (!operation?.messages || !Array.isArray(operation.messages)) {
       continue
     }
 

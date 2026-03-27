@@ -57,9 +57,11 @@ export default defineConfig((): import('vite').UserConfig => {
           },
         ],
         dirs: ['src/**'],
+        dirsScanOptions: {
+          fileFilter: (file) => !file.includes('__tests__') && !file.endsWith('.test.ts'),
+        },
         dts: true,
         vueTemplate: true,
-        include: [/\.ts$/, /\.vue$/],
         biomelintrc: {
           enabled: true,
           filepath: './.biomelintrc-auto-import.json',

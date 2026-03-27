@@ -526,15 +526,12 @@ declare module 'vue' {
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
     readonly isValidExtension: UnwrapRef<typeof import('./src/utils/titleTemplate')['isValidExtension']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
-    readonly makePreset: UnwrapRef<typeof import('./src/__tests__/fixtures')['makePreset']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
     readonly mapStores: UnwrapRef<typeof import('pinia')['mapStores']>
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
-    readonly mockSend: UnwrapRef<typeof import('./src/composables/__tests__/usePresetManager.test')['mockSend']>
-    readonly mockSocketData: UnwrapRef<typeof import('./src/composables/__tests__/usePresetManager.test')['mockSocketData']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
