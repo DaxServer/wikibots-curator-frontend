@@ -105,7 +105,7 @@ export const useTitleVerification = () => {
       }
 
       if (signal.aborted) return
-      if (!res || !res.ok) continue
+      if (!res?.ok) continue
       const data = (await res.json()) as {
         query?: {
           normalized?: Array<{ from: string; to: string }>

@@ -1,6 +1,6 @@
-import { watch } from 'vue'
 import { useFailedUploadsStore } from '@/stores/failedUploads.store'
 import type { FailedUploadsResponse } from '@/types/admin'
+import { watch } from 'vue'
 
 export const useFailedUploads = () => {
   const store = useFailedUploadsStore()
