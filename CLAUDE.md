@@ -159,6 +159,10 @@ Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 - Tests follow the pattern: `[name].test.ts`
 - Store tests go in `src/stores/__tests__/`; shared test fixtures in `src/__tests__/fixtures.ts` (imported as `@/__tests__/fixtures`)
 
+**Vue watcher timing in tests:** Watchers fire asynchronously; `await nextTick()` is needed between a reactive state change and any assertion that depends on the watcher callback having run (e.g., triggering a second debounced call to exercise abort behavior).
+
+**Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useCategoryValidation.test.ts` for the full pattern.
+
 **Composable tests with watchers:** Composables that call `watch()` (including transitively) must run inside an `effectScope` to prevent watcher leaks across tests:
 ```ts
 import { afterEach, beforeEach } from 'bun:test'
@@ -206,6 +210,10 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - **Utility classes only** - No manual styles (TailwindCSS)
 - **No linter ignore statements** - Fix issues instead
 - Run `bun typecheck && bun lint && bun format` before committing
+
+## Async Patterns
+
+**AbortController signal capture:** When using `AbortController` in async functions, always capture `signal` from the controller before the `await` (`const { signal } = abortController`) and use `signal.aborted` — not `abortController?.signal.aborted` — in `finally` blocks. The shared `abortController` variable may be reassigned by a subsequent call before the current `finally` runs, causing the wrong signal to be checked.
 
 ## PrimeVue Component Patterns
 
