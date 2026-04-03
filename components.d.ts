@@ -20,6 +20,7 @@ declare module 'vue' {
     BatchUploadsView: typeof import('./src/components/views/BatchUploadsView.vue')['default']
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
+    CategoryValidationMessages: typeof import('./src/components/steps/CategoryValidationMessages.vue')['default']
     Checkbox: typeof import('primevue/checkbox')['default']
     Chip: typeof import('primevue/chip')['default']
     CollectionItem: typeof import('./src/components/collection/CollectionItem.vue')['default']

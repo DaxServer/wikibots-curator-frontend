@@ -10,6 +10,7 @@ const {
   handleCancelEdit,
   handlePresetSave,
 } = usePresetManager()
+const { missingCategories } = useCategoryValidation()
 
 // We're viewing a preset (not editing) when one is selected and not in edit/create mode
 const isViewingPreset = computed(
@@ -59,9 +60,10 @@ const handleCancelEditWrapper = () => {
         <!-- Preset mode (not editing): subtle read-only field summary -->
         <div
           v-if="store.currentPresetId && !isEditing && !store.isAccordionOpen"
-          class="mt-1"
+          class="mt-1 flex flex-col gap-2"
         >
           <PresetPreview :preset="store.currentPreset" />
+          <CategoryValidationMessages :missing-categories="missingCategories" />
         </div>
 
         <!-- Manual or editing mode: editable forms -->
@@ -105,6 +107,12 @@ const handleCancelEditWrapper = () => {
                       <span class="underline">only as a fallback</span>
                     </SimpleMessage>
                   </div>
+                </template>
+                <template #category-message>
+                  <CategoryValidationMessages
+                    :missing-categories="missingCategories"
+                    show-auto-added
+                  />
                 </template>
               </ItemInputs>
               <DateCategorySetting class="mt-4" />

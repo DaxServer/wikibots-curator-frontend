@@ -1,0 +1,110 @@
+import { useCollectionsStore } from '@/stores/collections.store'
+import { debounce } from 'ts-debounce'
+import { ref, watch } from 'vue'
+
+export type QueryPage = { title: string; missing?: boolean }
+export type QueryNormalized = { from: string; to: string }
+
+const COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php'
+const CATEGORY_REGEX = /\[\[Category:([^\]|]+)(?:\|[^\]]+)?\]\]/gi
+const DEBOUNCE_MS = 500
+
+export const parseCategoryNames = (text: string): string[] => {
+  const matches = [...text.matchAll(CATEGORY_REGEX)]
+  return [
+    ...new Set(
+      matches.map((m) => {
+        const name = m[1]!.trim()
+        return name.charAt(0).toUpperCase() + name.slice(1)
+      }),
+    ),
+  ]
+}
+
+export const useCategoryValidation = () => {
+  const store = useCollectionsStore()
+
+  const missingCategories = ref<string[]>([])
+  const isChecking = ref(false)
+  const queriedCategories = new Set<string>()
+  const existingCategories = new Set<string>()
+  let abortController: AbortController | null = null
+
+  const checkCategories = async (text: string): Promise<void> => {
+    const categoryNames = parseCategoryNames(text)
+
+    if (categoryNames.length === 0) {
+      missingCategories.value = []
+      return
+    }
+
+    const toQuery = categoryNames.filter((name) => !queriedCategories.has(name))
+
+    if (toQuery.length > 0) {
+      abortController?.abort()
+      abortController = new AbortController()
+      const { signal } = abortController
+
+      isChecking.value = true
+
+      const params = new URLSearchParams()
+      params.set('action', 'query')
+      params.set('titles', toQuery.map((name) => `Category:${name}`).join('|'))
+      params.set('format', 'json')
+      params.set('origin', '*')
+      params.set('formatversion', '2')
+
+      try {
+        const res = await fetch(COMMONS_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString(),
+          signal,
+        })
+
+        if (signal.aborted) return
+        if (!res.ok) return
+
+        const data = (await res.json()) as {
+          query?: {
+            normalized?: QueryNormalized[]
+            pages?: Record<string, QueryPage>
+          }
+        }
+
+        // Map normalised title → original queried name so cache lookups use the input form
+        const normalizedToOriginal = new Map<string, string>()
+        for (const { from, to } of data.query?.normalized ?? []) {
+          normalizedToOriginal.set(to.replace(/^Category:/, ''), from.replace(/^Category:/, ''))
+        }
+
+        for (const page of Object.values(data.query?.pages ?? {})) {
+          const normalizedName = page.title.replace(/^Category:/, '')
+          const originalName = normalizedToOriginal.get(normalizedName) ?? normalizedName
+          queriedCategories.add(originalName)
+          if (!page.missing) {
+            existingCategories.add(originalName)
+          }
+        }
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === 'AbortError') return
+      } finally {
+        if (!signal.aborted) {
+          isChecking.value = false
+        }
+      }
+    }
+
+    missingCategories.value = categoryNames.filter((name) => !existingCategories.has(name))
+  }
+
+  const debouncedCheck = debounce(checkCategories, DEBOUNCE_MS)
+
+  watch(
+    () => store.globalCategories,
+    (value) => debouncedCheck(value),
+    { immediate: true },
+  )
+
+  return { missingCategories, isChecking }
+}
