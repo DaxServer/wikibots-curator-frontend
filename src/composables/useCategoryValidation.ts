@@ -8,15 +8,18 @@ export type QueryNormalized = { from: string; to: string }
 const COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php'
 const CATEGORY_REGEX = /\[\[Category:([^\]|]+)(?:\|[^\]]+)?\]\]/gi
 const DEBOUNCE_MS = 500
+const TITLES_PER_REQUEST = 50
 
 export const parseCategoryNames = (text: string): string[] => {
   const matches = [...text.matchAll(CATEGORY_REGEX)]
   return [
     ...new Set(
-      matches.map((m) => {
-        const name = m[1]!.trim()
-        return name.charAt(0).toUpperCase() + name.slice(1)
-      }),
+      matches
+        .map((m) => {
+          const name = m[1]!.trim().replace(/_/g, ' ')
+          return name ? name.charAt(0).toUpperCase() + name.slice(1) : null
+        })
+        .filter((n): n is string => n !== null),
     ),
   ]
 }
@@ -25,7 +28,6 @@ export const useCategoryValidation = () => {
   const store = useCollectionsStore()
 
   const missingCategories = ref<string[]>([])
-  const isChecking = ref(false)
   const queriedCategories = new Set<string>()
   const existingCategories = new Set<string>()
   let abortController: AbortController | null = null
@@ -45,53 +47,51 @@ export const useCategoryValidation = () => {
       abortController = new AbortController()
       const { signal } = abortController
 
-      isChecking.value = true
-
-      const params = new URLSearchParams()
-      params.set('action', 'query')
-      params.set('titles', toQuery.map((name) => `Category:${name}`).join('|'))
-      params.set('format', 'json')
-      params.set('origin', '*')
-      params.set('formatversion', '2')
-
       try {
-        const res = await fetch(COMMONS_API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: params.toString(),
-          signal,
-        })
+        for (let i = 0; i < toQuery.length; i += TITLES_PER_REQUEST) {
+          if (signal.aborted) return
 
-        if (signal.aborted) return
-        if (!res.ok) return
+          const chunk = toQuery.slice(i, i + TITLES_PER_REQUEST)
+          const params = new URLSearchParams()
+          params.set('action', 'query')
+          params.set('titles', chunk.map((name) => `Category:${name}`).join('|'))
+          params.set('format', 'json')
+          params.set('origin', '*')
+          params.set('formatversion', '2')
 
-        const data = (await res.json()) as {
-          query?: {
-            normalized?: QueryNormalized[]
-            pages?: Record<string, QueryPage>
+          const res = await fetch(COMMONS_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString(),
+            signal,
+          })
+
+          if (signal.aborted) return
+          if (!res.ok) return
+
+          const data = (await res.json()) as {
+            query?: {
+              normalized?: QueryNormalized[]
+              pages?: Record<string, QueryPage>
+            }
           }
-        }
 
-        // Map normalised title → original queried name so cache lookups use the input form
-        const normalizedToOriginal = new Map<string, string>()
-        for (const { from, to } of data.query?.normalized ?? []) {
-          normalizedToOriginal.set(to.replace(/^Category:/, ''), from.replace(/^Category:/, ''))
-        }
+          const normalizedToOriginal = new Map<string, string>()
+          for (const { from, to } of data.query?.normalized ?? []) {
+            normalizedToOriginal.set(to.replace(/^Category:/, ''), from.replace(/^Category:/, ''))
+          }
 
-        for (const page of Object.values(data.query?.pages ?? {})) {
-          const normalizedName = page.title.replace(/^Category:/, '')
-          const originalName = normalizedToOriginal.get(normalizedName) ?? normalizedName
-          queriedCategories.add(originalName)
-          if (!page.missing) {
-            existingCategories.add(originalName)
+          for (const page of Object.values(data.query?.pages ?? {})) {
+            const normalizedName = page.title.replace(/^Category:/, '')
+            const originalName = normalizedToOriginal.get(normalizedName) ?? normalizedName
+            queriedCategories.add(originalName)
+            if (!page.missing) {
+              existingCategories.add(originalName)
+            }
           }
         }
       } catch (e: unknown) {
         if (e instanceof Error && e.name === 'AbortError') return
-      } finally {
-        if (!signal.aborted) {
-          isChecking.value = false
-        }
       }
     }
 
@@ -106,5 +106,5 @@ export const useCategoryValidation = () => {
     { immediate: true },
   )
 
-  return { missingCategories, isChecking }
+  return { missingCategories }
 }

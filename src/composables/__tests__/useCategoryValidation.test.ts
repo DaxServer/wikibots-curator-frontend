@@ -64,6 +64,7 @@ describe('useCategoryValidation', () => {
       ['single-bracket link', '[Category:Foo]'],
       ['two opening one closing bracket', '[[Category:Foo]'],
       ['one opening two closing brackets', '[Category:Foo]]'],
+      ['whitespace-only name', '[[Category:   ]]'],
     ])('returns [] for %s', (_, input) => {
       expect(parseCategoryNames(input)).toEqual([])
     })
@@ -79,15 +80,17 @@ describe('useCategoryValidation', () => {
       ['leading and trailing whitespace', '[[Category:  Foo  ]]', 'Foo'],
       ['pipe alias', '[[Category:Foo|display text]]', 'Foo'],
       ['trailing space before sort key', '[[Category:Foo |sort key]]', 'Foo'],
+      ['underscores replaced with spaces', '[[Category:Foo_Bar_Baz]]', 'Foo Bar Baz'],
     ])('extracts name from %s', (_, input, expected) => {
       expect(parseCategoryNames(input)).toEqual([expected])
     })
 
     it.each([
-      ['identical names', '[[Category:Foo]]\n[[Category:Foo]]'],
-      ['names differing only by trailing space', '[[Category:Foo ]]\n[[Category:Foo]]'],
-    ])('deduplicates %s', (_, input) => {
-      expect(parseCategoryNames(input)).toEqual(['Foo'])
+      ['identical names', '[[Category:Foo]]\n[[Category:Foo]]', ['Foo']],
+      ['names differing only by trailing space', '[[Category:Foo ]]\n[[Category:Foo]]', ['Foo']],
+      ['names differing only by underscores vs spaces', '[[Category:Foo_Bar]]\n[[Category:Foo Bar]]', ['Foo Bar']],
+    ])('deduplicates %s', (_, input, expected) => {
+      expect(parseCategoryNames(input)).toEqual(expected)
     })
 
     it('extracts multiple category names', () => {
@@ -140,11 +143,9 @@ describe('useCategoryValidation', () => {
         input: '[[Category:Photography in Berlin]]',
       },
       {
-        label: 'API normalises the title',
+        label: 'category with underscores exists on Commons',
         pages: [{ title: 'Category:Photography in Berlin' }] as QueryPage[],
-        normalized: [
-          { from: 'Category:Photography_in_Berlin', to: 'Category:Photography in Berlin' },
-        ] as QueryNormalized[],
+        normalized: [] as QueryNormalized[],
         input: '[[Category:Photography_in_Berlin]]',
       },
     ])('does not report category as missing when $label', async ({ pages, normalized, input }) => {
@@ -172,15 +173,6 @@ describe('useCategoryValidation', () => {
         input: '[[Category:Photography in Berlin]]',
         expectedMissing: [] as string[],
       },
-      {
-        label: 'confirmed to exist via normalisation',
-        pages: [{ title: 'Category:Photography in Berlin' }] as QueryPage[],
-        normalized: [
-          { from: 'Category:Photography_in_Berlin', to: 'Category:Photography in Berlin' },
-        ] as QueryNormalized[],
-        input: '[[Category:Photography_in_Berlin]]',
-        expectedMissing: [] as string[],
-      },
     ])(
       'does not re-query category $label',
       async ({ pages, normalized, input, expectedMissing }) => {
@@ -193,7 +185,7 @@ describe('useCategoryValidation', () => {
         for (const exec of [...pendingDebounceExecutors]) await exec()
         pendingDebounceExecutors = []
 
-        store.globalCategories = input + '\n'
+        store.globalCategories = `${input}\n`
         for (const exec of pendingDebounceExecutors) await exec()
 
         expect(mockFetch.mock.calls).toHaveLength(1)
@@ -201,69 +193,32 @@ describe('useCategoryValidation', () => {
       },
     )
 
-    it('keeps isChecking true when a second request aborts the first', async () => {
-      let resolveFirst!: () => void
-      let resolveSecond!: () => void
-      let callCount = 0
+    it('sends categories in batches of 50 when there are more than 50', async () => {
+      const catNames = Array.from({ length: 51 }, (_, i) => `Cat${i + 1}`)
+      const allPages = catNames.map((name) => ({ title: `Category:${name}` }))
 
+      let callCount = 0
       global.fetch = mock(() => {
-        callCount += 1
-        const promise = new Promise<void>((res) => {
-          if (callCount === 1) resolveFirst = res
-          else resolveSecond = res
-        })
-        return promise.then(() => ({
+        const chunk = callCount === 0 ? allPages.slice(0, 50) : allPages.slice(50)
+        callCount++
+        return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ query: { pages: {} } }),
-        }))
+          json: () =>
+            Promise.resolve({
+              query: {
+                pages: Object.fromEntries(chunk.map((p, i) => [String(i), p])),
+              },
+            }),
+        })
       }) as unknown as typeof fetch
 
-      store.globalCategories = '[[Category:Foo]]'
-      const { isChecking } = useCategoryValidation()
+      store.globalCategories = catNames.map((name) => `[[Category:${name}]]`).join('\n')
+      const { missingCategories } = useCategoryValidation()
 
-      // Start first request
-      const firstExec = pendingDebounceExecutors.shift()!
-      const firstPromise = firstExec()
+      for (const exec of pendingDebounceExecutors) await exec()
 
-      // Trigger second request (aborts first) via watcher
-      store.globalCategories = '[[Category:Bar]]'
-      await nextTick()
-      const secondExec = pendingDebounceExecutors.shift()!
-      const secondPromise = secondExec()
-
-      // Resolve first (it is aborted — its finally must NOT clear isChecking)
-      resolveFirst()
-      await firstPromise
-
-      expect(isChecking.value).toBe(true)
-
-      resolveSecond()
-      await secondPromise
-      expect(isChecking.value).toBe(false)
-    })
-
-    it('sets isChecking to true during the API call and false after', async () => {
-      let resolveFetch!: () => void
-      const fetchPromise = new Promise<void>((res) => {
-        resolveFetch = res
-      })
-
-      global.fetch = mock(() =>
-        fetchPromise.then(() => ({
-          ok: true,
-          json: () => Promise.resolve({ query: { pages: {} } }),
-        })),
-      ) as unknown as typeof fetch
-
-      store.globalCategories = '[[Category:Foo]]'
-      const { isChecking } = useCategoryValidation()
-
-      const execPromises = pendingDebounceExecutors.map((exec) => exec())
-      expect(isChecking.value).toBe(true)
-
-      resolveFetch()
-      await Promise.all(execPromises)
-      expect(isChecking.value).toBe(false)
+      expect((global.fetch as unknown as ReturnType<typeof mock>).mock.calls).toHaveLength(2)
+      expect(missingCategories.value).toEqual([])
     })
 
     it.each([
