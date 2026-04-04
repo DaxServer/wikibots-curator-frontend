@@ -215,6 +215,10 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 **AbortController signal capture:** When using `AbortController` in async functions, always capture `signal` from the controller before the `await` (`const { signal } = abortController`) and use `signal.aborted` — not `abortController?.signal.aborted` — in `finally` blocks. The shared `abortController` variable may be reassigned by a subsequent call before the current `finally` runs, causing the wrong signal to be checked.
 
+## Wikimedia Commons API
+
+**Titles per request limit:** The `action=query&titles=` parameter accepts at most 50 titles for non-bot users (500 with `apihighlimits`). Both `useTitleVerification.ts` and `useCategoryValidation.ts` chunk requests at 50 using a `for (let i = 0; i < items.length; i += 50)` loop with a shared `AbortController` signal checked at the top of each iteration.
+
 ## PrimeVue Component Patterns
 
 **DatePicker events:** Use `@update:model-value` as the single handler for all date changes (selection and clear). The separate `@date-select` and `@clear` events are unreliable — `@clear` may not fire when `show-clear` is used. Emit downstream events (e.g., `dateChange`) from `@update:model-value` instead.
