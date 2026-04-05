@@ -299,7 +299,10 @@ const getInferredType = async (pattern: string): Promise<string> => {
     `temp_type_${Math.random().toString(36).slice(2)}.ts`,
   )
   // Simplify pattern for type inference to avoid "excessively deep" errors
-  const simplifiedPattern = pattern.replace(/\[1-9\]/g, '\\d').replace(/\[0-9\]/g, '\\d')
+  const simplifiedPattern = pattern
+    .replace(/\[1-9\]/g, '\\d')
+    .replace(/\[0-9\]/g, '\\d')
+    .replace(/\\d\\d\*/g, '\\d+')
 
   // Escape backslashes for the TS file string literal
   const escapedPattern = simplifiedPattern.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
@@ -322,6 +325,7 @@ const getInferredType = async (pattern: string): Promise<string> => {
       'bundler',
       '--module',
       'esnext',
+      '--ignoreConfig',
     ])
 
     // Bun.spawnSync doesn't throw on non-zero exit code by default,

@@ -20,7 +20,6 @@ describe('useDataFilters', () => {
     error: error ? { message: error, type: 'error' } : undefined,
     success:
       status === UPLOAD_STATUS.Completed ? 'https://commons.wikimedia.org/wiki/File:Test.jpg' : '',
-    last_edited_by: undefined,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   })

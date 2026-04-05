@@ -35,6 +35,8 @@ bun generate
    - `channels/wsChannel/messages/` - Channel reference
    - `operations/ServerMessage/messages/` - Server operation (alphabetical order)
 
+**Generator type inference:** `bun generate` uses `tsc` to infer template literal types from JSON schema patterns (e.g., `ItemId = \`Q${number}\``). If these degrade to `string` after a dep bump, the cause is likely a new TypeScript error (e.g., TS5112 in TS 6.0) polluting the `tsc` output. The fix is adding the relevant suppression flag to the `Bun.spawnSync` call in `getInferredType()` in `scripts/asyncapi.ts`.
+
 ## Technology Stack
 
 - **Vue 3** with Composition API (`<script setup lang="ts">`)

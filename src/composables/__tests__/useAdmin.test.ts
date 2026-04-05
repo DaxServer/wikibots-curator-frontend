@@ -20,7 +20,6 @@ const makeUploadRequest = (id: number, status: string): AdminUploadRequest => ({
   result: null,
   error: undefined,
   success: null,
-  last_edited_by: null,
   celery_task_id: null,
   created_at: '2026-01-01T00:00:00',
   updated_at: '2026-01-01T00:00:00',
