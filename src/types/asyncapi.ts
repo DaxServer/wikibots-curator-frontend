@@ -621,9 +621,9 @@ export enum DataValueType {
   WIKIBASE_ENTITYID = 'wikibase-entityid',
 }
 
-export type ItemId = `Q${number}${number}`
+export type ItemId = `Q${number}`
 
-export type PropertyId = `P${number}${number}`
+export type PropertyId = `P${number}`
 
 export enum Rank {
   DEPRECATED = 'deprecated',
