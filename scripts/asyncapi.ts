@@ -322,6 +322,7 @@ const getInferredType = async (pattern: string): Promise<string> => {
       'bundler',
       '--module',
       'esnext',
+      '--ignoreConfig',
     ])
 
     // Bun.spawnSync doesn't throw on non-zero exit code by default,

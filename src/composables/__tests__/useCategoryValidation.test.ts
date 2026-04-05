@@ -88,7 +88,11 @@ describe('useCategoryValidation', () => {
     it.each([
       ['identical names', '[[Category:Foo]]\n[[Category:Foo]]', ['Foo']],
       ['names differing only by trailing space', '[[Category:Foo ]]\n[[Category:Foo]]', ['Foo']],
-      ['names differing only by underscores vs spaces', '[[Category:Foo_Bar]]\n[[Category:Foo Bar]]', ['Foo Bar']],
+      [
+        'names differing only by underscores vs spaces',
+        '[[Category:Foo_Bar]]\n[[Category:Foo Bar]]',
+        ['Foo Bar'],
+      ],
     ])('deduplicates %s', (_, input, expected) => {
       expect(parseCategoryNames(input)).toEqual(expected)
     })
