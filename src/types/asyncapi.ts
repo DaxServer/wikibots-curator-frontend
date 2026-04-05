@@ -238,7 +238,6 @@ export type BatchUploadItem = {
     | GenericError
     | TitleBlacklistedError
   success?: string
-  last_edited_by?: string
   created_at?: string
   updated_at?: string
   image_id?: string
@@ -622,9 +621,9 @@ export enum DataValueType {
   WIKIBASE_ENTITYID = 'wikibase-entityid',
 }
 
-export type ItemId = `Q${number}`
+export type ItemId = string
 
-export type PropertyId = `P${number}`
+export type PropertyId = string
 
 export enum Rank {
   DEPRECATED = 'deprecated',

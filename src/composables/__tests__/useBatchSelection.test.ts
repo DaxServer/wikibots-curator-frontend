@@ -15,7 +15,6 @@ describe('useBatchSelection', () => {
     wikitext: `{{Some text}}`,
     error: undefined,
     success: '',
-    last_edited_by: undefined,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   })

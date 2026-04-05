@@ -110,14 +110,6 @@ const hasPendingJobs = computed(() => {
   return computedStats.value.queued > 0 || computedStats.value.in_progress > 0
 })
 
-const lastEditedBy = computed(() => {
-  const users = new Set(
-    store.batchUploads.map((u) => u.last_edited_by).filter((u): u is string => !!u),
-  )
-  if (users.size === 0) return null
-  return Array.from(users).join(', ')
-})
-
 const handleAdminRetrySelectedUploads = async () => {
   await adminRetrySelectedUploads(Array.from(selectedIds.value), batchId.value)
   exitSelectionMode()
@@ -259,16 +251,6 @@ onUnmounted(() => {
             <i class="pi pi-user text-sm"></i>
             <span v-if="store.batch">{{ store.batch.username }}</span>
             <Skeleton v-else />
-            <SimpleMessage
-              v-if="lastEditedBy"
-              icon="pi pi-user-edit"
-              severity="warn"
-              v-tooltip.top="
-                'The edits will be made from this user account. See history of files on Commons.'
-              "
-            >
-              Retry triggered by: {{ lastEditedBy }}
-            </SimpleMessage>
           </div>
         </template>
         <template #content>

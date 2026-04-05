@@ -33,7 +33,6 @@ export type AdminUploadRequest = {
   result: string | null
   error: UploadUpdateItem['error']
   success: string | null
-  last_edited_by: string | null
   celery_task_id: string | null
   created_at: string
   updated_at: string
