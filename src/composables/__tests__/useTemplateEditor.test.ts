@@ -77,7 +77,10 @@ const makeItem = (id: string, city = 'Berlin'): Item => ({
 })
 
 beforeAll(() => GlobalRegistrator.register())
-afterAll(() => GlobalRegistrator.unregister())
+afterAll(() => {
+  mock.restore()
+  GlobalRegistrator.unregister()
+})
 
 describe('useTemplateEditor', () => {
   let useTemplateEditor: typeof import('../useTemplateEditor').useTemplateEditor
