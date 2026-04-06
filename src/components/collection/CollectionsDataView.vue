@@ -140,8 +140,12 @@ watch(
     <template v-if="store.stepper === '3'">
       <Step3Header />
       <template v-if="!shouldHideStep3Controls">
-        <Step3ErrorBanner @toggle-filter="showErrorsOnly = $event" />
-        <Step3Controls />
+        <div class="max-w-7xl mx-auto w-full">
+          <Step3ErrorBanner @toggle-filter="showErrorsOnly = $event" />
+        </div>
+        <div class="max-w-7xl mx-auto w-full">
+          <Step3Controls />
+        </div>
       </template>
     </template>
 
@@ -150,125 +154,127 @@ watch(
       <Step4Header />
     </div>
 
-    <DataView
-      v-if="!shouldHideDataView"
-      :value="currentItems"
-      data-key="id"
-      :layout="currentLayout"
-      :paginator="store.stepper !== '5'"
-      :rows="getRowsPerPage"
-      :first="dataViewFirst"
-      paginator-position="both"
-      :always-show-paginator="false"
-      :rows-per-page-options="rowsPerPageOptions"
-      paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
-      current-page-report-template="Page {currentPage} of {totalPages}"
-      @page="onPageChange"
-      :pt="{
-        pcPaginator: {
-          root: {
-            class: 'justify-end!',
+    <div :class="store.stepper === '3' && 'max-w-7xl mx-auto w-full'">
+      <DataView
+        v-if="!shouldHideDataView"
+        :value="currentItems"
+        data-key="id"
+        :layout="currentLayout"
+        :paginator="store.stepper !== '5'"
+        :rows="getRowsPerPage"
+        :first="dataViewFirst"
+        paginator-position="both"
+        :always-show-paginator="false"
+        :rows-per-page-options="rowsPerPageOptions"
+        paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
+        current-page-report-template="Page {currentPage} of {totalPages}"
+        @page="onPageChange"
+        :pt="{
+          pcPaginator: {
+            root: {
+              class: 'justify-end!',
+            },
           },
-        },
-      }"
-    >
-      <template #header>
-        <div v-if="store.stepper === '2'">
-          <CollectionsControls @select:current-page="step2OnSelectCurrentPage" />
-        </div>
-        <div v-if="store.stepper === '5'">
-          <Step5Header />
-        </div>
-      </template>
+        }"
+      >
+        <template #header>
+          <div v-if="store.stepper === '2'">
+            <CollectionsControls @select:current-page="step2OnSelectCurrentPage" />
+          </div>
+          <div v-if="store.stepper === '5'">
+            <Step5Header />
+          </div>
+        </template>
 
-      <template #empty>
-        <Message
-          severity="info"
-          icon="pi pi-info-circle"
-        >
-          No items to display
-        </Message>
-      </template>
-
-      <template #grid="slotProps">
-        <div
-          v-if="store.stepper === '2'"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-        >
-          <SelectionItem
-            v-for="item in slotProps.items"
-            :key="item.id"
-            :item="item"
-            :alt-prefix="altPrefix"
-            layout="grid"
+        <template #empty>
+          <Message
+            severity="info"
+            icon="pi pi-info-circle"
           >
-            <template #metadata="itemProps">
-              <slot
-                name="metadata"
-                :item="itemProps.item"
-              />
-            </template>
-          </SelectionItem>
-        </div>
-      </template>
+            No items to display
+          </Message>
+        </template>
 
-      <template #list="slotProps">
-        <div class="flex flex-col">
-          <template
-            v-for="item in slotProps.items"
-            :key="item.id"
+        <template #grid="slotProps">
+          <div
+            v-if="store.stepper === '2'"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
           >
-            <CollectionItem
+            <SelectionItem
+              v-for="item in slotProps.items"
+              :key="item.id"
               :item="item"
               :alt-prefix="altPrefix"
+              layout="grid"
             >
-              <!-- Step 2: Metadata slot -->
-              <template #metadata="slotPropsInner">
+              <template #metadata="itemProps">
                 <slot
                   name="metadata"
-                  :item="slotPropsInner.item"
+                  :item="itemProps.item"
                 />
               </template>
+            </SelectionItem>
+          </div>
+        </template>
 
-              <!-- Step 3: Edit content slots -->
-              <template #edit-content-top="slotPropsInner">
-                <EditContentTop
-                  :item="slotPropsInner.item"
-                  :altPrefix="altPrefix"
-                />
-              </template>
-              <template #edit-content-right="slotPropsInner">
-                <EditContentRight
-                  :item="slotPropsInner.item"
-                  :altPrefix="altPrefix"
-                />
-              </template>
-              <template #edit-content-bottom="slotPropsInner">
-                <EditContentBottom
-                  :item="slotPropsInner.item"
-                  :altPrefix="altPrefix"
-                />
-              </template>
+        <template #list="slotProps">
+          <div class="flex flex-col">
+            <template
+              v-for="item in slotProps.items"
+              :key="item.id"
+            >
+              <CollectionItem
+                :item="item"
+                :alt-prefix="altPrefix"
+              >
+                <!-- Step 2: Metadata slot -->
+                <template #metadata="slotPropsInner">
+                  <slot
+                    name="metadata"
+                    :item="slotPropsInner.item"
+                  />
+                </template>
 
-              <!-- Step 4: Preview content -->
-              <template #preview-content="slotPropsInner">
-                <PreviewContent
-                  :item="slotPropsInner.item"
-                  :altPrefix="altPrefix"
-                />
-              </template>
+                <!-- Step 3: Edit content slots -->
+                <template #edit-content-top="slotPropsInner">
+                  <EditContentTop
+                    :item="slotPropsInner.item"
+                    :altPrefix="altPrefix"
+                  />
+                </template>
+                <template #edit-content-right="slotPropsInner">
+                  <EditContentRight
+                    :item="slotPropsInner.item"
+                    :altPrefix="altPrefix"
+                  />
+                </template>
+                <template #edit-content-bottom="slotPropsInner">
+                  <EditContentBottom
+                    :item="slotPropsInner.item"
+                    :altPrefix="altPrefix"
+                  />
+                </template>
 
-              <!-- Step 5: Status content -->
-              <template #status-content="slotPropsInner">
-                <StatusContent
-                  :item="slotPropsInner.item"
-                  :showSkeleton="showSkeleton"
-                />
-              </template>
-            </CollectionItem>
-          </template>
-        </div>
-      </template>
-    </DataView>
+                <!-- Step 4: Preview content -->
+                <template #preview-content="slotPropsInner">
+                  <PreviewContent
+                    :item="slotPropsInner.item"
+                    :altPrefix="altPrefix"
+                  />
+                </template>
+
+                <!-- Step 5: Status content -->
+                <template #status-content="slotPropsInner">
+                  <StatusContent
+                    :item="slotPropsInner.item"
+                    :showSkeleton="showSkeleton"
+                  />
+                </template>
+              </CollectionItem>
+            </template>
+          </div>
+        </template>
+      </DataView>
+    </div>
   </div>
 </template>

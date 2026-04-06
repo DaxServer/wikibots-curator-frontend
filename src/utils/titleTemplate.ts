@@ -11,7 +11,7 @@ interface FieldDefinition {
 // Helper to pad numbers
 const pad = (num: number, size = 2) => String(num).padStart(size, '0')
 
-export const AVAILABLE_IMAGE_FIELDS: Record<string, Record<string, FieldDefinition>> = {
+export const AVAILABLE_IMAGE_FIELDS = {
   image: {
     id: {
       path: 'mapillary.photo.id',
@@ -103,7 +103,9 @@ export const AVAILABLE_IMAGE_FIELDS: Record<string, Record<string, FieldDefiniti
     state: { path: 'location.state', name: 'State', description: 'State or province name' },
     postcode: { path: 'location.postcode', name: 'Postcode', description: 'Postal code' },
   },
-}
+} satisfies Record<string, Record<string, FieldDefinition>>
+
+export type FieldGroup = keyof typeof AVAILABLE_IMAGE_FIELDS
 
 export const CAMERA_FIELD_PATHS = ['camera.make', 'camera.model'] as const
 
@@ -182,6 +184,21 @@ const prepareContext = (image: Image, sequence: string) => {
       },
     },
   }
+}
+
+export const applyFieldTemplate = (template: string, image: Image, sequence: string): string => {
+  if (!template) return template
+  const context = prepareContext(image, sequence)
+  return template.replace(/\{\{\s*([^{}]+?)\s*\}\}/g, (match, path: string) => {
+    if (!validPaths.includes(path)) return match
+    const keys = path.split('.')
+    let value: Record<string, unknown> = context as Record<string, unknown>
+    for (const key of keys) {
+      if (value == null || typeof value !== 'object') return match
+      value = value[key] as Record<string, unknown>
+    }
+    return value != null ? String(value) : match
+  })
 }
 
 export const applyTitleTemplate = (templateStr: string, image: Image, sequence: string): string => {

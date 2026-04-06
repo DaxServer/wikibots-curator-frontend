@@ -643,6 +643,70 @@ describe('useCommons', () => {
     })
   })
 
+  describe('applyMetaDefaults', () => {
+    it('applies template substitution to description when falling back to global', async () => {
+      const store = useCollectionsStore()
+      store.globalDescription = 'Photo in {{location.city}}'
+      const { applyMetaDefaults } = useCommons()
+      const item = createMockItem('1')
+      item.image.location = { ...item.image.location, city: 'Berlin' }
+
+      const result = applyMetaDefaults(item, 'fallback title')
+
+      expect(result.description.value).toBe('Photo in Berlin')
+    })
+
+    it('applies template substitution to categories when falling back to global', async () => {
+      const store = useCollectionsStore()
+      store.globalCategories = '[[Category:Photos in {{location.city}}]]'
+      const { applyMetaDefaults } = useCommons()
+      const item = createMockItem('1')
+      item.image.location = { ...item.image.location, city: 'Berlin' }
+
+      const result = applyMetaDefaults(item, 'fallback title')
+
+      expect(result.categories).toBe('[[Category:Photos in Berlin]]')
+    })
+
+    it('passes through wikitext templates untouched in categories', async () => {
+      const store = useCollectionsStore()
+      store.globalCategories = '{{Taken on|2023}}\n[[Category:Photos in {{location.city}}]]'
+      const { applyMetaDefaults } = useCommons()
+      const item = createMockItem('1')
+      item.image.location = { ...item.image.location, city: 'Berlin' }
+
+      const result = applyMetaDefaults(item, 'fallback title')
+
+      expect(result.categories).toBe('{{Taken on|2023}}\n[[Category:Photos in Berlin]]')
+    })
+
+    it('uses item meta description when set (no template applied)', async () => {
+      const store = useCollectionsStore()
+      store.globalDescription = 'Photo in {{location.city}}'
+      const { applyMetaDefaults } = useCommons()
+      const item = createMockItem('1')
+      item.meta.description.value = 'My own description'
+      item.image.location = { ...item.image.location, city: 'Berlin' }
+
+      const result = applyMetaDefaults(item, 'fallback title')
+
+      expect(result.description.value).toBe('My own description')
+    })
+
+    it('uses item meta categories when set (no template applied)', async () => {
+      const store = useCollectionsStore()
+      store.globalCategories = '[[Category:Photos in {{location.city}}]]'
+      const { applyMetaDefaults } = useCommons()
+      const item = createMockItem('1')
+      item.meta.categories = 'My own category'
+      item.image.location = { ...item.image.location, city: 'Berlin' }
+
+      const result = applyMetaDefaults(item, 'fallback title')
+
+      expect(result.categories).toBe('My own category')
+    })
+  })
+
   describe('buildWikitext', () => {
     it('should use default license when no overrides provided', () => {
       const { buildWikitext } = useCommons()
