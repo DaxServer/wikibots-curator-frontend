@@ -171,6 +171,8 @@ Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 
 **Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useCategoryValidation.test.ts` for the full pattern.
 
+**Top-level `mock.module` cleanup:** Bun runs all test files in the same process. Any test file using top-level `mock.module` calls must call `mock.restore()` in `afterAll` to prevent the mock from leaking into subsequent test files. Without this, a mocked module (e.g. one that omits certain exports) can cause failures in unrelated test files that import the same module.
+
 **Composable tests with watchers:** Composables that call `watch()` (including transitively) must run inside an `effectScope` to prevent watcher leaks across tests:
 ```ts
 import { afterEach, beforeEach } from 'bun:test'

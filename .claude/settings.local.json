@@ -24,7 +24,8 @@
       "Skill(claude-md-management:revise-claude-md)",
       "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(c['cliId'], c['filePath']\\) for c in data['unassignedChanges']]\")",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(s['branches'][0]['name'], s['branches'][0]['cliId']\\) for s in d['stacks'] for b in [s['branches'][0]]]\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\([\\(c['cliId'],c['filePath']\\) for s in d['unassignedChanges'] for c in [s]]\\)\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\([\\(c['cliId'],c['filePath']\\) for s in d['unassignedChanges'] for c in [s]]\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\([\\(c['cliId'],c['filePath']\\) for c in d['unassignedChanges']]\\)\")"
     ]
   },
   "spinnerTipsEnabled": false
