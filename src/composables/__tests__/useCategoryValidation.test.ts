@@ -1,16 +1,15 @@
+import { parseCategoryNames } from '@/utils/categoryParsing'
 import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { createPinia, setActivePinia } from 'pinia'
 import type { QueryNormalized, QueryPage } from '../useCategoryValidation'
 
 describe('useCategoryValidation', () => {
-  let parseCategoryNames: typeof import('../useCategoryValidation').parseCategoryNames
   let useCategoryValidation: typeof import('../useCategoryValidation').useCategoryValidation
 
   beforeEach(async () => {
     setActivePinia(createPinia())
     mock.restore()
     const mod = await import('../useCategoryValidation')
-    parseCategoryNames = mod.parseCategoryNames
     useCategoryValidation = mod.useCategoryValidation
   })
 

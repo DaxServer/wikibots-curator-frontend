@@ -1,25 +1,11 @@
+import { parseCategoryNames } from '@/utils/categoryParsing'
 import { ref } from 'vue'
 
 export type QueryPage = { title: string; missing?: boolean }
 export type QueryNormalized = { from: string; to: string }
 
 const COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php'
-const CATEGORY_REGEX = /\[\[Category:([^\]|]+)(?:\|[^\]]+)?\]\]/gi
 const TITLES_PER_REQUEST = 50
-
-export const parseCategoryNames = (text: string): string[] => {
-  const matches = [...text.matchAll(CATEGORY_REGEX)]
-  return [
-    ...new Set(
-      matches
-        .map((m) => {
-          const name = m[1]!.trim().replace(/_/g, ' ')
-          return name ? name.charAt(0).toUpperCase() + name.slice(1) : null
-        })
-        .filter((n): n is string => n !== null),
-    ),
-  ]
-}
 
 export const useCategoryValidation = () => {
   const missingCategories = ref<string[]>([])
