@@ -38,13 +38,7 @@ mock.module('ts-debounce', () => ({
 }))
 
 const mockCheckCategories = mock(async (_text: string) => {})
-
-mock.module('@/composables/useCategoryValidation', () => ({
-  useCategoryValidation: () => ({
-    missingCategories: ref([]),
-    checkCategories: mockCheckCategories,
-  }),
-}))
+const mockCategoryValidation = { missingCategories: ref([]), checkCategories: mockCheckCategories }
 
 const makeItem = (id: string, city = 'Berlin'): Item => ({
   id,
@@ -77,10 +71,7 @@ const makeItem = (id: string, city = 'Berlin'): Item => ({
 })
 
 beforeAll(() => GlobalRegistrator.register())
-afterAll(() => {
-  mock.restore()
-  GlobalRegistrator.unregister()
-})
+afterAll(() => GlobalRegistrator.unregister())
 
 describe('useTemplateEditor', () => {
   let useTemplateEditor: typeof import('../useTemplateEditor').useTemplateEditor
@@ -90,7 +81,6 @@ describe('useTemplateEditor', () => {
   beforeEach(async () => {
     setActivePinia(createPinia())
     store = useCollectionsStore()
-    mock.restore()
     mockCheckCategories.mockClear()
     pendingDebounceExecutors = []
     scope = effectScope()
@@ -102,7 +92,7 @@ describe('useTemplateEditor', () => {
     scope.stop()
   })
 
-  const run = () => scope.run(() => useTemplateEditor())!
+  const run = () => scope.run(() => useTemplateEditor(mockCategoryValidation))!
 
   describe('internalDescription / internalCategories', () => {
     it('initializes from store', () => {

@@ -15,10 +15,12 @@ const STATUS_CLEAR_MS = 2000
 
 type FieldStatus = 'applying' | 'applied' | null
 
-export const useTemplateEditor = () => {
+export const useTemplateEditor = (
+  categoryValidation: ReturnType<typeof useCategoryValidation> = useCategoryValidation(),
+) => {
   const store = useCollectionsStore()
   const titleTemplate = useTitleTemplate()
-  const { missingCategories, checkCategories } = useCategoryValidation()
+  const { missingCategories, checkCategories } = categoryValidation
 
   const internalDescription = ref(store.globalDescription)
   const internalCategories = ref(store.globalCategories)

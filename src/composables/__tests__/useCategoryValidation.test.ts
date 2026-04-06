@@ -8,7 +8,6 @@ describe('useCategoryValidation', () => {
 
   beforeEach(async () => {
     setActivePinia(createPinia())
-    mock.restore()
     const mod = await import('../useCategoryValidation')
     useCategoryValidation = mod.useCategoryValidation
   })

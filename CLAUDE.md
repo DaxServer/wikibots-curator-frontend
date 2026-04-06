@@ -169,11 +169,7 @@ Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 
 **Vue watcher timing in tests:** Watchers fire asynchronously; `await nextTick()` is needed between a reactive state change and any assertion that depends on the watcher callback having run (e.g., triggering a second debounced call to exercise abort behavior).
 
-**Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useCategoryValidation.test.ts` for the full pattern.
-
-**Top-level `mock.module` cleanup:** Bun runs all test files in the same process and, on Linux, module mocks can persist in the cache across files even after `mock.restore()` in `afterAll`. Two defenses are required:
-1. Any file using top-level `mock.module` must call `mock.restore()` in `afterAll`.
-2. Any file doing dynamic imports in `beforeEach` must call `mock.restore()` first, to evict any stale mocked version from the cache before loading the real module.
+**Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useTemplateEditor.test.ts` for the full pattern.
 
 **Composable tests with watchers:** Composables that call `watch()` (including transitively) must run inside an `effectScope` to prevent watcher leaks across tests:
 ```ts
