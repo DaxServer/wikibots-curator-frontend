@@ -15,6 +15,7 @@ import {
 import { useTitleVerification } from '@/composables/useTitleVerification'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Image, Item, Metadata } from '@/types/image'
+import { applyFieldTemplate } from '@/utils/titleTemplate'
 
 export const useCommons = () => {
   const store = useCollectionsStore()
@@ -28,7 +29,8 @@ export const useCommons = () => {
     verifyTitles,
   } = useTitleVerification()
 
-  const applyMetaDefaults = (meta: Metadata, fallbackTitle: string): Metadata => {
+  const applyMetaDefaults = (item: Item, fallbackTitle: string): Metadata => {
+    const { meta, image } = item
     const title = meta.title?.trim() || fallbackTitle
 
     return {
@@ -36,9 +38,11 @@ export const useCommons = () => {
       title,
       description: {
         language: meta.description.language.trim() || store.globalLanguage.trim(),
-        value: meta.description.value.trim() || store.globalDescription.trim(),
+        value:
+          meta.description.value.trim() ||
+          applyFieldTemplate(store.globalDescription, image, store.input),
       },
-      categories: meta.categories || store.globalCategories,
+      categories: meta.categories || applyFieldTemplate(store.globalCategories, image, store.input),
     }
   }
 
@@ -85,7 +89,7 @@ ${categories}
   }
 
   const wikitext = (item: Item) => {
-    const meta = applyMetaDefaults(item.meta, getTemplateTitle(item.image))
+    const meta = applyMetaDefaults(item, getTemplateTitle(item.image))
     return buildWikitext({ ...item, meta: meta as Metadata })
   }
 

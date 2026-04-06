@@ -15,7 +15,7 @@ const batchProgress = computed(() => {
 </script>
 
 <template>
-  <Card class="">
+  <Card class="max-w-7xl mx-auto w-full">
     <template #content>
       <div class="flex flex-col gap-4">
         <div

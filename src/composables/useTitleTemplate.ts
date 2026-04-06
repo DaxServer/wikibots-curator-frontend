@@ -177,32 +177,6 @@ export const useTitleTemplate = () => {
 
   const getVariableToken = (path: string) => `{{${path}}}`
 
-  const onDragStart = (event: DragEvent, variable: string) => {
-    if (!event.dataTransfer) {
-      return
-    }
-
-    const text = getVariableToken(variable)
-    event.dataTransfer.setData('text/plain', text)
-    event.dataTransfer.effectAllowed = 'copy'
-
-    // Create a custom drag image that shows just the text
-    const el = document.createElement('div')
-    el.textContent = text
-    el.className =
-      'absolute top-[-9999px] bg-white p-1 rounded text-sm border border-gray-200 z-50 pointer-events-none'
-    document.body.appendChild(el)
-
-    // Use the text element as the drag image
-    // Offset slightly so it doesn't block the cursor (x: 0, y: -10)
-    event.dataTransfer.setDragImage(el, 0, -10)
-
-    // Clean up after a short delay to ensure the browser has captured the image
-    requestAnimationFrame(() => {
-      document.body.removeChild(el)
-    })
-  }
-
   return {
     error,
     highlightedTemplate,
@@ -220,6 +194,5 @@ export const useTitleTemplate = () => {
     verifyTitlesWithTemplate,
     getVariableToken,
     insertVariable,
-    onDragStart,
   }
 }

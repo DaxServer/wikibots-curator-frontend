@@ -1,5 +1,5 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
-import { afterAll, beforeAll, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, mock } from 'bun:test'
 import { createPinia, setActivePinia } from 'pinia'
 import { nextTick } from 'vue'
 import { useCollectionsStore } from '../../stores/collections.store'
@@ -276,62 +276,6 @@ describe('useTitleTemplate', () => {
     it('formats variable token correctly', () => {
       const { getVariableToken } = useTitleTemplate()
       expect(getVariableToken('test.path')).toBe('{{test.path}}')
-    })
-  })
-
-  describe('onDragStart', () => {
-    it('sets dataTransfer data correctly', () => {
-      const { onDragStart } = useTitleTemplate()
-      const setDataMock = mock()
-      const setDragImageMock = mock()
-      const event = {
-        dataTransfer: {
-          setData: setDataMock,
-          effectAllowed: '',
-          setDragImage: setDragImageMock,
-        },
-      } as unknown as DragEvent
-
-      // Spy on document methods
-      const appendChildSpy = spyOn(document.body, 'appendChild')
-      const removeChildSpy = spyOn(document.body, 'removeChild')
-
-      const originalRAF = global.requestAnimationFrame
-      global.requestAnimationFrame = mock((cb) => {
-        cb(0)
-        return 0
-      }) as unknown as typeof requestAnimationFrame
-
-      onDragStart(event, 'test.path')
-
-      expect(setDataMock).toHaveBeenCalledWith('text/plain', '{{test.path}}')
-      expect(event.dataTransfer!.effectAllowed).toBe('copy')
-
-      // Check if element was created and appended
-      expect(appendChildSpy).toHaveBeenCalled()
-      const calls = appendChildSpy.mock.calls
-      const appendedEl = calls[0]![0] as HTMLElement
-      expect(appendedEl.tagName).toBe('DIV')
-      expect(appendedEl.textContent).toBe('{{test.path}}')
-      expect(appendedEl.className).toContain('absolute')
-
-      expect(setDragImageMock).toHaveBeenCalledWith(appendedEl, 0, -10)
-
-      // Check removal
-      expect(removeChildSpy).toHaveBeenCalledWith(appendedEl)
-
-      // Restore mocks
-      global.requestAnimationFrame = originalRAF
-      appendChildSpy.mockRestore()
-      removeChildSpy.mockRestore()
-    })
-
-    it('does nothing if dataTransfer is missing', () => {
-      const { onDragStart } = useTitleTemplate()
-      const event = {} as unknown as DragEvent
-
-      // Just ensure it doesn't throw
-      onDragStart(event, 'test.path')
     })
   })
 

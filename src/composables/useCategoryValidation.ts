@@ -1,32 +1,13 @@
-import { useCollectionsStore } from '@/stores/collections.store'
-import { debounce } from 'ts-debounce'
-import { ref, watch } from 'vue'
+import { parseCategoryNames } from '@/utils/categoryParsing'
+import { ref } from 'vue'
 
 export type QueryPage = { title: string; missing?: boolean }
 export type QueryNormalized = { from: string; to: string }
 
 const COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php'
-const CATEGORY_REGEX = /\[\[Category:([^\]|]+)(?:\|[^\]]+)?\]\]/gi
-const DEBOUNCE_MS = 500
 const TITLES_PER_REQUEST = 50
 
-export const parseCategoryNames = (text: string): string[] => {
-  const matches = [...text.matchAll(CATEGORY_REGEX)]
-  return [
-    ...new Set(
-      matches
-        .map((m) => {
-          const name = m[1]!.trim().replace(/_/g, ' ')
-          return name ? name.charAt(0).toUpperCase() + name.slice(1) : null
-        })
-        .filter((n): n is string => n !== null),
-    ),
-  ]
-}
-
 export const useCategoryValidation = () => {
-  const store = useCollectionsStore()
-
   const missingCategories = ref<string[]>([])
   const queriedCategories = new Set<string>()
   const existingCategories = new Set<string>()
@@ -98,13 +79,5 @@ export const useCategoryValidation = () => {
     missingCategories.value = categoryNames.filter((name) => !existingCategories.has(name))
   }
 
-  const debouncedCheck = debounce(checkCategories, DEBOUNCE_MS)
-
-  watch(
-    () => store.globalCategories,
-    (value) => debouncedCheck(value),
-    { immediate: true },
-  )
-
-  return { missingCategories }
+  return { missingCategories, checkCategories }
 }

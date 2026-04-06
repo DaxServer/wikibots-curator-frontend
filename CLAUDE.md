@@ -74,9 +74,15 @@ Auto-imports can generate TypeScript errors with JavaScript reserved keywords (e
 
 **Composable `.ts` files are NOT auto-imported.** Only `.vue` SFCs receive Vite's auto-import treatment at runtime. Composable `.ts` files (e.g., `usePresetManager.ts`) must explicitly import stores, other composables, and PrimeVue utilities like `useToast`.
 
+**Composable cleanup — `onScopeDispose` not `onUnmounted`:** Use `onScopeDispose` for cleanup in composables — works in both component context and bare `effectScope` (tests). Explicitly import it from `'vue'` even though it appears in `auto-imports.d.ts`; TypeScript may flag it as "declared but never read" (false positive from the global shadow) but bun test needs the real import at runtime.
+
 ### Biome Integration
 
 Auto-import generates a `.biomelintrc-auto-import.json` that configures Biome to ignore auto-imported variables. The linter is configured to exclude `**/*.d.ts` files.
+
+### Layout Width
+
+The `max-w-7xl mx-auto` constraint for all step content (including Step 3's preset card) lives in `CollectionsTable.vue:22`, not in the step components themselves.
 
 ## Architecture
 
@@ -163,7 +169,7 @@ Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 
 **Vue watcher timing in tests:** Watchers fire asynchronously; `await nextTick()` is needed between a reactive state change and any assertion that depends on the watcher callback having run (e.g., triggering a second debounced call to exercise abort behavior).
 
-**Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useCategoryValidation.test.ts` for the full pattern.
+**Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useTemplateEditor.test.ts` for the full pattern.
 
 **Composable tests with watchers:** Composables that call `watch()` (including transitively) must run inside an `effectScope` to prevent watcher leaks across tests:
 ```ts
@@ -174,6 +180,8 @@ beforeEach(() => { scope = effectScope() })
 afterEach(() => { scope.stop() })
 const run = () => scope.run(() => useMyComposable())!
 ```
+
+**Drag-drop into textareas:** Native textareas accept text drops without any JavaScript — no `@dragover.prevent`, `@drop`, `@focus`, or `@blur` on the textarea. Any of these can interfere with native drop behavior (e.g. `@blur` firing on mousedown of the drag source triggers Vue re-renders mid-drag; `@dragover.prevent` signals the browser that JS owns the drop, breaking native insertion). For card ring highlights use CSS `focus-within:ring-2 focus-within:ring-X-300` on the parent Card instead of JS focus tracking.
 
 **PrimeVue mocks in tests:** `useToast` and similar PrimeVue utilities require mocking before any import that depends on them:
 ```ts
@@ -217,6 +225,10 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 **AbortController signal capture:** When using `AbortController` in async functions, always capture `signal` from the controller before the `await` (`const { signal } = abortController`) and use `signal.aborted` — not `abortController?.signal.aborted` — in `finally` blocks. The shared `abortController` variable may be reassigned by a subsequent call before the current `finally` runs, causing the wrong signal to be checked.
 
+## Feature Flags
+
+`src/composables/useFeatureFlags.ts` gates features by username allowlist. Add a new `const FEATURE_ALLOWED_USERS` array and a `computed` flag. Currently gated feature: `fieldTemplatesEnabled` (description/categories template editing in `GlobalTemplateEditor`).
+
 ## Wikimedia Commons API
 
 **Titles per request limit:** The `action=query&titles=` parameter accepts at most 50 titles for non-bot users (500 with `apihighlimits`). Both `useTitleVerification.ts` and `useCategoryValidation.ts` chunk requests at 50 using a `for (let i = 0; i < items.length; i += 50)` loop with a shared `AbortController` signal checked at the top of each iteration.
@@ -234,9 +246,13 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 ### Title Template System
 
-The title template system lives in `src/composables/useTitleTemplate.ts` and `src/utils/titleTemplate.ts`.
+The title template system lives in `src/composables/useTitleTemplate.ts` and `src/utils/titleTemplate.ts`. `applyFieldTemplate()` in `titleTemplate.ts` is a regex-based variant (no Handlebars) that substitutes `{{known.path}}` tokens and leaves unknown `{{...}}` tokens (e.g. wikitext like `{{Creator|John}}`) untouched.
 
 **`meta.title` semantics:** `Metadata.title` stores only user-entered titles. When empty, `getEffectiveTitle()` in `useTitleVerification.ts` falls back to `getTemplateTitle()` which computes from `store.globalTitleTemplate`. `verifyTitles()` never writes to `meta.title` — it only updates `titleStatus`.
+
+**`applyMetaDefaults` signature:** Takes `Item` (not `Metadata`) so image context is available for `applyFieldTemplate` when falling back to `globalDescription`/`globalCategories`.
+
+**`GlobalTemplateEditor`:** When `fieldTemplatesEnabled`, `Step3Header.vue` renders `GlobalTemplateEditor` instead of `TitleTemplateEditor` + Fallback Values card. The composable `useTemplateEditor` wraps `useTitleTemplate` and adds description/categories template state and `onDragStart` (drag-and-drop is a UI concern, not owned by `useTitleTemplate`). `allMissingOptionalFieldPaths` considers all three templates combined. Textareas have no event handlers; card focus rings use CSS `focus-within`.
 
 **`verifyTitlesWithTemplate` guard:** Items with a non-empty `meta.title` are skipped (treated as user-entered), except items in `MissingFields` status whose title was written by the template system. When a `MissingFields` item recovers (offending field removed from template), its `meta.title` must be explicitly cleared to `''` so `getEffectiveTitle` falls back to the template again.
 

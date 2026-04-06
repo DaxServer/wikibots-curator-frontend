@@ -71,53 +71,7 @@ const handleCancelEditWrapper = () => {
           v-else-if="!store.isAccordionOpen"
           class="flex flex-col gap-6 mt-2"
         >
-          <TitleTemplateEditor />
-
-          <Card class="bg-surface-50 border-l-4 border-blue-500">
-            <template #title>
-              <div class="flex items-center gap-2">
-                <i class="pi pi-info-circle text-blue-600" />
-                <span>Fallback Values</span>
-              </div>
-            </template>
-            <template #subtitle>
-              Applied to images that don't have values from Mapillary or other sources
-            </template>
-            <template #content>
-              <ItemInputs
-                class="mt-2"
-                :language="store.globalLanguage"
-                :description="store.globalDescription"
-                :categories="store.globalCategories"
-                :license="store.globalLicense"
-                @update:language="(v: string) => (store.globalLanguage = v)"
-                @update:description="(v: string) => (store.globalDescription = v)"
-                @update:categories="(v: string) => (store.globalCategories = v)"
-                @update:license="(v: string) => (store.globalLicense = v)"
-              >
-                <template #description-help>
-                  <div class="inline-flex flex-none">
-                    <SimpleMessage
-                      severity="info"
-                      variant="simple"
-                      size="small"
-                      icon="pi pi-info-circle"
-                    >
-                      Will be applied to all selected images
-                      <span class="underline">only as a fallback</span>
-                    </SimpleMessage>
-                  </div>
-                </template>
-                <template #category-message>
-                  <CategoryValidationMessages
-                    :missing-categories="missingCategories"
-                    show-auto-added
-                  />
-                </template>
-              </ItemInputs>
-              <DateCategorySetting class="mt-4" />
-            </template>
-          </Card>
+          <GlobalTemplateEditor />
         </div>
       </template>
 
@@ -135,7 +89,10 @@ const handleCancelEditWrapper = () => {
       </template>
     </Card>
 
-    <template v-if="!isEditing && !store.isAccordionOpen">
+    <div
+      v-if="!isEditing && !store.isAccordionOpen"
+      class="max-w-7xl mx-auto w-full flex flex-col gap-6"
+    >
       <SdcWarningMessage v-if="store.itemsWithExistingTitlesCount > 0" />
 
       <Message
@@ -148,6 +105,6 @@ const handleCancelEditWrapper = () => {
         }}
         missing camera fields used in template
       </Message>
-    </template>
+    </div>
   </div>
 </template>
