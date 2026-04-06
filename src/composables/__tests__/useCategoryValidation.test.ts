@@ -8,6 +8,7 @@ describe('useCategoryValidation', () => {
 
   beforeEach(async () => {
     setActivePinia(createPinia())
+    mock.restore()
     const mod = await import('../useCategoryValidation')
     parseCategoryNames = mod.parseCategoryNames
     useCategoryValidation = mod.useCategoryValidation
