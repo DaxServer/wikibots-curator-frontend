@@ -35,32 +35,16 @@ onMounted(() => {
           <template #title>
             <div class="flex justify-between items-center">
               <span>Title</span>
-              <span
-                v-if="titleStatus"
-                class="text-xs font-normal"
-                :class="titleStatus === 'applied' ? 'text-green-600' : 'text-gray-400'"
-              >
-                {{ titleStatus === 'applied' ? '✓ Applied' : 'Applying...' }}
-              </span>
+              <TemplateStatusBadge :status="titleStatus" />
             </div>
           </template>
           <template #content>
             <div class="flex flex-col gap-2 mt-1">
-              <div class="relative grid w-full">
-                <div
-                  class="col-start-1 row-start-1 p-3 text-md leading-snug font-mono whitespace-pre-wrap break-words border border-transparent pointer-events-none text-gray-900"
-                  aria-hidden="true"
-                  v-html="highlightedTemplate"
-                />
-                <Textarea
-                  v-model="template"
-                  :invalid="!!titleError"
-                  rows="1"
-                  auto-resize
-                  fluid
-                  class="col-start-1 row-start-1 !bg-transparent !text-transparent caret-gray-900 !p-3 !text-md !leading-snug !font-mono shadow-none"
-                />
-              </div>
+              <HighlightedTextarea
+                v-model="template"
+                :highlighted="highlightedTemplate"
+                :invalid="!!titleError"
+              />
               <small
                 v-if="titleError"
                 class="text-red-500"
@@ -89,30 +73,21 @@ onMounted(() => {
                   @update:model-value="(v: string) => (store.globalLanguage = v)"
                 />
               </div>
-              <span
-                v-if="descriptionStatus"
-                class="text-xs font-normal"
-                :class="descriptionStatus === 'applied' ? 'text-green-600' : 'text-gray-400'"
-              >
-                {{ descriptionStatus === 'applied' ? '✓ Applied' : 'Applying...' }}
-              </span>
+              <TemplateStatusBadge :status="descriptionStatus" />
             </div>
           </template>
+          <template #subtitle>
+            <span class="text-sm text-gray-500">
+              Added as Caption. Description in Information template is loaded via SDC.
+            </span>
+          </template>
           <template #content>
-            <div class="relative grid w-full mt-1">
-              <div
-                class="col-start-1 row-start-1 p-3 text-md leading-snug font-mono whitespace-pre-wrap break-words border border-transparent pointer-events-none text-gray-900"
-                aria-hidden="true"
-                v-html="descriptionHighlighted"
-              />
-              <Textarea
-                v-model="internalDescription"
-                rows="2"
-                auto-resize
-                fluid
-                class="col-start-1 row-start-1 !bg-transparent !text-transparent caret-gray-900 !p-3 !text-md !leading-snug !font-mono shadow-none"
-              />
-            </div>
+            <HighlightedTextarea
+              v-model="internalDescription"
+              :highlighted="descriptionHighlighted"
+              :rows="2"
+              class="mt-1"
+            />
           </template>
         </Card>
 
@@ -121,31 +96,19 @@ onMounted(() => {
           <template #title>
             <div class="flex justify-between items-center">
               <span>Categories</span>
-              <span
-                v-if="categoriesStatus"
-                class="text-xs font-normal"
-                :class="categoriesStatus === 'applied' ? 'text-green-600' : 'text-gray-400'"
-              >
-                {{ categoriesStatus === 'applied' ? '✓ Applied' : 'Applying...' }}
-              </span>
+              <TemplateStatusBadge :status="categoriesStatus" />
             </div>
+          </template>
+          <template #subtitle>
+            <span class="text-sm text-gray-500">Wikitext to be appended at the end</span>
           </template>
           <template #content>
             <div class="flex flex-col gap-4 mt-1">
-              <div class="relative grid w-full">
-                <div
-                  class="col-start-1 row-start-1 p-3 text-md leading-snug font-mono whitespace-pre-wrap break-words border border-transparent pointer-events-none text-gray-900"
-                  aria-hidden="true"
-                  v-html="categoriesHighlighted"
-                />
-                <Textarea
-                  v-model="internalCategories"
-                  rows="3"
-                  auto-resize
-                  fluid
-                  class="col-start-1 row-start-1 !bg-transparent !text-transparent caret-gray-900 !p-3 !text-md !leading-snug !font-mono shadow-none"
-                />
-              </div>
+              <HighlightedTextarea
+                v-model="internalCategories"
+                :highlighted="categoriesHighlighted"
+                :rows="3"
+              />
               <CategoryValidationMessages
                 :missing-categories="missingCategories"
                 show-auto-added
@@ -155,7 +118,7 @@ onMounted(() => {
         </Card>
 
         <!-- Others -->
-        <Card class="border-l-4 border-blue-500">
+        <Card class="border-l-4 border-transparent">
           <template #title>
             <div class="flex items-center gap-2">
               <i class="pi pi-info-circle text-blue-600" />
@@ -163,20 +126,7 @@ onMounted(() => {
             </div>
           </template>
           <template #content>
-            <div class="flex flex-wrap gap-4 mt-2 items-end">
-              <div class="flex flex-col gap-1 flex-1">
-                <label class="text-sm font-medium text-gray-600">License</label>
-                <InputText
-                  :value="store.globalLicense"
-                  size="small"
-                  placeholder="e.g. {{cc-by-sa-4.0}}"
-                  @input="
-                    (e: Event) => (store.globalLicense = (e.target as HTMLInputElement).value)
-                  "
-                />
-              </div>
-            </div>
-            <DateCategorySetting class="mt-4" />
+            <DateCategorySetting />
           </template>
         </Card>
 

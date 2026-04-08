@@ -53,7 +53,7 @@ const handleSave = () => {
 
     <div class="flex items-center gap-3">
       <Button
-        :label="isEditing ? 'Update preset' : 'Save preset'"
+        :label="isEditing ? 'Update preset' : 'Save preset for re-use'"
         :icon="isEditing ? 'pi pi-pencil' : 'pi pi-bookmark'"
         :disabled="!title.trim()"
         size="small"
