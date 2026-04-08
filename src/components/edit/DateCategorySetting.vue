@@ -4,6 +4,8 @@ const store = useCollectionsStore()
 defineProps<{
   readonly?: boolean
 }>()
+
+const takenOn = '{{Taken on|...}}'
 </script>
 
 <template>
@@ -32,13 +34,16 @@ defineProps<{
       Adds
       <code class="bg-gray-200 px-1">|cat=no</code>
       to
-      <code
-        class="bg-gray-200 px-1"
-        v-pre
+      <code class="bg-gray-200 px-1">{{ takenOn }}</code>
+      template to prevent automatic categorization by date (
+      <ExternalLink
+        href="https://commons.wikimedia.org/wiki/Template:Taken_on"
+        :icon-size="10"
+        class="hover:underline hover:text-primary"
       >
-        {{Taken on|...}}
-      </code>
-      template to prevent automatic categorization by date
+        Template:Taken on
+      </ExternalLink>
+      )
     </SimpleMessage>
   </div>
 </template>

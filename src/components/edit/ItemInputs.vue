@@ -4,13 +4,11 @@ const props = withDefaults(
     language: string
     description: string
     categories: string
-    license?: string
     showFallbackMessages?: boolean
     readonly?: boolean
   }>(),
   {
     showFallbackMessages: false,
-    license: '',
     readonly: false,
   },
 )
@@ -19,7 +17,6 @@ defineEmits<{
   'update:language': [string]
   'update:description': [string]
   'update:categories': [string]
-  'update:license': [string]
 }>()
 
 const store = useCollectionsStore()
@@ -40,12 +37,6 @@ const isFallbackDescription = computed(
 const isFallbackCategories = computed(
   () => store.globalCategories.trim() !== '' && props.categories.trim() === '',
 )
-
-const isFallbackLicense = computed(
-  () => store.globalLicense.trim() !== '' && props.license.trim() === '',
-)
-
-const licenseTemplate = `{{cc-by-sa-4.0}}`
 </script>
 
 <template>
@@ -132,39 +123,5 @@ const licenseTemplate = `{{cc-by-sa-4.0}}`
         </span>
       </SimpleMessage>
     </slot>
-
-    <div>
-      <FloatLabel variant="on">
-        <Textarea
-          :model-value="license"
-          id="license_input"
-          rows="2"
-          auto-resize
-          :disabled="readonly"
-          @update:model-value="$emit('update:license', $event)"
-          fluid
-        />
-        <label for="license_input">License template override</label>
-      </FloatLabel>
-      <SimpleMessage
-        severity="secondary"
-        variant="simple"
-        size="small"
-        icon="pi pi-exclamation-triangle"
-        class="pl-3"
-      >
-        SDC copyright license and copyright status will not be generated. Example:
-        {{ licenseTemplate }}
-      </SimpleMessage>
-      <SimpleMessage
-        v-if="showFallbackMessages && isFallbackLicense"
-        :severity="isFallbackLicense ? 'warn' : 'secondary'"
-        variant="simple"
-        size="small"
-        class="mt-1 pl-3"
-      >
-        Using fallback license template
-      </SimpleMessage>
-    </div>
   </div>
 </template>

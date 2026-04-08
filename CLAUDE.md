@@ -252,7 +252,7 @@ The title template system lives in `src/composables/useTitleTemplate.ts` and `sr
 
 **`applyMetaDefaults` signature:** Takes `Item` (not `Metadata`) so image context is available for `applyFieldTemplate` when falling back to `globalDescription`/`globalCategories`.
 
-**`GlobalTemplateEditor`:** When `fieldTemplatesEnabled`, `Step3Header.vue` renders `GlobalTemplateEditor` instead of `TitleTemplateEditor` + Fallback Values card. The composable `useTemplateEditor` wraps `useTitleTemplate` and adds description/categories template state and `onDragStart` (drag-and-drop is a UI concern, not owned by `useTitleTemplate`). `allMissingOptionalFieldPaths` considers all three templates combined. Textareas have no event handlers; card focus rings use CSS `focus-within`.
+**`GlobalTemplateEditor`:** When `fieldTemplatesEnabled`, `Step3Header.vue` renders `GlobalTemplateEditor` instead of `TitleTemplateEditor` + Fallback Values card. The composable `useTemplateEditor` wraps `useTitleTemplate` and adds description/categories template state and `onDragStart` (drag-and-drop is a UI concern, not owned by `useTitleTemplate`). `allMissingOptionalFieldPaths` considers all three templates combined. Textareas have no event handlers; card focus rings use CSS `focus-within`. Two sub-components in `src/components/template/`: `HighlightedTextarea.vue` (overlay pattern: highlighted div + transparent Textarea) and `TemplateStatusBadge.vue` (✓ Applied / Applying... badge).
 
 **`verifyTitlesWithTemplate` guard:** Items with a non-empty `meta.title` are skipped (treated as user-entered), except items in `MissingFields` status whose title was written by the template system. When a `MissingFields` item recovers (offending field removed from template), its `meta.title` must be explicitly cleared to `''` so `getEffectiveTitle` falls back to the template again.
 
@@ -263,6 +263,7 @@ The title template system lives in `src/composables/useTitleTemplate.ts` and `sr
 - Icon shows if field is in `allMissingOptionalFieldPaths`; icon is yellow if also in `usedOptionalFields`
 - Location numeric fields (`compass_angle`) use `== null` check (0 = North, valid); location string fields use `!value` (empty string = missing), matching camera field behavior
 
+- **License field** - `meta.license` exists in the data model and store but is intentionally not exposed in the Step 3 UI — Mapillary images use a fixed license so per-item and global license overrides are not applicable
 - **Handler** - Image source (currently only `mapillary`)
 - **Item** - An image with metadata (`Item` type in `types/image.ts`)
 - **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)
