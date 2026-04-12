@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const auth = useAuthStore()
-const { redlinksEnabled } = useFeatureFlags()
+const { redlinksEnabled, wantedCategoriesEnabled } = useFeatureFlags()
 const route = useRoute()
 
 onMounted(async () => {
@@ -24,6 +24,14 @@ onMounted(async () => {
         to="/redlinks"
         label="Redlinks"
         :outlined="!route.path.startsWith('/redlinks')"
+        class="ml-2"
+      />
+      <Button
+        v-if="wantedCategoriesEnabled"
+        as="router-link"
+        to="/wanted-categories"
+        label="Wanted Categories"
+        :outlined="!route.path.startsWith('/wanted-categories')"
         class="ml-2"
       />
     </div>

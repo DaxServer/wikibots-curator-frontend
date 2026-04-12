@@ -96,8 +96,14 @@
         "FetchRedlinks": {
           "$ref": "#/components/messages/FetchRedlinks"
         },
+        "FetchWantedCategories": {
+          "$ref": "#/components/messages/FetchWantedCategories"
+        },
         "RedlinksResponse": {
           "$ref": "#/components/messages/RedlinksResponse"
+        },
+        "WantedCategoriesResponse": {
+          "$ref": "#/components/messages/WantedCategoriesResponse"
         },
         "PresetsList": {
           "$ref": "#/components/messages/PresetsList"
@@ -138,6 +144,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/FetchRedlinks"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/FetchWantedCategories"
         },
         {
           "$ref": "#/channels/wsChannel/messages/RetryUploads"
@@ -218,6 +227,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/UploadSliceAck"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/WantedCategoriesResponse"
         }
       ]
     }
@@ -369,9 +381,19 @@
           "$ref": "#/components/schemas/FetchRedlinks"
         }
       },
+      "FetchWantedCategories": {
+        "payload": {
+          "$ref": "#/components/schemas/FetchWantedCategories"
+        }
+      },
       "RedlinksResponse": {
         "payload": {
           "$ref": "#/components/schemas/RedlinksResponse"
+        }
+      },
+      "WantedCategoriesResponse": {
+        "payload": {
+          "$ref": "#/components/schemas/WantedCategoriesResponse"
         }
       },
       "PresetsList": {
@@ -1934,6 +1956,82 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RedlinkItem"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "FetchWantedCategories": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "FETCH_WANTED_CATEGORIES"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WantedCategoryItem": {
+        "type": "object",
+        "required": [
+          "title",
+          "subcats",
+          "files",
+          "pages",
+          "total"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "subcats": {
+            "type": "integer"
+          },
+          "files": {
+            "type": "integer"
+          },
+          "pages": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WantedCategoriesResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "WANTED_CATEGORIES_RESPONSE"
+          },
+          "data": {
+            "$ref": "#/components/schemas/WantedCategoriesResponseData"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WantedCategoriesResponseData": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WantedCategoryItem"
             }
           }
         },

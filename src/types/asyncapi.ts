@@ -95,6 +95,10 @@ export type FetchRedlinks = {
   type: 'FETCH_REDLINKS'
 }
 
+export type FetchWantedCategories = {
+  type: 'FETCH_WANTED_CATEGORIES'
+}
+
 export type RetryUploads = {
   data: number
   type: 'RETRY_UPLOADS'
@@ -484,6 +488,24 @@ export type UploadSliceAckItem = {
   status: string
 }
 
+export type WantedCategoriesResponse = {
+  type: 'WANTED_CATEGORIES_RESPONSE'
+  data: WantedCategoriesResponseData
+  nonce: string
+}
+
+export type WantedCategoriesResponseData = {
+  items: WantedCategoryItem[]
+}
+
+export type WantedCategoryItem = {
+  title: string
+  subcats: number
+  files: number
+  pages: number
+  total: number
+}
+
 export type Claims = Record<
   string,
   (
@@ -726,6 +748,7 @@ export type ClientMessage =
   | FetchImages
   | FetchPresets
   | FetchRedlinks
+  | FetchWantedCategories
   | RetryUploads
   | SavePreset
   | SubscribeBatch
@@ -752,3 +775,4 @@ export type ServerMessage =
   | UploadsComplete
   | UploadsUpdate
   | UploadSliceAck
+  | WantedCategoriesResponse

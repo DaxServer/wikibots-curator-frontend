@@ -103,6 +103,7 @@ declare module 'vue' {
     Toast: typeof import('primevue/toast')['default']
     ValueRenderer: typeof import('./src/components/wikidata/ValueRenderer.vue')['default']
     VR: typeof import('./src/components/wikidata/VR.vue')['default']
+    WantedCategoriesView: typeof import('./src/components/views/WantedCategoriesView.vue')['default']
   }
   export interface GlobalDirectives {
     FocusTrap: typeof import('primevue/focustrap')['default']

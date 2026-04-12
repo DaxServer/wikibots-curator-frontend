@@ -4,6 +4,7 @@ import BatchesView from '@/components/views/BatchesView.vue'
 import BatchUploadsView from '@/components/views/BatchUploadsView.vue'
 import FailedUploadsView from '@/components/views/FailedUploadsView.vue'
 import RedlinksView from '@/components/views/RedlinksView.vue'
+import WantedCategoriesView from '@/components/views/WantedCategoriesView.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
@@ -41,6 +42,11 @@ const routes = [
     path: '/redlinks',
     name: 'redlinks',
     component: RedlinksView,
+  },
+  {
+    path: '/wanted-categories',
+    name: 'wanted-categories',
+    component: WantedCategoriesView,
   },
 ]
 

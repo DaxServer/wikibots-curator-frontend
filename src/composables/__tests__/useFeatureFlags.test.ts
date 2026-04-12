@@ -44,4 +44,28 @@ describe('useFeatureFlags', () => {
       expect(redlinksEnabled.value).toBe(false)
     })
   })
+
+  describe('wantedCategoriesEnabled', () => {
+    it('returns false when no user is authenticated', () => {
+      const { wantedCategoriesEnabled } = useFeatureFlags()
+
+      expect(wantedCategoriesEnabled.value).toBe(false)
+    })
+
+    it('returns false for non-allowed users', () => {
+      const auth = useAuthStore()
+      auth.user = 'testuser'
+      const { wantedCategoriesEnabled } = useFeatureFlags()
+
+      expect(wantedCategoriesEnabled.value).toBe(false)
+    })
+
+    it('returns true for DaxServer', () => {
+      const auth = useAuthStore()
+      auth.user = 'DaxServer'
+      const { wantedCategoriesEnabled } = useFeatureFlags()
+
+      expect(wantedCategoriesEnabled.value).toBe(true)
+    })
+  })
 })
