@@ -6,7 +6,9 @@ const filters = ref({
   linked_from: { value: null, matchMode: FilterMatchMode.CONTAINS },
 })
 
-const displayRows = computed(() => (loading.value ? Array(10).fill({}) : redlinks.value))
+const displayRows = computed(() =>
+  loading.value && redlinks.value.length === 0 ? Array(10).fill({}) : redlinks.value,
+)
 
 onMounted(() => {
   fetchRedlinks()
