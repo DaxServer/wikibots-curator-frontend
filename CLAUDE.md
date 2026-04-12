@@ -251,7 +251,7 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 ## Feature Flags
 
-`src/composables/useFeatureFlags.ts` gates features by username allowlist. Add a new `const FEATURE_ALLOWED_USERS` array and a `computed` flag. Currently gated feature: `fieldTemplatesEnabled` (description/categories template editing in `GlobalTemplateEditor`).
+`src/composables/useFeatureFlags.ts` gates features by `auth.isAdmin`. Current flags: `redlinksEnabled`, `wantedCategoriesEnabled`. Returns `ComputedRef<boolean>` values — wrap with `computed(() => auth.isAdmin)` rather than a plain ref, since Pinia auto-unwraps refs in returned objects and tests would get `undefined` on `.value`.
 
 ## Wikimedia Commons API
 
