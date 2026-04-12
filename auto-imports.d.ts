@@ -12,6 +12,7 @@ declare global {
   const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
   const FIELD_PATH_TO_NAME: typeof import('./src/utils/titleTemplate').FIELD_PATH_TO_NAME
+  const FilterMatchMode: typeof import('@primevue/core/api').FilterMatchMode
   const ImageHandler: typeof import('./src/types/asyncapi').ImageHandler
   const Noir: typeof import('./src/assets/Noir').default
   const OPTIONAL_FIELD_PATHS: typeof import('./src/utils/titleTemplate').OPTIONAL_FIELD_PATHS
@@ -310,6 +311,7 @@ declare global {
   const usePresetManager: typeof import('./src/composables/usePresetManager').usePresetManager
   const usePrevious: typeof import('@vueuse/core').usePrevious
   const useRafFn: typeof import('@vueuse/core').useRafFn
+  const useRedlinks: typeof import('./src/composables/useRedlinks').useRedlinks
   const useRefHistory: typeof import('@vueuse/core').useRefHistory
   const useResizeObserver: typeof import('@vueuse/core').useResizeObserver
   const useRoute: typeof import('vue-router').useRoute
@@ -420,7 +422,7 @@ declare global {
   export type { AdminUser, AdminBatch, AdminUploadRequest, AdminPreset, FailedUpload, BatchFailureGroup, PaginatedResponse, FailedUploadsResponse } from './src/types/admin'
   import('./src/types/admin')
   // @ts-ignore
-  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
+  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, FetchRedlinks, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, RedlinksResponse, RedlinksResponseData, RedlinkItem, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
   export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
@@ -444,6 +446,7 @@ declare module 'vue' {
     readonly DataValueType: UnwrapRef<typeof import('./src/types/asyncapi')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly FIELD_PATH_TO_NAME: UnwrapRef<typeof import('./src/utils/titleTemplate')['FIELD_PATH_TO_NAME']>
+    readonly FilterMatchMode: UnwrapRef<typeof import('@primevue/core/api')['FilterMatchMode']>
     readonly ImageHandler: UnwrapRef<typeof import('./src/types/asyncapi')['ImageHandler']>
     readonly Noir: UnwrapRef<typeof import('./src/assets/Noir')['default']>
     readonly OPTIONAL_FIELD_PATHS: UnwrapRef<typeof import('./src/utils/titleTemplate')['OPTIONAL_FIELD_PATHS']>
@@ -739,6 +742,7 @@ declare module 'vue' {
     readonly usePresetManager: UnwrapRef<typeof import('./src/composables/usePresetManager')['usePresetManager']>
     readonly usePrevious: UnwrapRef<typeof import('@vueuse/core')['usePrevious']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
+    readonly useRedlinks: UnwrapRef<typeof import('./src/composables/useRedlinks')['useRedlinks']>
     readonly useRefHistory: UnwrapRef<typeof import('@vueuse/core')['useRefHistory']>
     readonly useResizeObserver: UnwrapRef<typeof import('@vueuse/core')['useResizeObserver']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>

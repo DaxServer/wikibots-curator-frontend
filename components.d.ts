@@ -72,6 +72,7 @@ declare module 'vue' {
     ProgressBar: typeof import('primevue/progressbar')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']
+    RedlinksView: typeof import('./src/components/views/RedlinksView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SdcWarningMessage: typeof import('./src/components/feedback/SdcWarningMessage.vue')['default']

@@ -52,6 +52,10 @@ export default defineConfig((): import('vite').UserConfig => {
             imports: ['useToast'],
           },
           {
+            from: '@primevue/core/api',
+            imports: ['FilterMatchMode'],
+          },
+          {
             from: 'ts-debounce',
             imports: ['debounce'],
           },

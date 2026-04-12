@@ -1,17 +1,17 @@
 import { useAuthStore } from '@/stores/auth.store'
 import { computed } from 'vue'
 
-const PRESET_ALLOWED_USERS = ['DaxServer', 'PantheraLeo1359531'] as const
+const REDLINKS_ALLOWED_USERS = ['DaxServer'] as const
 
 export const useFeatureFlags = () => {
   const auth = useAuthStore()
 
-  const presetsEnabled = computed(() => {
+  const redlinksEnabled = computed(() => {
     if (!auth.user) return false
-    return PRESET_ALLOWED_USERS.includes(auth.user as (typeof PRESET_ALLOWED_USERS)[number])
+    return REDLINKS_ALLOWED_USERS.includes(auth.user as (typeof REDLINKS_ALLOWED_USERS)[number])
   })
 
   return {
-    presetsEnabled,
+    redlinksEnabled,
   }
 }
