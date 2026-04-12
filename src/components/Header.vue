@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const auth = useAuthStore()
+const { redlinksEnabled } = useFeatureFlags()
+const route = useRoute()
 
 onMounted(async () => {
   await auth.checkAuth()
@@ -14,6 +16,15 @@ onMounted(async () => {
         as="router-link"
         to="/mapillary"
         label="Mapillary"
+        :outlined="!route.path.startsWith('/mapillary')"
+      />
+      <Button
+        v-if="redlinksEnabled"
+        as="router-link"
+        to="/redlinks"
+        label="Redlinks"
+        :outlined="!route.path.startsWith('/redlinks')"
+        class="ml-2"
       />
     </div>
 

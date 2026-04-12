@@ -93,6 +93,12 @@
         "FetchPresets": {
           "$ref": "#/components/messages/FetchPresets"
         },
+        "FetchRedlinks": {
+          "$ref": "#/components/messages/FetchRedlinks"
+        },
+        "RedlinksResponse": {
+          "$ref": "#/components/messages/RedlinksResponse"
+        },
         "PresetsList": {
           "$ref": "#/components/messages/PresetsList"
         },
@@ -129,6 +135,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/FetchPresets"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/FetchRedlinks"
         },
         {
           "$ref": "#/channels/wsChannel/messages/RetryUploads"
@@ -185,6 +194,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/PresetsList"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/RedlinksResponse"
         },
         {
           "$ref": "#/channels/wsChannel/messages/RetryUploadsResponse"
@@ -350,6 +362,16 @@
       "FetchPresets": {
         "payload": {
           "$ref": "#/components/schemas/FetchPresets"
+        }
+      },
+      "FetchRedlinks": {
+        "payload": {
+          "$ref": "#/components/schemas/FetchRedlinks"
+        }
+      },
+      "RedlinksResponse": {
+        "payload": {
+          "$ref": "#/components/schemas/RedlinksResponse"
         }
       },
       "PresetsList": {
@@ -1849,6 +1871,70 @@
         "properties": {
           "preset_id": {
             "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FetchRedlinks": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "FETCH_REDLINKS"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RedlinkItem": {
+        "type": "object",
+        "required": [
+          "title",
+          "linked_from"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "linked_from": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RedlinksResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "REDLINKS_RESPONSE"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RedlinksResponseData"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RedlinksResponseData": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RedlinkItem"
+            }
           }
         },
         "additionalProperties": false

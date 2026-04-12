@@ -8,48 +8,40 @@ describe('useFeatureFlags', () => {
     setActivePinia(createPinia())
   })
 
-  describe('presetsEnabled', () => {
+  describe('redlinksEnabled', () => {
     it('returns false when no user is authenticated', () => {
-      const { presetsEnabled } = useFeatureFlags()
+      const { redlinksEnabled } = useFeatureFlags()
 
-      expect(presetsEnabled.value).toBe(false)
+      expect(redlinksEnabled.value).toBe(false)
     })
 
     it('returns false for non-allowed users', () => {
       const auth = useAuthStore()
       auth.user = 'testuser'
-      const { presetsEnabled } = useFeatureFlags()
+      const { redlinksEnabled } = useFeatureFlags()
 
-      expect(presetsEnabled.value).toBe(false)
+      expect(redlinksEnabled.value).toBe(false)
     })
 
     it('returns true for DaxServer', () => {
       const auth = useAuthStore()
       auth.user = 'DaxServer'
-      const { presetsEnabled } = useFeatureFlags()
+      const { redlinksEnabled } = useFeatureFlags()
 
-      expect(presetsEnabled.value).toBe(true)
-    })
-
-    it('returns true for PantheraLeo1359531', () => {
-      const auth = useAuthStore()
-      auth.user = 'PantheraLeo1359531'
-      const { presetsEnabled } = useFeatureFlags()
-
-      expect(presetsEnabled.value).toBe(true)
+      expect(redlinksEnabled.value).toBe(true)
     })
 
     it('updates reactively when user changes', () => {
       const auth = useAuthStore()
-      const { presetsEnabled } = useFeatureFlags()
+      const { redlinksEnabled } = useFeatureFlags()
 
-      expect(presetsEnabled.value).toBe(false)
+      expect(redlinksEnabled.value).toBe(false)
 
       auth.user = 'DaxServer'
-      expect(presetsEnabled.value).toBe(true)
+      expect(redlinksEnabled.value).toBe(true)
 
       auth.user = 'someoneelse'
-      expect(presetsEnabled.value).toBe(false)
+      expect(redlinksEnabled.value).toBe(false)
     })
   })
 })

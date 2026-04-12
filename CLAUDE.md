@@ -171,6 +171,30 @@ Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 
 **Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useTemplateEditor.test.ts` for the full pattern.
 
+**Watcher flush in composable tests:** Watchers in composables default to async (microtask) flush. When a test sets a reactive ref and immediately asserts on the result, use `{ flush: 'sync' }` on the watcher so it fires synchronously:
+
+```ts
+watch(data, handler, { flush: 'sync' })
+```
+
+**Module-level composable state in tests:** Composables that hold module-level `ref` state (singletons) retain their values across tests. Reset the state explicitly in `beforeEach`:
+
+```ts
+beforeEach(() => {
+  const { items, loading } = useMyComposable()
+  items.value = []
+  loading.value = false
+})
+```
+
+**Auto-imports regeneration:** After adding a new composable or store, `bun typecheck` will fail with "Cannot find name" until `auto-imports.d.ts` is regenerated. Run `bunx vite build` (which triggers Vite plugins including `unplugin-auto-import`) to regenerate it, then delete `dist/` afterwards.
+
+**Third-party constants in components:** Constants from external packages (e.g. `FilterMatchMode` from `@primevue/core/api`) are not auto-imported by default. Add them to the `imports` array in `vite.config.ts` under `AutoImport({imports: [...]})` rather than hardcoding string literals or adding manual imports to components:
+
+```ts
+{ from: '@primevue/core/api', imports: ['FilterMatchMode'] }
+```
+
 **Composable tests with watchers:** Composables that call `watch()` (including transitively) must run inside an `effectScope` to prevent watcher leaks across tests:
 ```ts
 import { afterEach, beforeEach } from 'bun:test'
@@ -234,6 +258,8 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 **Titles per request limit:** The `action=query&titles=` parameter accepts at most 50 titles for non-bot users (500 with `apihighlimits`). Both `useTitleVerification.ts` and `useCategoryValidation.ts` chunk requests at 50 using a `for (let i = 0; i < items.length; i += 50)` loop with a shared `AbortController` signal checked at the top of each iteration.
 
 ## PrimeVue Component Patterns
+
+**DataTable header background (Noir theme):** Setting `sort-field`/`sort-order` pre-selects a sorted column on load, which triggers `selectedBackground` (`highlight.background` = black in Noir) on that header. Don't set default sort props unless a black header is intended. To override header colors globally, add component token overrides in `src/assets/Noir.ts` under `components.datatable.headerCell` — CSS class selectors (even with `!important`) don't win against PrimeVue v4's dynamically injected theme tokens.
 
 **DatePicker events:** Use `@update:model-value` as the single handler for all date changes (selection and clear). The separate `@date-select` and `@clear` events are unreliable — `@clear` may not fire when `show-clear` is used. Emit downstream events (e.g., `dateChange`) from `@update:model-value` instead.
 

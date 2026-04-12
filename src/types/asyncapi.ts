@@ -91,6 +91,10 @@ export type FetchPresetsData = {
   handler: string
 }
 
+export type FetchRedlinks = {
+  type: 'FETCH_REDLINKS'
+}
+
 export type RetryUploads = {
   data: number
   type: 'RETRY_UPLOADS'
@@ -392,6 +396,21 @@ export type PresetItem = {
   is_default: boolean
   created_at: string
   updated_at: string
+}
+
+export type RedlinksResponse = {
+  type: 'REDLINKS_RESPONSE'
+  data: RedlinksResponseData
+  nonce: string
+}
+
+export type RedlinksResponseData = {
+  items: RedlinkItem[]
+}
+
+export type RedlinkItem = {
+  title: string
+  linked_from: string
 }
 
 export type RetryUploadsResponse = {
@@ -706,6 +725,7 @@ export type ClientMessage =
   | FetchBatchUploads
   | FetchImages
   | FetchPresets
+  | FetchRedlinks
   | RetryUploads
   | SavePreset
   | SubscribeBatch
@@ -724,6 +744,7 @@ export type ServerMessage =
   | Error
   | PartialCollectionImages
   | PresetsList
+  | RedlinksResponse
   | RetryUploadsResponse
   | Subscribed
   | TryBatchRetrieval
