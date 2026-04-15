@@ -87,6 +87,7 @@ declare global {
   const extractUsedCameraFields: typeof import('./src/utils/titleTemplate').extractUsedCameraFields
   const extractUsedOptionalFields: typeof import('./src/utils/titleTemplate').extractUsedOptionalFields
   const getActivePinia: typeof import('pinia').getActivePinia
+  const getCategoryText: typeof import('./src/composables/useCreateCategory').getCategoryText
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
@@ -223,6 +224,7 @@ declare global {
   const useConfirmDialog: typeof import('@vueuse/core').useConfirmDialog
   const useCountdown: typeof import('@vueuse/core').useCountdown
   const useCounter: typeof import('@vueuse/core').useCounter
+  const useCreateCategory: typeof import('./src/composables/useCreateCategory').useCreateCategory
   const useCssModule: typeof import('vue').useCssModule
   const useCssSupports: typeof import('@vueuse/core').useCssSupports
   const useCssVar: typeof import('@vueuse/core').useCssVar
@@ -311,6 +313,7 @@ declare global {
   const usePresetManager: typeof import('./src/composables/usePresetManager').usePresetManager
   const usePrevious: typeof import('@vueuse/core').usePrevious
   const useRafFn: typeof import('@vueuse/core').useRafFn
+  const useReconcile: typeof import('./src/composables/useReconcile').useReconcile
   const useRedlinks: typeof import('./src/composables/useRedlinks').useRedlinks
   const useRefHistory: typeof import('@vueuse/core').useRefHistory
   const useResizeObserver: typeof import('@vueuse/core').useResizeObserver
@@ -417,13 +420,19 @@ declare global {
   export type { QueryPage, QueryNormalized } from './src/composables/useCategoryValidation'
   import('./src/composables/useCategoryValidation')
   // @ts-ignore
+  export type { CategoryStatus, CategoryTextKey } from './src/composables/useCreateCategory'
+  import('./src/composables/useCreateCategory')
+  // @ts-ignore
+  export type { ReconCandidate } from './src/composables/useReconcile'
+  import('./src/composables/useReconcile')
+  // @ts-ignore
   export type { ColorVariant } from './src/composables/useUploadStatus'
   import('./src/composables/useUploadStatus')
   // @ts-ignore
   export type { AdminUser, AdminBatch, AdminUploadRequest, AdminPreset, FailedUpload, BatchFailureGroup, PaginatedResponse, FailedUploadsResponse } from './src/types/admin'
   import('./src/types/admin')
   // @ts-ignore
-  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, FetchRedlinks, FetchWantedCategories, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, RedlinksResponse, RedlinksResponseData, RedlinkItem, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, WantedCategoriesResponse, WantedCategoriesResponseData, WantedCategoryItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
+  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, CreateCategory, CreateCategoryData, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, CheckCategoriesDeleted, CheckCategoriesDeletedData, FetchRedlinks, FetchWantedCategories, FetchWantedCategoriesData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, CategoriesDeletedResponse, CategoriesDeletedResponseData, CategoryCreatedResponse, CategoryCreatedResponseData, RedlinksResponse, RedlinksResponseData, RedlinkItem, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, WantedCategoriesResponse, WantedCategoriesResponseData, WantedCategoryItem, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
   export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
@@ -522,6 +531,7 @@ declare module 'vue' {
     readonly extractUsedCameraFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['extractUsedCameraFields']>
     readonly extractUsedOptionalFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['extractUsedOptionalFields']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
+    readonly getCategoryText: UnwrapRef<typeof import('./src/composables/useCreateCategory')['getCategoryText']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
@@ -655,6 +665,7 @@ declare module 'vue' {
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useCountdown: UnwrapRef<typeof import('@vueuse/core')['useCountdown']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
+    readonly useCreateCategory: UnwrapRef<typeof import('./src/composables/useCreateCategory')['useCreateCategory']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssSupports: UnwrapRef<typeof import('@vueuse/core')['useCssSupports']>
     readonly useCssVar: UnwrapRef<typeof import('@vueuse/core')['useCssVar']>
@@ -743,6 +754,7 @@ declare module 'vue' {
     readonly usePresetManager: UnwrapRef<typeof import('./src/composables/usePresetManager')['usePresetManager']>
     readonly usePrevious: UnwrapRef<typeof import('@vueuse/core')['usePrevious']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
+    readonly useReconcile: UnwrapRef<typeof import('./src/composables/useReconcile')['useReconcile']>
     readonly useRedlinks: UnwrapRef<typeof import('./src/composables/useRedlinks')['useRedlinks']>
     readonly useRefHistory: UnwrapRef<typeof import('@vueuse/core')['useRefHistory']>
     readonly useResizeObserver: UnwrapRef<typeof import('@vueuse/core')['useResizeObserver']>
