@@ -27,8 +27,14 @@
         "CollectionImages": {
           "$ref": "#/components/messages/CollectionImages"
         },
+        "CategoryCreatedResponse": {
+          "$ref": "#/components/messages/CategoryCreatedResponse"
+        },
         "CreateBatch": {
           "$ref": "#/components/messages/CreateBatch"
+        },
+        "CreateCategory": {
+          "$ref": "#/components/messages/CreateCategory"
         },
         "Error": {
           "$ref": "#/components/messages/Error"
@@ -93,6 +99,12 @@
         "FetchPresets": {
           "$ref": "#/components/messages/FetchPresets"
         },
+        "CheckCategoriesDeleted": {
+          "$ref": "#/components/messages/CheckCategoriesDeleted"
+        },
+        "CategoriesDeletedResponse": {
+          "$ref": "#/components/messages/CategoriesDeletedResponse"
+        },
         "FetchRedlinks": {
           "$ref": "#/components/messages/FetchRedlinks"
         },
@@ -128,6 +140,9 @@
           "$ref": "#/channels/wsChannel/messages/CreateBatch"
         },
         {
+          "$ref": "#/channels/wsChannel/messages/CreateCategory"
+        },
+        {
           "$ref": "#/channels/wsChannel/messages/DeletePreset"
         },
         {
@@ -141,6 +156,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/FetchPresets"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/CheckCategoriesDeleted"
         },
         {
           "$ref": "#/channels/wsChannel/messages/FetchRedlinks"
@@ -205,6 +223,12 @@
           "$ref": "#/channels/wsChannel/messages/PresetsList"
         },
         {
+          "$ref": "#/channels/wsChannel/messages/CategoriesDeletedResponse"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/CategoryCreatedResponse"
+        },
+        {
           "$ref": "#/channels/wsChannel/messages/RedlinksResponse"
         },
         {
@@ -261,9 +285,29 @@
           "$ref": "#/components/schemas/CollectionImages"
         }
       },
+      "CategoriesDeletedResponse": {
+        "payload": {
+          "$ref": "#/components/schemas/CategoriesDeletedResponse"
+        }
+      },
+      "CategoryCreatedResponse": {
+        "payload": {
+          "$ref": "#/components/schemas/CategoryCreatedResponse"
+        }
+      },
+      "CheckCategoriesDeleted": {
+        "payload": {
+          "$ref": "#/components/schemas/CheckCategoriesDeleted"
+        }
+      },
       "CreateBatch": {
         "payload": {
           "$ref": "#/components/schemas/CreateBatch"
+        }
+      },
+      "CreateCategory": {
+        "payload": {
+          "$ref": "#/components/schemas/CreateCategory"
         }
       },
       "Error": {
@@ -688,6 +732,106 @@
         },
         "additionalProperties": false
       },
+      "CategoriesDeletedResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "CATEGORIES_DELETED_RESPONSE"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CategoriesDeletedResponseData"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryCreatedResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "CATEGORY_CREATED_RESPONSE"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CategoryCreatedResponseData"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryCreatedResponseData": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoriesDeletedResponseData": {
+        "type": "object",
+        "required": [
+          "deleted"
+        ],
+        "properties": {
+          "deleted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckCategoriesDeleted": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "CHECK_CATEGORIES_DELETED"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CheckCategoriesDeletedData"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckCategoriesDeletedData": {
+        "type": "object",
+        "required": [
+          "titles"
+        ],
+        "properties": {
+          "titles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "CollectionImageIds": {
         "type": "object",
         "required": [
@@ -760,6 +904,41 @@
         "properties": {
           "type": {
             "const": "CREATE_BATCH"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCategory": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "CREATE_CATEGORY"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CreateCategoryData"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCategoryData": {
+        "type": "object",
+        "required": [
+          "title",
+          "text"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "wikidata_qid": {
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1964,11 +2143,31 @@
       "FetchWantedCategories": {
         "type": "object",
         "required": [
-          "type"
+          "type",
+          "data"
         ],
         "properties": {
           "type": {
             "const": "FETCH_WANTED_CATEGORIES"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FetchWantedCategoriesData"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FetchWantedCategoriesData": {
+        "type": "object",
+        "required": [
+          "offset"
+        ],
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "default": 0
+          },
+          "filter": {
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -2025,7 +2224,8 @@
       "WantedCategoriesResponseData": {
         "type": "object",
         "required": [
-          "items"
+          "items",
+          "total"
         ],
         "properties": {
           "items": {
@@ -2033,6 +2233,9 @@
             "items": {
               "$ref": "#/components/schemas/WantedCategoryItem"
             }
+          },
+          "total": {
+            "type": "integer"
           }
         },
         "additionalProperties": false

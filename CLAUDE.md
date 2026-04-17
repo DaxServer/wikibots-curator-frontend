@@ -239,10 +239,13 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 ## Code Style
 
+**Typed const dispatch maps:** Use `satisfies Record<string, ...>` (not `as const`) to define known-key maps while keeping narrow literal types for `keyof typeof`. Example: `CATEGORY_TEXT_MAP` in `useCreateCategory.ts`. `keyof typeof MAP` then yields a precise union rather than `string`.
+
 - **No `any` types** - Enforced by Biome linter (`noExplicitAny: error`)
 - **Single quotes, semicolons as-needed** - Configured in biome.json
 - **Utility classes only** - No manual styles (TailwindCSS)
 - **No linter ignore statements** - Fix issues instead
+- **No dark theme** - Do not use `dark:` Tailwind variants; the app does not support dark mode
 - Run `bun typecheck && bun lint && bun format` before committing
 
 ## Async Patterns

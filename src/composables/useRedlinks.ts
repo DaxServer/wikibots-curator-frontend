@@ -1,5 +1,5 @@
 import { useSocket } from '@/composables/useSocket'
-import type { RedlinkItem, ServerMessage } from '@/types/asyncapi'
+import type { FetchRedlinks, RedlinkItem, ServerMessage } from '@/types/asyncapi'
 import { ref, watch } from 'vue'
 
 const redlinks = ref<RedlinkItem[]>([])
@@ -23,7 +23,7 @@ export const useRedlinks = () => {
 
   const fetchRedlinks = () => {
     loading.value = true
-    send(JSON.stringify({ type: 'FETCH_REDLINKS' }))
+    send(JSON.stringify({ type: 'FETCH_REDLINKS' } satisfies FetchRedlinks))
   }
 
   return { redlinks, loading, fetchRedlinks }

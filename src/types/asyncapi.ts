@@ -45,6 +45,17 @@ export type CreateBatch = {
   type: 'CREATE_BATCH'
 }
 
+export type CreateCategory = {
+  type: 'CREATE_CATEGORY'
+  data: CreateCategoryData
+}
+
+export type CreateCategoryData = {
+  title: string
+  text: string
+  wikidata_qid?: string
+}
+
 export type DeletePreset = {
   type: 'DELETE_PRESET'
   data: DeletePresetData
@@ -91,12 +102,27 @@ export type FetchPresetsData = {
   handler: string
 }
 
+export type CheckCategoriesDeleted = {
+  type: 'CHECK_CATEGORIES_DELETED'
+  data: CheckCategoriesDeletedData
+}
+
+export type CheckCategoriesDeletedData = {
+  titles: string[]
+}
+
 export type FetchRedlinks = {
   type: 'FETCH_REDLINKS'
 }
 
 export type FetchWantedCategories = {
   type: 'FETCH_WANTED_CATEGORIES'
+  data: FetchWantedCategoriesData
+}
+
+export type FetchWantedCategoriesData = {
+  offset: number
+  filter?: string
 }
 
 export type RetryUploads = {
@@ -402,6 +428,26 @@ export type PresetItem = {
   updated_at: string
 }
 
+export type CategoriesDeletedResponse = {
+  type: 'CATEGORIES_DELETED_RESPONSE'
+  data: CategoriesDeletedResponseData
+  nonce: string
+}
+
+export type CategoriesDeletedResponseData = {
+  deleted: string[]
+}
+
+export type CategoryCreatedResponse = {
+  type: 'CATEGORY_CREATED_RESPONSE'
+  data: CategoryCreatedResponseData
+  nonce: string
+}
+
+export type CategoryCreatedResponseData = {
+  title: string
+}
+
 export type RedlinksResponse = {
   type: 'REDLINKS_RESPONSE'
   data: RedlinksResponseData
@@ -496,6 +542,7 @@ export type WantedCategoriesResponse = {
 
 export type WantedCategoriesResponseData = {
   items: WantedCategoryItem[]
+  total: number
 }
 
 export type WantedCategoryItem = {
@@ -742,11 +789,13 @@ export enum SnakType {
 export type ClientMessage =
   | CancelBatch
   | CreateBatch
+  | CreateCategory
   | DeletePreset
   | FetchBatches
   | FetchBatchUploads
   | FetchImages
   | FetchPresets
+  | CheckCategoriesDeleted
   | FetchRedlinks
   | FetchWantedCategories
   | RetryUploads
@@ -767,6 +816,8 @@ export type ServerMessage =
   | Error
   | PartialCollectionImages
   | PresetsList
+  | CategoriesDeletedResponse
+  | CategoryCreatedResponse
   | RedlinksResponse
   | RetryUploadsResponse
   | Subscribed

@@ -1,10 +1,17 @@
 <script setup lang="ts">
 const { redlinks, loading, fetchRedlinks } = useRedlinks()
 
+const first = ref(0)
+
 const filters = ref({
   title: { value: null, matchMode: FilterMatchMode.CONTAINS },
   linked_from: { value: null, matchMode: FilterMatchMode.CONTAINS },
 })
+
+const refresh = () => {
+  first.value = 0
+  fetchRedlinks()
+}
 
 const displayRows = computed(() =>
   loading.value && redlinks.value.length === 0 ? Array(10).fill({}) : redlinks.value,
@@ -19,17 +26,23 @@ onMounted(() => {
   <div class="flex justify-between items-center mb-4 max-w-7xl mx-auto">
     <h1 class="text-2xl font-bold">Category Redlinks</h1>
     <div class="flex gap-2 items-center">
-      <Tag>{{ redlinks.length }} results</Tag>
+      <Skeleton
+        v-if="loading"
+        width="6rem"
+        height="1.5rem"
+      />
+      <Tag v-else>{{ redlinks.length }} results</Tag>
       <Button
         label="Refresh"
         :loading="loading"
-        @click="fetchRedlinks"
+        @click="refresh"
       />
     </div>
   </div>
 
   <DataTable
     :value="displayRows"
+    v-model:first="first"
     v-model:filters="filters"
     filter-display="row"
     paginator

@@ -23,17 +23,40 @@ describe('useWantedCategories', () => {
   beforeEach(() => {
     mockSocketData.value = null
     ;(mockSend as Mock<typeof mockSend>).mockClear()
-    const { wantedCategories, loading } = useWantedCategories()
+    const { wantedCategories, loading, total } = useWantedCategories()
     wantedCategories.value = []
     loading.value = false
+    total.value = 0
   })
 
-  it('sends FETCH_WANTED_CATEGORIES message when fetchWantedCategories is called', () => {
+  it('sends FETCH_WANTED_CATEGORIES with offset 0 by default', () => {
     const { fetchWantedCategories } = useWantedCategories()
 
     fetchWantedCategories()
 
-    expect(mockSend).toHaveBeenCalledWith(JSON.stringify({ type: 'FETCH_WANTED_CATEGORIES' }))
+    expect(mockSend).toHaveBeenCalledWith(
+      JSON.stringify({ type: 'FETCH_WANTED_CATEGORIES', data: { offset: 0 } }),
+    )
+  })
+
+  it('sends FETCH_WANTED_CATEGORIES with provided offset', () => {
+    const { fetchWantedCategories } = useWantedCategories()
+
+    fetchWantedCategories(100)
+
+    expect(mockSend).toHaveBeenCalledWith(
+      JSON.stringify({ type: 'FETCH_WANTED_CATEGORIES', data: { offset: 100 } }),
+    )
+  })
+
+  it('sends FETCH_WANTED_CATEGORIES with filter text when provided', () => {
+    const { fetchWantedCategories } = useWantedCategories()
+
+    fetchWantedCategories(0, 'Germany')
+
+    expect(mockSend).toHaveBeenCalledWith(
+      JSON.stringify({ type: 'FETCH_WANTED_CATEGORIES', data: { offset: 0, filter: 'Germany' } }),
+    )
   })
 
   it('sets loading to true when fetchWantedCategories is called', () => {
@@ -44,8 +67,8 @@ describe('useWantedCategories', () => {
     expect(loading.value).toBe(true)
   })
 
-  it('updates wantedCategories and clears loading when WANTED_CATEGORIES_RESPONSE is received', () => {
-    const { wantedCategories, loading, fetchWantedCategories } = useWantedCategories()
+  it('updates wantedCategories, total, and clears loading when WANTED_CATEGORIES_RESPONSE is received', () => {
+    const { wantedCategories, loading, total, fetchWantedCategories } = useWantedCategories()
     fetchWantedCategories()
 
     const items: WantedCategoryItem[] = [
@@ -54,11 +77,12 @@ describe('useWantedCategories', () => {
     ]
     mockSocketData.value = JSON.stringify({
       type: 'WANTED_CATEGORIES_RESPONSE',
-      data: { items },
+      data: { items, total: 843 },
       nonce: 'x',
     })
 
     expect(wantedCategories.value).toEqual(items)
+    expect(total.value).toBe(843)
     expect(loading.value).toBe(false)
   })
 
