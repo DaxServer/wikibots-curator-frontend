@@ -10,7 +10,10 @@ const displayCategories = computed(() =>
   wantedCategories.value.map((c) => ({ ...c, status: getStatus(c.title) })),
 )
 
-const skeletonRows = Array<WantedCategoryItem>(10).fill({} as WantedCategoryItem)
+const skeletonRows = Array.from(
+  { length: 10 },
+  (_, i) => ({ title: `skeleton-${i}` }) as WantedCategoryItem,
+)
 
 const doFetch = () =>
   fetchWantedCategories(offset.value, filterText.value.replaceAll(' ', '_') || undefined)
@@ -49,7 +52,7 @@ onMounted(() => {
       <Button
         label="Refresh"
         :loading="loading"
-        @click="fetchWantedCategories(0, filterText || undefined)"
+        @click="fetchWantedCategories(0, filterText.replaceAll(' ', '_') || undefined)"
       />
     </div>
   </div>

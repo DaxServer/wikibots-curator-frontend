@@ -28,16 +28,14 @@ export function useReconcile() {
           { query: title.replaceAll('_', ' '), limit: QUERY_LIMIT },
         ]),
       )
-      const url = `${RECONCILE_API}?queries=${encodeURIComponent(JSON.stringify(queries))}`
-      const response = await fetch(url)
+      const response = await fetch(RECONCILE_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ queries: JSON.stringify(queries) }),
+      })
       const data = (await response.json()) as ReconApiResponse
       categories.forEach(({ title }, i) => {
-        const candidates = data[`q${i}`]?.result ?? []
-        reconcileResults.value[title] = candidates
-        const first = candidates[0]
-        if (candidates.length === 1 && first) {
-          selectedQids.value[title] = first.id
-        }
+        reconcileResults.value[title] = data[`q${i}`]?.result ?? []
       })
     } finally {
       isReconciling.value = false

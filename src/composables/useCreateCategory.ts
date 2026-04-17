@@ -9,6 +9,21 @@ export type CategoryStatus =
   | { type: 'created'; createdTitle: string }
   | { type: 'error'; message: string }
 
+const MONTH_NUMBER: Record<string, string> = {
+  January: '01',
+  February: '02',
+  March: '03',
+  April: '04',
+  May: '05',
+  June: '06',
+  July: '07',
+  August: '08',
+  September: '09',
+  October: '10',
+  November: '11',
+  December: '12',
+}
+
 const CATEGORY_TEXT_MAP = {
   campaign: {
     pattern: /^Uploaded via Campaign:(.*)$/,
@@ -21,14 +36,14 @@ const CATEGORY_TEXT_MAP = {
   bostonByMonth: {
     pattern: /^(\w+) (\d{4}) in Boston$/,
     getText: (m: RegExpMatchArray) => {
-      const month = String(new Date(`${m[1]} 1`).getMonth() + 1).padStart(2, '0')
+      const month = MONTH_NUMBER[m[1]!] ?? '01'
       return `{{MonthbyyearBoston|${m[2]!.slice(0, 3)}|${m[2]!.slice(3)}|${month}}}`
     },
   },
   wolsztynByMonth: {
     pattern: /^(\w+) (\d{4}) in Wolsztyn$/,
     getText: (m: RegExpMatchArray) => {
-      const month = String(new Date(`${m[1]} 1`).getMonth() + 1).padStart(2, '0')
+      const month = MONTH_NUMBER[m[1]!] ?? '01'
       return `{{POLmonthbyyear-Wolsztyn|${m[2]!.slice(0, 3)}|${m[2]!.slice(3)}|${month}}}`
     },
   },
