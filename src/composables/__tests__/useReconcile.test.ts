@@ -5,7 +5,7 @@ const mockResponse = {
   q1: { result: [] },
 }
 
-test('reconcile populates results and auto-selects single match', async () => {
+test('reconcile populates results without auto-selecting', async () => {
   global.fetch = mock(() =>
     Promise.resolve({ json: () => Promise.resolve(mockResponse) }),
   ) as unknown as typeof fetch
@@ -17,7 +17,7 @@ test('reconcile populates results and auto-selects single match', async () => {
     { title: 'Title_Two', subcats: 0, files: 0, pages: 0, total: 0 },
   ])
   expect(reconcileResults.value.Title_One).toHaveLength(1)
-  expect(selectedQids.value.Title_One).toBe('Q1')
+  expect(selectedQids.value.Title_One).toBeUndefined()
   expect(reconcileResults.value.Title_Two).toHaveLength(0)
   expect(selectedQids.value.Title_Two).toBeUndefined()
 })
