@@ -12,8 +12,7 @@ export type CategoryStatus =
 const CATEGORY_TEXT_MAP = {
   campaign: {
     pattern: /^Uploaded via Campaign:(.*)$/,
-    getText: (m: RegExpMatchArray) =>
-      `{{Hidden cat}}\n[[Category:Uploaded via Campaign|${m[1]}]]`,
+    getText: (m: RegExpMatchArray) => `{{Hidden cat}}\n[[Category:Uploaded via Campaign|${m[1]}]]`,
   },
   photographerNews: {
     pattern: /^Photos by (.+) for (Mehr|Tasnim|Moj|Fars) News Agency$/,

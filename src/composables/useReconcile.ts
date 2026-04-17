@@ -23,7 +23,10 @@ export function useReconcile() {
     isReconciling.value = true
     try {
       const queries = Object.fromEntries(
-        categories.map(({ title }, i) => [`q${i}`, { query: title.replaceAll('_', ' '), limit: QUERY_LIMIT }]),
+        categories.map(({ title }, i) => [
+          `q${i}`,
+          { query: title.replaceAll('_', ' '), limit: QUERY_LIMIT },
+        ]),
       )
       const url = `${RECONCILE_API}?queries=${encodeURIComponent(JSON.stringify(queries))}`
       const response = await fetch(url)
