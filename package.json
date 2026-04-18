@@ -17,6 +17,7 @@
     "@vueuse/core": "^14.2.1",
     "@vueuse/router": "^14.2.1",
     "handlebars": "^4.7.9",
+    "maplibre-gl": "^5.23.0",
     "pinia": "^3.0.4",
     "primeicons": "^7.0.0",
     "primevue": "^4.5.5",

@@ -294,7 +294,7 @@ The title template system lives in `src/composables/useTitleTemplate.ts` and `sr
 
 - **License field** - `meta.license` exists in the data model and store but is intentionally not exposed in the Step 3 UI — Mapillary images use a fixed license so per-item and global license overrides are not applicable
 - **Handler** - Image source (currently only `mapillary`)
-- **Item** - An image with metadata (`Item` type in `types/image.ts`)
+- **Item** - An image with metadata (`Item` type in `types/image.ts`). `index` is 1-based.
 - **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)
 - **Title Status** - Validation state of generated titles (`TITLE_ERROR_STATUSES` in `types/image.ts`)
 - **Layout** - View mode (`list` or `grid`) for collection display
@@ -306,3 +306,13 @@ The title template system lives in `src/composables/useTitleTemplate.ts` and `sr
   Preset creation (via accordion "Create new preset" button) is treated like editing mode - hides images list until canceled/saved. Preset removal (via "Remove preset" button) enters manual mode with both forms and images list visible.
 
   Orchestration lives in `usePresetManager` composable (`selectPreset`, `clearPreset`, `handleEditPreset`, `handleCancelEdit`).
+
+## MapLibre GL JS Integration
+
+**Container setup:** Reference container by string `id` (not Vue `ref`). Set height via scoped CSS — MapLibre reads `clientHeight` at init before Tailwind JIT resolves.
+
+**Layer ordering:** Layers render in insertion order (first = bottom). Add background/direction layers before pin layers.
+
+**Paint expressions:** WebGL-based — CSS `var()` is not supported. Hardcode hex values.
+
+**OpenFreeMap liberty style** has known missing sprite icons — cosmetic warnings, safe to ignore. Use `positron` for a cleaner minimal style.

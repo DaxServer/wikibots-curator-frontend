@@ -106,6 +106,7 @@ declare global {
   const isRef: typeof import('vue').isRef
   const isShallow: typeof import('vue').isShallow
   const isValidExtension: typeof import('./src/utils/titleTemplate').isValidExtension
+  const itemsToGeoJSON: typeof import('./src/composables/useSequenceMap').itemsToGeoJSON
   const makeDestructurable: typeof import('@vueuse/core').makeDestructurable
   const makePreset: typeof import('./src/__tests__/fixtures').makePreset
   const mapActions: typeof import('pinia').mapActions
@@ -326,6 +327,7 @@ declare global {
   const useScriptTag: typeof import('@vueuse/core').useScriptTag
   const useScroll: typeof import('@vueuse/core').useScroll
   const useScrollLock: typeof import('@vueuse/core').useScrollLock
+  const useSequenceMap: typeof import('./src/composables/useSequenceMap').useSequenceMap
   const useSessionStorage: typeof import('@vueuse/core').useSessionStorage
   const useShare: typeof import('@vueuse/core').useShare
   const useSlots: typeof import('vue').useSlots
@@ -767,6 +769,7 @@ declare module 'vue' {
     readonly useScriptTag: UnwrapRef<typeof import('@vueuse/core')['useScriptTag']>
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
+    readonly useSequenceMap: UnwrapRef<typeof import('./src/composables/useSequenceMap')['useSequenceMap']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
