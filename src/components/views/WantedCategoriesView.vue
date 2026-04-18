@@ -2,9 +2,16 @@
 const { wantedCategories, loading, total, fetchWantedCategories } = useWantedCategories()
 const { getStatus, createCategory, getCategoryText } = useCreateCategory()
 const { reconcile, reconcileResults, selectedQids, toggleSelect, isReconciling } = useReconcile()
+const { templateMap, checkTemplates } = useYearTemplates()
 
 const filterText = ref('')
 const offset = ref(0)
+
+const showOnlyWithTemplate = ref(false)
+
+const withTemplateCount = computed(
+  () => wantedCategories.value.filter((c) => templateMap.value[c.title]).length,
+)
 
 const displayCategories = computed(() =>
   wantedCategories.value.map((c) => ({ ...c, status: getStatus(c.title) })),
@@ -34,6 +41,48 @@ const onPageChange = (event: { first: number }) => {
   fetchWantedCategories(event.first, filterText.value.replaceAll(' ', '_') || undefined)
 }
 
+watch(wantedCategories, (cats) => {
+  if (cats.length > 0) checkTemplates(cats.map((c) => c.title))
+  selectedTitles.value.clear()
+})
+
+const selectedTitles = ref(new Set<string>())
+
+const visibleIdleTitles = computed(() =>
+  displayCategories.value
+    .filter((c) => c.status.type === 'idle')
+    .filter((c) => !showOnlyWithTemplate.value || templateMap.value[c.title])
+    .map((c) => c.title),
+)
+
+const allSelected = computed(
+  () =>
+    visibleIdleTitles.value.length > 0 &&
+    visibleIdleTitles.value.every((t) => selectedTitles.value.has(t)),
+)
+
+const toggleSelectAll = () => {
+  if (allSelected.value) {
+    selectedTitles.value = new Set()
+  } else {
+    selectedTitles.value = new Set(visibleIdleTitles.value)
+  }
+}
+
+const createSelected = () => {
+  for (const title of selectedTitles.value) {
+    createCategory(title, templateMap.value[title] ?? getCategoryText(title))
+  }
+  selectedTitles.value = new Set()
+}
+
+const createWISelected = () => {
+  for (const title of selectedTitles.value) {
+    createCategory(title, '{{WI}}', selectedQids.value[title])
+  }
+  selectedTitles.value = new Set()
+}
+
 onMounted(() => {
   fetchWantedCategories(0)
 })
@@ -57,12 +106,6 @@ onMounted(() => {
     </div>
   </div>
 
-  <InputText
-    v-model="filterText"
-    placeholder="Filter..."
-    class="w-full mb-3 max-w-7xl mx-auto block"
-  />
-
   <DataView
     :value="loading && wantedCategories.length === 0 ? skeletonRows : displayCategories"
     data-key="title"
@@ -70,7 +113,7 @@ onMounted(() => {
     paginator
     paginator-position="both"
     paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
-    current-page-report-template="Page {currentPage} of {totalPages}"
+    current-page-report-template="Page {currentPage} of {totalPages} ({totalRecords})"
     :page-link-size="10"
     always-show-paginator
     lazy
@@ -80,160 +123,228 @@ onMounted(() => {
     class="max-w-7xl mx-auto"
     @page="onPageChange"
   >
+    <template #header>
+      <div class="flex flex-col gap-2">
+        <div class="flex gap-2">
+          <InputText
+            v-model="filterText"
+            placeholder="Filter..."
+            class="flex-1"
+          />
+          <Button
+            :label="`By year template (${withTemplateCount})`"
+            :severity="showOnlyWithTemplate ? 'info' : 'secondary'"
+            :outlined="!showOnlyWithTemplate"
+            @click="showOnlyWithTemplate = !showOnlyWithTemplate"
+          />
+        </div>
+        <div class="flex gap-2 items-center">
+          <Button
+            :label="allSelected ? 'Deselect All' : 'Select All'"
+            size="small"
+            severity="secondary"
+            outlined
+            @click="toggleSelectAll"
+          />
+          <Button
+            label="Create"
+            size="small"
+            severity="secondary"
+            :disabled="selectedTitles.size === 0"
+            @click="createSelected"
+            text
+            class="create-btn"
+          />
+          <Button
+            label="Create WI"
+            size="small"
+            severity="secondary"
+            :disabled="selectedTitles.size === 0"
+            @click="createWISelected"
+            text
+            class="create-btn"
+          />
+          <span
+            v-if="selectedTitles.size > 0"
+            class="text-sm text-surface-500"
+          >
+            {{ selectedTitles.size }} selected
+          </span>
+        </div>
+      </div>
+    </template>
+
     <template #empty>
       <span class="py-4 text-center text-surface-500 block">No wanted categories found.</span>
     </template>
 
     <template #list="slotProps">
-      <TransitionGroup
-        tag="div"
-        leave-active-class="transition-opacity duration-500 ease-in"
-        leave-to-class="opacity-0"
-        class="flex flex-col"
+      <div
+        v-for="(cat, index) in slotProps.items"
+        v-show="!showOnlyWithTemplate || templateMap[cat.title]"
+        :key="cat.title"
+        class="flex flex-col py-3 px-4 rounded odd:bg-surface-50 hover:bg-surface-100"
       >
-        <div
-          v-for="(cat, index) in slotProps.items"
-          :key="cat.title"
-          class="flex flex-col py-3 px-4 rounded odd:bg-surface-50 hover:bg-surface-100"
-        >
-          <template v-if="loading && wantedCategories.length === 0">
-            <Skeleton />
-          </template>
-          <template v-else>
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-surface-400 w-10">
-                {{ offset + Number(index) + 1 }}
-              </span>
-              <span class="flex items-center gap-2 flex-wrap flex-1">
-                <ExternalLink
-                  :href="`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(cat.title)}`"
-                  :show-icon="false"
-                  class="text-base font-medium hover:underline py-(--p-button-sm-padding-y)"
-                >
-                  {{ cat.title.replaceAll('_', ' ') }}
-                </ExternalLink>
-
-                <template v-if="cat.status.type === 'idle'">
-                  <Button
-                    label="Create"
-                    size="small"
-                    severity="secondary"
-                    text
-                    class="create-btn"
-                    @click="createCategory(cat.title, getCategoryText(cat.title))"
-                  />
-                  <Button
-                    label="Create WI"
-                    size="small"
-                    :severity="selectedQids[cat.title] ? 'primary' : 'secondary'"
-                    text
-                    class="create-btn"
-                    @click="createCategory(cat.title, '{{WI}}', selectedQids[cat.title])"
-                  />
-                </template>
-
-                <span
-                  v-if="cat.status.type === 'deleted'"
-                  class="text-sm text-red-900 cursor-help"
-                  title="This category was previously deleted"
-                >
-                  Deleted
-                </span>
-
-                <span
-                  v-else-if="cat.status.type === 'creating'"
-                  class="text-sm cursor-wait"
-                >
-                  Creating...
-                </span>
-
-                <template v-else-if="cat.status.type === 'created'">
-                  <span class="text-sm text-green-600">
-                    <ExternalLink
-                      :href="`https://commons.wikimedia.org/wiki/${encodeURIComponent(cat.status.createdTitle)}`"
-                      class="hover:underline"
-                      :icon-size="10"
-                    >
-                      {{ cat.status.createdTitle.replaceAll('_', ' ') }}
-                    </ExternalLink>
-                  </span>
-                </template>
-
-                <span
-                  v-else-if="cat.status.type === 'error'"
-                  class="text-sm text-red-500"
-                >
-                  {{ cat.status.message }}
-                </span>
-              </span>
-
-              <span class="flex gap-3 text-sm text-surface-500 ml-4">
-                <span title="Subcategories">{{ cat.subcats }}c</span>
-                <span title="Files">{{ cat.files }}f</span>
-                <span title="Pages">{{ cat.pages }}p</span>
-                <span
-                  title="Total"
-                  class="text-base font-medium text-surface-700"
-                >
-                  {{ cat.total }}
-                </span>
-              </span>
-            </div>
-
-            <!-- Reconcile candidate panel -->
-            <div
-              v-if="reconcileResults[cat.title]"
-              class="mt-2 ml-10 border-l-2 border-indigo-200 pl-3"
-            >
-              <div
-                v-if="reconcileResults[cat.title]?.length === 0"
-                class="text-sm text-surface-400"
+        <template v-if="loading && wantedCategories.length === 0">
+          <Skeleton />
+        </template>
+        <template v-else>
+          <div class="flex items-center justify-between">
+            <Checkbox
+              v-if="cat.status.type === 'idle'"
+              :model-value="selectedTitles.has(cat.title)"
+              :binary="true"
+              class="mr-4"
+              @change="
+                selectedTitles.has(cat.title)
+                  ? selectedTitles.delete(cat.title)
+                  : selectedTitles.add(cat.title)
+              "
+            />
+            <span
+              v-else
+              class="w-5 mr-4"
+            />
+            <span class="text-sm text-surface-400 w-10">
+              {{ offset + Number(index) + 1 }}
+            </span>
+            <span class="flex items-center gap-2 flex-wrap flex-1">
+              <ExternalLink
+                :href="`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(cat.title)}`"
+                :show-icon="false"
+                class="text-base font-medium hover:underline py-(--p-button-sm-padding-y)"
               >
-                No Wikidata matches found
-              </div>
-              <div
-                v-for="candidate in reconcileResults[cat.title]"
-                :key="candidate.id"
-                :class="[
-                  'flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer text-sm border hover:bg-sky-50 hover:border-sky-300 hover:border',
-                  selectedQids[cat.title] === candidate.id
-                    ? 'bg-sky-50 border-sky-300'
-                    : 'border-transparent',
-                ]"
-                @click="toggleSelect(cat.title, candidate.id)"
-              >
-                <span
-                  :class="[
-                    'w-3 h-3 rounded-full border-2 flex-shrink-0',
-                    selectedQids[cat.title] === candidate.id
-                      ? 'border-sky-500 bg-sky-500'
-                      : 'border-surface-400',
-                  ]"
+                {{ cat.title.replaceAll('_', ' ') }}
+              </ExternalLink>
+
+              <template v-if="cat.status.type === 'idle'">
+                <Tag
+                  v-if="templateMap[cat.title]"
+                  value="by year template"
+                  severity="success"
+                  class="text-xs"
                 />
-                <ExternalLink
-                  :href="`https://www.wikidata.org/wiki/${candidate.id}`"
-                  :show-icon="false"
-                  class="font-mono text-sky-800 hover:underline flex-shrink-0"
-                  @click.stop
-                >
-                  {{ candidate.id }}
-                </ExternalLink>
-                <span class="font-medium">{{ candidate.name }}</span>
-                <span class="text-surface-500 truncate">{{ candidate.description }}</span>
-                <span class="text-surface-500 ml-auto flex-shrink-0">{{ candidate.score }}%</span>
-                <ExternalLink
-                  :href="`https://www.wikidata.org/wiki/${candidate.id}`"
-                  class="text-sky-800 hover:underline hover:text-sky-900 flex-shrink-0"
-                  @click.stop
-                  :show-icon="false"
-                >
-                  Wikidata ↗
-                </ExternalLink>
-              </div>
+                <Button
+                  label="Create"
+                  size="small"
+                  severity="secondary"
+                  text
+                  class="create-btn"
+                  @click="
+                    createCategory(cat.title, templateMap[cat.title] ?? getCategoryText(cat.title))
+                  "
+                />
+                <Button
+                  label="Create WI"
+                  size="small"
+                  :severity="selectedQids[cat.title] ? 'primary' : 'secondary'"
+                  text
+                  class="create-btn"
+                  @click="createCategory(cat.title, '{{WI}}', selectedQids[cat.title])"
+                />
+              </template>
+
+              <span
+                v-if="cat.status.type === 'deleted'"
+                class="text-sm text-red-900 cursor-help"
+                title="This category was previously deleted"
+              >
+                Deleted
+              </span>
+
+              <span
+                v-else-if="cat.status.type === 'creating'"
+                class="text-sm cursor-wait"
+              >
+                Creating...
+              </span>
+
+              <template v-else-if="cat.status.type === 'created'">
+                <span class="text-sm text-green-600">
+                  <ExternalLink
+                    :href="`https://commons.wikimedia.org/wiki/${encodeURIComponent(cat.status.createdTitle)}`"
+                    class="hover:underline"
+                    :icon-size="10"
+                  >
+                    {{ cat.status.createdTitle.replaceAll('_', ' ') }}
+                  </ExternalLink>
+                </span>
+              </template>
+
+              <span
+                v-else-if="cat.status.type === 'error'"
+                class="text-sm text-red-500"
+              >
+                {{ cat.status.message }}
+              </span>
+            </span>
+
+            <span class="flex gap-3 text-sm text-surface-500 ml-4">
+              <span title="Subcategories">{{ cat.subcats }}c</span>
+              <span title="Files">{{ cat.files }}f</span>
+              <span title="Pages">{{ cat.pages }}p</span>
+              <span
+                title="Total"
+                class="text-base font-medium text-surface-700"
+              >
+                {{ cat.total }}
+              </span>
+            </span>
+          </div>
+
+          <!-- Reconcile candidate panel -->
+          <div
+            v-if="reconcileResults[cat.title]"
+            class="mt-2 ml-10 border-l-2 border-indigo-200 pl-3"
+          >
+            <div
+              v-if="reconcileResults[cat.title]?.length === 0"
+              class="text-sm text-surface-400"
+            >
+              No Wikidata matches found
             </div>
-          </template>
-        </div>
-      </TransitionGroup>
+            <div
+              v-for="candidate in reconcileResults[cat.title]"
+              :key="candidate.id"
+              :class="[
+                'flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer text-sm border hover:bg-sky-50 hover:border-sky-300 hover:border',
+                selectedQids[cat.title] === candidate.id
+                  ? 'bg-sky-50 border-sky-300'
+                  : 'border-transparent',
+              ]"
+              @click="toggleSelect(cat.title, candidate.id)"
+            >
+              <span
+                :class="[
+                  'w-3 h-3 rounded-full border-2 flex-shrink-0',
+                  selectedQids[cat.title] === candidate.id
+                    ? 'border-sky-500 bg-sky-500'
+                    : 'border-surface-400',
+                ]"
+              />
+              <ExternalLink
+                :href="`https://www.wikidata.org/wiki/${candidate.id}`"
+                :show-icon="false"
+                class="font-mono text-sky-800 hover:underline flex-shrink-0"
+                @click.stop
+              >
+                {{ candidate.id }}
+              </ExternalLink>
+              <span class="font-medium">{{ candidate.name }}</span>
+              <span class="text-surface-500 truncate">{{ candidate.description }}</span>
+              <span class="text-surface-500 ml-auto flex-shrink-0">{{ candidate.score }}%</span>
+              <ExternalLink
+                :href="`https://www.wikidata.org/wiki/${candidate.id}`"
+                class="text-sky-800 hover:underline hover:text-sky-900 flex-shrink-0"
+                @click.stop
+                :show-icon="false"
+              >
+                Wikidata ↗
+              </ExternalLink>
+            </div>
+          </div>
+        </template>
+      </div>
     </template>
   </DataView>
 </template>

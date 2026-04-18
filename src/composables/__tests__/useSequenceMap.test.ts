@@ -13,7 +13,13 @@ const makeItem = (
     compass_angle?: number
   } = {},
 ): Item => {
-  const { latitude = 48.8566, longitude = 2.3522, selected = true, compass_angle, ...rest } = overrides
+  const {
+    latitude = 48.8566,
+    longitude = 2.3522,
+    selected = true,
+    compass_angle,
+    ...rest
+  } = overrides
   return {
     id: 'item-1',
     index: 0,

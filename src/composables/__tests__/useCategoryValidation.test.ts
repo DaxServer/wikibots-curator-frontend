@@ -68,7 +68,7 @@ describe('useCategoryValidation', () => {
           Promise.resolve({
             query: {
               ...(normalized.length > 0 ? { normalized } : {}),
-              pages: Object.fromEntries(pages.map((p, i) => [String(i), p])),
+              pages,
             },
           }),
       }),
@@ -154,9 +154,7 @@ describe('useCategoryValidation', () => {
           ok: true,
           json: () =>
             Promise.resolve({
-              query: {
-                pages: Object.fromEntries(chunk.map((p, i) => [String(i), p])),
-              },
+              query: { pages: chunk },
             }),
         })
       }) as unknown as typeof fetch
