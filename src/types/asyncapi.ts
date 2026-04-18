@@ -99,7 +99,7 @@ export type FetchPresets = {
 }
 
 export type FetchPresetsData = {
-  handler: string
+  handler: ImageHandler
 }
 
 export type CheckCategoriesDeleted = {
