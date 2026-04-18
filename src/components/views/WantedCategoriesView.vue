@@ -85,25 +85,30 @@ onMounted(() => {
     </template>
 
     <template #list="slotProps">
-      <div class="flex flex-col">
+      <TransitionGroup
+        tag="div"
+        leave-active-class="transition-opacity duration-500 ease-in"
+        leave-to-class="opacity-0"
+        class="flex flex-col"
+      >
         <div
           v-for="(cat, index) in slotProps.items"
-          :key="index"
-          class="flex flex-col py-2 px-3 rounded odd:bg-surface-50 hover:bg-surface-100"
+          :key="cat.title"
+          class="flex flex-col py-3 px-4 rounded odd:bg-surface-50 hover:bg-surface-100"
         >
           <template v-if="loading && wantedCategories.length === 0">
             <Skeleton />
           </template>
           <template v-else>
             <div class="flex items-center justify-between">
-              <span class="text-xs text-surface-400 w-10">
+              <span class="text-sm text-surface-400 w-10">
                 {{ offset + Number(index) + 1 }}
               </span>
               <span class="flex items-center gap-2 flex-wrap flex-1">
                 <ExternalLink
                   :href="`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(cat.title)}`"
                   :show-icon="false"
-                  class="hover:underline"
+                  class="text-base font-medium hover:underline py-(--p-button-sm-padding-y)"
                 >
                   {{ cat.title.replaceAll('_', ' ') }}
                 </ExternalLink>
@@ -129,7 +134,7 @@ onMounted(() => {
 
                 <span
                   v-if="cat.status.type === 'deleted'"
-                  class="text-xs text-red-900 cursor-help"
+                  class="text-sm text-red-900 cursor-help"
                   title="This category was previously deleted"
                 >
                   Deleted
@@ -137,13 +142,13 @@ onMounted(() => {
 
                 <span
                   v-else-if="cat.status.type === 'creating'"
-                  class="text-xs cursor-wait"
+                  class="text-sm cursor-wait"
                 >
                   Creating...
                 </span>
 
                 <template v-else-if="cat.status.type === 'created'">
-                  <span class="text-xs text-green-600">
+                  <span class="text-sm text-green-600">
                     <ExternalLink
                       :href="`https://commons.wikimedia.org/wiki/${encodeURIComponent(cat.status.createdTitle)}`"
                       class="hover:underline"
@@ -156,19 +161,19 @@ onMounted(() => {
 
                 <span
                   v-else-if="cat.status.type === 'error'"
-                  class="text-xs text-red-500"
+                  class="text-sm text-red-500"
                 >
                   {{ cat.status.message }}
                 </span>
               </span>
 
-              <span class="flex gap-3 text-xs text-surface-500 ml-4">
+              <span class="flex gap-3 text-sm text-surface-500 ml-4">
                 <span title="Subcategories">{{ cat.subcats }}c</span>
                 <span title="Files">{{ cat.files }}f</span>
                 <span title="Pages">{{ cat.pages }}p</span>
                 <span
                   title="Total"
-                  class="font-medium text-surface-700"
+                  class="text-base font-medium text-surface-700"
                 >
                   {{ cat.total }}
                 </span>
@@ -180,12 +185,9 @@ onMounted(() => {
               v-if="reconcileResults[cat.title]"
               class="mt-2 ml-10 border-l-2 border-indigo-200 pl-3"
             >
-              <div class="text-xs font-semibold text-indigo-500 uppercase tracking-wide mb-1">
-                Wikidata Matches
-              </div>
               <div
                 v-if="reconcileResults[cat.title]?.length === 0"
-                class="text-xs text-surface-400"
+                class="text-sm text-surface-400"
               >
                 No Wikidata matches found
               </div>
@@ -193,10 +195,10 @@ onMounted(() => {
                 v-for="candidate in reconcileResults[cat.title]"
                 :key="candidate.id"
                 :class="[
-                  'flex items-center gap-2 py-1 px-2 rounded cursor-pointer text-xs hover:bg-indigo-50',
+                  'flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer text-sm border hover:bg-sky-50 hover:border-sky-300 hover:border',
                   selectedQids[cat.title] === candidate.id
-                    ? 'bg-indigo-50 border border-indigo-300'
-                    : '',
+                    ? 'bg-sky-50 border-sky-300'
+                    : 'border-transparent',
                 ]"
                 @click="toggleSelect(cat.title, candidate.id)"
               >
@@ -204,28 +206,34 @@ onMounted(() => {
                   :class="[
                     'w-3 h-3 rounded-full border-2 flex-shrink-0',
                     selectedQids[cat.title] === candidate.id
-                      ? 'border-indigo-500 bg-indigo-500'
+                      ? 'border-sky-500 bg-sky-500'
                       : 'border-surface-400',
                   ]"
                 />
-                <span class="font-mono text-indigo-600">{{ candidate.id }}</span>
-                <span class="font-medium">{{ candidate.name }}</span>
-                <span class="text-surface-400 truncate">{{ candidate.description }}</span>
-                <span class="text-surface-300 ml-auto flex-shrink-0">{{ candidate.score }}%</span>
-                <a
+                <ExternalLink
                   :href="`https://www.wikidata.org/wiki/${candidate.id}`"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-indigo-400 hover:text-indigo-600 flex-shrink-0"
+                  :show-icon="false"
+                  class="font-mono text-sky-800 hover:underline flex-shrink-0"
                   @click.stop
                 >
+                  {{ candidate.id }}
+                </ExternalLink>
+                <span class="font-medium">{{ candidate.name }}</span>
+                <span class="text-surface-500 truncate">{{ candidate.description }}</span>
+                <span class="text-surface-500 ml-auto flex-shrink-0">{{ candidate.score }}%</span>
+                <ExternalLink
+                  :href="`https://www.wikidata.org/wiki/${candidate.id}`"
+                  class="text-sky-800 hover:underline hover:text-sky-900 flex-shrink-0"
+                  @click.stop
+                  :show-icon="false"
+                >
                   Wikidata ↗
-                </a>
+                </ExternalLink>
               </div>
             </div>
           </template>
         </div>
-      </div>
+      </TransitionGroup>
     </template>
   </DataView>
 </template>

@@ -2,7 +2,7 @@ import type { WantedCategoryItem } from '@/types/asyncapi'
 import { ref } from 'vue'
 
 const RECONCILE_API = 'https://wikidata-reconciliation.wmcloud.org/en/api'
-const QUERY_LIMIT = 3
+const QUERY_LIMIT = 10
 
 export type ReconCandidate = {
   id: string
