@@ -2,7 +2,7 @@
 const store = useCollectionsStore()
 
 onMounted(() => {
-  store.setHandler('mapillary')
+  store.setHandler(ImageHandler.MAPILLARY)
 })
 </script>
 

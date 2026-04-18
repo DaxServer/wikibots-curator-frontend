@@ -1,12 +1,18 @@
-import type { BatchItem, BatchUploadItem, Creator, PresetItem } from '@/types/asyncapi'
-import type { Handler, Layout } from '@/types/collections'
+import {
+  ImageHandler,
+  type BatchItem,
+  type BatchUploadItem,
+  type Creator,
+  type PresetItem,
+} from '@/types/asyncapi'
+import type { Layout } from '@/types/collections'
 import type { Item, Metadata, MetadataKey } from '@/types/image'
 import { TITLE_ERROR_STATUSES } from '@/types/image'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, shallowRef } from 'vue'
 
 export const useCollectionsStore = defineStore('collections', () => {
-  const handler = ref<Handler>('mapillary')
+  const handler = ref<ImageHandler>(ImageHandler.MAPILLARY)
   const input = ref<string>('')
   const creator = ref<Creator>({ id: '', username: '', profile_url: '' })
 
@@ -220,7 +226,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     itemsPerPage.value = n
   }
 
-  const setHandler = (h: Handler) => {
+  const setHandler = (h: ImageHandler) => {
     handler.value = h
   }
 

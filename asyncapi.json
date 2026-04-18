@@ -1988,7 +1988,7 @@
         ],
         "properties": {
           "handler": {
-            "type": "string"
+            "$ref": "#/components/schemas/ImageHandler"
           }
         },
         "additionalProperties": false
