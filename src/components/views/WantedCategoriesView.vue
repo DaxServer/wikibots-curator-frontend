@@ -108,7 +108,7 @@ onMounted(() => {
                 <ExternalLink
                   :href="`https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(cat.title)}`"
                   :show-icon="false"
-                  class="text-md font-medium hover:underline py-(--p-button-sm-padding-y)"
+                  class="text-base font-medium hover:underline py-(--p-button-sm-padding-y)"
                 >
                   {{ cat.title.replaceAll('_', ' ') }}
                 </ExternalLink>
@@ -173,7 +173,7 @@ onMounted(() => {
                 <span title="Pages">{{ cat.pages }}p</span>
                 <span
                   title="Total"
-                  class="text-md font-medium text-surface-700"
+                  class="text-base font-medium text-surface-700"
                 >
                   {{ cat.total }}
                 </span>
