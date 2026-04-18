@@ -1,6 +1,7 @@
 import { useSocket } from '@/composables/useSocket'
+import { useWantedCategories } from '@/composables/useWantedCategories'
 import type { CheckCategoriesDeleted, CreateCategory, ServerMessage } from '@/types/asyncapi'
-import { ref, watch } from 'vue'
+import { onScopeDispose, ref, watch } from 'vue'
 
 export type CategoryStatus =
   | { type: 'idle' }
@@ -67,9 +68,13 @@ export const getCategoryText = (title: string): string => {
   return '{{subst:unc}}'
 }
 
+const CREATED_REMOVAL_DELAY_MS = 10_000
+
 export const useCreateCategory = () => {
   const { data, send } = useSocket
+  const { removeCategory } = useWantedCategories()
   const statuses = ref<Record<string, CategoryStatus>>({})
+  const removalTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
   watch(
     data,
@@ -84,6 +89,12 @@ export const useCreateCategory = () => {
       if (msg.type === 'CATEGORY_CREATED_RESPONSE') {
         const title = msg.data.title.replace(/^Category:/, '')
         statuses.value[title] = { type: 'created', createdTitle: msg.data.title }
+        const timer = setTimeout(() => {
+          delete statuses.value[title]
+          removeCategory(title)
+          removalTimers.delete(title)
+        }, CREATED_REMOVAL_DELAY_MS)
+        removalTimers.set(title, timer)
       }
       if (msg.type === 'ERROR') {
         for (const [title, status] of Object.entries(statuses.value)) {
@@ -116,6 +127,10 @@ export const useCreateCategory = () => {
       } satisfies CreateCategory),
     )
   }
+
+  onScopeDispose(() => {
+    for (const timer of removalTimers.values()) clearTimeout(timer)
+  })
 
   return { getStatus, checkIfDeleted, createCategory, getCategoryText }
 }
