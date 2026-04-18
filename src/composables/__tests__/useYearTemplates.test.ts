@@ -9,9 +9,7 @@ const buildMockFetch = (pages: QueryPage[]) =>
       ok: true,
       json: () =>
         Promise.resolve({
-          query: {
-            pages: Object.fromEntries(pages.map((p, i) => [String(i), p])),
-          },
+          query: { pages },
         }),
     }),
   )
@@ -139,7 +137,7 @@ describe('useYearTemplates', () => {
         ok: true,
         json: () =>
           Promise.resolve({
-            query: { pages: Object.fromEntries(chunk.map((p, i) => [String(i), p])) },
+            query: { pages: chunk },
           }),
       })
     }) as unknown as typeof fetch

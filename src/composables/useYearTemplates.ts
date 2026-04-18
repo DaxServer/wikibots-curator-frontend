@@ -32,10 +32,10 @@ const fetchExistingTemplates = async (templateTitles: string[]): Promise<Set<str
     if (!res.ok) continue
 
     const data = (await res.json()) as {
-      query?: { pages?: Record<string, { title: string; missing?: boolean }> }
+      query?: { pages?: Array<{ title: string; missing?: boolean }> }
     }
 
-    for (const page of Object.values(data.query?.pages ?? {})) {
+    for (const page of data.query?.pages ?? []) {
       if (!page.missing) existing.add(page.title)
     }
   }

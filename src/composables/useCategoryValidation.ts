@@ -53,7 +53,7 @@ export const useCategoryValidation = () => {
           const data = (await res.json()) as {
             query?: {
               normalized?: QueryNormalized[]
-              pages?: Record<string, QueryPage>
+              pages?: QueryPage[]
             }
           }
 
@@ -62,7 +62,7 @@ export const useCategoryValidation = () => {
             normalizedToOriginal.set(to.replace(/^Category:/, ''), from.replace(/^Category:/, ''))
           }
 
-          for (const page of Object.values(data.query?.pages ?? {})) {
+          for (const page of data.query?.pages ?? []) {
             const normalizedName = page.title.replace(/^Category:/, '')
             const originalName = normalizedToOriginal.get(normalizedName) ?? normalizedName
             queriedCategories.add(originalName)
