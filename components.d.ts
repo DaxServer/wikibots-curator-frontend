@@ -80,6 +80,7 @@ declare module 'vue' {
     Select: typeof import('primevue/select')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']
     SelectionItem: typeof import('./src/components/ui/SelectionItem.vue')['default']
+    SequenceMap: typeof import('./src/components/collection/SequenceMap.vue')['default']
     SharedDataTable: typeof import('./src/components/layout/SharedDataTable.vue')['default']
     SimpleMessage: typeof import('./src/components/feedback/SimpleMessage.vue')['default']
     Skeleton: typeof import('primevue/skeleton')['default']

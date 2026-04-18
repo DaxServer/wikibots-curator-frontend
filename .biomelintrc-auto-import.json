@@ -484,6 +484,7 @@
       "useScriptTag",
       "useScroll",
       "useScrollLock",
+      "useSequenceMap",
       "useSessionStorage",
       "useShare",
       "useSlots",

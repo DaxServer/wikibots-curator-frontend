@@ -27,6 +27,7 @@ export type MetadataValue = Metadata[MetadataKey]
 export type Item = {
   image: Image
   meta: Metadata
+  /** 1-based position in the sequence */
   index: number
   id: string
   isSkeleton: boolean

@@ -20,7 +20,7 @@ const onStepperUpdate = (next: string) => {
 
 <template>
   <div :class="['flex flex-col gap-4', store.stepper !== '3' && 'max-w-7xl mx-auto']">
-    <div :class="store.stepper === '3' && 'max-w-7xl mx-auto'">
+    <div :class="store.stepper === '3' && 'max-w-7xl mx-auto w-full'">
       <Stepper
         :value="store.stepper"
         @update:value="onStepperUpdate"
@@ -81,6 +81,8 @@ const onStepperUpdate = (next: string) => {
       :total-images="store.totalImages"
       :id-label="idLabel"
     />
+
+    <SequenceMap v-if="store.stepper === '2'" />
 
     <SdcWarningMessage v-if="store.stepper === '2' && store.anyItemsWithExistingFiles" />
 
