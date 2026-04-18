@@ -122,7 +122,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div :id="MAP_CONTAINER_ID" class="map-container max-w-7xl mx-auto w-full" />
+  <div
+    :id="MAP_CONTAINER_ID"
+    class="map-container max-w-7xl mx-auto w-full"
+  />
 </template>
 
 <style scoped>

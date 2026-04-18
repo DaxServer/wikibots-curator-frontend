@@ -28,9 +28,5 @@ export const useWantedCategories = () => {
     send(JSON.stringify({ type: 'FETCH_WANTED_CATEGORIES', data: { offset, filter } }))
   }
 
-  const removeCategory = (title: string) => {
-    wantedCategories.value = wantedCategories.value.filter((c) => c.title !== title)
-  }
-
-  return { wantedCategories, loading, total, fetchWantedCategories, removeCategory }
+  return { wantedCategories, loading, total, fetchWantedCategories }
 }

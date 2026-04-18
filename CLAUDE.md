@@ -187,6 +187,24 @@ beforeEach(() => {
 })
 ```
 
+For non-ref module-level state (e.g. a `Set`), export it directly and reset via a typed dynamic import:
+
+```ts
+// composable
+export const queriedItems = new Set<string>()
+
+// test
+import type * as Mod from '../useMyComposable'
+beforeEach(async () => {
+  const mod = (await import('../useMyComposable')) as typeof Mod
+  mod.queriedItems.clear()
+})
+```
+
+**POST body assertions in tests:** Use `new URLSearchParams(rawBody).get('key')` to assert on fetch POST bodies — the raw body uses `+` for spaces so `.toContain('foo bar')` won't match.
+
+**Lazy DataView client-side filtering:** Use `v-show` on rows rather than filtering the `:value` array — changing `:value` on a `lazy` DataView corrupts pagination state (total-records, first, page).
+
 **Auto-imports regeneration:** After adding a new composable or store, `bun typecheck` will fail with "Cannot find name" until `auto-imports.d.ts` is regenerated. Run `bunx vite build` (which triggers Vite plugins including `unplugin-auto-import`) to regenerate it, then delete `dist/` afterwards.
 
 **Third-party constants in components:** Constants from external packages (e.g. `FilterMatchMode` from `@primevue/core/api`) are not auto-imported by default. Add them to the `imports` array in `vite.config.ts` under `AutoImport({imports: [...]})` rather than hardcoding string literals or adding manual imports to components:
