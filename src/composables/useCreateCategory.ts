@@ -1,5 +1,10 @@
 import { useSocket } from '@/composables/useSocket'
-import type { CheckCategoriesDeleted, CreateCategory, ServerMessage } from '@/types/asyncapi'
+import type {
+  CheckCategoriesDeleted,
+  CreateCategory,
+  RecategorizeFiles,
+  ServerMessage,
+} from '@/types/asyncapi'
 import { ref, watch } from 'vue'
 
 export type CategoryStatus =
@@ -7,7 +12,18 @@ export type CategoryStatus =
   | { type: 'deleted' }
   | { type: 'creating' }
   | { type: 'created'; createdTitle: string }
+  | { type: 'recategorizing' }
+  | { type: 'recategorized'; count: number }
   | { type: 'error'; message: string }
+
+const ZERO_DECIMAL_FOCAL_LENGTH = /^Lens focal length (\d+)[.,](0+) mm$/
+
+export const getFocalLengthRedirect = (title: string): string | null => {
+  const normalized = title.replaceAll('_', ' ')
+  const match = normalized.match(ZERO_DECIMAL_FOCAL_LENGTH)
+  if (!match) return null
+  return `Lens focal length ${parseInt(match[1]!, 10)} mm`
+}
 
 const MONTH_NUMBER: Record<string, string> = {
   January: '01',
@@ -54,6 +70,17 @@ const CATEGORY_TEXT_MAP = {
       return `{{ImageTOC}}\n{{Hiddencat}}\n\n[[Category:Photographs by lens focal length| ${padded}]]`
     },
   },
+  lensFocalLengthDecimal: {
+    pattern: /^Lens focal length (\d+)[.,](\d+) mm$/,
+    getText: (m: RegExpMatchArray) => {
+      const integer = parseInt(m[1]!, 10)
+      const decimal = m[2]!
+      if (parseInt(decimal, 10) === 0) {
+        return `[[Category:Lens focal length ${integer} mm]]`
+      }
+      return `{{Hiddencat}}\n{{ImageTOC}}\n[[Category:Lens focal length ${integer} mm| ${integer}.${decimal}]]`
+    },
+  },
 } satisfies Record<string, { pattern: RegExp; getText: (m: RegExpMatchArray) => string }>
 
 export type CategoryTextKey = keyof typeof CATEGORY_TEXT_MAP
@@ -86,9 +113,12 @@ export const useCreateCategory = () => {
         const title = msg.data.title.replace(/^Category:/, '')
         statuses.value[title] = { type: 'created', createdTitle: msg.data.title }
       }
+      if (msg.type === 'RECATEGORIZE_FILES_RESPONSE') {
+        statuses.value[msg.data.source] = { type: 'recategorized', count: msg.data.count }
+      }
       if (msg.type === 'ERROR') {
         for (const [title, status] of Object.entries(statuses.value)) {
-          if (status.type === 'creating') {
+          if (status.type === 'creating' || status.type === 'recategorizing') {
             statuses.value[title] = { type: 'error', message: msg.data }
           }
         }
@@ -118,5 +148,15 @@ export const useCreateCategory = () => {
     )
   }
 
-  return { getStatus, checkIfDeleted, createCategory, getCategoryText }
+  const recategorizeFiles = (source: string, target: string): void => {
+    statuses.value[source] = { type: 'recategorizing' }
+    send(
+      JSON.stringify({
+        type: 'RECATEGORIZE_FILES',
+        data: { source, target },
+      } satisfies RecategorizeFiles),
+    )
+  }
+
+  return { getStatus, checkIfDeleted, createCategory, recategorizeFiles, getCategoryText }
 }

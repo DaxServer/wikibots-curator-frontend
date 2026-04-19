@@ -122,6 +122,12 @@
         },
         "SavePreset": {
           "$ref": "#/components/messages/SavePreset"
+        },
+        "RecategorizeFiles": {
+          "$ref": "#/components/messages/RecategorizeFiles"
+        },
+        "RecategorizeFilesResponse": {
+          "$ref": "#/components/messages/RecategorizeFilesResponse"
         }
       }
     }
@@ -189,6 +195,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/UploadSlice"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/RecategorizeFiles"
         }
       ]
     },
@@ -254,6 +263,9 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/WantedCategoriesResponse"
+        },
+        {
+          "$ref": "#/channels/wsChannel/messages/RecategorizeFilesResponse"
         }
       ]
     }
@@ -449,6 +461,16 @@
         "payload": {
           "$ref": "#/components/schemas/SavePreset"
         }
+      },
+      "RecategorizeFiles": {
+        "payload": {
+          "$ref": "#/components/schemas/RecategorizeFiles"
+        }
+      },
+      "RecategorizeFilesResponse": {
+        "payload": {
+          "$ref": "#/components/schemas/RecategorizeFilesResponse"
+        }
       }
     },
     "schemas": {
@@ -541,7 +563,10 @@
             "format": "date-time"
           },
           "edit_group_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "username": {
             "type": "string"
@@ -2236,6 +2261,75 @@
           },
           "total": {
             "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecategorizeFilesData": {
+        "type": "object",
+        "required": [
+          "source",
+          "target"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecategorizeFiles": {
+        "type": "object",
+        "required": [
+          "type",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "const": "RECATEGORIZE_FILES"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RecategorizeFilesData"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecategorizeFilesResponseData": {
+        "type": "object",
+        "required": [
+          "source",
+          "count"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecategorizeFilesResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "data",
+          "nonce"
+        ],
+        "properties": {
+          "type": {
+            "const": "RECATEGORIZE_FILES_RESPONSE"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RecategorizeFilesResponseData"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Timestamp nonce to ensure change detection"
           }
         },
         "additionalProperties": false
