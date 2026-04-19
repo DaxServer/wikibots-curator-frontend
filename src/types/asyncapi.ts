@@ -205,6 +205,16 @@ export type UploadSliceData = {
   handler: string
 }
 
+export type RecategorizeFiles = {
+  type: 'RECATEGORIZE_FILES'
+  data: RecategorizeFilesData
+}
+
+export type RecategorizeFilesData = {
+  source: string
+  target: string
+}
+
 export type BatchCreated = {
   type: 'BATCH_CREATED'
   data: number
@@ -553,6 +563,17 @@ export type WantedCategoryItem = {
   total: number
 }
 
+export type RecategorizeFilesResponse = {
+  type: 'RECATEGORIZE_FILES_RESPONSE'
+  data: RecategorizeFilesResponseData
+  nonce: string
+}
+
+export type RecategorizeFilesResponseData = {
+  source: string
+  count: number
+}
+
 export type Claims = Record<
   string,
   (
@@ -806,6 +827,7 @@ export type ClientMessage =
   | UnsubscribeBatchesList
   | Upload
   | UploadSlice
+  | RecategorizeFiles
 
 export type ServerMessage =
   | BatchCreated
@@ -827,3 +849,4 @@ export type ServerMessage =
   | UploadsUpdate
   | UploadSliceAck
   | WantedCategoriesResponse
+  | RecategorizeFilesResponse

@@ -1,10 +1,6 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
-This is the Curator Frontend - a Vue 3 + TypeScript application for Wikimedia's image curation tool. It manages image collections from Mapillary, handles batch uploads to Wikimedia Commons, and provides administrative functionality.
+Curator Frontend — Vue 3 + TypeScript app for Wikimedia image curation. Manages Mapillary image collections, batch uploads to Wikimedia Commons, admin functionality.
 
 ## Development Commands
 
@@ -25,7 +21,7 @@ bun format
 bun generate
 ```
 
-**Note:** `asyncapi.json` is the source of truth for WebSocket messages. After editing:
+**Note:** `asyncapi.json` = source of truth for WebSocket messages. After editing:
 1. Run `bun generate` - Updates backend Python models AND frontend TypeScript types
 2. Backend code generation auto-formats with ruff
 3. Frontend types are generated to `src/types/asyncapi.ts`
@@ -35,34 +31,34 @@ bun generate
    - `channels/wsChannel/messages/` - Channel reference
    - `operations/ServerMessage/messages/` - Server operation (alphabetical order)
 
-**Generator type inference:** `bun generate` uses `tsc` to infer template literal types from JSON schema patterns (e.g., `ItemId = \`Q${number}\``). If these degrade to `string` after a dep bump, the cause is likely a new TypeScript error (e.g., TS5112 in TS 6.0) polluting the `tsc` output. The fix is adding the relevant suppression flag to the `Bun.spawnSync` call in `getInferredType()` in `scripts/asyncapi.ts`.
+**Generator type inference:** `bun generate` uses `tsc` to infer template literal types from JSON schema patterns (e.g., `ItemId = \`Q${number}\``). If types degrade to `string` after dep bump, likely new TypeScript error (e.g., TS5112 in TS 6.0) polluting `tsc` output. Fix: add suppression flag to `Bun.spawnSync` call in `getInferredType()` in `scripts/asyncapi.ts`.
 
 ## Technology Stack
 
 - **Vue 3** with Composition API (`<script setup lang="ts">`)
-- **TypeScript** with strict type checking (`noExplicitAny` is enforced)
-- **Vite** as build tool
-- **Bun** 1.3.9 as package manager (enforced in package.json)
-- **Pinia** for state management
+- **TypeScript** strict type checking (`noExplicitAny` enforced)
+- **Vite** build tool
+- **Bun** 1.3.9 package manager (enforced in package.json)
+- **Pinia** state management
 - **PrimeVue** 4.5.4 + TailwindCSS for UI
-- **Biome** for linting (Prettier for formatting only)
+- **Biome** linting (Prettier for formatting only)
 
 ## Auto-Import Configuration
 
-The project uses extensive auto-imports configured in `vite.config.ts`:
+Auto-imports configured in `vite.config.ts`:
 
 ### What's Auto-Imported
 
 **Vue ecosystem:** All Vue composables (`ref`, `computed`, `watch`, etc.), Pinia functions, Vue Router
 
-**VueUse:** All composables from `@vueuse/core` plus `useRouteParams` from `@vueuse/router`
+**VueUse:** All composables from `@vueuse/core` + `useRouteParams` from `@vueuse/router`
 
-**Project files:** All files in `src/**` directories are auto-imported
+**Project files:** All `src/**` files auto-imported
 - Components: No manual imports needed for `.vue` files
-- Composables: No manual imports needed for `.ts` files in composables
+- Composables: No manual imports for `.ts` in composables
 - Stores: Pinia stores in `src/stores/`
 
-**PrimeVue:** Components auto-resolved via `PrimeVueResolver`, plus specific imports:
+**PrimeVue:** Components auto-resolved via `PrimeVueResolver`, plus:
 - `useConfirm` from `primevue/useconfirm`
 - Types: `MeterItem`, `DataTableCellEditEvent`, `MessageProps`, etc.
 
@@ -70,19 +66,19 @@ The project uses extensive auto-imports configured in `vite.config.ts`:
 
 ### Important Caveat
 
-Auto-imports can generate TypeScript errors with JavaScript reserved keywords (e.g., `const`, `var`, `function`). If `auto-imports.d.ts` has errors related to reserved keywords, manually remove those lines from the generated file.
+Auto-imports can generate TypeScript errors with JavaScript reserved keywords (e.g., `const`, `var`, `function`). If `auto-imports.d.ts` has reserved keyword errors, manually remove those lines.
 
-**Composable `.ts` files are NOT auto-imported.** Only `.vue` SFCs receive Vite's auto-import treatment at runtime. Composable `.ts` files (e.g., `usePresetManager.ts`) must explicitly import stores, other composables, and PrimeVue utilities like `useToast`.
+**Composable `.ts` files are NOT auto-imported.** Only `.vue` SFCs get Vite's auto-import at runtime. Composable `.ts` files (e.g., `usePresetManager.ts`) must explicitly import stores, other composables, and PrimeVue utilities like `useToast`.
 
-**Composable cleanup — `onScopeDispose` not `onUnmounted`:** Use `onScopeDispose` for cleanup in composables — works in both component context and bare `effectScope` (tests). Explicitly import it from `'vue'` even though it appears in `auto-imports.d.ts`; TypeScript may flag it as "declared but never read" (false positive from the global shadow) but bun test needs the real import at runtime.
+**Composable cleanup — `onScopeDispose` not `onUnmounted`:** Use `onScopeDispose` in composables — works in component context and bare `effectScope` (tests). Explicitly import from `'vue'` even though it appears in `auto-imports.d.ts`; TypeScript may flag as "declared but never read" (false positive) but bun test needs real import at runtime.
 
 ### Biome Integration
 
-Auto-import generates a `.biomelintrc-auto-import.json` that configures Biome to ignore auto-imported variables. The linter is configured to exclude `**/*.d.ts` files.
+Auto-import generates `.biomelintrc-auto-import.json` configuring Biome to ignore auto-imported vars. Linter excludes `**/*.d.ts`.
 
 ### Layout Width
 
-The `max-w-7xl mx-auto` constraint for all step content (including Step 3's preset card) lives in `CollectionsTable.vue:22`, not in the step components themselves.
+`max-w-7xl mx-auto` constraint for all step content lives in `CollectionsTable.vue:22`, not step components.
 
 ## Architecture
 
@@ -117,25 +113,25 @@ src/
 
 ### State Management Pattern
 
-Centralized state in Pinia stores located in `src/stores/`:
+Pinia stores in `src/stores/`:
 
-- **collections.store.ts** - Main state for image collections, selection, pagination, batch uploads, global metadata
-- **auth.store.ts** - Authentication state
-- **admin.store.ts** - Administrative functions
+- **collections.store.ts** - Image collections, selection, pagination, batch uploads, global metadata
+- **auth.store.ts** - Auth state
+- **admin.store.ts** - Admin functions
 
-Stores use the Composition API pattern with `defineStore` (arrow function syntax). State is reactive with `ref`/`reactive`, and computed properties derive values.
+Stores use Composition API pattern with `defineStore` (arrow function syntax). State reactive via `ref`/`reactive`; computed properties derive values.
 
-**Store vs local state:** Use Pinia store for state shared across multiple components. Local refs duplicated across components require manual event synchronization chains that are fragile and hard to maintain. If state affects multiple components or requires events to stay in sync, it belongs in the store.
+**Store vs local state:** Use Pinia store for state shared across components. Local refs duplicated across components need manual event sync chains — fragile. State affecting multiple components or needing sync → belongs in store.
 
 ### Component Patterns
 
-Components use `<script setup lang="ts">` with Composition API. Since components and composables are auto-imported, you typically won't see import statements for them.
+Components use `<script setup lang="ts">`. Components/composables auto-imported — no import statements needed.
 
-Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
+Icons NOT auto-imported — manually import from PrimeIcons.
 
-**Template conventions:** Props are accessed directly by name (not `props.propName`). Events are emitted with `$emit('event')` directly in templates, not via the `emit` const from `defineEmits`. The `const emit =` assignment is only needed when emitting from script logic.
+**Template conventions:** Props accessed by name directly (not `props.propName`). Events emitted via `$emit('event')` in templates, not `emit` const from `defineEmits`. `const emit =` only needed when emitting from script logic.
 
-**Vue Transitions:** For complex animations like accordions, use named transitions with scoped CSS instead of inline Transition props with Tailwind classes:
+**Vue Transitions:** For complex animations like accordions, use named transitions with scoped CSS over inline Transition props with Tailwind:
 ```vue
 <Transition name="accordion">
   <div v-if="isOpen" class="overflow-hidden">...</div>
@@ -154,30 +150,30 @@ Icons are NOT auto-imported - they must be manually imported from PrimeIcons.
 </style>
 ```
 
-**Parent-child communication:** Use event emitters instead of `defineExpose` for sharing state between components. Emit state changes up the component tree rather than exposing refs.
+**Parent-child communication:** Use event emitters over `defineExpose`. Emit state changes up component tree; don't expose refs.
 
-**TypeScript null handling:** Be explicit about nullable props. Use `prop: Type | null` instead of `prop?: Type` when a prop can be null, to distinguish between "not provided" (undefined) and "explicitly null" values.
+**TypeScript null handling:** Explicit nullable props: `prop: Type | null` over `prop?: Type` when prop can be null — distinguishes "not provided" (undefined) from "explicitly null".
 
 ### Testing
 
-- Tests in `__tests__/` directories alongside source files
-- `bun:test` as test runner
+- Tests in `__tests__/` alongside source files
+- `bun:test` test runner
 - Happy DOM for browser simulation
 - `@pinia/testing` for store testing
-- Tests follow the pattern: `[name].test.ts`
-- Store tests go in `src/stores/__tests__/`; shared test fixtures in `src/__tests__/fixtures.ts` (imported as `@/__tests__/fixtures`)
+- Pattern: `[name].test.ts`
+- Store tests in `src/stores/__tests__/`; shared fixtures in `src/__tests__/fixtures.ts` (imported as `@/__tests__/fixtures`)
 
-**Vue watcher timing in tests:** Watchers fire asynchronously; `await nextTick()` is needed between a reactive state change and any assertion that depends on the watcher callback having run (e.g., triggering a second debounced call to exercise abort behavior).
+**Vue watcher timing in tests:** Watchers fire async; `await nextTick()` needed between reactive state change and assertions depending on watcher callback (e.g., triggering second debounced call to exercise abort behavior).
 
-**Debounce mock pattern:** When testing composables that use `ts-debounce`, `mock.module('ts-debounce', ...)` must appear before any import of the module under test. The composable is imported dynamically inside `beforeEach` after `mock.restore()` so each test gets a fresh module load. A `pendingDebounceExecutors` array captures debounced calls for manual execution in tests. See `src/composables/__tests__/useTemplateEditor.test.ts` for the full pattern.
+**Debounce mock pattern:** `mock.module('ts-debounce', ...)` must appear before any import of module under test. Composable imported dynamically inside `beforeEach` after `mock.restore()` — each test gets fresh module load. `pendingDebounceExecutors` array captures debounced calls for manual execution. See `src/composables/__tests__/useTemplateEditor.test.ts` for full pattern.
 
-**Watcher flush in composable tests:** Watchers in composables default to async (microtask) flush. When a test sets a reactive ref and immediately asserts on the result, use `{ flush: 'sync' }` on the watcher so it fires synchronously:
+**Watcher flush in composable tests:** Watchers default to async (microtask) flush. When test sets reactive ref and immediately asserts, use `{ flush: 'sync' }` on the watcher so it fires synchronously:
 
 ```ts
 watch(data, handler, { flush: 'sync' })
 ```
 
-**Module-level composable state in tests:** Composables that hold module-level `ref` state (singletons) retain their values across tests. Reset the state explicitly in `beforeEach`:
+**Module-level composable state in tests:** Composables holding module-level `ref` state (singletons) retain values across tests. Reset explicitly in `beforeEach`:
 
 ```ts
 beforeEach(() => {
@@ -187,7 +183,7 @@ beforeEach(() => {
 })
 ```
 
-For non-ref module-level state (e.g. a `Set`), export it directly and reset via a typed dynamic import:
+For non-ref module-level state (e.g. a `Set`), export directly and reset via typed dynamic import:
 
 ```ts
 // composable
@@ -201,19 +197,19 @@ beforeEach(async () => {
 })
 ```
 
-**POST body assertions in tests:** Use `new URLSearchParams(rawBody).get('key')` to assert on fetch POST bodies — the raw body uses `+` for spaces so `.toContain('foo bar')` won't match.
+**POST body assertions in tests:** Use `new URLSearchParams(rawBody).get('key')` to assert on fetch POST bodies — raw body uses `+` for spaces, so `.toContain('foo bar')` won't match.
 
-**Lazy DataView client-side filtering:** Use `v-show` on rows rather than filtering the `:value` array — changing `:value` on a `lazy` DataView corrupts pagination state (total-records, first, page).
+**Lazy DataView client-side filtering:** Use `v-show` on rows, not filtering `:value` array — changing `:value` on `lazy` DataView corrupts pagination state (total-records, first, page).
 
-**Auto-imports regeneration:** After adding a new composable or store, `bun typecheck` will fail with "Cannot find name" until `auto-imports.d.ts` is regenerated. Run `bunx vite build` (which triggers Vite plugins including `unplugin-auto-import`) to regenerate it, then delete `dist/` afterwards.
+**Auto-imports regeneration:** After adding composable/store, `bun typecheck` fails with "Cannot find name" until `auto-imports.d.ts` regenerated. Run `bunx vite build` (triggers `unplugin-auto-import`) then delete `dist/`.
 
-**Third-party constants in components:** Constants from external packages (e.g. `FilterMatchMode` from `@primevue/core/api`) are not auto-imported by default. Add them to the `imports` array in `vite.config.ts` under `AutoImport({imports: [...]})` rather than hardcoding string literals or adding manual imports to components:
+**Third-party constants in components:** Constants from external packages (e.g. `FilterMatchMode` from `@primevue/core/api`) not auto-imported by default. Add to `imports` array in `vite.config.ts` under `AutoImport({imports: [...]})` — don't hardcode string literals or add manual imports:
 
 ```ts
 { from: '@primevue/core/api', imports: ['FilterMatchMode'] }
 ```
 
-**Composable tests with watchers:** Composables that call `watch()` (including transitively) must run inside an `effectScope` to prevent watcher leaks across tests:
+**Composable tests with watchers:** Composables calling `watch()` (including transitively) must run inside `effectScope` to prevent watcher leaks:
 ```ts
 import { afterEach, beforeEach } from 'bun:test'
 import { effectScope } from 'vue'
@@ -223,7 +219,7 @@ afterEach(() => { scope.stop() })
 const run = () => scope.run(() => useMyComposable())!
 ```
 
-**Drag-drop into textareas:** Native textareas accept text drops without any JavaScript — no `@dragover.prevent`, `@drop`, `@focus`, or `@blur` on the textarea. Any of these can interfere with native drop behavior (e.g. `@blur` firing on mousedown of the drag source triggers Vue re-renders mid-drag; `@dragover.prevent` signals the browser that JS owns the drop, breaking native insertion). For card ring highlights use CSS `focus-within:ring-2 focus-within:ring-X-300` on the parent Card instead of JS focus tracking.
+**Drag-drop into textareas:** Native textareas accept text drops without JS — no `@dragover.prevent`, `@drop`, `@focus`, or `@blur`. These interfere with native drop behavior (e.g. `@blur` fires on mousedown of drag source → Vue re-renders mid-drag; `@dragover.prevent` signals browser JS owns drop → breaks native insertion). Card ring highlights: use CSS `focus-within:ring-2 focus-within:ring-X-300` on parent Card, not JS focus tracking.
 
 **PrimeVue mocks in tests:** `useToast` and similar PrimeVue utilities require mocking before any import that depends on them:
 ```ts
@@ -232,57 +228,65 @@ mock.module('primevue/usetoast', () => ({ useToast: () => ({ add: mock(() => {})
 
 ## API Proxying
 
-Development server (Vite) proxies API calls to backend:
+Dev server (Vite) proxies API calls to backend:
 
 - `/auth/*` → `http://localhost:8000`
 - `/api/*` → `http://localhost:8000`
 - `/callback/wikimedia` → rewritten to `/auth/callback`
 
-No hardcoded API hosts - use proxy paths.
+No hardcoded API hosts — use proxy paths.
 
 ## WebSocket Integration
 
-Real-time features use WebSocket connections defined in AsyncAPI contract (`src/types/asyncapi.ts` generated by `bun generate`). The `useSocket.ts` composable handles WebSocket connections for upload status updates.
+Real-time features use WebSocket connections defined in AsyncAPI contract (`src/types/asyncapi.ts` generated by `bun generate`). `useSocket.ts` handles WebSocket for upload status updates.
 
 **Navigation after WebSocket responses:**
-- For responses that should trigger navigation (e.g., retry creates new batch), set a store state (e.g., `retryNewBatchId`)
-- Components watch the store state and navigate when it changes using `router.push()`
-- Unsubscribe from old batch before navigating to avoid stale subscriptions
+- For responses triggering navigation (e.g., retry creates new batch), set store state (e.g., `retryNewBatchId`)
+- Components watch store state, navigate on change via `router.push()`
+- Unsubscribe from old batch before navigating — avoid stale subscriptions
 - Skip unnecessary data fetches when navigating away (early-return or conditional in retry functions)
 
 **State updates after WebSocket responses:**
-- WebSocket responses that update store arrays (e.g., `PRESETS_LIST` → `store.presets`) are asynchronous
-- Use watchers on the updated store property to complete dependent operations (e.g., setting `currentPresetId` after save)
-- Use temporary flags to prevent watcher conflicts when multiple watchers observe the same reactive source
+- WebSocket responses updating store arrays (e.g., `PRESETS_LIST` → `store.presets`) are async
+- Use watchers on updated store property to complete dependent ops (e.g., setting `currentPresetId` after save)
+- Temporary flags prevent watcher conflicts when multiple watchers observe same reactive source
 
 ## Code Style
 
-**Typed const dispatch maps:** Use `satisfies Record<string, ...>` (not `as const`) to define known-key maps while keeping narrow literal types for `keyof typeof`. Example: `CATEGORY_TEXT_MAP` in `useCreateCategory.ts`. `keyof typeof MAP` then yields a precise union rather than `string`.
+**Typed const dispatch maps:** Use `satisfies Record<string, ...>` (not `as const`) for known-key maps — keeps narrow literal types for `keyof typeof`. Example: `CATEGORY_TEXT_MAP` in `useCreateCategory.ts`. `keyof typeof MAP` yields precise union, not `string`.
 
-- **No `any` types** - Enforced by Biome linter (`noExplicitAny: error`)
-- **Single quotes, semicolons as-needed** - Configured in biome.json
-- **Utility classes only** - No manual styles (TailwindCSS)
-- **No linter ignore statements** - Fix issues instead
-- **No dark theme** - Do not use `dark:` Tailwind variants; the app does not support dark mode
+- **No `any` types** — Biome enforces (`noExplicitAny: error`)
+- **Single quotes, semicolons as-needed** — configured in biome.json
+- **Utility classes only** — no manual styles (TailwindCSS)
+- **No linter ignore statements** — fix issues instead
+- **No dark theme** — don't use `dark:` Tailwind variants; app doesn't support dark mode
 - Run `bun typecheck && bun lint && bun format` before committing
 
 ## Async Patterns
 
-**AbortController signal capture:** When using `AbortController` in async functions, always capture `signal` from the controller before the `await` (`const { signal } = abortController`) and use `signal.aborted` — not `abortController?.signal.aborted` — in `finally` blocks. The shared `abortController` variable may be reassigned by a subsequent call before the current `finally` runs, causing the wrong signal to be checked.
+**AbortController signal capture:** Capture `signal` from controller before `await` (`const { signal } = abortController`), use `signal.aborted` — not `abortController?.signal.aborted` — in `finally` blocks. Shared `abortController` may be reassigned by subsequent call before current `finally` runs → wrong signal checked.
 
 ## Feature Flags
 
-`src/composables/useFeatureFlags.ts` gates features by `auth.isAdmin`. Current flags: `redlinksEnabled`, `wantedCategoriesEnabled`. Returns `ComputedRef<boolean>` values — wrap with `computed(() => auth.isAdmin)` rather than a plain ref, since Pinia auto-unwraps refs in returned objects and tests would get `undefined` on `.value`.
+`src/composables/useFeatureFlags.ts` gates features by `auth.isAdmin`. Flags: `redlinksEnabled`, `wantedCategoriesEnabled`. Returns `ComputedRef<boolean>` — wrap with `computed(() => auth.isAdmin)` not plain ref; Pinia auto-unwraps refs in returned objects → tests get `undefined` on `.value`.
+
+## Wanted Categories
+
+**`getCategoryText(title)`** in `useCreateCategory.ts` maps category title patterns to wikitext via `CATEGORY_TEXT_MAP` (satisfies pattern). Each entry has `pattern: RegExp` and `getText(match)`. Returns `{{subst:unc}}` for unrecognized titles.
+
+**`getFocalLengthRedirect(title)`** returns target integer category for zero-decimal focal length titles (`79.0 mm` / `79,0 mm` → `Lens focal length 79 mm`), or `null` for all other. Used in `WantedCategoriesView` to show "Recategorize" over "Create" and exclude from bulk select (`visibleIdleTitles`).
+
+**`CategoryStatus`** union includes `recategorizing` and `recategorized` (with `count`) for `RECATEGORIZE_FILES` WebSocket flow, alongside create/error states.
 
 ## Wikimedia Commons API
 
-**Titles per request limit:** The `action=query&titles=` parameter accepts at most 50 titles for non-bot users (500 with `apihighlimits`). Both `useTitleVerification.ts` and `useCategoryValidation.ts` chunk requests at 50 using a `for (let i = 0; i < items.length; i += 50)` loop with a shared `AbortController` signal checked at the top of each iteration.
+**Titles per request limit:** `action=query&titles=` accepts at most 50 titles for non-bot users (500 with `apihighlimits`). Both `useTitleVerification.ts` and `useCategoryValidation.ts` chunk at 50 via `for (let i = 0; i < items.length; i += 50)` loop with shared `AbortController` signal checked each iteration.
 
 ## PrimeVue Component Patterns
 
-**DataTable header background (Noir theme):** Setting `sort-field`/`sort-order` pre-selects a sorted column on load, which triggers `selectedBackground` (`highlight.background` = black in Noir) on that header. Don't set default sort props unless a black header is intended. To override header colors globally, add component token overrides in `src/assets/Noir.ts` under `components.datatable.headerCell` — CSS class selectors (even with `!important`) don't win against PrimeVue v4's dynamically injected theme tokens.
+**DataTable header background (Noir theme):** Setting `sort-field`/`sort-order` pre-selects sorted column on load → triggers `selectedBackground` (black in Noir) on that header. Don't set default sort props unless black header intended. Override header colors globally via component tokens in `src/assets/Noir.ts` under `components.datatable.headerCell` — CSS selectors (even `!important`) lose to PrimeVue v4's dynamically injected theme tokens.
 
-**DatePicker events:** Use `@update:model-value` as the single handler for all date changes (selection and clear). The separate `@date-select` and `@clear` events are unreliable — `@clear` may not fire when `show-clear` is used. Emit downstream events (e.g., `dateChange`) from `@update:model-value` instead.
+**DatePicker events:** Use `@update:model-value` as single handler for all date changes. `@date-select` and `@clear` unreliable — `@clear` may not fire with `show-clear`. Emit downstream events (e.g., `dateChange`) from `@update:model-value`.
 
 **Button styling:** Use `severity` prop with `outlined` for semantic styling:
 - Normal action: `outlined` (default)
@@ -293,37 +297,37 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 ### Title Template System
 
-The title template system lives in `src/composables/useTitleTemplate.ts` and `src/utils/titleTemplate.ts`. `applyFieldTemplate()` in `titleTemplate.ts` is a regex-based variant (no Handlebars) that substitutes `{{known.path}}` tokens and leaves unknown `{{...}}` tokens (e.g. wikitext like `{{Creator|John}}`) untouched.
+Title template system in `src/composables/useTitleTemplate.ts` and `src/utils/titleTemplate.ts`. `applyFieldTemplate()` in `titleTemplate.ts` regex-based (no Handlebars) — substitutes `{{known.path}}` tokens, leaves unknown `{{...}}` tokens (e.g. wikitext `{{Creator|John}}`) untouched.
 
-**`meta.title` semantics:** `Metadata.title` stores only user-entered titles. When empty, `getEffectiveTitle()` in `useTitleVerification.ts` falls back to `getTemplateTitle()` which computes from `store.globalTitleTemplate`. `verifyTitles()` never writes to `meta.title` — it only updates `titleStatus`.
+**`meta.title` semantics:** `Metadata.title` stores user-entered titles only. When empty, `getEffectiveTitle()` in `useTitleVerification.ts` falls back to `getTemplateTitle()` computing from `store.globalTitleTemplate`. `verifyTitles()` never writes to `meta.title` — only updates `titleStatus`.
 
 **`applyMetaDefaults` signature:** Takes `Item` (not `Metadata`) so image context is available for `applyFieldTemplate` when falling back to `globalDescription`/`globalCategories`.
 
-**`GlobalTemplateEditor`:** When `fieldTemplatesEnabled`, `Step3Header.vue` renders `GlobalTemplateEditor` instead of `TitleTemplateEditor` + Fallback Values card. The composable `useTemplateEditor` wraps `useTitleTemplate` and adds description/categories template state and `onDragStart` (drag-and-drop is a UI concern, not owned by `useTitleTemplate`). `allMissingOptionalFieldPaths` considers all three templates combined. Textareas have no event handlers; card focus rings use CSS `focus-within`. Two sub-components in `src/components/template/`: `HighlightedTextarea.vue` (overlay pattern: highlighted div + transparent Textarea) and `TemplateStatusBadge.vue` (✓ Applied / Applying... badge).
+**`GlobalTemplateEditor`:** When `fieldTemplatesEnabled`, `Step3Header.vue` renders `GlobalTemplateEditor` over `TitleTemplateEditor` + Fallback Values card. `useTemplateEditor` wraps `useTitleTemplate`, adds description/categories template state and `onDragStart` (drag-and-drop is UI concern, not `useTitleTemplate`'s). `allMissingOptionalFieldPaths` covers all three templates. Textareas have no event handlers; card focus rings use CSS `focus-within`. Two sub-components in `src/components/template/`: `HighlightedTextarea.vue` (overlay: highlighted div + transparent Textarea) and `TemplateStatusBadge.vue` (✓ Applied / Applying... badge).
 
-**`verifyTitlesWithTemplate` guard:** Items with a non-empty `meta.title` are skipped (treated as user-entered), except items in `MissingFields` status whose title was written by the template system. When a `MissingFields` item recovers (offending field removed from template), its `meta.title` must be explicitly cleared to `''` so `getEffectiveTitle` falls back to the template again.
+**`verifyTitlesWithTemplate` guard:** Items with non-empty `meta.title` skipped (treated as user-entered), except `MissingFields` items whose title was written by template system. When `MissingFields` item recovers (offending field removed from template), `meta.title` must be explicitly cleared to `''` so `getEffectiveTitle` falls back to template.
 
 **Optional field warning system:**
 - `OPTIONAL_FIELD_PATHS` = `[...CAMERA_FIELD_PATHS, ...OPTIONAL_LOCATION_FIELD_PATHS]` — all fields that can be absent
-- `allMissingOptionalFieldPaths` (Set) — which paths ANY selected item is missing, independent of the template; drives icon visibility in `TitleTemplateEditor.vue`
-- `itemsMissingOptionalFields` — items missing at least one field that is ALSO used in the current template; drives yellow highlight count
-- Icon shows if field is in `allMissingOptionalFieldPaths`; icon is yellow if also in `usedOptionalFields`
-- Location numeric fields (`compass_angle`) use `== null` check (0 = North, valid); location string fields use `!value` (empty string = missing), matching camera field behavior
+- `allMissingOptionalFieldPaths` (Set) — paths any selected item is missing, independent of template; drives icon visibility in `TitleTemplateEditor.vue`
+- `itemsMissingOptionalFields` — items missing at least one field also used in current template; drives yellow highlight count
+- Icon shows if field in `allMissingOptionalFieldPaths`; yellow if also in `usedOptionalFields`
+- Location numeric fields (`compass_angle`) use `== null` (0 = North, valid); location string fields use `!value` (empty = missing), matching camera field behavior
 
-- **License field** - `meta.license` exists in the data model and store but is intentionally not exposed in the Step 3 UI — Mapillary images use a fixed license so per-item and global license overrides are not applicable
-- **Handler** - Image source (currently only `mapillary`)
-- **Item** - An image with metadata (`Item` type in `types/image.ts`). `index` is 1-based.
-- **Batch** - A collection of uploads tracked together (`BatchItem` in AsyncAPI types)
-- **Title Status** - Validation state of generated titles (`TITLE_ERROR_STATUSES` in `types/image.ts`)
-- **Layout** - View mode (`list` or `grid`) for collection display
-- **Preset** - Active preset tracked by `store.currentPresetId` (null = manual mode). Three preset UI modes with different visibility rules:
-  1. **Selected preset (not editing)**: Shows read-only PresetPreview, hides forms, shows images list and controls
-  2. **Editing preset**: Hides preset preview, shows editable forms, hides images list and controls, hides "Change preset" and Edit/Remove buttons
-  3. **Manual mode (no preset)**: Shows editable forms, shows images list and controls
+- **License field** — `meta.license` in data model/store but not exposed in Step 3 UI — Mapillary uses fixed license, per-item/global overrides not applicable
+- **Handler** — Image source (currently only `mapillary`)
+- **Item** — Image with metadata (`Item` type in `types/image.ts`). `index` 1-based.
+- **Batch** — Collection of uploads tracked together (`BatchItem` in AsyncAPI types)
+- **Title Status** — Validation state of generated titles (`TITLE_ERROR_STATUSES` in `types/image.ts`)
+- **Layout** — View mode (`list` or `grid`) for collection display
+- **Preset** — Active preset tracked by `store.currentPresetId` (null = manual mode). Three UI modes:
+  1. **Selected (not editing)**: Read-only PresetPreview, forms hidden, images list + controls shown
+  2. **Editing**: Preset preview hidden, forms shown, images list + controls hidden, "Change preset"/Edit/Remove buttons hidden
+  3. **Manual (no preset)**: Forms shown, images list + controls shown
 
-  Preset creation (via accordion "Create new preset" button) is treated like editing mode - hides images list until canceled/saved. Preset removal (via "Remove preset" button) enters manual mode with both forms and images list visible.
+  Preset creation (accordion "Create new preset") treated like editing mode — hides images list until canceled/saved. Preset removal ("Remove preset") → manual mode with forms + images list visible.
 
-  Orchestration lives in `usePresetManager` composable (`selectPreset`, `clearPreset`, `handleEditPreset`, `handleCancelEdit`).
+  Orchestration in `usePresetManager` (`selectPreset`, `clearPreset`, `handleEditPreset`, `handleCancelEdit`).
 
 ## MapLibre GL JS Integration
 
@@ -331,6 +335,6 @@ The title template system lives in `src/composables/useTitleTemplate.ts` and `sr
 
 **Layer ordering:** Layers render in insertion order (first = bottom). Add background/direction layers before pin layers.
 
-**Paint expressions:** WebGL-based — CSS `var()` is not supported. Hardcode hex values.
+**Paint expressions:** WebGL-based — CSS `var()` not supported. Hardcode hex values.
 
-**OpenFreeMap liberty style** has known missing sprite icons — cosmetic warnings, safe to ignore. Use `positron` for a cleaner minimal style.
+**OpenFreeMap liberty style** has known missing sprite icons — cosmetic warnings, safe to ignore. Use `positron` for cleaner minimal style.
