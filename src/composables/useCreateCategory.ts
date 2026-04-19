@@ -71,15 +71,7 @@ const CATEGORY_TEXT_MAP = {
     },
   },
   lensFocalLengthDecimal: {
-    pattern: /^Lens focal length (\d+)\.(\d+) mm$/,
-    getText: (m: RegExpMatchArray) => {
-      const integer = parseInt(m[1]!, 10)
-      const decimal = m[2]!
-      return `{{Hiddencat}}\n{{ImageTOC}}\n[[Category:Lens focal length ${integer} mm| ${integer}.${decimal}]]`
-    },
-  },
-  lensFocalLengthGermanComma: {
-    pattern: /^Lens focal length (\d+),(\d+) mm$/,
+    pattern: /^Lens focal length (\d+)[.,](\d+) mm$/,
     getText: (m: RegExpMatchArray) => {
       const integer = parseInt(m[1]!, 10)
       const decimal = m[2]!
