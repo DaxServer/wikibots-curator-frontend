@@ -144,6 +144,7 @@ declare global {
   const pausableWatch: typeof import('@vueuse/core').pausableWatch
   const provide: typeof import('vue').provide
   const provideLocal: typeof import('@vueuse/core').provideLocal
+  const queriedNavboxRegions: typeof import('./src/composables/useYearTemplates').queriedNavboxRegions
   const queriedSubjects: typeof import('./src/composables/useYearTemplates').queriedSubjects
   const reactify: typeof import('@vueuse/core').reactify
   const reactifyObject: typeof import('@vueuse/core').reactifyObject
@@ -590,6 +591,7 @@ declare module 'vue' {
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
+    readonly queriedNavboxRegions: UnwrapRef<typeof import('./src/composables/useYearTemplates')['queriedNavboxRegions']>
     readonly queriedSubjects: UnwrapRef<typeof import('./src/composables/useYearTemplates')['queriedSubjects']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
     readonly reactifyObject: UnwrapRef<typeof import('@vueuse/core')['reactifyObject']>
