@@ -22,6 +22,7 @@ describe('useYearTemplates', () => {
     useYearTemplates = mod.useYearTemplates
     mod.templateMap.value = {}
     mod.queriedSubjects.clear()
+    mod.queriedNavboxRegions.clear()
   })
 
   it('leaves templateMap empty when no titles match "X in YYYY" pattern', async () => {
@@ -175,5 +176,110 @@ describe('useYearTemplates', () => {
     const params = new URLSearchParams(rawBody)
     expect(params.get('titles')).not.toContain('Template:Cars by year')
     expect(params.get('titles')).toContain('Template:Boats by year')
+  })
+})
+
+describe('useYearTemplates — photographs taken on navbox', () => {
+  let useYearTemplates: typeof import('../useYearTemplates').useYearTemplates
+
+  beforeEach(async () => {
+    const mod = (await import('../useYearTemplates')) as typeof YearTemplatesModule
+    useYearTemplates = mod.useYearTemplates
+    mod.templateMap.value = {}
+    mod.queriedSubjects.clear()
+    mod.queriedNavboxRegions.clear()
+  })
+
+  it('adds entry when navbox template exists for "X photographs taken on [date]"', async () => {
+    global.fetch = buildMockFetch([
+      { title: 'Template:Bavaria photographs taken on navbox' },
+    ]) as unknown as typeof fetch
+
+    const { templateMap, checkTemplates } = useYearTemplates()
+    await checkTemplates(['Bavaria photographs taken on 2023-01-15'])
+
+    expect(templateMap.value['Bavaria photographs taken on 2023-01-15']).toBe(
+      '{{Bavaria photographs taken on navbox}}',
+    )
+  })
+
+  it('does not add entry when navbox template is missing on Commons', async () => {
+    global.fetch = buildMockFetch([
+      { title: 'Template:Saxony photographs taken on navbox', missing: true },
+    ]) as unknown as typeof fetch
+
+    const { templateMap, checkTemplates } = useYearTemplates()
+    await checkTemplates(['Saxony photographs taken on 2023-01-15'])
+
+    expect(templateMap.value).toEqual({})
+  })
+
+  it('does not re-query already-checked navbox region on second call', async () => {
+    const fetchMock = buildMockFetch([
+      { title: 'Template:Bavaria photographs taken on navbox', missing: true },
+    ])
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    const { checkTemplates } = useYearTemplates()
+    await checkTemplates(['Bavaria photographs taken on 2023-01-15'])
+    await checkTemplates(['Bavaria photographs taken on 2023-02-20'])
+
+    expect(fetchMock.mock.calls).toHaveLength(1)
+  })
+
+  it('handles titles with underscores', async () => {
+    global.fetch = buildMockFetch([
+      { title: 'Template:Bavaria photographs taken on navbox' },
+    ]) as unknown as typeof fetch
+
+    const { templateMap, checkTemplates } = useYearTemplates()
+    await checkTemplates(['Bavaria_photographs_taken_on_2023-01-15'])
+
+    expect(templateMap.value['Bavaria_photographs_taken_on_2023-01-15']).toBe(
+      '{{Bavaria photographs taken on navbox}}',
+    )
+  })
+
+  it('normalizes NFD-encoded region name to NFC before querying navbox template', async () => {
+    const nfdIle = 'Île-de-France' // NFD: I + combining circumflex + le-de-France
+    global.fetch = buildMockFetch([
+      { title: 'Template:Île-de-France photographs taken on navbox' },
+    ]) as unknown as typeof fetch
+
+    const { templateMap, checkTemplates } = useYearTemplates()
+    await checkTemplates([`${nfdIle} photographs taken on 2026-04-02`])
+
+    const key = `${nfdIle} photographs taken on 2026-04-02`
+    expect(templateMap.value[key]).toBe('{{Île-de-France photographs taken on navbox}}')
+  })
+
+  it('does not match when suffix is not an ISO date', async () => {
+    const fetchMock = mock(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }))
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    const { templateMap, checkTemplates } = useYearTemplates()
+    await checkTemplates([
+      'Bavaria photographs taken on someday',
+      'Bavaria photographs taken on January 2023',
+      'Bavaria photographs taken on 2023-1-1',
+    ])
+
+    expect(fetchMock.mock.calls).toHaveLength(0)
+    expect(templateMap.value).toEqual({})
+  })
+
+  it('checks both year and navbox templates in single call when both pattern types present', async () => {
+    global.fetch = buildMockFetch([
+      { title: 'Template:Cars by year' },
+      { title: 'Template:Bavaria photographs taken on navbox' },
+    ]) as unknown as typeof fetch
+
+    const { templateMap, checkTemplates } = useYearTemplates()
+    await checkTemplates(['Cars in 2000', 'Bavaria photographs taken on 2023-01-15'])
+
+    expect(templateMap.value['Cars in 2000']).toBe('{{Cars by year|200|0}}')
+    expect(templateMap.value['Bavaria photographs taken on 2023-01-15']).toBe(
+      '{{Bavaria photographs taken on navbox}}',
+    )
   })
 })

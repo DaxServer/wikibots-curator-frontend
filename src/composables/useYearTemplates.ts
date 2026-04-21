@@ -3,9 +3,11 @@ import { ref } from 'vue'
 const COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php'
 const TITLES_PER_REQUEST = 50
 const YEAR_IN_PATTERN = /^(.+) in (\d{4})$/
+const PHOTOGRAPHS_TAKEN_ON_PATTERN = /^(.+) photographs taken on (\d{4}-\d{2}-\d{2})$/
 
 export const templateMap = ref<Record<string, string>>({})
 export const queriedSubjects = new Set<string>()
+export const queriedNavboxRegions = new Set<string>()
 
 const buildWikitext = (subject: string, year: string): string =>
   `{{${subject} by year|${year.slice(0, 3)}|${year[3]}}}`
@@ -45,7 +47,7 @@ const fetchExistingTemplates = async (templateTitles: string[]): Promise<Set<str
 
 export const useYearTemplates = () => {
   const checkTemplates = async (titles: string[]): Promise<void> => {
-    const candidates = titles
+    const yearCandidates = titles
       .map((title) => {
         const normalized = title.replaceAll('_', ' ')
         const match = normalized.match(YEAR_IN_PATTERN)
@@ -55,20 +57,41 @@ export const useYearTemplates = () => {
       .filter((c): c is { originalTitle: string; subject: string; year: string } => c !== null)
       .filter((c) => !queriedSubjects.has(c.subject))
 
-    if (candidates.length === 0) return
+    const navboxCandidates = titles
+      .map((title) => {
+        const normalized = title.replaceAll('_', ' ').normalize('NFC')
+        const match = normalized.match(PHOTOGRAPHS_TAKEN_ON_PATTERN)
+        if (!match) return null
+        return { originalTitle: title, region: match[1]! }
+      })
+      .filter((c): c is { originalTitle: string; region: string } => c !== null)
+      .filter((c) => !queriedNavboxRegions.has(c.region))
 
-    for (const c of candidates) queriedSubjects.add(c.subject)
+    if (yearCandidates.length === 0 && navboxCandidates.length === 0) return
 
-    const templateTitles = candidates.map((c) => `Template:${c.subject} by year`)
-    const existing = await fetchExistingTemplates(templateTitles)
+    for (const c of yearCandidates) queriedSubjects.add(c.subject)
+    for (const c of navboxCandidates) queriedNavboxRegions.add(c.region)
 
-    for (const candidate of candidates) {
+    const yearTemplateTitles = yearCandidates.map((c) => `Template:${c.subject} by year`)
+    const navboxTemplateTitles = navboxCandidates.map(
+      (c) => `Template:${c.region} photographs taken on navbox`,
+    )
+    const existing = await fetchExistingTemplates([...yearTemplateTitles, ...navboxTemplateTitles])
+
+    for (const candidate of yearCandidates) {
       const templateTitle = `Template:${candidate.subject} by year`
       if (existing.has(templateTitle)) {
         templateMap.value[candidate.originalTitle] = buildWikitext(
           candidate.subject,
           candidate.year,
         )
+      }
+    }
+
+    for (const candidate of navboxCandidates) {
+      const templateTitle = `Template:${candidate.region} photographs taken on navbox`
+      if (existing.has(templateTitle)) {
+        templateMap.value[candidate.originalTitle] = `{{${candidate.region} photographs taken on navbox}}`
       }
     }
   }
