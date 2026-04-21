@@ -49,7 +49,7 @@ export const useYearTemplates = () => {
   const checkTemplates = async (titles: string[]): Promise<void> => {
     const yearCandidates = titles
       .map((title) => {
-        const normalized = title.replaceAll('_', ' ')
+        const normalized = title.replaceAll('_', ' ').normalize('NFC')
         const match = normalized.match(YEAR_IN_PATTERN)
         if (!match) return null
         return { originalTitle: title, subject: match[1]!, year: match[2]! }
