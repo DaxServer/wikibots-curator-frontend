@@ -14,7 +14,7 @@ const distanceUnit = ref<DistanceUnit>('meters')
 const distanceUnitOptions = DISTANCE_UNITS.map((u) => ({ label: u, value: u }))
 const distanceMethod = ref<'traversal' | 'straight-line'>('traversal')
 const distanceMethodOptions = [
-  { label: 'travesed-path', value: 'traversal' },
+  { label: 'traversed-path', value: 'traversal' },
   { label: 'straight-line', value: 'straight-line' },
 ]
 
