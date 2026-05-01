@@ -108,13 +108,17 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
       />
     </div>
 
-    <div class="flex items-center gap-3">
+    <div
+      v-if="store.totalImages > 1"
+      class="flex items-center gap-3"
+    >
       <span class="text-md text-gray-600">Select every</span>
       <InputNumber
         v-model="nthN"
         :min="2"
         :max="store.totalImages"
         :step="1"
+        :suffix="ordinalSuffix(nthN)"
         size="small"
         show-buttons
         button-layout="horizontal"
@@ -125,12 +129,12 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         input-class="w-20 text-center"
         :disabled="store.isBatchLoading"
       />
-      <span class="text-md text-gray-600">-{{ ordinalSuffix(nthN) }} item and</span>
+      <span class="text-md text-gray-600">item and</span>
       <Button
         class="hover-primary"
         severity="secondary"
         outlined
-        label="add them to selection"
+        label="add to selection"
         :disabled="nthN < 2 || store.isBatchLoading"
         @click="store.selectEveryNth(nthN, true)"
       />
