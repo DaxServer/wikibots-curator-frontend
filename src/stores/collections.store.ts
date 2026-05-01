@@ -73,7 +73,11 @@ export const useCollectionsStore = defineStore('collections', () => {
   })
 
   const itemsArray = computed(() => Object.values(items))
-  const chronoItems = computed(() => [...itemsArray.value].sort((a, b) => a.index - b.index))
+  const chronoItems = computed(() =>
+    [...itemsArray.value].sort(
+      (a, b) => a.image.dates.taken.getTime() - b.image.dates.taken.getTime(),
+    ),
+  )
   const totalImages = computed(() => itemsArray.value.length)
   const selectedItems = computed(() => itemsArray.value.filter((i) => i.meta.selected))
   const selectedCount = computed(() => selectedItems.value.length)
