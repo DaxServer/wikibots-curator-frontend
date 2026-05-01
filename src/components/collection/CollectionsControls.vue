@@ -76,8 +76,12 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
 
         <span
           class="inline-block"
-          v-tooltip.bottom="
-            store.isBatchLoading ? 'Controls disabled while images are being retrieved' : ''
+          v-tooltip.top="
+            store.isBatchLoading
+              ? 'Controls disabled while images are being retrieved'
+              : store.selectedCount === 0
+                ? 'Select at least one image to proceed'
+                : ''
           "
         >
           <Button
@@ -146,17 +150,20 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         class="hover-primary"
         severity="secondary"
         outlined
+        label="replace entire selection"
+        :disabled="nthN === null || nthN < 2 || store.isBatchLoading"
+        v-tooltip.right="nthN !== null && nthN >= 2 ? `Clears the current selection, then selects every ${ordinal(nthN)} image.` : ''"
+        @click="store.selectEveryNth(nthN!, false)"
+      />
+      <span class="text-sm text-gray-400">or</span>
+      <Button
+        class="hover-primary"
+        severity="secondary"
+        outlined
         label="add to selection"
         :disabled="nthN === null || nthN < 2 || store.isBatchLoading"
+        v-tooltip.right="nthN !== null && nthN >= 2 ? `Keeps the current selection and also selects every ${ordinal(nthN)} image.` : ''"
         @click="store.selectEveryNth(nthN!, true)"
-      />
-      <i
-        class="pi pi-info-circle text-gray-400 cursor-help"
-        v-tooltip.right="
-          nthN !== null && nthN >= 2
-            ? `Selects every ${ordinal(nthN)} image in the sequence and adds it to the current selection.`
-            : ''
-        "
       />
     </div>
 
@@ -192,17 +199,20 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         class="hover-primary"
         severity="secondary"
         outlined
+        label="replace entire selection"
+        :disabled="minIntervalInSeconds === null || store.isBatchLoading"
+        v-tooltip.right="minIntervalInSeconds !== null ? `Clears the current selection, then selects images at least ${minIntervalSeconds} ${minIntervalSeconds === 1 ? intervalUnit.replace(/s$/, '') : intervalUnit} apart.` : ''"
+        @click="store.selectByMinInterval(minIntervalInSeconds!, false)"
+      />
+      <span class="text-sm text-gray-400">or</span>
+      <Button
+        class="hover-primary"
+        severity="secondary"
+        outlined
         label="add to selection"
         :disabled="minIntervalInSeconds === null || store.isBatchLoading"
+        v-tooltip.right="minIntervalInSeconds !== null ? `Keeps the current selection and also selects images at least ${minIntervalSeconds} ${minIntervalSeconds === 1 ? intervalUnit.replace(/s$/, '') : intervalUnit} apart.` : ''"
         @click="store.selectByMinInterval(minIntervalInSeconds!, true)"
-      />
-      <i
-        class="pi pi-info-circle text-gray-400 cursor-help"
-        v-tooltip.right="
-          minIntervalInSeconds !== null
-            ? `Selects images where at least ${minIntervalSeconds} ${minIntervalSeconds === 1 ? intervalUnit.replace(/s$/, '') : intervalUnit} have elapsed since the last selected image, and adds them to the current selection.`
-            : ''
-        "
       />
     </div>
   </div>

@@ -118,6 +118,19 @@ describe('selectByMinInterval', () => {
     expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true])
   })
 
+  it('keeps a pre-selected item that fails the interval check when add is true', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: makeItem(1, false, t(0)),
+      b: makeItem(2, true, t(5)),
+    })
+
+    store.selectByMinInterval(10, true)
+
+    // b is 5s from a — fails the 10s threshold — but stays selected because add=true never deselects
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true])
+  })
+
   it('adds to existing selection when add is true', () => {
     const store = useCollectionsStore()
     store.replaceItems({
