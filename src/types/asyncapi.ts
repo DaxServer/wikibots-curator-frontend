@@ -111,20 +111,6 @@ export type CheckCategoriesDeletedData = {
   titles: string[]
 }
 
-export type FetchRedlinks = {
-  type: 'FETCH_REDLINKS'
-}
-
-export type FetchWantedCategories = {
-  type: 'FETCH_WANTED_CATEGORIES'
-  data: FetchWantedCategoriesData
-}
-
-export type FetchWantedCategoriesData = {
-  offset: number
-  filter?: string
-}
-
 export type RetryUploads = {
   data: number
   type: 'RETRY_UPLOADS'
@@ -458,21 +444,6 @@ export type CategoryCreatedResponseData = {
   title: string
 }
 
-export type RedlinksResponse = {
-  type: 'REDLINKS_RESPONSE'
-  data: RedlinksResponseData
-  nonce: string
-}
-
-export type RedlinksResponseData = {
-  items: RedlinkItem[]
-}
-
-export type RedlinkItem = {
-  title: string
-  linked_from: string
-}
-
 export type RetryUploadsResponse = {
   type: 'RETRY_UPLOADS_RESPONSE'
   data: number
@@ -542,25 +513,6 @@ export type UploadSliceAck = {
 export type UploadSliceAckItem = {
   id: string
   status: string
-}
-
-export type WantedCategoriesResponse = {
-  type: 'WANTED_CATEGORIES_RESPONSE'
-  data: WantedCategoriesResponseData
-  nonce: string
-}
-
-export type WantedCategoriesResponseData = {
-  items: WantedCategoryItem[]
-  total: number
-}
-
-export type WantedCategoryItem = {
-  title: string
-  subcats: number
-  files: number
-  pages: number
-  total: number
 }
 
 export type RecategorizeFilesResponse = {
@@ -817,8 +769,6 @@ export type ClientMessage =
   | FetchImages
   | FetchPresets
   | CheckCategoriesDeleted
-  | FetchRedlinks
-  | FetchWantedCategories
   | RetryUploads
   | SavePreset
   | SubscribeBatch
@@ -840,7 +790,6 @@ export type ServerMessage =
   | PresetsList
   | CategoriesDeletedResponse
   | CategoryCreatedResponse
-  | RedlinksResponse
   | RetryUploadsResponse
   | Subscribed
   | TryBatchRetrieval
@@ -848,5 +797,4 @@ export type ServerMessage =
   | UploadsComplete
   | UploadsUpdate
   | UploadSliceAck
-  | WantedCategoriesResponse
   | RecategorizeFilesResponse

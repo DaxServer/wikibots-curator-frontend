@@ -105,18 +105,6 @@
         "CategoriesDeletedResponse": {
           "$ref": "#/components/messages/CategoriesDeletedResponse"
         },
-        "FetchRedlinks": {
-          "$ref": "#/components/messages/FetchRedlinks"
-        },
-        "FetchWantedCategories": {
-          "$ref": "#/components/messages/FetchWantedCategories"
-        },
-        "RedlinksResponse": {
-          "$ref": "#/components/messages/RedlinksResponse"
-        },
-        "WantedCategoriesResponse": {
-          "$ref": "#/components/messages/WantedCategoriesResponse"
-        },
         "PresetsList": {
           "$ref": "#/components/messages/PresetsList"
         },
@@ -165,12 +153,6 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/CheckCategoriesDeleted"
-        },
-        {
-          "$ref": "#/channels/wsChannel/messages/FetchRedlinks"
-        },
-        {
-          "$ref": "#/channels/wsChannel/messages/FetchWantedCategories"
         },
         {
           "$ref": "#/channels/wsChannel/messages/RetryUploads"
@@ -238,9 +220,6 @@
           "$ref": "#/channels/wsChannel/messages/CategoryCreatedResponse"
         },
         {
-          "$ref": "#/channels/wsChannel/messages/RedlinksResponse"
-        },
-        {
           "$ref": "#/channels/wsChannel/messages/RetryUploadsResponse"
         },
         {
@@ -260,9 +239,6 @@
         },
         {
           "$ref": "#/channels/wsChannel/messages/UploadSliceAck"
-        },
-        {
-          "$ref": "#/channels/wsChannel/messages/WantedCategoriesResponse"
         },
         {
           "$ref": "#/channels/wsChannel/messages/RecategorizeFilesResponse"
@@ -430,26 +406,6 @@
       "FetchPresets": {
         "payload": {
           "$ref": "#/components/schemas/FetchPresets"
-        }
-      },
-      "FetchRedlinks": {
-        "payload": {
-          "$ref": "#/components/schemas/FetchRedlinks"
-        }
-      },
-      "FetchWantedCategories": {
-        "payload": {
-          "$ref": "#/components/schemas/FetchWantedCategories"
-        }
-      },
-      "RedlinksResponse": {
-        "payload": {
-          "$ref": "#/components/schemas/RedlinksResponse"
-        }
-      },
-      "WantedCategoriesResponse": {
-        "payload": {
-          "$ref": "#/components/schemas/WantedCategoriesResponse"
         }
       },
       "PresetsList": {
@@ -2096,170 +2052,6 @@
         ],
         "properties": {
           "preset_id": {
-            "type": "integer"
-          }
-        },
-        "additionalProperties": false
-      },
-      "FetchRedlinks": {
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "const": "FETCH_REDLINKS"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RedlinkItem": {
-        "type": "object",
-        "required": [
-          "title",
-          "linked_from"
-        ],
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "linked_from": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RedlinksResponse": {
-        "type": "object",
-        "required": [
-          "type",
-          "data",
-          "nonce"
-        ],
-        "properties": {
-          "type": {
-            "const": "REDLINKS_RESPONSE"
-          },
-          "data": {
-            "$ref": "#/components/schemas/RedlinksResponseData"
-          },
-          "nonce": {
-            "type": "string",
-            "description": "Timestamp nonce to ensure change detection"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RedlinksResponseData": {
-        "type": "object",
-        "required": [
-          "items"
-        ],
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RedlinkItem"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "FetchWantedCategories": {
-        "type": "object",
-        "required": [
-          "type",
-          "data"
-        ],
-        "properties": {
-          "type": {
-            "const": "FETCH_WANTED_CATEGORIES"
-          },
-          "data": {
-            "$ref": "#/components/schemas/FetchWantedCategoriesData"
-          }
-        },
-        "additionalProperties": false
-      },
-      "FetchWantedCategoriesData": {
-        "type": "object",
-        "required": [
-          "offset"
-        ],
-        "properties": {
-          "offset": {
-            "type": "integer",
-            "default": 0
-          },
-          "filter": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "WantedCategoryItem": {
-        "type": "object",
-        "required": [
-          "title",
-          "subcats",
-          "files",
-          "pages",
-          "total"
-        ],
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "subcats": {
-            "type": "integer"
-          },
-          "files": {
-            "type": "integer"
-          },
-          "pages": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "additionalProperties": false
-      },
-      "WantedCategoriesResponse": {
-        "type": "object",
-        "required": [
-          "type",
-          "data",
-          "nonce"
-        ],
-        "properties": {
-          "type": {
-            "const": "WANTED_CATEGORIES_RESPONSE"
-          },
-          "data": {
-            "$ref": "#/components/schemas/WantedCategoriesResponseData"
-          },
-          "nonce": {
-            "type": "string",
-            "description": "Timestamp nonce to ensure change detection"
-          }
-        },
-        "additionalProperties": false
-      },
-      "WantedCategoriesResponseData": {
-        "type": "object",
-        "required": [
-          "items",
-          "total"
-        ],
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/WantedCategoryItem"
-            }
-          },
-          "total": {
             "type": "integer"
           }
         },

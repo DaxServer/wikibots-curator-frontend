@@ -190,11 +190,7 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 
 ## Feature Flags
 
-`src/composables/useFeatureFlags.ts` gates features by `auth.isAdmin`. Flags: `redlinksEnabled`, `wantedCategoriesEnabled`. Returns `ComputedRef<boolean>` — wrap with `computed(() => auth.isAdmin)` not plain ref; Pinia auto-unwraps refs in returned objects → tests get `undefined` on `.value`.
-
-## Wanted Categories
-
-**`getFocalLengthRedirect(title)`** returns target integer category for zero-decimal focal length titles (`79.0 mm` / `79,0 mm` → `Lens focal length 79 mm`), or `null` for all other. Used in `WantedCategoriesView` to show "Recategorize" over "Create" and exclude from bulk select (`visibleIdleTitles`).
+`src/composables/useFeatureFlags.ts` gates features by `auth.isAdmin`. Returns `ComputedRef<boolean>` — wrap with `computed(() => auth.isAdmin)` not plain ref; Pinia auto-unwraps refs in returned objects → tests get `undefined` on `.value`.
 
 ## Wikimedia Commons API
 

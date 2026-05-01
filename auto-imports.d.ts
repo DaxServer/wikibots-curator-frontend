@@ -318,8 +318,6 @@ declare global {
   const usePresetManager: typeof import('./src/composables/usePresetManager').usePresetManager
   const usePrevious: typeof import('@vueuse/core').usePrevious
   const useRafFn: typeof import('@vueuse/core').useRafFn
-  const useReconcile: typeof import('./src/composables/useReconcile').useReconcile
-  const useRedlinks: typeof import('./src/composables/useRedlinks').useRedlinks
   const useRefHistory: typeof import('@vueuse/core').useRefHistory
   const useResizeObserver: typeof import('@vueuse/core').useResizeObserver
   const useRoute: typeof import('vue-router').useRoute
@@ -377,7 +375,6 @@ declare global {
   const useVibrate: typeof import('@vueuse/core').useVibrate
   const useVirtualList: typeof import('@vueuse/core').useVirtualList
   const useWakeLock: typeof import('@vueuse/core').useWakeLock
-  const useWantedCategories: typeof import('./src/composables/useWantedCategories').useWantedCategories
   const useWebNotification: typeof import('@vueuse/core').useWebNotification
   const useWebSocket: typeof import('@vueuse/core').useWebSocket
   const useWebWorker: typeof import('@vueuse/core').useWebWorker
@@ -427,19 +424,13 @@ declare global {
   export type { QueryPage, QueryNormalized } from './src/composables/useCategoryValidation'
   import('./src/composables/useCategoryValidation')
   // @ts-ignore
-  export type { CategoryStatus, CategoryTextKey } from './src/composables/useCreateCategory'
-  import('./src/composables/useCreateCategory')
-  // @ts-ignore
-  export type { ReconCandidate } from './src/composables/useReconcile'
-  import('./src/composables/useReconcile')
-  // @ts-ignore
   export type { ColorVariant } from './src/composables/useUploadStatus'
   import('./src/composables/useUploadStatus')
   // @ts-ignore
   export type { AdminUser, AdminBatch, AdminUploadRequest, AdminPreset, FailedUpload, BatchFailureGroup, PaginatedResponse, FailedUploadsResponse } from './src/types/admin'
   import('./src/types/admin')
   // @ts-ignore
-  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, CreateCategory, CreateCategoryData, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, CheckCategoriesDeleted, CheckCategoriesDeletedData, FetchRedlinks, FetchWantedCategories, FetchWantedCategoriesData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, RecategorizeFiles, RecategorizeFilesData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, CategoriesDeletedResponse, CategoriesDeletedResponseData, CategoryCreatedResponse, CategoryCreatedResponseData, RedlinksResponse, RedlinksResponseData, RedlinkItem, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, WantedCategoriesResponse, WantedCategoriesResponseData, WantedCategoryItem, RecategorizeFilesResponse, RecategorizeFilesResponseData, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
+  export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, CreateCategory, CreateCategoryData, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, CheckCategoriesDeleted, CheckCategoriesDeletedData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, RecategorizeFiles, RecategorizeFilesData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, CategoriesDeletedResponse, CategoriesDeletedResponseData, CategoryCreatedResponse, CategoryCreatedResponseData, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, RecategorizeFilesResponse, RecategorizeFilesResponseData, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
   export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
@@ -538,11 +529,9 @@ declare module 'vue' {
     readonly extractUsedCameraFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['extractUsedCameraFields']>
     readonly extractUsedOptionalFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['extractUsedOptionalFields']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
-    readonly getCategoryText: UnwrapRef<typeof import('./src/composables/useCreateCategory')['getCategoryText']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
-    readonly getFocalLengthRedirect: UnwrapRef<typeof import('./src/composables/useCreateCategory')['getFocalLengthRedirect']>
     readonly getNumericId: UnwrapRef<typeof import('./src/composables/sdc')['getNumericId']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly hasMissingCameraFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['hasMissingCameraFields']>
@@ -591,8 +580,6 @@ declare module 'vue' {
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
-    readonly queriedNavboxRegions: UnwrapRef<typeof import('./src/composables/useYearTemplates')['queriedNavboxRegions']>
-    readonly queriedSubjects: UnwrapRef<typeof import('./src/composables/useYearTemplates')['queriedSubjects']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
     readonly reactifyObject: UnwrapRef<typeof import('@vueuse/core')['reactifyObject']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
@@ -618,7 +605,6 @@ declare module 'vue' {
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
-    readonly templateMap: UnwrapRef<typeof import('./src/composables/useYearTemplates')['templateMap']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
     readonly throttledRef: UnwrapRef<typeof import('@vueuse/core')['throttledRef']>
     readonly throttledWatch: UnwrapRef<typeof import('@vueuse/core')['throttledWatch']>
@@ -676,7 +662,6 @@ declare module 'vue' {
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useCountdown: UnwrapRef<typeof import('@vueuse/core')['useCountdown']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
-    readonly useCreateCategory: UnwrapRef<typeof import('./src/composables/useCreateCategory')['useCreateCategory']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssSupports: UnwrapRef<typeof import('@vueuse/core')['useCssSupports']>
     readonly useCssVar: UnwrapRef<typeof import('@vueuse/core')['useCssVar']>
@@ -765,8 +750,6 @@ declare module 'vue' {
     readonly usePresetManager: UnwrapRef<typeof import('./src/composables/usePresetManager')['usePresetManager']>
     readonly usePrevious: UnwrapRef<typeof import('@vueuse/core')['usePrevious']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
-    readonly useReconcile: UnwrapRef<typeof import('./src/composables/useReconcile')['useReconcile']>
-    readonly useRedlinks: UnwrapRef<typeof import('./src/composables/useRedlinks')['useRedlinks']>
     readonly useRefHistory: UnwrapRef<typeof import('@vueuse/core')['useRefHistory']>
     readonly useResizeObserver: UnwrapRef<typeof import('@vueuse/core')['useResizeObserver']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
@@ -824,7 +807,6 @@ declare module 'vue' {
     readonly useVibrate: UnwrapRef<typeof import('@vueuse/core')['useVibrate']>
     readonly useVirtualList: UnwrapRef<typeof import('@vueuse/core')['useVirtualList']>
     readonly useWakeLock: UnwrapRef<typeof import('@vueuse/core')['useWakeLock']>
-    readonly useWantedCategories: UnwrapRef<typeof import('./src/composables/useWantedCategories')['useWantedCategories']>
     readonly useWebNotification: UnwrapRef<typeof import('@vueuse/core')['useWebNotification']>
     readonly useWebSocket: UnwrapRef<typeof import('@vueuse/core')['useWebSocket']>
     readonly useWebWorker: UnwrapRef<typeof import('@vueuse/core')['useWebWorker']>
@@ -833,7 +815,6 @@ declare module 'vue' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
-    readonly useYearTemplates: UnwrapRef<typeof import('./src/composables/useYearTemplates')['useYearTemplates']>
     readonly validPaths: UnwrapRef<typeof import('./src/utils/titleTemplate')['validPaths']>
     readonly validateTemplate: UnwrapRef<typeof import('./src/utils/titleTemplate')['validateTemplate']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
