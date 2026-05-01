@@ -8,64 +8,32 @@ describe('useFeatureFlags', () => {
     setActivePinia(createPinia())
   })
 
-  describe('redlinksEnabled', () => {
+  describe('adminEnabled', () => {
     it('returns false when no user is authenticated', () => {
-      const { redlinksEnabled } = useFeatureFlags()
+      const { adminEnabled } = useFeatureFlags()
 
-      expect(redlinksEnabled.value).toBe(false)
+      expect(adminEnabled.value).toBe(false)
     })
 
-    it('returns false for non-allowed users', () => {
+    it('returns false for non-admin users', () => {
       const auth = useAuthStore()
       auth.user = 'testuser'
-      const { redlinksEnabled } = useFeatureFlags()
+      const { adminEnabled } = useFeatureFlags()
 
-      expect(redlinksEnabled.value).toBe(false)
-    })
-
-    it('returns true for DaxServer', () => {
-      const auth = useAuthStore()
-      auth.user = 'DaxServer'
-      const { redlinksEnabled } = useFeatureFlags()
-
-      expect(redlinksEnabled.value).toBe(true)
+      expect(adminEnabled.value).toBe(false)
     })
 
     it('updates reactively when user changes', () => {
       const auth = useAuthStore()
-      const { redlinksEnabled } = useFeatureFlags()
+      const { adminEnabled } = useFeatureFlags()
 
-      expect(redlinksEnabled.value).toBe(false)
+      expect(adminEnabled.value).toBe(false)
 
       auth.user = 'DaxServer'
-      expect(redlinksEnabled.value).toBe(true)
+      expect(adminEnabled.value).toBe(true)
 
       auth.user = 'someoneelse'
-      expect(redlinksEnabled.value).toBe(false)
-    })
-  })
-
-  describe('wantedCategoriesEnabled', () => {
-    it('returns false when no user is authenticated', () => {
-      const { wantedCategoriesEnabled } = useFeatureFlags()
-
-      expect(wantedCategoriesEnabled.value).toBe(false)
-    })
-
-    it('returns false for non-allowed users', () => {
-      const auth = useAuthStore()
-      auth.user = 'testuser'
-      const { wantedCategoriesEnabled } = useFeatureFlags()
-
-      expect(wantedCategoriesEnabled.value).toBe(false)
-    })
-
-    it('returns true for DaxServer', () => {
-      const auth = useAuthStore()
-      auth.user = 'DaxServer'
-      const { wantedCategoriesEnabled } = useFeatureFlags()
-
-      expect(wantedCategoriesEnabled.value).toBe(true)
+      expect(adminEnabled.value).toBe(false)
     })
   })
 })

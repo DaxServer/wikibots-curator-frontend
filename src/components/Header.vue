@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const auth = useAuthStore()
-const { redlinksEnabled, wantedCategoriesEnabled } = useFeatureFlags()
 const route = useRoute()
 
 onMounted(async () => {
@@ -17,22 +16,6 @@ onMounted(async () => {
         to="/mapillary"
         label="Mapillary"
         :outlined="!route.path.startsWith('/mapillary')"
-      />
-      <Button
-        v-if="redlinksEnabled"
-        as="router-link"
-        to="/redlinks"
-        label="Redlinks"
-        :outlined="!route.path.startsWith('/redlinks')"
-        class="ml-2"
-      />
-      <Button
-        v-if="wantedCategoriesEnabled"
-        as="router-link"
-        to="/wanted-categories"
-        label="Wanted Categories"
-        :outlined="!route.path.startsWith('/wanted-categories')"
-        class="ml-2"
       />
     </div>
 

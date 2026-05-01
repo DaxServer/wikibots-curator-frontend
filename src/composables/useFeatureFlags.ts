@@ -6,7 +6,6 @@ export const useFeatureFlags = () => {
   const adminEnabled = computed(() => auth.isAdmin)
 
   return {
-    redlinksEnabled: adminEnabled,
-    wantedCategoriesEnabled: adminEnabled,
+    adminEnabled,
   }
 }

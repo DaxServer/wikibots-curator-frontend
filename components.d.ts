@@ -73,7 +73,6 @@ declare module 'vue' {
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
     PropertyLabel: typeof import('./src/components/wikidata/PropertyLabel.vue')['default']
     ReconcilePanel: typeof import('./src/components/views/ReconcilePanel.vue')['default']
-    RedlinksView: typeof import('./src/components/views/RedlinksView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SdcWarningMessage: typeof import('./src/components/feedback/SdcWarningMessage.vue')['default']
@@ -105,8 +104,6 @@ declare module 'vue' {
     Toast: typeof import('primevue/toast')['default']
     ValueRenderer: typeof import('./src/components/wikidata/ValueRenderer.vue')['default']
     VR: typeof import('./src/components/wikidata/VR.vue')['default']
-    WantedCategoriesView: typeof import('./src/components/views/WantedCategoriesView.vue')['default']
-    WantedCategoryRow: typeof import('./src/components/views/WantedCategoryRow.vue')['default']
   }
   export interface GlobalDirectives {
     FocusTrap: typeof import('primevue/focustrap')['default']
