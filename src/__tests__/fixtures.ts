@@ -1,13 +1,19 @@
 import type { PresetItem } from '@/types/asyncapi'
 import type { Item } from '@/types/image'
 
-export const makeItem = (index: number, selected = false, takenAt?: Date): Item => ({
+export const makeItem = (
+  index: number,
+  selected = false,
+  takenAt?: Date,
+  latitude = 0,
+  longitude = 0,
+): Item => ({
   id: `item-${index}`,
   index,
   isSkeleton: false,
   image: {
     id: `img-${index}`,
-    location: { latitude: 0, longitude: 0, compass_angle: null },
+    location: { latitude, longitude, compass_angle: null },
     thumb_url: '',
     full_url: '',
     existing: [],

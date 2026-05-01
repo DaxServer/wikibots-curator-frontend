@@ -8,6 +8,7 @@ import {
 import type { Layout } from '@/types/collections'
 import type { Item, Metadata, MetadataKey } from '@/types/image'
 import { TITLE_ERROR_STATUSES } from '@/types/image'
+import { haversineDistance } from '@/utils/geo'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, shallowRef } from 'vue'
 
@@ -146,6 +147,27 @@ export const useCollectionsStore = defineStore('collections', () => {
     chronoItems.value.forEach((item, i) => {
       if ((i + 1) % n === 0) item.meta.selected = true
     })
+  }
+
+  const selectByMinDistance = (minMeters: number, add: boolean) => {
+    if (!add) deselectAll()
+    let lastLat: number | null = null
+    let lastLon: number | null = null
+    for (const item of chronoItems.value) {
+      const { latitude, longitude } = item.image.location
+      if (lastLat === null || lastLon === null) {
+        item.meta.selected = true
+        lastLat = latitude
+        lastLon = longitude
+      } else {
+        const dist = haversineDistance(lastLat, lastLon, latitude, longitude)
+        if (dist >= minMeters) {
+          item.meta.selected = true
+          lastLat = latitude
+          lastLon = longitude
+        }
+      }
+    }
   }
 
   const selectByMinInterval = (minSeconds: number, add: boolean) => {
@@ -395,6 +417,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     deselectAll,
     selectEveryNth,
     selectByMinInterval,
+    selectByMinDistance,
     selectPage,
     setViewMode,
     toggleViewMode,

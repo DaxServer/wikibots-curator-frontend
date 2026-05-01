@@ -146,6 +146,96 @@ describe('selectByMinInterval', () => {
   })
 })
 
+describe('selectByMinDistance', () => {
+  // ~111m per 0.001° latitude at equator; longitude same at equator
+  const pt = (index: number, selected: boolean, lat: number, lon: number) =>
+    makeItem(index, selected, undefined, lat, lon)
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('always selects first item', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({ a: pt(1, false, 0, 0) })
+
+    store.selectByMinDistance(100, false)
+
+    expect(store.itemsArray[0]!.meta.selected).toBe(true)
+  })
+
+  it('selects items meeting the minimum distance from last selected', () => {
+    const store = useCollectionsStore()
+    // ~0m, ~55m, ~111m, ~167m from origin
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, false, 0, 0.0005),
+      c: pt(3, false, 0, 0.001),
+      d: pt(4, false, 0, 0.0015),
+    })
+
+    store.selectByMinDistance(100, false)
+
+    // a: selected (first); b: ~55m from a, skip; c: ~111m from a, select; d: ~55m from c, skip
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true, false])
+  })
+
+  it('measures distance from last selected, not last checked', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, false, 0, 0.0005),
+      c: pt(3, false, 0, 0.0008),
+      d: pt(4, false, 0, 0.0015),
+    })
+
+    store.selectByMinDistance(100, false)
+
+    // b (~55m from a) and c (~88m from a) both rejected; d (~166m from a) accepted
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, false, true])
+  })
+
+  it('clears existing selection when add is false', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, true, 0, 0),
+      b: pt(2, true, 0, 0.0005),
+      c: pt(3, true, 0, 0.001),
+    })
+
+    store.selectByMinDistance(100, false)
+
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true])
+  })
+
+  it('keeps pre-selected item that fails distance check when add is true', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, true, 0, 0.0005),
+    })
+
+    store.selectByMinDistance(100, true)
+
+    // b is ~55m from a — fails threshold — but stays selected because add=true never deselects
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true])
+  })
+
+  it('adds to existing selection when add is true', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, true, 0, 0.0005),
+      c: pt(3, false, 0, 0.0015),
+    })
+
+    store.selectByMinDistance(100, true)
+
+    // a: selected (first); b: ~55m skip but stays; c: ~166m from a >= 100m, select
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true, true])
+  })
+})
+
 describe('collections store — preset state', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
