@@ -170,6 +170,29 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
+  const selectByTraversalDistance = (minMeters: number, add: boolean) => {
+    if (!add) deselectAll()
+    let accumulated = 0
+    let lastLat: number | null = null
+    let lastLon: number | null = null
+    for (const item of chronoItems.value) {
+      const { latitude, longitude } = item.image.location
+      if (lastLat === null || lastLon === null) {
+        item.meta.selected = true
+        lastLat = latitude
+        lastLon = longitude
+      } else {
+        accumulated += haversineDistance(lastLat, lastLon, latitude, longitude)
+        lastLat = latitude
+        lastLon = longitude
+        if (accumulated >= minMeters) {
+          item.meta.selected = true
+          accumulated = 0
+        }
+      }
+    }
+  }
+
   const selectByMinInterval = (minSeconds: number, add: boolean) => {
     if (!add) deselectAll()
     let lastSelectedTime: Date | null = null
@@ -418,6 +441,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     selectEveryNth,
     selectByMinInterval,
     selectByMinDistance,
+    selectByTraversalDistance,
     selectPage,
     setViewMode,
     toggleViewMode,
