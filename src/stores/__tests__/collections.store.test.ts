@@ -236,6 +236,109 @@ describe('selectByMinDistance', () => {
   })
 })
 
+describe('selectByTraversalDistance', () => {
+  // ~111m per 0.001° at equator
+  const pt = (index: number, selected: boolean, lat: number, lon: number) =>
+    makeItem(index, selected, undefined, lat, lon)
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('always selects first item', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({ a: pt(1, false, 0, 0) })
+
+    store.selectByTraversalDistance(100, false)
+
+    expect(store.itemsArray[0]!.meta.selected).toBe(true)
+  })
+
+  it('selects item when traversal distance meets threshold', () => {
+    const store = useCollectionsStore()
+    // a→b = ~55m, a→b + b→c = ~110m >= 100m
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, false, 0, 0.0005),
+      c: pt(3, false, 0, 0.001),
+    })
+
+    store.selectByTraversalDistance(100, false)
+
+    // a: first (selected); b: ~55m accumulated, skip; c: ~110m accumulated, select
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true])
+  })
+
+  it('accumulates across skipped points from last selected, not straight-line', () => {
+    const store = useCollectionsStore()
+    // a→b→c path is ~110m traversal; straight-line a→c is ~78m
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, false, 0.0005, 0),
+      c: pt(3, false, 0.0005, 0.0005),
+    })
+
+    store.selectByTraversalDistance(100, false)
+
+    // traversal: a→b ~55m, b→c ~55m, total ~110m → c selected
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true])
+  })
+
+  it('resets accumulator after selection', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, false, 0, 0.001),
+      c: pt(3, false, 0, 0.0015),
+    })
+
+    store.selectByTraversalDistance(100, false)
+
+    // a: selected; b: ~111m from a, select, reset; c: ~55m from b, skip
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true, false])
+  })
+
+  it('clears existing selection when add is false', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, true, 0, 0),
+      b: pt(2, true, 0, 0.0005),
+      c: pt(3, true, 0, 0.001),
+    })
+
+    store.selectByTraversalDistance(100, false)
+
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true])
+  })
+
+  it('keeps pre-selected item that fails threshold when add is true', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, true, 0, 0.0005),
+    })
+
+    store.selectByTraversalDistance(100, true)
+
+    // b is ~55m traversal from a — fails — but stays selected (add=true never deselects)
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true])
+  })
+
+  it('adds to existing selection when add is true', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: pt(1, false, 0, 0),
+      b: pt(2, true, 0, 0.0005),
+      c: pt(3, false, 0, 0.001),
+    })
+
+    store.selectByTraversalDistance(100, true)
+
+    // a: selected; b: ~55m traversal, fails but stays; c: ~110m traversal, select
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true, true])
+  })
+})
+
 describe('collections store — preset state', () => {
   beforeEach(() => {
     setActivePinia(createPinia())

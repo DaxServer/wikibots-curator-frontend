@@ -12,6 +12,11 @@ const intervalUnitOptions = INTERVAL_UNITS.map((u) => ({ label: u, value: u }))
 const minDistance = ref<number | null>(100)
 const distanceUnit = ref<DistanceUnit>('meters')
 const distanceUnitOptions = DISTANCE_UNITS.map((u) => ({ label: u, value: u }))
+const distanceMethod = ref<'traversal' | 'straight-line'>('traversal')
+const distanceMethodOptions = [
+  { label: 'traversed-path', value: 'traversal' },
+  { label: 'straight-line', value: 'straight-line' },
+]
 
 const minDistanceInMeters = computed(() => {
   if (minDistance.value === null) return null
@@ -269,7 +274,17 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         size="small"
         :disabled="store.isBatchLoading"
       />
-      <span class="text-md text-gray-600">apart (as the crow flies) and</span>
+      <span class="text-md text-gray-600">apart along</span>
+      <SelectButton
+        v-model="distanceMethod"
+        :options="distanceMethodOptions"
+        option-label="label"
+        option-value="value"
+        :allow-empty="false"
+        size="small"
+        :disabled="store.isBatchLoading"
+      />
+      <span class="text-md text-gray-600">and</span>
       <Button
         class="hover-primary"
         severity="secondary"
@@ -278,10 +293,14 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         :disabled="minDistanceInMeters === null || store.isBatchLoading"
         v-tooltip.right="
           minDistanceInMeters !== null
-            ? `Clears the current selection, then selects images at least ${minDistance} ${minDistance === 1 ? distanceUnit.replace(/s$/, '') : distanceUnit} apart.`
+            ? `Clears the current selection, then selects images at least ${minDistance} ${minDistance === 1 ? distanceUnit.replace(/s$/, '') : distanceUnit} apart (${distanceMethod === 'traversal' ? 'measured along the path' : 'straight-line'}).`
             : ''
         "
-        @click="store.selectByMinDistance(minDistanceInMeters!, false)"
+        @click="
+          distanceMethod === 'traversal'
+            ? store.selectByTraversalDistance(minDistanceInMeters!, false)
+            : store.selectByMinDistance(minDistanceInMeters!, false)
+        "
       />
       <span class="text-sm text-gray-400">or</span>
       <Button
@@ -292,10 +311,14 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         :disabled="minDistanceInMeters === null || store.isBatchLoading"
         v-tooltip.right="
           minDistanceInMeters !== null
-            ? `Keeps the current selection and also selects images at least ${minDistance} ${minDistance === 1 ? distanceUnit.replace(/s$/, '') : distanceUnit} apart.`
+            ? `Keeps the current selection and also selects images at least ${minDistance} ${minDistance === 1 ? distanceUnit.replace(/s$/, '') : distanceUnit} apart (${distanceMethod === 'traversal' ? 'measured along the path' : 'straight-line'}).`
             : ''
         "
-        @click="store.selectByMinDistance(minDistanceInMeters!, true)"
+        @click="
+          distanceMethod === 'traversal'
+            ? store.selectByTraversalDistance(minDistanceInMeters!, true)
+            : store.selectByMinDistance(minDistanceInMeters!, true)
+        "
       />
     </div>
   </div>
