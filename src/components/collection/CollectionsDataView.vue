@@ -168,11 +168,12 @@ watch(
         :rows-per-page-options="rowsPerPageOptions"
         paginator-template="Rows RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport JumpToPageDropdown"
         current-page-report-template="Page {currentPage} of {totalPages}"
+        :page-link-size="10"
         @page="onPageChange"
         :pt="{
           pcPaginator: {
             root: {
-              class: 'justify-end!',
+              class: store.stepper === '2' ? 'justify-start!' : 'justify-end!',
             },
           },
         }"

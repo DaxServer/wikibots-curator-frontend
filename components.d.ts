@@ -54,6 +54,7 @@ declare module 'vue' {
     Image: typeof import('primevue/image')['default']
     IngestPagination: typeof import('./src/components/ui/IngestPagination.vue')['default']
     InputIcon: typeof import('primevue/inputicon')['default']
+    InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
     ItemInputs: typeof import('./src/components/edit/ItemInputs.vue')['default']
     MapillaryCollections: typeof import('./src/components/mapillary/MapillaryCollections.vue')['default']

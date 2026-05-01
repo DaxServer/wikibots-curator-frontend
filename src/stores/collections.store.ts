@@ -136,6 +136,13 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
+  const selectEveryNth = (n: number, add: boolean) => {
+    if (!add) deselectAll()
+    itemsArray.value.forEach((item, i) => {
+      if ((i + 1) % n === 0) item.meta.selected = true
+    })
+  }
+
   const selectPage = (start: number, rows: number) => {
     const end = start + rows
     const pageItems = itemsArray.value.slice(start, end)
@@ -362,6 +369,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     updateSelected,
     selectAll,
     deselectAll,
+    selectEveryNth,
     selectPage,
     setViewMode,
     toggleViewMode,
