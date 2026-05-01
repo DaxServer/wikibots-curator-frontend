@@ -3,7 +3,7 @@ const store = useCollectionsStore()
 
 const emit = defineEmits(['select:currentPage'])
 
-const nthN = ref(2)
+const nthN = ref<number | null>(2)
 
 const ordinal = (n: number): string => {
   const mod100 = n % 100
@@ -118,7 +118,6 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         :min="2"
         :max="store.totalImages"
         :step="1"
-        :suffix="ordinalSuffix(nthN)"
         size="small"
         show-buttons
         button-layout="horizontal"
@@ -129,18 +128,18 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         input-class="w-20 text-center"
         :disabled="store.isBatchLoading"
       />
-      <span class="text-md text-gray-600">item and</span>
+      <span class="text-md text-gray-600">-{{ nthN !== null && nthN >= 2 ? ordinalSuffix(nthN) : '' }} item and</span>
       <Button
         class="hover-primary"
         severity="secondary"
         outlined
         label="add to selection"
-        :disabled="nthN < 2 || store.isBatchLoading"
-        @click="store.selectEveryNth(nthN, true)"
+        :disabled="nthN === null || nthN < 2 || store.isBatchLoading"
+        @click="store.selectEveryNth(nthN!, true)"
       />
       <i
         class="pi pi-info-circle text-gray-400 cursor-help"
-        v-tooltip.right="`Selects every ${ordinal(nthN)} image in the sequence and adds it to the current selection.`"
+        v-tooltip.right="nthN !== null && nthN >= 2 ? `Selects every ${ordinal(nthN)} image in the sequence and adds it to the current selection.` : ''"
       />
     </div>
   </div>
