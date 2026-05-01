@@ -73,6 +73,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   })
 
   const itemsArray = computed(() => Object.values(items))
+  const chronoItems = computed(() => [...itemsArray.value].sort((a, b) => a.index - b.index))
   const totalImages = computed(() => itemsArray.value.length)
   const selectedItems = computed(() => itemsArray.value.filter((i) => i.meta.selected))
   const selectedCount = computed(() => selectedItems.value.length)
@@ -138,7 +139,7 @@ export const useCollectionsStore = defineStore('collections', () => {
 
   const selectEveryNth = (n: number, add: boolean) => {
     if (!add) deselectAll()
-    itemsArray.value.forEach((item, i) => {
+    chronoItems.value.forEach((item, i) => {
       if ((i + 1) % n === 0) item.meta.selected = true
     })
   }
@@ -146,7 +147,7 @@ export const useCollectionsStore = defineStore('collections', () => {
   const selectByMinInterval = (minSeconds: number, add: boolean) => {
     if (!add) deselectAll()
     let lastSelectedTime: Date | null = null
-    for (const item of itemsArray.value) {
+    for (const item of chronoItems.value) {
       const taken = item.image.dates?.taken
       if (!taken) continue
       if (lastSelectedTime === null) {
@@ -337,6 +338,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     globalDateCategory,
     globalTitleTemplate,
     itemsArray,
+    chronoItems,
     totalImages,
     selectedCount,
     selectedItems,
