@@ -152,8 +152,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     if (!add) deselectAll()
     let lastSelectedTime: Date | null = null
     for (const item of chronoItems.value) {
-      const taken = item.image.dates?.taken
-      if (!taken) continue
+      const taken = item.image.dates.taken
       if (lastSelectedTime === null) {
         item.meta.selected = true
         lastSelectedTime = taken
