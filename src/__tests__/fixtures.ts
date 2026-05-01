@@ -1,4 +1,25 @@
 import type { PresetItem } from '@/types/asyncapi'
+import type { Item } from '@/types/image'
+
+export const makeItem = (index: number, selected = false): Item => ({
+  id: `item-${index}`,
+  index,
+  isSkeleton: false,
+  image: {
+    id: `img-${index}`,
+    location: { latitude: 0, longitude: 0, compass_angle: null },
+    thumb_url: '',
+    full_url: '',
+    existing: [],
+    captured_at: '',
+    sequence_id: '',
+  } as unknown as Item['image'],
+  meta: {
+    selected,
+    description: { language: 'en', value: '' },
+    categories: '',
+  },
+})
 
 export const makePreset = (overrides: Partial<PresetItem> = {}): PresetItem => ({
   id: 1,

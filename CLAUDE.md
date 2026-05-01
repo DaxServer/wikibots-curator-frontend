@@ -207,6 +207,18 @@ Real-time features use WebSocket connections defined in AsyncAPI contract (`src/
 - Danger action: `severity="danger"` + `outlined`
 - Primary action: `severity="primary"` (filled, no outlined)
 
+**Button hover overrides in scoped CSS:** PrimeVue injects button CSS at runtime (after static styles) — equal-specificity `:deep()` rules lose. Use `!important` on the properties. This differs from DataTable where PrimeVue uses inline token injection (which `!important` can't beat). Button CSS is class-based, so `!important` works:
+
+```css
+:deep(.my-hover-class:not(:disabled):hover) {
+  background: var(--p-button-primary-background) !important;
+  border-color: var(--p-button-primary-border-color) !important;
+  color: var(--p-button-primary-color) !important;
+}
+```
+
+**PrimeVue CSS variable naming:** `dt('button.primary.background')` → `--p-button-primary-background` (dots to dashes, `--p-` prefix). Verify variable names by reading `node_modules/@primeuix/styles/dist/button/index.mjs`.
+
 ## Domain Concepts
 
 ### Title Template System

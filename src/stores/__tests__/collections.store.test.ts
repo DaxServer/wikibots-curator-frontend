@@ -1,7 +1,58 @@
-import { makePreset } from '@/__tests__/fixtures'
+import { makeItem, makePreset } from '@/__tests__/fixtures'
 import { useCollectionsStore } from '@/stores/collections.store'
 import { beforeEach, describe, expect, it } from 'bun:test'
 import { createPinia, setActivePinia } from 'pinia'
+
+describe('selectEveryNth', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('selects every Nth item by 1-based index when add is false', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      'item-1': makeItem(1),
+      'item-2': makeItem(2),
+      'item-3': makeItem(3),
+      'item-4': makeItem(4),
+      'item-5': makeItem(5),
+      'item-6': makeItem(6),
+    })
+
+    store.selectEveryNth(2, false)
+
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([
+      false, true, false, true, false, true,
+    ])
+  })
+
+  it('clears existing selection before selecting when add is false', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      'item-1': makeItem(1, true),
+      'item-2': makeItem(2, false),
+      'item-3': makeItem(3, false),
+    })
+
+    store.selectEveryNth(3, false)
+
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([false, false, true])
+  })
+
+  it('adds to existing selection when add is true', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      'item-1': makeItem(1, true),
+      'item-2': makeItem(2, false),
+      'item-3': makeItem(3, false),
+      'item-4': makeItem(4, false),
+    })
+
+    store.selectEveryNth(2, true)
+
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true, false, true])
+  })
+})
 
 describe('collections store — preset state', () => {
   beforeEach(() => {
