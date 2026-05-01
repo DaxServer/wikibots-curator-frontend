@@ -143,6 +143,25 @@ export const useCollectionsStore = defineStore('collections', () => {
     })
   }
 
+  const selectByMinInterval = (minSeconds: number, add: boolean) => {
+    if (!add) deselectAll()
+    let lastSelectedTime: Date | null = null
+    for (const item of itemsArray.value) {
+      const taken = item.image.dates?.taken
+      if (!taken) continue
+      if (lastSelectedTime === null) {
+        item.meta.selected = true
+        lastSelectedTime = taken
+      } else {
+        const elapsed = (taken.getTime() - lastSelectedTime.getTime()) / 1000
+        if (elapsed >= minSeconds) {
+          item.meta.selected = true
+          lastSelectedTime = taken
+        }
+      }
+    }
+  }
+
   const selectPage = (start: number, rows: number) => {
     const end = start + rows
     const pageItems = itemsArray.value.slice(start, end)
@@ -370,6 +389,7 @@ export const useCollectionsStore = defineStore('collections', () => {
     selectAll,
     deselectAll,
     selectEveryNth,
+    selectByMinInterval,
     selectPage,
     setViewMode,
     toggleViewMode,

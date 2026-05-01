@@ -13,6 +13,7 @@ declare global {
   const EffectScope: typeof import('vue').EffectScope
   const FIELD_PATH_TO_NAME: typeof import('./src/utils/titleTemplate').FIELD_PATH_TO_NAME
   const FilterMatchMode: typeof import('@primevue/core/api').FilterMatchMode
+  const INTERVAL_UNITS: typeof import('./src/types/collections').INTERVAL_UNITS
   const ImageHandler: typeof import('./src/types/asyncapi').ImageHandler
   const Noir: typeof import('./src/assets/Noir').default
   const OPTIONAL_FIELD_PATHS: typeof import('./src/utils/titleTemplate').OPTIONAL_FIELD_PATHS
@@ -45,6 +46,7 @@ declare global {
   const createCopyrightLicenseClaim: typeof import('./src/composables/sdc').createCopyrightLicenseClaim
   const createCopyrightStatusClaim: typeof import('./src/composables/sdc').createCopyrightStatusClaim
   const createCreatorClaim: typeof import('./src/composables/sdc').createCreatorClaim
+  const createDisposableDirective: typeof import('@vueuse/core').createDisposableDirective
   const createEventHook: typeof import('@vueuse/core').createEventHook
   const createExternalIdSnak: typeof import('./src/composables/sdc').createExternalIdSnak
   const createExternalIdStatement: typeof import('./src/composables/sdc').createExternalIdStatement
@@ -433,7 +435,7 @@ declare global {
   export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, CreateCategory, CreateCategoryData, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, CheckCategoriesDeleted, CheckCategoriesDeletedData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, RecategorizeFiles, RecategorizeFilesData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, CategoriesDeletedResponse, CategoriesDeletedResponseData, CategoryCreatedResponse, CategoryCreatedResponseData, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, RecategorizeFilesResponse, RecategorizeFilesResponseData, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
-  export type { Handler, Layout, BatchStatsCard } from './src/types/collections'
+  export type { Handler, Layout, IntervalUnit, BatchStatsCard } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
   export type { Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
@@ -455,6 +457,7 @@ declare module 'vue' {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly FIELD_PATH_TO_NAME: UnwrapRef<typeof import('./src/utils/titleTemplate')['FIELD_PATH_TO_NAME']>
     readonly FilterMatchMode: UnwrapRef<typeof import('@primevue/core/api')['FilterMatchMode']>
+    readonly INTERVAL_UNITS: UnwrapRef<typeof import('./src/types/collections')['INTERVAL_UNITS']>
     readonly ImageHandler: UnwrapRef<typeof import('./src/types/asyncapi')['ImageHandler']>
     readonly Noir: UnwrapRef<typeof import('./src/assets/Noir')['default']>
     readonly OPTIONAL_FIELD_PATHS: UnwrapRef<typeof import('./src/utils/titleTemplate')['OPTIONAL_FIELD_PATHS']>
@@ -487,6 +490,7 @@ declare module 'vue' {
     readonly createCopyrightLicenseClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCopyrightLicenseClaim']>
     readonly createCopyrightStatusClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCopyrightStatusClaim']>
     readonly createCreatorClaim: UnwrapRef<typeof import('./src/composables/sdc')['createCreatorClaim']>
+    readonly createDisposableDirective: UnwrapRef<typeof import('@vueuse/core')['createDisposableDirective']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createExternalIdSnak: UnwrapRef<typeof import('./src/composables/sdc')['createExternalIdSnak']>
     readonly createExternalIdStatement: UnwrapRef<typeof import('./src/composables/sdc')['createExternalIdStatement']>
@@ -595,7 +599,6 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
-    readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly router: UnwrapRef<typeof import('./src/router/index')['default']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>

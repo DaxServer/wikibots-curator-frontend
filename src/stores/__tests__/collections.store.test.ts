@@ -22,7 +22,12 @@ describe('selectEveryNth', () => {
     store.selectEveryNth(2, false)
 
     expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([
-      false, true, false, true, false, true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
     ])
   })
 
@@ -51,6 +56,80 @@ describe('selectEveryNth', () => {
     store.selectEveryNth(2, true)
 
     expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true, false, true])
+  })
+})
+
+describe('selectByMinInterval', () => {
+  const t = (s: number) => new Date(s * 1000)
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('always selects first item', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({ a: makeItem(1, false, t(0)) })
+
+    store.selectByMinInterval(10, false)
+
+    expect(store.itemsArray[0]!.meta.selected).toBe(true)
+  })
+
+  it('selects items meeting the minimum interval from first', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: makeItem(1, false, t(0)),
+      b: makeItem(2, false, t(5)),
+      c: makeItem(3, false, t(10)),
+      d: makeItem(4, false, t(15)),
+      e: makeItem(5, false, t(20)),
+    })
+
+    store.selectByMinInterval(10, false)
+
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true, false, true])
+  })
+
+  it('measures elapsed from last selected item, not last item', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: makeItem(1, false, t(0)),
+      b: makeItem(2, false, t(5)),
+      c: makeItem(3, false, t(8)),
+      d: makeItem(4, false, t(12)),
+    })
+
+    store.selectByMinInterval(10, false)
+
+    // b (5s from a) and c (8s from a) both rejected; d (12s from a) accepted
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, false, true])
+  })
+
+  it('clears existing selection when add is false', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: makeItem(1, true, t(0)),
+      b: makeItem(2, true, t(5)),
+      c: makeItem(3, true, t(20)),
+    })
+
+    store.selectByMinInterval(10, false)
+
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, false, true])
+  })
+
+  it('adds to existing selection when add is true', () => {
+    const store = useCollectionsStore()
+    store.replaceItems({
+      a: makeItem(1, false, t(0)),
+      b: makeItem(2, true, t(5)),
+      c: makeItem(3, false, t(12)),
+    })
+
+    store.selectByMinInterval(10, true)
+
+    // a: selected (first); b: 5s skip but already selected stays; c: 12s from a >= 10 selected
+    expect(store.itemsArray.map((i) => i.meta.selected)).toEqual([true, true, true])
   })
 })
 
