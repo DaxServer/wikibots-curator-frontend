@@ -1,7 +1,7 @@
 import type { PresetItem } from '@/types/asyncapi'
 import type { Item } from '@/types/image'
 
-export const makeItem = (index: number, selected = false): Item => ({
+export const makeItem = (index: number, selected = false, takenAt?: Date): Item => ({
   id: `item-${index}`,
   index,
   isSkeleton: false,
@@ -13,6 +13,7 @@ export const makeItem = (index: number, selected = false): Item => ({
     existing: [],
     captured_at: '',
     sequence_id: '',
+    dates: { taken: takenAt ?? new Date(0) },
   } as unknown as Item['image'],
   meta: {
     selected,
