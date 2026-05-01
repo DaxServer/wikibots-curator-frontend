@@ -9,6 +9,7 @@ declare global {
   const AVAILABLE_IMAGE_FIELDS: typeof import('./src/utils/titleTemplate').AVAILABLE_IMAGE_FIELDS
   const CAMERA_FIELD_PATHS: typeof import('./src/utils/titleTemplate').CAMERA_FIELD_PATHS
   const COLOR_VARIANTS: typeof import('./src/composables/useUploadStatus').COLOR_VARIANTS
+  const DISTANCE_UNITS: typeof import('./src/types/collections').DISTANCE_UNITS
   const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
   const FIELD_PATH_TO_NAME: typeof import('./src/utils/titleTemplate').FIELD_PATH_TO_NAME
@@ -98,6 +99,7 @@ declare global {
   const h: typeof import('vue').h
   const hasMissingCameraFields: typeof import('./src/utils/titleTemplate').hasMissingCameraFields
   const hasMissingOptionalFields: typeof import('./src/utils/titleTemplate').hasMissingOptionalFields
+  const haversineDistance: typeof import('./src/utils/geo').haversineDistance
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const initCollectionsListeners: typeof import('./src/composables/useCollections').initCollectionsListeners
   const inject: typeof import('vue').inject
@@ -435,7 +437,7 @@ declare global {
   export type { ImageHandler, WikibaseEntityType, DataValueType, Rank, SnakDataType, SnakType, StructuredError, DataValue, Snak, ValueSnak, CancelBatch, CreateBatch, CreateCategory, CreateCategoryData, DeletePreset, DeletePresetData, FetchBatches, FetchBatchesData, FetchBatchUploads, FetchImages, FetchPresets, FetchPresetsData, CheckCategoriesDeleted, CheckCategoriesDeletedData, RetryUploads, SavePreset, SavePresetData, Label, SubscribeBatch, SubscribeBatchesList, SubscribeBatchesListData, UnsubscribeBatch, UnsubscribeBatchesList, Upload, UploadData, UploadItem, UploadSlice, UploadSliceData, RecategorizeFiles, RecategorizeFilesData, BatchCreated, BatchesList, BatchesListData, BatchItem, BatchStats, BatchUploadsList, BatchUploadsListData, BatchUploadItem, DuplicateError, ErrorLink, DuplicatedSdcNotUpdatedError, DuplicatedSdcUpdatedError, GenericError, TitleBlacklistedError, CollectionImageIds, CollectionImages, CollectionImagesData, MediaImage, CameraInfo, Creator, Dates, ImageDimensions, ExistingPage, GeoLocation, ImageUrls, Error, PartialCollectionImages, PartialCollectionImagesData, PresetsList, PresetsListData, PresetItem, CategoriesDeletedResponse, CategoriesDeletedResponseData, CategoryCreatedResponse, CategoryCreatedResponseData, RetryUploadsResponse, Subscribed, TryBatchRetrieval, UploadCreated, UploadCreatedItem, UploadsComplete, UploadsUpdate, UploadUpdateItem, UploadSliceAck, UploadSliceAckItem, RecategorizeFilesResponse, RecategorizeFilesResponseData, Claims, NoValueSnak, SomeValueSnak, EntityIdValueSnak, EntityIdDataValue, DataValueEntityId, ExternalIdValueSnak, StringDataValue, GlobeCoordinateValueSnak, GlobeCoordinateDataValue, DataValueGlobeCoordinate, QuantityValueSnak, QuantityDataValue, DataValueQuantity, StringValueSnak, TimeValueSnak, TimeDataValue, DataValueTime, UrlValueSnak, UrlDataValue, ItemId, PropertyId, Reference, Statement, ClientMessage, ServerMessage } from './src/types/asyncapi'
   import('./src/types/asyncapi')
   // @ts-ignore
-  export type { Handler, Layout, IntervalUnit, BatchStatsCard } from './src/types/collections'
+  export type { Handler, Layout, IntervalUnit, DistanceUnit, BatchStatsCard } from './src/types/collections'
   import('./src/types/collections')
   // @ts-ignore
   export type { Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
@@ -453,6 +455,7 @@ declare module 'vue' {
     readonly AVAILABLE_IMAGE_FIELDS: UnwrapRef<typeof import('./src/utils/titleTemplate')['AVAILABLE_IMAGE_FIELDS']>
     readonly CAMERA_FIELD_PATHS: UnwrapRef<typeof import('./src/utils/titleTemplate')['CAMERA_FIELD_PATHS']>
     readonly COLOR_VARIANTS: UnwrapRef<typeof import('./src/composables/useUploadStatus')['COLOR_VARIANTS']>
+    readonly DISTANCE_UNITS: UnwrapRef<typeof import('./src/types/collections')['DISTANCE_UNITS']>
     readonly DataValueType: UnwrapRef<typeof import('./src/types/asyncapi')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly FIELD_PATH_TO_NAME: UnwrapRef<typeof import('./src/utils/titleTemplate')['FIELD_PATH_TO_NAME']>
@@ -540,6 +543,7 @@ declare module 'vue' {
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly hasMissingCameraFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['hasMissingCameraFields']>
     readonly hasMissingOptionalFields: UnwrapRef<typeof import('./src/utils/titleTemplate')['hasMissingOptionalFields']>
+    readonly haversineDistance: UnwrapRef<typeof import('./src/utils/geo')['haversineDistance']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly initCollectionsListeners: UnwrapRef<typeof import('./src/composables/useCollections')['initCollectionsListeners']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>

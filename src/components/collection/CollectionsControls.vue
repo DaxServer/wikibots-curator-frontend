@@ -9,6 +9,16 @@ const minIntervalSeconds = ref<number | null>(10)
 const intervalUnit = ref<IntervalUnit>('seconds')
 const intervalUnitOptions = INTERVAL_UNITS.map((u) => ({ label: u, value: u }))
 
+const minDistance = ref<number | null>(100)
+const distanceUnit = ref<DistanceUnit>('meters')
+const distanceUnitOptions = DISTANCE_UNITS.map((u) => ({ label: u, value: u }))
+
+const minDistanceInMeters = computed(() => {
+  if (minDistance.value === null) return null
+  if (distanceUnit.value === 'kilometers') return minDistance.value * 1000
+  return minDistance.value
+})
+
 const minIntervalInSeconds = computed(() => {
   if (minIntervalSeconds.value === null) return null
   if (intervalUnit.value === 'minutes') return minIntervalSeconds.value * 60
@@ -152,7 +162,11 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         outlined
         label="replace entire selection"
         :disabled="nthN === null || nthN < 2 || store.isBatchLoading"
-        v-tooltip.right="nthN !== null && nthN >= 2 ? `Clears the current selection, then selects every ${ordinal(nthN)} image.` : ''"
+        v-tooltip.right="
+          nthN !== null && nthN >= 2
+            ? `Clears the current selection, then selects every ${ordinal(nthN)} image.`
+            : ''
+        "
         @click="store.selectEveryNth(nthN!, false)"
       />
       <span class="text-sm text-gray-400">or</span>
@@ -162,7 +176,11 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         outlined
         label="add to selection"
         :disabled="nthN === null || nthN < 2 || store.isBatchLoading"
-        v-tooltip.right="nthN !== null && nthN >= 2 ? `Keeps the current selection and also selects every ${ordinal(nthN)} image.` : ''"
+        v-tooltip.right="
+          nthN !== null && nthN >= 2
+            ? `Keeps the current selection and also selects every ${ordinal(nthN)} image.`
+            : ''
+        "
         @click="store.selectEveryNth(nthN!, true)"
       />
     </div>
@@ -201,7 +219,11 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         outlined
         label="replace entire selection"
         :disabled="minIntervalInSeconds === null || store.isBatchLoading"
-        v-tooltip.right="minIntervalInSeconds !== null ? `Clears the current selection, then selects images at least ${minIntervalSeconds} ${minIntervalSeconds === 1 ? intervalUnit.replace(/s$/, '') : intervalUnit} apart.` : ''"
+        v-tooltip.right="
+          minIntervalInSeconds !== null
+            ? `Clears the current selection, then selects images at least ${minIntervalSeconds} ${minIntervalSeconds === 1 ? intervalUnit.replace(/s$/, '') : intervalUnit} apart.`
+            : ''
+        "
         @click="store.selectByMinInterval(minIntervalInSeconds!, false)"
       />
       <span class="text-sm text-gray-400">or</span>
@@ -211,8 +233,69 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         outlined
         label="add to selection"
         :disabled="minIntervalInSeconds === null || store.isBatchLoading"
-        v-tooltip.right="minIntervalInSeconds !== null ? `Keeps the current selection and also selects images at least ${minIntervalSeconds} ${minIntervalSeconds === 1 ? intervalUnit.replace(/s$/, '') : intervalUnit} apart.` : ''"
+        v-tooltip.right="
+          minIntervalInSeconds !== null
+            ? `Keeps the current selection and also selects images at least ${minIntervalSeconds} ${minIntervalSeconds === 1 ? intervalUnit.replace(/s$/, '') : intervalUnit} apart.`
+            : ''
+        "
         @click="store.selectByMinInterval(minIntervalInSeconds!, true)"
+      />
+    </div>
+
+    <div
+      v-if="store.totalImages > 1"
+      class="flex items-center gap-3"
+    >
+      <span class="text-md text-gray-600">Select every</span>
+      <InputNumber
+        v-model="minDistance"
+        :min="1"
+        :step="1"
+        size="small"
+        show-buttons
+        button-layout="horizontal"
+        increment-button-icon="pi pi-plus"
+        decrement-button-icon="pi pi-minus"
+        :allow-empty="false"
+        :use-grouping="false"
+        input-class="w-20 text-center"
+        :disabled="store.isBatchLoading"
+      />
+      <Select
+        v-model="distanceUnit"
+        :options="distanceUnitOptions"
+        option-label="label"
+        option-value="value"
+        size="small"
+        :disabled="store.isBatchLoading"
+      />
+      <span class="text-md text-gray-600">apart (as the crow flies) and</span>
+      <Button
+        class="hover-primary"
+        severity="secondary"
+        outlined
+        label="replace entire selection"
+        :disabled="minDistanceInMeters === null || store.isBatchLoading"
+        v-tooltip.right="
+          minDistanceInMeters !== null
+            ? `Clears the current selection, then selects images at least ${minDistance} ${minDistance === 1 ? distanceUnit.replace(/s$/, '') : distanceUnit} apart.`
+            : ''
+        "
+        @click="store.selectByMinDistance(minDistanceInMeters!, false)"
+      />
+      <span class="text-sm text-gray-400">or</span>
+      <Button
+        class="hover-primary"
+        severity="secondary"
+        outlined
+        label="add to selection"
+        :disabled="minDistanceInMeters === null || store.isBatchLoading"
+        v-tooltip.right="
+          minDistanceInMeters !== null
+            ? `Keeps the current selection and also selects images at least ${minDistance} ${minDistance === 1 ? distanceUnit.replace(/s$/, '') : distanceUnit} apart.`
+            : ''
+        "
+        @click="store.selectByMinDistance(minDistanceInMeters!, true)"
       />
     </div>
   </div>
