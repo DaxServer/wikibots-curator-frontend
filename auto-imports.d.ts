@@ -9,6 +9,7 @@ declare global {
   const AVAILABLE_IMAGE_FIELDS: typeof import('./src/utils/titleTemplate').AVAILABLE_IMAGE_FIELDS
   const CAMERA_FIELD_PATHS: typeof import('./src/utils/titleTemplate').CAMERA_FIELD_PATHS
   const COLOR_VARIANTS: typeof import('./src/composables/useUploadStatus').COLOR_VARIANTS
+  const DEMO_ITEMS: typeof import('./src/utils/filterSelection').DEMO_ITEMS
   const DISTANCE_UNITS: typeof import('./src/types/collections').DISTANCE_UNITS
   const DataValueType: typeof import('./src/types/asyncapi').DataValueType
   const EffectScope: typeof import('vue').EffectScope
@@ -167,6 +168,10 @@ declare global {
   const resolveComponent: typeof import('vue').resolveComponent
   const resolveRef: typeof import('@vueuse/core').resolveRef
   const router: typeof import('./src/router/index').default
+  const selectByMinInterval: typeof import('./src/utils/filterSelection').selectByMinInterval
+  const selectByStraightLineDistance: typeof import('./src/utils/filterSelection').selectByStraightLineDistance
+  const selectByTraversalDistance: typeof import('./src/utils/filterSelection').selectByTraversalDistance
+  const selectEveryNth: typeof import('./src/utils/filterSelection').selectEveryNth
   const setActivePinia: typeof import('pinia').setActivePinia
   const setMapStoreSuffix: typeof import('pinia').setMapStoreSuffix
   const shallowReactive: typeof import('vue').shallowReactive
@@ -443,6 +448,9 @@ declare global {
   export type { Image, Metadata, MetadataKey, MetadataValue, Item, TitleStatus, UploadStatus, UploadStatusUpdate } from './src/types/image'
   import('./src/types/image')
   // @ts-ignore
+  export type { FilterItem } from './src/utils/filterSelection'
+  import('./src/utils/filterSelection')
+  // @ts-ignore
   export type { FieldGroup } from './src/utils/titleTemplate'
   import('./src/utils/titleTemplate')
 }
@@ -455,6 +463,7 @@ declare module 'vue' {
     readonly AVAILABLE_IMAGE_FIELDS: UnwrapRef<typeof import('./src/utils/titleTemplate')['AVAILABLE_IMAGE_FIELDS']>
     readonly CAMERA_FIELD_PATHS: UnwrapRef<typeof import('./src/utils/titleTemplate')['CAMERA_FIELD_PATHS']>
     readonly COLOR_VARIANTS: UnwrapRef<typeof import('./src/composables/useUploadStatus')['COLOR_VARIANTS']>
+    readonly DEMO_ITEMS: UnwrapRef<typeof import('./src/utils/filterSelection')['DEMO_ITEMS']>
     readonly DISTANCE_UNITS: UnwrapRef<typeof import('./src/types/collections')['DISTANCE_UNITS']>
     readonly DataValueType: UnwrapRef<typeof import('./src/types/asyncapi')['DataValueType']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
@@ -604,6 +613,10 @@ declare module 'vue' {
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly router: UnwrapRef<typeof import('./src/router/index')['default']>
+    readonly selectByMinInterval: UnwrapRef<typeof import('./src/utils/filterSelection')['selectByMinInterval']>
+    readonly selectByStraightLineDistance: UnwrapRef<typeof import('./src/utils/filterSelection')['selectByStraightLineDistance']>
+    readonly selectByTraversalDistance: UnwrapRef<typeof import('./src/utils/filterSelection')['selectByTraversalDistance']>
+    readonly selectEveryNth: UnwrapRef<typeof import('./src/utils/filterSelection')['selectEveryNth']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
