@@ -39,8 +39,10 @@ const onStepperUpdate = (next: string) => {
               class="mt-4 mb-4 flex flex-col gap-4"
               v-focustrap
             >
+              <label for="input" class="w-full text-xl font-medium text-gray-700">Mapillary URL / Sequence ID</label>
               <InputText
                 autofocus
+                id="input"
                 v-model="store.input"
                 :placeholder="placeholder"
               />
