@@ -2,7 +2,7 @@ import { useSequenceMap } from '@/composables/useSequenceMap'
 import { useCollectionsStore } from '@/stores/collections.store'
 import type { Item } from '@/types/image'
 import { beforeEach, describe, expect, test } from 'bun:test'
-import type { Point } from 'geojson'
+import type { LineString, Point } from 'geojson'
 import { createPinia, setActivePinia } from 'pinia'
 
 const makeItem = (
@@ -115,11 +115,94 @@ describe('useSequenceMap', () => {
     expect(geoJSON.value.features[0]!.properties?.compass_angle).toBeUndefined()
   })
 
+  describe('start/end labels', () => {
+    test('first item has label Start', () => {
+      store.items.a = makeItem({ id: 'a', index: 1 })
+      store.items.b = makeItem({ id: 'b', index: 2 })
+      const { geoJSON } = useSequenceMap()
+      const first = geoJSON.value.features.find((f) => f.properties?.number === 1)
+      expect(first?.properties?.label).toBe('Start')
+    })
+
+    test('last item has label End', () => {
+      store.items.a = makeItem({ id: 'a', index: 1 })
+      store.items.b = makeItem({ id: 'b', index: 2 })
+      const { geoJSON } = useSequenceMap()
+      const last = geoJSON.value.features.find((f) => f.properties?.number === 2)
+      expect(last?.properties?.label).toBe('End')
+    })
+
+    test('middle items have empty label', () => {
+      store.items.a = makeItem({ id: 'a', index: 1 })
+      store.items.b = makeItem({ id: 'b', index: 2 })
+      store.items.c = makeItem({ id: 'c', index: 3 })
+      const { geoJSON } = useSequenceMap()
+      const middle = geoJSON.value.features.find((f) => f.properties?.number === 2)
+      expect(middle?.properties?.label).toBe('')
+    })
+
+    test('single item has no label', () => {
+      store.items.a = makeItem({ id: 'a', index: 1 })
+      const { geoJSON } = useSequenceMap()
+      expect(geoJSON.value.features[0]?.properties?.label).toBe('')
+    })
+  })
+
   test('geoJSON updates reactively when selection changes', () => {
     store.items.a = makeItem({ id: 'a', selected: true })
     const { geoJSON } = useSequenceMap()
     expect(geoJSON.value.features[0]!.properties?.selected).toBe(true)
     store.items.a!.meta.selected = false
     expect(geoJSON.value.features[0]!.properties?.selected).toBe(false)
+  })
+
+  describe('pathGeoJSON', () => {
+    test('returns FeatureCollection', () => {
+      const { pathGeoJSON } = useSequenceMap()
+      expect(pathGeoJSON.value.type).toBe('FeatureCollection')
+    })
+
+    test('returns empty features when store is empty', () => {
+      const { pathGeoJSON } = useSequenceMap()
+      expect(pathGeoJSON.value.features).toHaveLength(0)
+    })
+
+    test('returns empty features when only one item', () => {
+      store.items.a = makeItem({ id: 'a', index: 1 })
+      const { pathGeoJSON } = useSequenceMap()
+      expect(pathGeoJSON.value.features).toHaveLength(0)
+    })
+
+    test('returns single LineString feature when two or more items', () => {
+      store.items.a = makeItem({ id: 'a', index: 1, latitude: 10, longitude: 20 })
+      store.items.b = makeItem({ id: 'b', index: 2, latitude: 11, longitude: 21 })
+      const { pathGeoJSON } = useSequenceMap()
+      expect(pathGeoJSON.value.features).toHaveLength(1)
+      expect(pathGeoJSON.value.features[0]!.geometry.type).toBe('LineString')
+    })
+
+    test('coordinates are [longitude, latitude] in index order', () => {
+      store.items.b = makeItem({ id: 'b', index: 2, latitude: 11, longitude: 21 })
+      store.items.a = makeItem({ id: 'a', index: 1, latitude: 10, longitude: 20 })
+      const { pathGeoJSON } = useSequenceMap()
+      const coords = (pathGeoJSON.value.features[0]!.geometry as LineString).coordinates
+      expect(coords[0]).toEqual([20, 10])
+      expect(coords[1]).toEqual([21, 11])
+    })
+
+    test('excludes skeleton items from path', () => {
+      store.items.a = makeItem({ id: 'a', index: 1, isSkeleton: false })
+      store.items.b = makeItem({ id: 'b', index: 2, isSkeleton: true })
+      const { pathGeoJSON } = useSequenceMap()
+      expect(pathGeoJSON.value.features).toHaveLength(0)
+    })
+
+    test('updates reactively when items are added', () => {
+      const { pathGeoJSON } = useSequenceMap()
+      expect(pathGeoJSON.value.features).toHaveLength(0)
+      store.items.a = makeItem({ id: 'a', index: 1 })
+      store.items.b = makeItem({ id: 'b', index: 2 })
+      expect(pathGeoJSON.value.features).toHaveLength(1)
+    })
   })
 })
