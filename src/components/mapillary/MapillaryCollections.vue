@@ -9,8 +9,8 @@ onMounted(() => {
 <template>
   <CollectionLayout>
     <CollectionsTable
-      placeholder="Mapillary sequence ID (e.g., tulzukst7vufhdo1e4z60f)"
-      empty-message="Enter a Mapillary sequence ID to view images"
+      placeholder="Mapillary URL (e.g., https://www.mapillary.com/app/?pKey=165706989090864&focus=photo) or Sequence ID (e.g., tulzukst7vufhdo1e4z60f)"
+      empty-message="Enter a Mapillary URL or Sequence ID to view images"
       id-label="Sequence ID"
       alt-prefix="Mapillary image"
     >

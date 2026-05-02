@@ -359,7 +359,7 @@ describe('useCollections Listeners', () => {
         },
       }
 
-      listeners.onCollectionImages(creator, images)
+      listeners.onCollectionImages(creator, images, 'seq1')
 
       expect(store.creator).toEqual(creator)
       expect(store.items.img1).toBeDefined()
@@ -387,7 +387,7 @@ describe('useCollections Listeners', () => {
         },
       }
 
-      listeners.onCollectionImages(creator, images)
+      listeners.onCollectionImages(creator, images, 'seq1')
 
       expect(store.items.img1!.image.dates.taken).toBeInstanceOf(Date)
       expect(store.items.img1!.image.dates.taken.toISOString()).toBe(takenIso)
@@ -399,7 +399,7 @@ describe('useCollections Listeners', () => {
       const creator = { id: 'c1', username: 'u1', profile_url: '' }
       const images: Record<string, MediaImage> = {}
 
-      listeners.onCollectionImages(creator, images)
+      listeners.onCollectionImages(creator, images, 'seq1')
 
       expect(store.creator).toEqual(creator)
       expect(Object.keys(store.items)).toHaveLength(0)
