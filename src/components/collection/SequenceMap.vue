@@ -52,7 +52,11 @@ function updateEndpointMarkers() {
     const label = feature.properties?.label
     if (label !== 'Start' && label !== 'End') continue
     const [lng, lat] = feature.geometry.coordinates as [number, number]
-    const marker = new maplibregl.Marker({ element: createBadgeElement(label), anchor: 'top', offset: [0, 8] })
+    const marker = new maplibregl.Marker({
+      element: createBadgeElement(label),
+      anchor: 'top',
+      offset: [0, 8],
+    })
       .setLngLat([lng, lat])
       .addTo(map)
     if (label === 'Start') startMarker = marker

@@ -36,7 +36,7 @@ const timeDotData = computed(() =>
       state,
       num: i + 1,
       label: `${ms / 1000}s`,
-      x: 3 + (ms / TIME_MAX_MS) * 94,
+      x: 3 + (TIME_MAX_MS > 0 ? (ms / TIME_MAX_MS) * 94 : 0),
       isTop: i % 2 === 0,
     }
   }),
@@ -228,7 +228,7 @@ onUnmounted(clearTimer)
 // ── Style helpers ──────────────────────────────────────────────────────────
 const dotClass = (state: DotState): string => {
   if (state === 'selected')
-    return 'bg-green-500 text-white scale-110 shadow-[0_0_8px_rgba(34,197,94,0.6)]'
+    return 'bg-green-500 text-white scale-110 shadow-[0_0_8px_var(--p-green-500)]'
   if (state === 'skipped') return 'bg-red-100 text-red-600'
   return 'bg-surface-200 text-surface-500'
 }

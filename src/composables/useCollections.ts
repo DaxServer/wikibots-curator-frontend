@@ -166,7 +166,11 @@ export const initCollectionsListeners = () => {
     }
   }
 
-  const onCollectionImages = (creator: Creator, images: Record<string, MediaImage>, sequenceId: string) => {
+  const onCollectionImages = (
+    creator: Creator,
+    images: Record<string, MediaImage>,
+    sequenceId: string,
+  ) => {
     store.creator = creator
     store.input = sequenceId
     const allItems: Record<string, Item> = {}
