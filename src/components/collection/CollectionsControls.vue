@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
+const helpVisible = ref(false)
 
 const emit = defineEmits(['select:currentPage'])
 
@@ -137,6 +138,26 @@ const ordinalSuffix = (n: number): string => ordinal(n).slice(-2)
         @click="store.deselectAll()"
       />
     </div>
+
+    <Divider />
+
+    <div
+      v-if="store.totalImages > 1"
+      class="flex items-center gap-4"
+    >
+      <span class="text-md font-semibold text-surface-600">Filters</span>
+      <Button
+        severity="secondary"
+        outlined
+        size="small"
+        icon="pi pi-question-circle"
+        label="How do filters work?"
+        :disabled="store.isBatchLoading"
+        @click="helpVisible = true"
+      />
+    </div>
+
+    <FiltersHelpDialog v-model="helpVisible" />
 
     <div
       v-if="store.totalImages > 1"

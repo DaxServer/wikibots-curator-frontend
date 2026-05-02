@@ -8,7 +8,13 @@ import {
 import type { Layout } from '@/types/collections'
 import type { Item, Metadata, MetadataKey } from '@/types/image'
 import { TITLE_ERROR_STATUSES } from '@/types/image'
-import { haversineDistance } from '@/utils/geo'
+import type { FilterItem } from '@/utils/filterSelection'
+import {
+  selectByMinInterval as filterByMinInterval,
+  selectByTraversalDistance as filterByTraversalDistance,
+  selectEveryNth as filterEveryNth,
+  selectByStraightLineDistance,
+} from '@/utils/filterSelection'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, shallowRef } from 'vue'
 
@@ -142,73 +148,42 @@ export const useCollectionsStore = defineStore('collections', () => {
     }
   }
 
-  const selectEveryNth = (n: number, add: boolean) => {
+  const toFilterItems = (storeItems: typeof chronoItems.value): FilterItem[] =>
+    storeItems.map((item) => ({
+      capturedAt: item.image.dates.taken,
+      latitude: item.image.location.latitude,
+      longitude: item.image.location.longitude,
+    }))
+
+  const applySelection = (
+    storeItems: typeof chronoItems.value,
+    selected: boolean[],
+    add: boolean,
+  ) => {
     if (!add) deselectAll()
-    chronoItems.value.forEach((item, i) => {
-      if ((i + 1) % n === 0) item.meta.selected = true
+    storeItems.forEach((item, i) => {
+      if (selected[i]) item.meta.selected = true
     })
   }
 
+  const selectEveryNth = (n: number, add: boolean) => {
+    const items = chronoItems.value
+    applySelection(items, filterEveryNth(toFilterItems(items), n), add)
+  }
+
   const selectByMinDistance = (minMeters: number, add: boolean) => {
-    if (!add) deselectAll()
-    let lastLat: number | null = null
-    let lastLon: number | null = null
-    for (const item of chronoItems.value) {
-      const { latitude, longitude } = item.image.location
-      if (lastLat === null || lastLon === null) {
-        item.meta.selected = true
-        lastLat = latitude
-        lastLon = longitude
-      } else {
-        const dist = haversineDistance(lastLat, lastLon, latitude, longitude)
-        if (dist >= minMeters) {
-          item.meta.selected = true
-          lastLat = latitude
-          lastLon = longitude
-        }
-      }
-    }
+    const items = chronoItems.value
+    applySelection(items, selectByStraightLineDistance(toFilterItems(items), minMeters), add)
   }
 
   const selectByTraversalDistance = (minMeters: number, add: boolean) => {
-    if (!add) deselectAll()
-    let accumulated = 0
-    let lastLat: number | null = null
-    let lastLon: number | null = null
-    for (const item of chronoItems.value) {
-      const { latitude, longitude } = item.image.location
-      if (lastLat === null || lastLon === null) {
-        item.meta.selected = true
-        lastLat = latitude
-        lastLon = longitude
-      } else {
-        accumulated += haversineDistance(lastLat, lastLon, latitude, longitude)
-        lastLat = latitude
-        lastLon = longitude
-        if (accumulated >= minMeters) {
-          item.meta.selected = true
-          accumulated = 0
-        }
-      }
-    }
+    const items = chronoItems.value
+    applySelection(items, filterByTraversalDistance(toFilterItems(items), minMeters), add)
   }
 
   const selectByMinInterval = (minSeconds: number, add: boolean) => {
-    if (!add) deselectAll()
-    let lastSelectedTime: Date | null = null
-    for (const item of chronoItems.value) {
-      const taken = item.image.dates.taken
-      if (lastSelectedTime === null) {
-        item.meta.selected = true
-        lastSelectedTime = taken
-      } else {
-        const elapsed = (taken.getTime() - lastSelectedTime.getTime()) / 1000
-        if (elapsed >= minSeconds) {
-          item.meta.selected = true
-          lastSelectedTime = taken
-        }
-      }
-    }
+    const items = chronoItems.value
+    applySelection(items, filterByMinInterval(toFilterItems(items), minSeconds * 1000), add)
   }
 
   const selectPage = (start: number, rows: number) => {
