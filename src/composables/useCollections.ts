@@ -166,8 +166,9 @@ export const initCollectionsListeners = () => {
     }
   }
 
-  const onCollectionImages = (creator: Creator, images: Record<string, MediaImage>) => {
+  const onCollectionImages = (creator: Creator, images: Record<string, MediaImage>, sequenceId: string) => {
     store.creator = creator
+    store.input = sequenceId
     const allItems: Record<string, Item> = {}
     let index = 0
     for (const [id, image] of Object.entries(images)) {
@@ -308,7 +309,7 @@ export const initCollectionsListeners = () => {
         onUploadsComplete(msg.data)
         break
       case 'COLLECTION_IMAGES':
-        onCollectionImages(msg.data.creator, msg.data.images)
+        onCollectionImages(msg.data.creator, msg.data.images, msg.data.sequence_id)
         break
       case 'ERROR':
         onError(msg.data)

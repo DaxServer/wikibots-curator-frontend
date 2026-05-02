@@ -862,7 +862,8 @@
         "type": "object",
         "required": [
           "images",
-          "creator"
+          "creator",
+          "sequence_id"
         ],
         "properties": {
           "images": {
@@ -873,6 +874,9 @@
           },
           "creator": {
             "$ref": "#/components/schemas/Creator"
+          },
+          "sequence_id": {
+              "type": "string"
           }
         },
         "additionalProperties": false

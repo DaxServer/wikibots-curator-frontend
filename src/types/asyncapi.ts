@@ -321,6 +321,7 @@ export type CollectionImages = {
 export type CollectionImagesData = {
   images: Record<string, MediaImage>
   creator: Creator
+  sequence_id: string
 }
 
 export type MediaImage = {
