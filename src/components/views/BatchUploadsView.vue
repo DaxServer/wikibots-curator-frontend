@@ -4,6 +4,7 @@ const router = useRouter()
 
 const authStore = useAuthStore()
 const store = useCollectionsStore()
+const { toLocalTimezoneString } = useCommons()
 
 const {
   loadBatchUploads,
@@ -185,7 +186,7 @@ onUnmounted(() => {
               <span>Batch #{{ batchId }}</span>
               <span class="text-sm font-normal text-gray-500">
                 <template v-if="store.batch">
-                  {{ new Date(store.batch.created_at).toLocaleString() }}
+                  {{ toLocalTimezoneString(new Date(store.batch.created_at)) }}
                 </template>
                 <Skeleton v-else />
               </span>
