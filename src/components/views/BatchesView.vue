@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
 const router = useRouter()
+const { toLocalTimezoneString } = useCommons()
 
 const { refreshBatches, unsubscribeBatchesList } = useCollections()
 
@@ -121,7 +122,7 @@ onUnmounted(() => {
     </template>
     <template #body-cell="{ col, data }">
       <template v-if="col.field === 'created_at'">
-        {{ new Date(data.created_at).toLocaleString() }}
+        {{ toLocalTimezoneString(new Date(data.created_at)) }}
       </template>
       <template v-else-if="col.field === 'uploads'">
         <BatchStats
