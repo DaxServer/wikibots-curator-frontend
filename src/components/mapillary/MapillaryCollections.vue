@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const store = useCollectionsStore()
+const { toLocalTimezoneString } = useCommons()
 
 onMounted(() => {
   store.setHandler(ImageHandler.MAPILLARY)
@@ -22,7 +23,7 @@ onMounted(() => {
           </span>
           <div>
             <strong>Taken:</strong>
-            {{ item.image.dates.taken ? item.image.dates.taken.toLocaleString() : '—' }}
+            {{ item.image.dates.taken ? toLocalTimezoneString(item.image.dates.taken) : '—' }}
           </div>
           <div>
             <strong>ID:</strong>
