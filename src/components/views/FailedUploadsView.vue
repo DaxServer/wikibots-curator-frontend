@@ -95,7 +95,6 @@ onMounted(() => {
           :options="[
             { label: 'All handlers', value: null },
             { label: 'Mapillary', value: 'mapillary' },
-            { label: 'Flickr', value: 'flickr' },
           ]"
           option-label="label"
           option-value="value"

@@ -90,7 +90,6 @@ export type FetchImages = {
 
 export enum ImageHandler {
   MAPILLARY = 'mapillary',
-  FLICKR = 'flickr',
 }
 
 export type FetchPresets = {

@@ -1239,8 +1239,7 @@
       "ImageHandler": {
         "type": "string",
         "enum": [
-          "mapillary",
-          "flickr"
+          "mapillary"
         ]
       },
       "Label": {

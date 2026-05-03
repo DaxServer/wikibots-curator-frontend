@@ -31,7 +31,7 @@ export const useCommons = () => {
 
   const toLocalTimezoneString = (date: Date): string => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const nd = date.toLocaleString(undefined, {timeZone: tz, timeZoneName: "short"})
+    const nd = date.toLocaleString(undefined, { timeZone: tz, timeZoneName: 'short' })
     return nd
   }
 
@@ -168,6 +168,6 @@ ${categories}
     getTemplateTitle,
     validateTitle,
     verifyTitles,
-	toLocalTimezoneString,
+    toLocalTimezoneString,
   }
 }
