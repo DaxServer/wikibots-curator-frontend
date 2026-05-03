@@ -29,6 +29,12 @@ export const useCommons = () => {
     verifyTitles,
   } = useTitleVerification()
 
+  const toLocalTimezoneString = (date: Date): string => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const nd = date.toLocaleString(undefined, {timeZone: tz, timeZoneName: "short"})
+    return nd
+  }
+
   const applyMetaDefaults = (item: Item, fallbackTitle: string): Metadata => {
     const { meta, image } = item
     const title = meta.title?.trim() || fallbackTitle
@@ -162,5 +168,6 @@ ${categories}
     getTemplateTitle,
     validateTitle,
     verifyTitles,
+	toLocalTimezoneString,
   }
 }
